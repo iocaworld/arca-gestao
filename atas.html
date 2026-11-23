@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCA - Atas de Reuniões | Aguada de Baixo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Barra de Navegação Superior -->
+  <header class="app-navbar">
+    <div class="nav-inner">
+      <div class="brand-section">
+        <a href="painel.html" class="brand-logo-small">
+          <img src="assets/arca-logo.png" alt="ARCA">
+        </a>
+        <div class="brand-info">
+          <h3>A.R.C.A.</h3>
+          <span>Aguada de Baixo | Gestão</span>
+        </div>
+      </div>
+
+      <!-- Menus Principais de Navegação -->
+      <nav class="nav-menu">
+        <a href="painel.html" class="nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Painel</span>
+        </a>
+        <a href="socios.html" class="nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+          </svg>
+          <span>Sócios</span>
+        </a>
+        <a href="atas.html" class="nav-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <span>Atas</span>
+        </a>
+        <a href="utilizadores.html" class="nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Utilizadores</span>
+        </a>
+      </nav>
+
+      <!-- Perfil do Utilizador & Sair -->
+      <div class="nav-user">
+        <div class="user-badge">
+          <span>Jorge Cunha (Admin)</span>
+        </div>
+        <a href="index.html" class="btn-logout" title="Sair">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal: Atas -->
+  <main class="main-content">
+    
+    <div class="page-header">
+      <div>
+        <h1>Atas de Reuniões</h1>
+        <p>Registo e arquivo digital das deliberações da Direção e Assembleias Gerais da ARCA.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-action btn-primary" onclick="alert('Formulário para registar nova Ata de Reunião!');">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Nova Ata</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabela de Atas -->
+    <section class="table-wrapper">
+      <div class="table-controls">
+        <strong style="color: var(--text-title); font-size: 1.05rem;">Arquivo Digital de Atas</strong>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nº Ata</th>
+              <th>Data</th>
+              <th>Tipo de Reunião</th>
+              <th>Assunto Principal</th>
+              <th>Presentes</th>
+              <th>Estado</th>
+              <th style="text-align: right;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ata #12/2026</strong></td>
+              <td>15/10/2026</td>
+              <td><span class="badge-status" style="background: var(--color-blue-light); color: var(--color-blue);">Reunião de Direção</span></td>
+              <td>Preparação do Convite e Aniversário da ARCA</td>
+              <td>5 membros</td>
+              <td><span class="badge-status em-dia">Aprovada & Assinada</span></td>
+              <td style="text-align: right;">
+                <button class="btn-action btn-secondary" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;" onclick="alert('A abrir documento da Ata #12/2026');">Ver Documento</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Ata #11/2026</strong></td>
+              <td>22/08/2026</td>
+              <td><span class="badge-status" style="background: var(--primary-light); color: var(--primary);">Assembleia Geral</span></td>
+              <td>Aprovação de contas e plano de atividades desportivas</td>
+              <td>28 sócios</td>
+              <td><span class="badge-status em-dia">Aprovada & Assinada</span></td>
+              <td style="text-align: right;">
+                <button class="btn-action btn-secondary" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;" onclick="alert('A abrir documento da Ata #11/2026');">Ver Documento</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Ata #10/2026</strong></td>
+              <td>14/06/2026</td>
+              <td><span class="badge-status" style="background: var(--color-blue-light); color: var(--color-blue);">Reunião de Direção</span></td>
+              <td>BiciARCA e Passeio de Cicloturismo 2026</td>
+              <td>6 membros</td>
+              <td><span class="badge-status em-dia">Aprovada & Assinada</span></td>
+              <td style="text-align: right;">
+                <button class="btn-action btn-secondary" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;" onclick="alert('A abrir documento da Ata #10/2026');">Ver Documento</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

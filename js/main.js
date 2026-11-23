@@ -30,11 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Feedback visual e transição
       loginBtn.disabled = true;
       loginBtn.innerHTML = '<span>A validar...</span>';
-      showLoginAlert('Sessão iniciada com sucesso! A carregar a gestão...', 'success');
+      showLoginAlert('Sessão iniciada com sucesso! A carregar o painel geral...', 'success');
 
       setTimeout(() => {
-        window.location.href = 'socios.html';
-      }, 1000);
+        window.location.href = 'painel.html';
+      }, 800);
     });
   }
 
