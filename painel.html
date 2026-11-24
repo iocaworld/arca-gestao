@@ -3,195 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARCA - Painel Central de Gestão</title>
+  <title>A.R.C.A. - Painel de Gestão Integrada | Aguada de Baixo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* Estilos específicos do Painel Central */
-    .dashboard-welcome {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 2.25rem;
-      margin-bottom: 2.25rem;
-      box-shadow: var(--shadow-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .welcome-text h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-title);
-      margin-bottom: 0.5rem;
-    }
-
-    .welcome-text p {
-      font-size: 1.05rem;
-      color: var(--text-body);
-      max-width: 650px;
-    }
-
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .module-card {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-subtle);
-      transition: all 0.25s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-    }
-
-    .module-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-card);
-      border-color: var(--border-hover);
-    }
-
-    .module-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-    }
-
-    .module-icon-large {
-      width: 54px;
-      height: 54px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .module-badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.3rem 0.65rem;
-      border-radius: var(--radius-full);
-      background: var(--bg-page);
-      color: var(--text-muted);
-      border: 1px solid var(--border-color);
-    }
-
-    .module-card h3 {
-      font-size: 1.3rem;
-      color: var(--text-title);
-      margin-bottom: 0.5rem;
-    }
-
-    .module-card p {
-      font-size: 0.92rem;
-      color: var(--text-body);
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
-    }
-
-    .module-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid var(--border-color);
-      padding-top: 1.25rem;
-      margin-top: auto;
-    }
-
-    .module-stat-text {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .btn-enter-module {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--primary);
-      transition: gap 0.2s;
-    }
-
-    .module-card:hover .btn-enter-module {
-      gap: 0.65rem;
-      color: var(--primary-hover);
-    }
-  </style>
 </head>
 <body>
 
-  <!-- Barra de Navegação Superior -->
-  <header class="app-navbar">
-    <div class="nav-inner">
-      <div class="brand-section">
-        <a href="painel.html" class="brand-logo-small">
-          <img src="assets/arca-logo.png" alt="ARCA">
-        </a>
-        <div class="brand-info">
-          <h3>A.R.C.A.</h3>
-          <span>Aguada de Baixo | Gestão Geral</span>
+  <div class="app-layout">
+    
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="assets/arca-logo.png" alt="ARCA Logótipo">
+        </div>
+        <div class="sidebar-brand">
+          <h2>A.R.C.A.</h2>
+          <span>Aguada de Baixo</span>
         </div>
       </div>
 
-      <!-- Menus Principais de Navegação -->
-      <nav class="nav-menu">
-        <a href="painel.html" class="nav-link active">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"/>
-            <rect x="14" y="3" width="7" height="7"/>
-            <rect x="14" y="14" width="7" height="7"/>
-            <rect x="3" y="14" width="7" height="7"/>
-          </svg>
-          <span>Painel</span>
-        </a>
-        <a href="socios.html" class="nav-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-          </svg>
-          <span>Sócios</span>
-        </a>
-        <a href="atas.html" class="nav-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-          </svg>
-          <span>Atas</span>
-        </a>
-        <a href="utilizadores.html" class="nav-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span>Utilizadores</span>
-        </a>
+      <nav class="sidebar-nav">
+        <!-- Secção 1: Principal -->
+        <div>
+          <div class="nav-section-title">Principal</div>
+          <ul class="nav-list">
+            <li>
+              <a href="painel.html" class="nav-item-link active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Painel Geral</span>
+              </a>
+            </li>
+            <li>
+              <a href="socios.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Sócios</span>
+                <span class="nav-item-badge">248</span>
+              </a>
+            </li>
+            <li>
+              <a href="atas.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <span>Atas de Reuniões</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Secção 2: Atividades & Gestão -->
+        <div>
+          <div class="nav-section-title">Organização</div>
+          <ul class="nav-list">
+            <li>
+              <a href="calendario.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Calendário & Eventos</span>
+              </a>
+            </li>
+            <li>
+              <a href="documentos.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>Documentos & Arquivo</span>
+              </a>
+            </li>
+            <li>
+              <a href="utilizadores.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <span>Utilizadores & Acessos</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </nav>
 
-      <!-- Perfil do Utilizador & Sair -->
-      <div class="nav-user">
-        <div class="user-badge">
-          <span>Jorge Cunha (Admin)</span>
+      <div class="sidebar-footer">
+        <div class="user-avatar">JC</div>
+        <div class="user-details">
+          <div class="user-name">Jorge Cunha</div>
+          <div class="user-role">Administrador Geral</div>
         </div>
-        <a href="index.html" class="btn-logout" title="Terminar Sessão">
+        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
             <polyline points="16 17 21 12 16 7"/>
@@ -199,182 +117,204 @@
           </svg>
         </a>
       </div>
-    </div>
-  </header>
+    </aside>
 
-  <!-- Conteúdo Principal -->
-  <main class="main-content">
+    <!-- Área Principal de Conteúdo -->
+    <div class="app-main">
+      
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">
+            &#9776;
+          </button>
+          <div class="breadcrumbs">
+            <span>ARCA</span>
+            <span>&rsaquo;</span>
+            <span class="current">Painel Central</span>
+          </div>
+        </div>
 
-    <!-- Boas-vindas -->
-    <section class="dashboard-welcome">
-      <div class="welcome-text">
-        <span class="eyebrow" style="margin-bottom: 0.35rem;">CENTRO DE CONTROLO ARCA</span>
-        <h1>Bem-vindo, Jorge</h1>
-        <p>
-          Este é o espaço central de gestão da Associação Recreativa, Cultural e de Assistência de Aguada de Baixo. Aceda a todos os módulos, registos e ferramentas a partir daqui.
-        </p>
-      </div>
+        <div class="topbar-right">
+          <div class="quick-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" placeholder="Pesquisar sócio, ata ou ficheiro...">
+          </div>
 
-      <div>
-        <a href="socios.html" class="btn-action btn-primary" style="padding: 0.85rem 1.5rem;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-          </svg>
-          <span>Abrir Sócios</span>
-        </a>
-      </div>
-    </section>
+          <button class="topbar-btn" title="Notificações" onclick="showToast('Sistema 100% operacional e atualizado!', 'success')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="indicator"></span>
+          </button>
+        </div>
+      </header>
 
-    <!-- Grelha de Módulos do Sistema -->
-    <section class="modules-grid">
+      <!-- Conteúdo da Página -->
+      <main class="page-container">
+        
+        <!-- Faixa de Boas-vindas -->
+        <div class="card-box" style="padding: 2.25rem; background: linear-gradient(135deg, #ffffff 60%, var(--primary-light) 100%);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+              <span class="status-pill em-dia" style="margin-bottom: 0.75rem;">Sessão Ativa</span>
+              <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em;">
+                Bom dia, Jorge
+              </h1>
+              <p style="color: var(--text-body); font-size: 1.05rem; max-width: 620px; margin-top: 0.35rem;">
+                Bem-vindo ao centro integrado da <strong>ARCA - Aguada de Baixo</strong>. Consulte associados, registe quotas, consulte atas ou organize os próximos eventos.
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+              <a href="socios.html" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                </svg>
+                <span>Gestão de Sócios</span>
+              </a>
+              <a href="atas.html" class="btn btn-secondary">
+                <span>Ver Atas</span>
+              </a>
+            </div>
+          </div>
+        </div>
 
-      <!-- Módulo 1: Sócios -->
-      <article class="module-card">
-        <div>
-          <div class="module-top">
-            <div class="module-icon-large" style="background: var(--color-blue-light); color: var(--color-blue);">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Linha de Métricas Rápidas -->
+        <div class="metrics-row">
+          <div class="metric-card">
+            <div class="metric-content">
+              <span class="metric-label">Total de Associados</span>
+              <span class="metric-value">248</span>
+              <span class="metric-badge positive">&uarr; +10 novos em 2026</span>
+            </div>
+            <div class="metric-icon-box terracotta">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                 <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
               </svg>
             </div>
-            <span class="module-badge" style="color: var(--color-blue); background: var(--color-blue-light);">Ativo</span>
           </div>
-          <h3>Gestão de Sócios</h3>
-          <p>Ficheiro geral de associados, histórico de quotas de 2026, pesquisa rápida, registo de pagamentos e exportação de dados.</p>
-        </div>
-        <div class="module-footer">
-          <span class="module-stat-text">248 Associados</span>
-          <a href="socios.html" class="btn-enter-module">
-            <span>Aceder</span> &rarr;
-          </a>
-        </div>
-      </article>
 
-      <!-- Módulo 2: Utilizadores -->
-      <article class="module-card">
-        <div>
-          <div class="module-top">
-            <div class="module-icon-large" style="background: var(--color-green-light); color: var(--color-green);">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <div class="metric-card">
+            <div class="metric-content">
+              <span class="metric-label">Quotas em Dia (2026)</span>
+              <span class="metric-value">196</span>
+              <span class="metric-badge positive">&check; 79% regularizado</span>
+            </div>
+            <div class="metric-icon-box green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <span class="module-badge" style="color: var(--color-green); background: var(--color-green-light);">Segurança</span>
           </div>
-          <h3>Utilizadores e Acessos</h3>
-          <p>Gestão de utilizadores autorizados a aceder à plataforma, perfis da Direção, permissões e histórico de acessos.</p>
-        </div>
-        <div class="module-footer">
-          <span class="module-stat-text">Controlo de Acessos</span>
-          <a href="utilizadores.html" class="btn-enter-module">
-            <span>Gerir</span> &rarr;
-          </a>
-        </div>
-      </article>
 
-      <!-- Módulo 3: Atas -->
-      <article class="module-card">
-        <div>
-          <div class="module-top">
-            <div class="module-icon-large" style="background: var(--primary-light); color: var(--primary);">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
+          <div class="metric-card">
+            <div class="metric-content">
+              <span class="metric-label">Próximo Evento</span>
+              <span class="metric-value" style="font-size: 1.45rem; padding-top: 0.35rem;">BiciARCA</span>
+              <span class="metric-badge neutral">14 de Junho de 2026</span>
             </div>
-            <span class="module-badge" style="color: var(--primary); background: var(--primary-light);">Arquivo</span>
-          </div>
-          <h3>Atas de Reuniões</h3>
-          <p>Arquivo e registo digital das Atas de Assembleia Geral, reuniões de Direção, deliberações e documentos anexos.</p>
-        </div>
-        <div class="module-footer">
-          <span class="module-stat-text">Livro Digital</span>
-          <a href="atas.html" class="btn-enter-module">
-            <span>Ver Atas</span> &rarr;
-          </a>
-        </div>
-      </article>
-
-      <!-- Módulo 4: Calendário & Eventos -->
-      <article class="module-card">
-        <div>
-          <div class="module-top">
-            <div class="module-icon-large" style="background: #fef3eb; color: #c2410c;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="metric-icon-box amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/>
                 <line x1="8" y1="2" x2="8" y2="6"/>
                 <line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
             </div>
-            <span class="module-badge">Agenda</span>
           </div>
-          <h3>Calendário e Eventos</h3>
-          <p>Organização de iniciativas da ARCA: BiciARCA, Agit'ARCA, convívios, ensaios de teatro e ocupação do Pavilhão.</p>
-        </div>
-        <div class="module-footer">
-          <span class="module-stat-text">Próximas Datas</span>
-          <a href="#" onclick="alert('Módulo de Calendário: Estamos a carregar a agenda oficial'); return false;" class="btn-enter-module">
-            <span>Consultar</span> &rarr;
-          </a>
-        </div>
-      </article>
 
-      <!-- Módulo 5: Documentos -->
-      <article class="module-card">
-        <div>
-          <div class="module-top">
-            <div class="module-icon-large" style="background: #edf4f9; color: #2563eb;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          <div class="metric-card">
+            <div class="metric-content">
+              <span class="metric-label">Livro de Atas</span>
+              <span class="metric-value">12</span>
+              <span class="metric-badge neutral">Última: 15/Out/2026</span>
+            </div>
+            <div class="metric-icon-box blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               </svg>
             </div>
-            <span class="module-badge">Documental</span>
           </div>
-          <h3>Arquivo de Documentos</h3>
-          <p>Estatutos da ARCA, regulamento do pavilhão, protocolos institucionais com a Junta e Câmara, requerimentos e ofícios.</p>
         </div>
-        <div class="module-footer">
-          <span class="module-stat-text">Repositório Digital</span>
-          <a href="#" onclick="alert('Módulo Documental: Carregando estatutos e regulamentos'); return false;" class="btn-enter-module">
-            <span>Explorar</span> &rarr;
-          </a>
-        </div>
-      </article>
 
-      <!-- Módulo 6: Finanças -->
-      <article class="module-card">
-        <div>
-          <div class="module-top">
-            <div class="module-icon-large" style="background: #fdf5eb; color: #d97706;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-              </svg>
+        <!-- Grelha de Módulos Operacionais -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          
+          <div class="card-box" style="padding: 1.75rem; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <div class="metric-icon-box blue" style="width: 44px; height: 44px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.2rem; color: var(--text-title);">Gestão de Sócios</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Associados & Quotas</span>
+              </div>
             </div>
-            <span class="module-badge">Tesouraria</span>
+            <p style="font-size: 0.92rem; color: var(--text-body); margin-bottom: 1.25rem;">
+              Ficheiro completo de associados, histórico de pagamentos, liquidação direta de quotas e emissão de recibos oficiais com o brasão da ARCA.
+            </p>
+            <a href="socios.html" class="btn btn-primary btn-sm" style="width: 100%;">
+              <span>Entrar no Módulo de Sócios &rarr;</span>
+            </a>
           </div>
-          <h3>Finanças e Contas</h3>
-          <p>Controlo do livro de receitas e despesas, balancetes da associação, pagamentos de quotas e apoio a eventos.</p>
-        </div>
-        <div class="module-footer">
-          <span class="module-stat-text">Balanço 2026</span>
-          <a href="#" onclick="alert('Módulo de Finanças: Em integração com a tesouraria'); return false;" class="btn-enter-module">
-            <span>Ver Contas</span> &rarr;
-          </a>
-        </div>
-      </article>
 
-    </section>
+          <div class="card-box" style="padding: 1.75rem; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <div class="metric-icon-box terracotta" style="width: 44px; height: 44px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.2rem; color: var(--text-title);">Livro de Atas</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Reuniões & Deliberações</span>
+              </div>
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-body); margin-bottom: 1.25rem;">
+              Arquivo oficial das reuniões de Direção e Assembleias Gerais, registo de deliberações, presenças e documentos em anexo.
+            </p>
+            <a href="atas.html" class="btn btn-secondary btn-sm" style="width: 100%;">
+              <span>Consultar Livro de Atas &rarr;</span>
+            </a>
+          </div>
 
-  </main>
+          <div class="card-box" style="padding: 1.75rem; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <div class="metric-icon-box amber" style="width: 44px; height: 44px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                </svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.2rem; color: var(--text-title);">Calendário & Eventos</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Agenda & Pavilhão</span>
+              </div>
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-body); margin-bottom: 1.25rem;">
+              Planeamento de iniciativas (Agit'ARCA, BiciARCA, convívios anuais) e controlo de ocupação do Pavilhão desportivo da associação.
+            </p>
+            <a href="calendario.html" class="btn btn-secondary btn-sm" style="width: 100%;">
+              <span>Ver Calendário Oficial &rarr;</span>
+            </a>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+  </div>
 
   <script src="js/main.js"></script>
 </body>
