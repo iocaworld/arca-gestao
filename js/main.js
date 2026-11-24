@@ -39,22 +39,57 @@ window.showToast = function(message, type = 'success') {
 document.addEventListener('DOMContentLoaded', () => {
 
   // =========================================================================
-  // 2. Controlo da Barra Lateral Mobile (Sidebar Toggle)
+  // 2. Controlo da Barra Lateral Mobile (Sidebar & Backdrop Toggle)
   // =========================================================================
   const mobileToggle = document.getElementById('mobileSidebarToggle');
   const appSidebar = document.querySelector('.app-sidebar');
 
+  // Criar elemento de Backdrop se não existir
+  let sidebarBackdrop = document.querySelector('.sidebar-backdrop');
+  if (!sidebarBackdrop) {
+    sidebarBackdrop = document.createElement('div');
+    sidebarBackdrop.className = 'sidebar-backdrop';
+    document.body.appendChild(sidebarBackdrop);
+  }
+
+  function openSidebar() {
+    if (appSidebar) appSidebar.classList.add('open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+    document.body.style.overflow = window.innerWidth <= 1024 ? 'hidden' : '';
+  }
+
+  function closeSidebar() {
+    if (appSidebar) appSidebar.classList.remove('open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
   if (mobileToggle && appSidebar) {
-    mobileToggle.addEventListener('click', () => {
-      appSidebar.classList.toggle('open');
+    mobileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (appSidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
     });
 
-    document.addEventListener('click', (e) => {
-      if (window.innerWidth <= 1024) {
-        if (!appSidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
-          appSidebar.classList.remove('open');
+    if (sidebarBackdrop) {
+      sidebarBackdrop.addEventListener('click', closeSidebar);
+    }
+
+    // Botões de fechar dentro da sidebar
+    const closeBtns = document.querySelectorAll('.sidebar-close-btn');
+    closeBtns.forEach(btn => btn.addEventListener('click', closeSidebar));
+
+    // Fechar ao navegar num link no mobile
+    const navLinks = appSidebar.querySelectorAll('a.nav-item-link, a.nav-sublink');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) {
+          closeSidebar();
         }
-      }
+      });
     });
   }
 

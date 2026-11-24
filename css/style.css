@@ -78,6 +78,7 @@
 
 html, body {
   height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -967,6 +968,24 @@ button, input, select, textarea {
   color: var(--text-title);
 }
 
+.welcome-banner {
+  padding: 2.25rem;
+  background: linear-gradient(135deg, #ffffff 60%, var(--primary-light) 100%);
+}
+
+.welcome-banner h1 {
+  font-size: 2.2rem;
+}
+
+@media (max-width: 768px) {
+  .welcome-banner {
+    padding: 1.25rem !important;
+  }
+  .welcome-banner h1 {
+    font-size: 1.6rem !important;
+  }
+}
+
 /* Tabelas de Dados */
 .table-responsive {
   width: 100%;
@@ -1190,21 +1209,307 @@ button, input, select, textarea {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Responsividade Mobile */
+/* ==========================================================================
+   Responsividade Completa para Smartphones e Tablets
+   ========================================================================== */
+
+/* Cortina de fundo (Backdrop) da Sidebar no Mobile */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 30, 20, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Botão de Fechar dentro da Sidebar no Mobile */
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+/* Tablets e Ecrãs Médios (<= 1024px) */
 @media (max-width: 1024px) {
   .app-sidebar {
     transform: translateX(-100%);
+    box-shadow: var(--shadow-xl);
   }
+
   .app-sidebar.open {
     transform: translateX(0);
   }
-  .app-main {
-    margin-left: 0;
-  }
-  .mobile-toggle {
+
+  .sidebar-close-btn {
     display: block;
   }
+
+  .app-main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .mobile-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-page);
+    border: 1px solid var(--border-light);
+    font-size: 1.3rem;
+  }
+
+  .app-topbar {
+    padding: 0 1.25rem;
+  }
+
   .page-container {
-    padding: 1.5rem;
+    padding: 1.5rem 1.25rem;
   }
 }
+
+/* Smartphones (<= 768px) */
+@media (max-width: 768px) {
+  /* 1. Página de Login / Entrada (index.html) */
+  .login-wrapper {
+    padding: 1.5rem 1rem;
+    align-items: flex-start;
+  }
+
+  .login-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .login-story {
+    text-align: center;
+    padding: 0.5rem 0;
+  }
+
+  .login-title {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .login-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+  }
+
+  .login-pills {
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .pill-item {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.85rem;
+  }
+
+  .login-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: var(--radius-md);
+  }
+
+  .arca-logo-wrap {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-top h2 {
+    font-size: 1.35rem;
+  }
+
+  /* 2. Topbar & Cabeçalhos no Mobile */
+  .app-topbar {
+    height: 60px;
+    padding: 0 1rem;
+  }
+
+  .topbar-left {
+    gap: 0.75rem;
+  }
+
+  .breadcrumbs {
+    font-size: 0.8rem;
+  }
+
+  .breadcrumbs span:not(.current) {
+    display: none;
+  }
+
+  .topbar-right .quick-search {
+    display: none; /* Esconder barra de pesquisa pesada da topbar em telemóveis */
+  }
+
+  .topbar-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .app-topbar .btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.78rem;
+    gap: 0.35rem;
+  }
+
+  /* 3. Área de Conteúdo Geral */
+  .page-container {
+    padding: 1rem 0.85rem;
+  }
+
+  .page-title-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .page-title-bar h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-title-bar p {
+    font-size: 0.88rem;
+  }
+
+  /* 4. Métricas e Cards em Grelha */
+  .metrics-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .metric-card {
+    padding: 1rem;
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .metric-icon-box {
+    width: 38px;
+    height: 38px;
+  }
+
+  .metric-icon-box svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 5. Caixas e Cabeçalhos de Secções */
+  .card-box {
+    border-radius: var(--radius-md);
+    margin-bottom: 1.25rem;
+  }
+
+  .card-header-bar {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .card-header-bar h2 {
+    font-size: 1.1rem;
+  }
+
+  .card-header-bar .quick-search,
+  .card-header-bar select {
+    width: 100% !important;
+  }
+
+  .card-header-bar > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* 6. Tabelas com Scroll Suave no Mobile */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md);
+  }
+
+  .modern-table th,
+  .modern-table td {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  /* 7. Drawer Lateral do Sócio no Mobile (Ocupa Ecrã Inteiro) */
+  .drawer-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .drawer-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .drawer-body {
+    padding: 1.25rem;
+  }
+
+  .drawer-footer {
+    padding: 1rem 1.25rem;
+  }
+
+  /* 8. Modais de Criação */
+  .modal-overlay {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    padding: 1.25rem;
+    max-width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .modal-header h2 {
+    font-size: 1.15rem;
+  }
+
+  /* 9. Botões e Ações */
+  .btn {
+    padding: 0.55rem 0.95rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Ecrãs Pequenos (<= 400px) */
+@media (max-width: 400px) {
+  .metrics-row {
+    grid-template-columns: 1fr;
+  }
+
+  .login-title {
+    font-size: 1.85rem;
+  }
+}
+
