@@ -311,11 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <head>
           <title>Recibo de Quota - ARCA Aguada de Baixo</title>
           <style>
-            body { font-family: -apple-system, system-ui, sans-serif; padding: 40px; color: #231f1c; line-height: 1.6; }
-            .receipt-box { border: 2px solid #a65a3c; border-radius: 12px; padding: 30px; position: relative; }
-            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #faf7f2; padding-bottom: 20px; margin-bottom: 25px; }
-            .logo-text h1 { margin: 0; font-size: 24px; color: #a65a3c; }
-            .logo-text p { margin: 0; font-size: 13px; color: #8c8275; }
+            body { font-family: -apple-system, system-ui, sans-serif; padding: 40px; color: #1a271f; line-height: 1.6; background: #ffffff; }
+            .receipt-box { border: 2px solid #1c6d42; border-radius: 12px; padding: 30px; position: relative; }
+            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eaf5ee; padding-bottom: 20px; margin-bottom: 25px; }
+            .logo-text h1 { margin: 0; font-size: 24px; color: #1c6d42; }
+            .logo-text p { margin: 0; font-size: 13px; color: #6b7f72; }
             .receipt-title { font-size: 20px; font-weight: bold; text-align: right; }
             .row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
             .total-row { border-top: 1px dashed #ccc; padding-top: 15px; font-size: 18px; font-weight: bold; }
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <span><strong>Morada:</strong> ${socio.morada}</span>
             </div>
 
-            <div style="background: #faf7f2; padding: 15px; border-radius: 8px; margin: 25px 0;">
+            <div style="background: #f1f7f3; padding: 15px; border-radius: 8px; margin: 25px 0;">
               <div class="row" style="margin: 0;">
                 <span>Liquidação da Quota Anual de Associado (${socio.ultimaQuota})</span>
                 <strong>${socio.valorQuota ? socio.valorQuota.toFixed(2) : '15.00'} €</strong>
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="row total-row">
               <span>Total Liquidado</span>
-              <span style="color: #a65a3c;">${socio.valorQuota ? socio.valorQuota.toFixed(2) : '15.00'} €</span>
+              <span style="color: #1c6d42;">${socio.valorQuota ? socio.valorQuota.toFixed(2) : '15.00'} €</span>
             </div>
 
             <div class="signature">
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="no-print" style="margin-top: 25px; text-align: center;">
-            <button onclick="window.print()" style="padding: 10px 25px; font-size: 16px; background: #a65a3c; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            <button onclick="window.print()" style="padding: 10px 25px; font-size: 16px; background: #1c6d42; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
               🖨️ Imprimir / Guardar em PDF
             </button>
           </div>
