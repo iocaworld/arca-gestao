@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A.R.C.A. - Livro de Atas | Aguada de Baixo</title>
+  <title>A.R.C.A. - Atas da Direção | Aguada de Baixo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 
   <div class="app-layout">
     
-    <!-- Barra Lateral (Sidebar) -->
+    <!-- Barra Lateral (Sidebar com Nova Estrutura de Menus) -->
     <aside class="app-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -26,8 +26,8 @@
       </div>
 
       <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
         <div>
-          <div class="nav-section-title">Principal</div>
           <ul class="nav-list">
             <li>
               <a href="painel.html" class="nav-item-link">
@@ -37,65 +37,107 @@
                   <rect x="14" y="14" width="7" height="7"/>
                   <rect x="3" y="14" width="7" height="7"/>
                 </svg>
-                <span>Painel Geral</span>
-              </a>
-            </li>
-            <li>
-              <a href="socios.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-                <span>Sócios</span>
-                <span class="nav-item-badge">248</span>
-              </a>
-            </li>
-            <li>
-              <a href="atas.html" class="nav-item-link active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
-                <span>Atas de Reuniões</span>
+                <span>Visão Geral</span>
               </a>
             </li>
           </ul>
         </div>
 
+        <!-- 2. Menu: Gestão -->
         <div>
-          <div class="nav-section-title">Organização</div>
           <ul class="nav-list">
             <li>
-              <a href="calendario.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                <span>Calendário & Eventos</span>
-              </a>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
             </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios -->
+        <div>
+          <ul class="nav-list">
             <li>
-              <a href="documentos.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span>Documentos & Arquivo</span>
-              </a>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Sócios</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="socios.html?view=fichas" class="nav-sublink">Fichas de Sócios</a></li>
+                <li><a href="socios.html?view=cotas" class="nav-sublink">Lista de Cotas</a></li>
+              </ul>
             </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção (Aberto) -->
+        <div>
+          <ul class="nav-list">
             <li>
-              <a href="utilizadores.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-                <span>Utilizadores & Acessos</span>
-              </a>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="atas.html" class="nav-sublink active">Atas Direção</a></li>
+                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano" class="nav-sublink">Plano de Atividades</a></li>
+                <li><a href="documentos.html?cat=orcamento" class="nav-sublink">Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -105,7 +147,7 @@
         <div class="user-avatar">JC</div>
         <div class="user-details">
           <div class="user-name">Jorge Cunha</div>
-          <div class="user-role">Administrador Geral</div>
+          <div class="user-role">Direção Geral</div>
         </div>
         <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -129,17 +171,19 @@
           <div class="breadcrumbs">
             <a href="painel.html">ARCA</a>
             <span>&rsaquo;</span>
-            <span class="current">Livro de Atas</span>
+            <span>Direção</span>
+            <span>&rsaquo;</span>
+            <span class="current">Atas da Direção</span>
           </div>
         </div>
 
         <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Editor de nova ata oficial em preparação!', 'success')">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Editor de Ata da Direção em preparação!', 'success')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>Nova Ata</span>
+            <span>Nova Ata Direção</span>
           </button>
         </div>
       </header>
@@ -149,15 +193,15 @@
         
         <div class="page-title-bar">
           <div>
-            <h1>Livro Digital de Atas</h1>
-            <p>Arquivo e registo oficial das deliberações da Direção e Assembleias Gerais da ARCA.</p>
+            <h1>Atas das Reuniões de Direção</h1>
+            <p>Arquivo e registo oficial de deliberações, decisões de gestão e presenças nas reuniões da Direção da ARCA.</p>
           </div>
         </div>
 
         <!-- Tabela de Atas -->
         <div class="card-box">
           <div class="card-header-bar">
-            <h2>Atas Arquivadas</h2>
+            <h2>Livro de Atas da Direção (Mandato 2025/2027)</h2>
           </div>
 
           <div class="table-responsive">
@@ -165,8 +209,7 @@
               <thead>
                 <tr>
                   <th>Nº Ata</th>
-                  <th>Data</th>
-                  <th>Tipo de Reunião</th>
+                  <th>Data da Reunião</th>
                   <th>Assunto Principal</th>
                   <th>Presentes</th>
                   <th>Estado</th>
@@ -175,36 +218,33 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>Ata #12/2026</strong></td>
+                  <td><strong>Ata Direção #12/2026</strong></td>
                   <td>15/10/2026</td>
-                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Reunião de Direção</span></td>
-                  <td>Organização do aniversário da ARCA e homenagem a sócios</td>
+                  <td>Preparação das comemorações e homenagem a associados com mais de 25 anos</td>
                   <td>5 membros</td>
                   <td><span class="status-pill em-dia">Aprovada & Assinada</span></td>
                   <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir documento da Ata #12/2026...', 'success')">Ver Ata</button>
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Ata Direção #12/2026...', 'success')">Ver Documento</button>
                   </td>
                 </tr>
                 <tr>
-                  <td><strong>Ata #11/2026</strong></td>
-                  <td>22/08/2026</td>
-                  <td><span class="status-pill" style="background: var(--primary-light); color: var(--primary);">Assembleia Geral</span></td>
-                  <td>Aprovação de contas e plano de atividades desportivas e culturais</td>
-                  <td>28 associados</td>
+                  <td><strong>Ata Direção #11/2026</strong></td>
+                  <td>08/07/2026</td>
+                  <td>Organização do Agit'ARCA 2026 e contratação de artistas e som</td>
+                  <td>4 membros</td>
                   <td><span class="status-pill em-dia">Aprovada & Assinada</span></td>
                   <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir documento da Ata #11/2026...', 'success')">Ver Ata</button>
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Ata Direção #11/2026...', 'success')">Ver Documento</button>
                   </td>
                 </tr>
                 <tr>
-                  <td><strong>Ata #10/2026</strong></td>
+                  <td><strong>Ata Direção #10/2026</strong></td>
                   <td>14/06/2026</td>
-                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Reunião de Direção</span></td>
-                  <td>BiciARCA 2026 e logística do passeio de cicloturismo</td>
+                  <td>BiciARCA 2026 &bull; Logística de percurso e almoço convívio dos ciclistas</td>
                   <td>6 membros</td>
                   <td><span class="status-pill em-dia">Aprovada & Assinada</span></td>
                   <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir documento da Ata #10/2026...', 'success')">Ver Ata</button>
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Ata Direção #10/2026...', 'success')">Ver Documento</button>
                   </td>
                 </tr>
               </tbody>

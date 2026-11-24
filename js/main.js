@@ -59,6 +59,39 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
+  // 2.1. Alternância de Submenus Expansíveis na Sidebar
+  // =========================================================================
+  const submenuParents = document.querySelectorAll('.nav-item-parent');
+  submenuParents.forEach(parent => {
+    parent.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sublist = parent.nextElementSibling;
+      const isOpen = parent.classList.contains('open');
+
+      if (isOpen) {
+        parent.classList.remove('open');
+        if (sublist) sublist.classList.remove('open');
+      } else {
+        parent.classList.add('open');
+        if (sublist) sublist.classList.add('open');
+      }
+    });
+  });
+
+  // Garantir que os menus pais com submenus ativos permanecem abertos
+  const activeSublink = document.querySelector('.nav-sublink.active');
+  if (activeSublink) {
+    const parentSublist = activeSublink.closest('.nav-sublist');
+    if (parentSublist) {
+      parentSublist.classList.add('open');
+      const parentBtn = parentSublist.previousElementSibling;
+      if (parentBtn && parentBtn.classList.contains('nav-item-parent')) {
+        parentBtn.classList.add('open');
+      }
+    }
+  }
+
+  // =========================================================================
   // 3. Autenticação na Página Principal (index.html)
   // =========================================================================
   const loginForm = document.getElementById('arcaLoginForm');

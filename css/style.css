@@ -475,6 +475,111 @@ button, input, select, textarea {
   color: #ffffff;
 }
 
+/* Submenus da Barra Lateral (Acordeão Expansível) */
+.nav-item-parent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.nav-parent-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-parent-title svg {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.nav-item-parent:hover {
+  background: var(--bg-hover);
+  color: var(--primary);
+}
+
+.nav-item-parent:hover .nav-parent-title svg {
+  color: var(--primary);
+}
+
+.nav-item-parent.open {
+  color: var(--primary);
+  background: rgba(28, 109, 66, 0.05);
+}
+
+.nav-item-parent.open .nav-parent-title svg {
+  color: var(--primary);
+}
+
+.nav-item-parent .chevron {
+  transition: transform 0.25s ease;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.nav-item-parent.open .chevron {
+  transform: rotate(90deg);
+  color: var(--primary);
+}
+
+.nav-sublist {
+  list-style: none;
+  padding-left: 2.25rem;
+  position: relative;
+  margin: 0.25rem 0 0.5rem;
+  display: none;
+}
+
+.nav-sublist::before {
+  content: '';
+  position: absolute;
+  left: 1.45rem;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 2px;
+  background: var(--border-light);
+  border-radius: 2px;
+}
+
+.nav-sublist.open {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.nav-sublink {
+  display: block;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: var(--radius-xs);
+  transition: all 0.2s ease;
+}
+
+.nav-sublink:hover {
+  color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.nav-sublink.active {
+  color: var(--primary);
+  background: var(--primary-light);
+  font-weight: 700;
+}
+
 /* Rodapé da Sidebar */
 .sidebar-footer {
   padding: 1.25rem;

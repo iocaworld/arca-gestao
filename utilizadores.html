@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A.R.C.A. - Utilizadores & Acessos | Aguada de Baixo</title>
+  <title>A.R.C.A. - Órgãos Sociais & Utilizadores | Aguada de Baixo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 
   <div class="app-layout">
     
-    <!-- Barra Lateral (Sidebar) -->
+    <!-- Barra Lateral (Sidebar com Nova Estrutura de Menus) -->
     <aside class="app-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -26,8 +26,8 @@
       </div>
 
       <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
         <div>
-          <div class="nav-section-title">Principal</div>
           <ul class="nav-list">
             <li>
               <a href="painel.html" class="nav-item-link">
@@ -37,65 +37,107 @@
                   <rect x="14" y="14" width="7" height="7"/>
                   <rect x="3" y="14" width="7" height="7"/>
                 </svg>
-                <span>Painel Geral</span>
-              </a>
-            </li>
-            <li>
-              <a href="socios.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-                <span>Sócios</span>
-                <span class="nav-item-badge">248</span>
-              </a>
-            </li>
-            <li>
-              <a href="atas.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
-                <span>Atas de Reuniões</span>
+                <span>Visão Geral</span>
               </a>
             </li>
           </ul>
         </div>
 
+        <!-- 2. Menu: Gestão -->
         <div>
-          <div class="nav-section-title">Organização</div>
           <ul class="nav-list">
             <li>
-              <a href="calendario.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                <span>Calendário & Eventos</span>
-              </a>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
             </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios -->
+        <div>
+          <ul class="nav-list">
             <li>
-              <a href="documentos.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span>Documentos & Arquivo</span>
-              </a>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Sócios</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="socios.html?view=fichas" class="nav-sublink">Fichas de Sócios</a></li>
+                <li><a href="socios.html?view=cotas" class="nav-sublink">Lista de Cotas</a></li>
+              </ul>
             </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção (Aberto) -->
+        <div>
+          <ul class="nav-list">
             <li>
-              <a href="utilizadores.html" class="nav-item-link active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-                <span>Utilizadores & Acessos</span>
-              </a>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+                <li><a href="utilizadores.html" class="nav-sublink active">Utilizadores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano" class="nav-sublink">Plano de Atividades</a></li>
+                <li><a href="documentos.html?cat=orcamento" class="nav-sublink">Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -105,7 +147,7 @@
         <div class="user-avatar">JC</div>
         <div class="user-details">
           <div class="user-name">Jorge Cunha</div>
-          <div class="user-role">Administrador Geral</div>
+          <div class="user-role">Direção Geral</div>
         </div>
         <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -129,17 +171,19 @@
           <div class="breadcrumbs">
             <a href="painel.html">ARCA</a>
             <span>&rsaquo;</span>
-            <span class="current">Utilizadores & Acessos</span>
+            <span>Direção</span>
+            <span>&rsaquo;</span>
+            <span class="current">Utilizadores & Órgãos Sociais</span>
           </div>
         </div>
 
         <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Janela de convite de utilizador em preparação!', 'success')">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Adicionar membro aos Órgãos Sociais em preparação!', 'success')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>Convidar Membro</span>
+            <span>Novo Membro / Acesso</span>
           </button>
         </div>
       </header>
@@ -149,61 +193,149 @@
         
         <div class="page-title-bar">
           <div>
-            <h1>Utilizadores & Permissões</h1>
-            <p>Controlo de utilizadores da Direção, perfis de acesso e segurança do sistema.</p>
+            <h1>Órgãos Sociais & Controlo de Acessos</h1>
+            <p>Listagem e fichas dos membros da Direção, Assembleia Geral e Conselho Fiscal com gestão de permissões e acessos.</p>
           </div>
         </div>
 
-        <!-- Tabela de Utilizadores -->
+        <!-- 1. Direção da ARCA -->
         <div class="card-box">
           <div class="card-header-bar">
-            <h2>Membros com Acesso à Plataforma</h2>
+            <h2>Membros da Direção</h2>
+            <span class="status-pill em-dia">Mandato 2025/2027</span>
           </div>
 
           <div class="table-responsive">
             <table class="modern-table">
               <thead>
                 <tr>
-                  <th>Utilizador</th>
-                  <th>Nome Completo</th>
-                  <th>E-mail</th>
-                  <th>Cargo / Função</th>
-                  <th>Nível de Acesso</th>
-                  <th>Último Acesso</th>
+                  <th>Nome do Membro</th>
+                  <th>Cargo</th>
+                  <th>Utilizador / E-mail</th>
+                  <th>Permissões de Acesso</th>
                   <th>Estado</th>
+                  <th style="text-align: right;">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><code>jorge</code></td>
-                  <td><strong>Jorge Cunha</strong></td>
-                  <td>jorge.cunha@arca.pt</td>
-                  <td>Direção Geral</td>
-                  <td><span class="status-pill em-dia">Administrador Total</span></td>
-                  <td>Hoje, às 09:00</td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Jorge Cunha</div>
+                    <small style="color: var(--text-muted);">Sócio #1</small>
+                  </td>
+                  <td><strong>Presidente da Direção</strong></td>
+                  <td><code>jorge</code> &bull; jorge.cunha@arca.pt</td>
+                  <td><span class="status-pill em-dia">Acesso Total (Admin)</span></td>
                   <td><span class="status-pill em-dia">Ativo</span></td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-outline btn-sm" onclick="showToast('Permissões de Administrador ativas', 'success')">Permissões</button>
+                  </td>
                 </tr>
                 <tr>
-                  <td><code>secretaria</code></td>
-                  <td><strong>Secretaria ARCA</strong></td>
-                  <td>secretaria@arca-aguadadebaixo.pt</td>
-                  <td>Apoio Administrativo</td>
-                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Gestão de Sócios</span></td>
-                  <td>Ontem</td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Fernando José Almeida</div>
+                    <small style="color: var(--text-muted);">Sócio #23</small>
+                  </td>
+                  <td><strong>Vice-Presidente</strong></td>
+                  <td><code>vicepresidente</code> &bull; fernando.almeida@arca.pt</td>
+                  <td><span class="status-pill em-dia">Gestão Geral & Atas</span></td>
                   <td><span class="status-pill em-dia">Ativo</span></td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir permissões...', 'success')">Permissões</button>
+                  </td>
                 </tr>
                 <tr>
-                  <td><code>tesouraria</code></td>
-                  <td><strong>Tesoureiro ARCA</strong></td>
-                  <td>tesouraria@arca-aguadadebaixo.pt</td>
-                  <td>Tesouraria</td>
-                  <td><span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Quotas & Contas</span></td>
-                  <td>21/11/2026</td>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Carlos Eduardo Pinto</div>
+                    <small style="color: var(--text-muted);">Sócio #58</small>
+                  </td>
+                  <td><strong>Tesoureiro</strong></td>
+                  <td><code>tesoureiro</code> &bull; tesouraria@arca-aguadadebaixo.pt</td>
+                  <td><span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Cotas & Tesouraria</span></td>
                   <td><span class="status-pill em-dia">Ativo</span></td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir permissões...', 'success')">Permissões</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Ana Beatriz Ramos</div>
+                    <small style="color: var(--text-muted);">Sócia #42</small>
+                  </td>
+                  <td><strong>Secretária</strong></td>
+                  <td><code>secretaria</code> &bull; secretaria@arca-aguadadebaixo.pt</td>
+                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Sócios & Atas</span></td>
+                  <td><span class="status-pill em-dia">Ativo</span></td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir permissões...', 'success')">Permissões</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
+        </div>
+
+        <!-- 2. Mesa da Assembleia Geral & Conselho Fiscal -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+          
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Mesa da Assembleia Geral</h2>
+            </div>
+            <div style="padding: 1.25rem;">
+              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
+                <div>
+                  <strong>Presidente da Mesa:</strong> Manuel António Rodrigues
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio Benemérito #2</div>
+                </div>
+                <span class="status-pill em-dia">Consulta</span>
+              </div>
+              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
+                <div>
+                  <strong>1º Secretário:</strong> Maria Clara Santos
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócia #14</div>
+                </div>
+                <span class="status-pill em-dia">Consulta</span>
+              </div>
+              <div style="padding: 0.75rem 0; display: flex; justify-content: space-between;">
+                <div>
+                  <strong>2º Secretário:</strong> Rui Pedro Oliveira
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio #74</div>
+                </div>
+                <span class="status-pill em-dia">Consulta</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Conselho Fiscal</h2>
+            </div>
+            <div style="padding: 1.25rem;">
+              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
+                <div>
+                  <strong>Presidente:</strong> António Silva Pereira
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Pareceres e auditoria às contas</div>
+                </div>
+                <span class="status-pill em-dia">Auditoria</span>
+              </div>
+              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
+                <div>
+                  <strong>Relator:</strong> José Manuel Martins
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Fiscalização de balancetes</div>
+                </div>
+                <span class="status-pill em-dia">Auditoria</span>
+              </div>
+              <div style="padding: 0.75rem 0; display: flex; justify-content: space-between;">
+                <div>
+                  <strong>Secretário:</strong> Paula Cristina Soares
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Acompanhamento de relatórios</div>
+                </div>
+                <span class="status-pill em-dia">Auditoria</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </main>
