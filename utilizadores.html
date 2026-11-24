@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A.R.C.A. - Órgãos Sociais & Utilizadores | Aguada de Baixo</title>
+  <title>A.R.C.A. - Painel de Controlo & Utilizadores | Aguada de Baixo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -71,7 +71,7 @@
           </ul>
         </div>
 
-        <!-- 3. Menu: Sócios (Link Direto Unificado) -->
+        <!-- 3. Menu: Sócios -->
         <div>
           <ul class="nav-list">
             <li>
@@ -89,23 +89,25 @@
           </ul>
         </div>
 
-        <!-- 4. Menu: Direção (Aberto) -->
+        <!-- 4. Menu: Direção -->
         <div>
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent open" type="button">
+              <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                   </svg>
                   <span>Direção</span>
                 </span>
                 <span class="chevron">&#9656;</span>
               </button>
-              <ul class="nav-sublist open">
+              <ul class="nav-sublist">
                 <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
-                <li><a href="utilizadores.html" class="nav-sublink active">Utilizadores</a></li>
+                <li><a href="membros.html" class="nav-sublink">Membros</a></li>
               </ul>
             </li>
           </ul>
@@ -132,6 +134,27 @@
                 <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
                 <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
                 <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 6. Menu: Painel de Controlo (Aberto) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="utilizadores.html" class="nav-sublink active">Utilizadores</a></li>
               </ul>
             </li>
           </ul>
@@ -166,19 +189,19 @@
           <div class="breadcrumbs">
             <a href="painel.html">ARCA</a>
             <span>&rsaquo;</span>
-            <span>Direção</span>
+            <span>Painel de Controlo</span>
             <span>&rsaquo;</span>
-            <span class="current">Utilizadores & Órgãos Sociais</span>
+            <span class="current">Gestão de Utilizadores</span>
           </div>
         </div>
 
         <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Adicionar membro aos Órgãos Sociais em preparação!', 'success')">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Convidar novo utilizador em preparação!', 'success')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>Novo Membro / Acesso</span>
+            <span>Novo Utilizador</span>
           </button>
         </div>
       </header>
@@ -188,149 +211,68 @@
         
         <div class="page-title-bar">
           <div>
-            <h1>Órgãos Sociais & Controlo de Acessos</h1>
-            <p>Listagem e fichas dos membros da Direção, Assembleia Geral e Conselho Fiscal com gestão de permissões e acessos.</p>
+            <h1>Painel de Controlo &bull; Utilizadores</h1>
+            <p>Gestão técnica de contas de acesso à plataforma da ARCA, palavras-passe, perfis de permissão e registo de acessos.</p>
           </div>
         </div>
 
-        <!-- 1. Direção da ARCA -->
+        <!-- Tabela de Utilizadores -->
         <div class="card-box">
           <div class="card-header-bar">
-            <h2>Membros da Direção</h2>
-            <span class="status-pill em-dia">Mandato 2025/2027</span>
+            <h2>Contas de Utilizadores da Plataforma</h2>
+            <span class="status-pill em-dia">Sistema Seguro</span>
           </div>
 
           <div class="table-responsive">
             <table class="modern-table">
               <thead>
                 <tr>
-                  <th>Nome do Membro</th>
-                  <th>Cargo</th>
-                  <th>Utilizador / E-mail</th>
-                  <th>Permissões de Acesso</th>
+                  <th>Utilizador (Login)</th>
+                  <th>Nome do Titular</th>
+                  <th>E-mail</th>
+                  <th>Perfil de Permissões</th>
+                  <th>Último Acesso</th>
                   <th>Estado</th>
                   <th style="text-align: right;">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Jorge Cunha</div>
-                    <small style="color: var(--text-muted);">Sócio #1</small>
-                  </td>
-                  <td><strong>Presidente da Direção</strong></td>
-                  <td><code>jorge</code> &bull; jorge.cunha@arca.pt</td>
-                  <td><span class="status-pill em-dia">Acesso Total (Admin)</span></td>
+                  <td><code>jorge</code></td>
+                  <td><strong>Jorge Cunha</strong></td>
+                  <td>jorge.cunha@arca.pt</td>
+                  <td><span class="status-pill em-dia">Administrador Total</span></td>
+                  <td>Hoje, às 15:15</td>
                   <td><span class="status-pill em-dia">Ativo</span></td>
                   <td style="text-align: right;">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('Permissões de Administrador ativas', 'success')">Permissões</button>
+                    <button class="btn btn-outline btn-sm" onclick="showToast('Conta de Administrador Geral protegida', 'success')">Editar</button>
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Fernando José Almeida</div>
-                    <small style="color: var(--text-muted);">Sócio #23</small>
-                  </td>
-                  <td><strong>Vice-Presidente</strong></td>
-                  <td><code>vicepresidente</code> &bull; fernando.almeida@arca.pt</td>
-                  <td><span class="status-pill em-dia">Gestão Geral & Atas</span></td>
+                  <td><code>secretaria</code></td>
+                  <td><strong>Secretaria ARCA</strong></td>
+                  <td>secretaria@arca-aguadadebaixo.pt</td>
+                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Sócios, Cotas & Atas</span></td>
+                  <td>Hoje, às 11:30</td>
                   <td><span class="status-pill em-dia">Ativo</span></td>
                   <td style="text-align: right;">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir permissões...', 'success')">Permissões</button>
+                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir conta da secretaria...', 'success')">Editar</button>
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Carlos Eduardo Pinto</div>
-                    <small style="color: var(--text-muted);">Sócio #58</small>
-                  </td>
-                  <td><strong>Tesoureiro</strong></td>
-                  <td><code>tesoureiro</code> &bull; tesouraria@arca-aguadadebaixo.pt</td>
-                  <td><span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Cotas & Tesouraria</span></td>
+                  <td><code>tesoureiro</code></td>
+                  <td><strong>Tesouraria ARCA</strong></td>
+                  <td>tesouraria@arca-aguadadebaixo.pt</td>
+                  <td><span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Cotas & Contabilidade</span></td>
+                  <td>21/11/2026</td>
                   <td><span class="status-pill em-dia">Ativo</span></td>
                   <td style="text-align: right;">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir permissões...', 'success')">Permissões</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Ana Beatriz Ramos</div>
-                    <small style="color: var(--text-muted);">Sócia #42</small>
-                  </td>
-                  <td><strong>Secretária</strong></td>
-                  <td><code>secretaria</code> &bull; secretaria@arca-aguadadebaixo.pt</td>
-                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Sócios & Atas</span></td>
-                  <td><span class="status-pill em-dia">Ativo</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir permissões...', 'success')">Permissões</button>
+                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir conta do tesoureiro...', 'success')">Editar</button>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
-
-        <!-- 2. Mesa da Assembleia Geral & Conselho Fiscal -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
-          
-          <div class="card-box">
-            <div class="card-header-bar">
-              <h2>Mesa da Assembleia Geral</h2>
-            </div>
-            <div style="padding: 1.25rem;">
-              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
-                <div>
-                  <strong>Presidente da Mesa:</strong> Manuel António Rodrigues
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio Benemérito #2</div>
-                </div>
-                <span class="status-pill em-dia">Consulta</span>
-              </div>
-              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
-                <div>
-                  <strong>1º Secretário:</strong> Maria Clara Santos
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócia #14</div>
-                </div>
-                <span class="status-pill em-dia">Consulta</span>
-              </div>
-              <div style="padding: 0.75rem 0; display: flex; justify-content: space-between;">
-                <div>
-                  <strong>2º Secretário:</strong> Rui Pedro Oliveira
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio #74</div>
-                </div>
-                <span class="status-pill em-dia">Consulta</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="card-box">
-            <div class="card-header-bar">
-              <h2>Conselho Fiscal</h2>
-            </div>
-            <div style="padding: 1.25rem;">
-              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
-                <div>
-                  <strong>Presidente:</strong> António Silva Pereira
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Pareceres e auditoria às contas</div>
-                </div>
-                <span class="status-pill em-dia">Auditoria</span>
-              </div>
-              <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between;">
-                <div>
-                  <strong>Relator:</strong> José Manuel Martins
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Fiscalização de balancetes</div>
-                </div>
-                <span class="status-pill em-dia">Auditoria</span>
-              </div>
-              <div style="padding: 0.75rem 0; display: flex; justify-content: space-between;">
-                <div>
-                  <strong>Secretário:</strong> Paula Cristina Soares
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Acompanhamento de relatórios</div>
-                </div>
-                <span class="status-pill em-dia">Auditoria</span>
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </main>

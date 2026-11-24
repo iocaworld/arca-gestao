@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.R.C.A. - Membros dos Órgãos Sociais | Aguada de Baixo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="assets/arca-logo.png" alt="ARCA Logótipo">
+        </div>
+        <div class="sidebar-brand">
+          <h2>A.R.C.A.</h2>
+          <span>Aguada de Baixo</span>
+        </div>
+        <button class="sidebar-close-btn" aria-label="Fechar menu">&times;</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="painel.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Visão Geral</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 2. Menu: Gestão -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="socios.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Sócios & Cotas</span>
+                <span class="nav-item-badge">248</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção (Aberto) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+                <li><a href="membros.html" class="nav-sublink active">Membros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano" class="nav-sublink">Plano de Atividades</a></li>
+                <li><a href="documentos.html?cat=orcamento" class="nav-sublink">Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 6. Menu: Painel de Controlo -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">JC</div>
+        <div class="user-details">
+          <div class="user-name">Jorge Cunha</div>
+          <div class="user-role">Direção Geral</div>
+        </div>
+        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <div class="app-main">
+      
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">
+            &#9776;
+          </button>
+          <div class="breadcrumbs">
+            <a href="painel.html">ARCA</a>
+            <span>&rsaquo;</span>
+            <span>Direção</span>
+            <span>&rsaquo;</span>
+            <span class="current">Membros dos Órgãos Sociais</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Adicionar membro aos Órgãos Sociais em preparação!', 'success')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Novo Membro</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Conteúdo da Página -->
+      <main class="page-container">
+        
+        <div class="page-title-bar">
+          <div>
+            <h1>Membros dos Órgãos Sociais</h1>
+            <p>Fichas institucionais e composição da Direção, Mesa da Assembleia Geral e Conselho Fiscal da ARCA (Mandato 2025/2027).</p>
+          </div>
+        </div>
+
+        <!-- 1. Direção -->
+        <div class="card-box">
+          <div class="card-header-bar">
+            <h2>Membros da Direção</h2>
+            <span class="status-pill em-dia">Mandato Ativo</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Nome do Dirigente</th>
+                  <th>Cargo Institucional</th>
+                  <th>Nº Sócio</th>
+                  <th>Contacto / E-mail</th>
+                  <th>Tomada de Posse</th>
+                  <th style="text-align: right;">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Jorge Cunha</div>
+                    <small style="color: var(--text-muted);">Aguada de Baixo</small>
+                  </td>
+                  <td><strong>Presidente da Direção</strong></td>
+                  <td>Sócio #1</td>
+                  <td>912 345 678 &bull; jorge.cunha@arca.pt</td>
+                  <td>12/01/2025</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa do dirigente...', 'success')">Ver Ficha</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Fernando José Almeida</div>
+                    <small style="color: var(--text-muted);">Aguada de Baixo</small>
+                  </td>
+                  <td><strong>Vice-Presidente</strong></td>
+                  <td>Sócio #23</td>
+                  <td>925 444 555 &bull; fernando.almeida@arca.pt</td>
+                  <td>12/01/2025</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa...', 'success')">Ver Ficha</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Carlos Eduardo Pinto</div>
+                    <small style="color: var(--text-muted);">Aguada de Baixo</small>
+                  </td>
+                  <td><strong>Tesoureiro</strong></td>
+                  <td>Sócio #58</td>
+                  <td>964 333 444 &bull; tesouraria@arca-aguadadebaixo.pt</td>
+                  <td>12/01/2025</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa...', 'success')">Ver Ficha</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="font-weight: 700; color: var(--text-title);">Ana Beatriz Ramos</div>
+                    <small style="color: var(--text-muted);">Águeda</small>
+                  </td>
+                  <td><strong>Secretária</strong></td>
+                  <td>Sócia #42</td>
+                  <td>918 777 666 &bull; secretaria@arca-aguadadebaixo.pt</td>
+                  <td>12/01/2025</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa...', 'success')">Ver Ficha</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. Mesa da Assembleia Geral & Conselho Fiscal -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+          
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Mesa da Assembleia Geral</h2>
+            </div>
+            <div style="padding: 1.25rem;">
+              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>Presidente da Mesa:</strong> Manuel António Rodrigues
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio Benemérito #2 &bull; Aguada de Baixo</div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Manuel Rodrigues', 'success')">Ficha</button>
+              </div>
+              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>1º Secretário:</strong> Maria Clara Santos
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócia #14 &bull; Barrô</div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Maria Clara', 'success')">Ficha</button>
+              </div>
+              <div style="padding: 0.85rem 0; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>2º Secretário:</strong> Rui Pedro Oliveira
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio #74 &bull; Aguada de Cima</div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Rui Pedro', 'success')">Ficha</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Conselho Fiscal</h2>
+            </div>
+            <div style="padding: 1.25rem;">
+              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>Presidente do Conselho:</strong> António Silva Pereira
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Pareceres e auditoria fiscal às contas</div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de António Pereira', 'success')">Ficha</button>
+              </div>
+              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>Relator:</strong> José Manuel Martins
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Fiscalização de balancetes e fechos</div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de José Martins', 'success')">Ficha</button>
+              </div>
+              <div style="padding: 0.85rem 0; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>Secretário:</strong> Paula Cristina Soares
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Acompanhamento de relatórios</div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Paula Soares', 'success')">Ficha</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
