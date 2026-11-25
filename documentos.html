@@ -834,11 +834,107 @@
     let currentCategory = 'all';
     let currentUploadedFileData = null;
     let currentPreviewDocId = null;
+    let loadedDocuments = [];
+
+    // Constantes de Base de Dados
+    const DB_NAME = 'arca_dms_db_v2';
+    const DB_VERSION = 1;
+    const DB_STORE = 'documents';
+
+    // Helpers IndexedDB para suportar ficheiros reais de grandes dimensões (PDFs de 4MB, 10MB, etc.)
+    function openDB() {
+      return new Promise((resolve) => {
+        if (!window.indexedDB) {
+          console.warn('IndexedDB não suportado neste navegador.');
+          resolve(null);
+          return;
+        }
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(DB_STORE)) {
+            db.createObjectStore(DB_STORE, { keyPath: 'id' });
+          }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => {
+          console.warn('Erro ao abrir IndexedDB:', e);
+          resolve(null);
+        };
+      });
+    }
+
+    async function dbGetAll() {
+      const db = await openDB();
+      if (!db) return null;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(DB_STORE, 'readonly');
+          const store = tx.objectStore(DB_STORE);
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => resolve(null);
+        } catch(e) {
+          console.error(e);
+          resolve(null);
+        }
+      });
+    }
+
+    async function dbPut(item) {
+      const db = await openDB();
+      if (!db) return false;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(DB_STORE, 'readwrite');
+          const store = tx.objectStore(DB_STORE);
+          const req = store.put(item);
+          req.onsuccess = () => resolve(true);
+          req.onerror = (e) => {
+            console.error('Erro no dbPut:', e);
+            resolve(false);
+          };
+        } catch(e) {
+          console.error(e);
+          resolve(false);
+        }
+      });
+    }
+
+    async function dbDelete(id) {
+      const db = await openDB();
+      if (!db) return false;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(DB_STORE, 'readwrite');
+          const store = tx.objectStore(DB_STORE);
+          const req = store.delete(id);
+          req.onsuccess = () => resolve(true);
+          req.onerror = () => resolve(false);
+        } catch(e) {
+          resolve(false);
+        }
+      });
+    }
+
+    async function dbClear() {
+      const db = await openDB();
+      if (!db) return false;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(DB_STORE, 'readwrite');
+          const store = tx.objectStore(DB_STORE);
+          const req = store.clear();
+          req.onsuccess = () => resolve(true);
+          req.onerror = () => resolve(false);
+        } catch(e) {
+          resolve(false);
+        }
+      });
+    }
 
     // Inicialização da Aplicação
-    document.addEventListener('DOMContentLoaded', () => {
-      initDocumentStore();
-
+    document.addEventListener('DOMContentLoaded', async () => {
       // Ler parâmetro da URL se existir (?cat=...)
       const urlParams = new URLSearchParams(window.location.search);
       const catParam = urlParams.get('cat');
@@ -848,7 +944,7 @@
 
       setupDragAndDrop();
       setupSidebarSublinks();
-      renderDocuments();
+      await initDocumentStore();
     });
 
     function setupSidebarSublinks() {
@@ -870,26 +966,58 @@
       });
     }
 
-    // Inicializar LocalStorage
-    function initDocumentStore() {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DOCUMENTS));
+    // Inicializar Repositório com suporte a IndexedDB
+    async function initDocumentStore() {
+      try {
+        const fromDB = await dbGetAll();
+        if (fromDB && fromDB.length > 0) {
+          loadedDocuments = fromDB;
+        } else {
+          // Se o IndexedDB ainda não tem documentos, carregar pré-definidos
+          let initialDocs = DEFAULT_DOCUMENTS;
+          try {
+            const local = localStorage.getItem(STORAGE_KEY);
+            if (local) {
+              const parsed = JSON.parse(local);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                initialDocs = parsed;
+              }
+            }
+          } catch (e) {
+            console.warn('Erro ao ler localStorage inicial:', e);
+          }
+
+          loadedDocuments = initialDocs;
+          for (const d of initialDocs) {
+            await dbPut(d);
+          }
+        }
+      } catch (err) {
+        console.error('Erro na inicialização:', err);
+        loadedDocuments = [...DEFAULT_DOCUMENTS];
       }
+
+      syncLocalStorageMetadata();
+      renderDocuments();
     }
 
     function getDocuments() {
-      try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : DEFAULT_DOCUMENTS;
-      } catch (e) {
-        console.error('Erro ao ler documentos:', e);
-        return DEFAULT_DOCUMENTS;
-      }
+      return loadedDocuments || [];
     }
 
-    function saveDocuments(docs) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+    // Mantém espelho de metadados leves no localStorage (sem ficheiros pesados para não estourar os 5MB)
+    function syncLocalStorageMetadata() {
+      try {
+        const lightList = (loadedDocuments || []).map(doc => {
+          const item = { ...doc };
+          delete item.fileBlob;
+          delete item.fileData;
+          return item;
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(lightList));
+      } catch (e) {
+        console.warn('Aviso ao sincronizar metadados no localStorage:', e);
+      }
     }
 
     // Configurar Drag & Drop
@@ -955,17 +1083,13 @@
         inputDocTitle.value = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
       }
 
-      // Ler ficheiro para Base64 para persistência local
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        currentUploadedFileData = {
-          fileName: file.name,
-          fileSize: sizeFormatted,
-          format: format,
-          base64: e.target.result
-        };
+      // Guardar objeto File direto (sem Base64 pesado!)
+      currentUploadedFileData = {
+        fileBlob: file,
+        fileName: file.name,
+        fileSize: sizeFormatted,
+        format: format
       };
-      reader.readAsDataURL(file);
     }
 
     // Renderização dos Documentos e Pastas
@@ -1180,7 +1304,7 @@
       const dropZoneHelp = document.getElementById('dropZoneHelp');
       dropZoneTitle.textContent = 'Clique para escolher ficheiro ou arraste para aqui';
       dropZoneTitle.style.color = 'var(--text-title)';
-      dropZoneHelp.textContent = 'Formatos aceites: PDF, DOCX, XLSX, Imagens (Máx. 10MB)';
+      dropZoneHelp.textContent = 'Formatos aceites: PDF, DOCX, XLSX, Imagens (Sem limite de tamanho)';
 
       // Predefinir ano atual
       const currentYear = new Date().getFullYear();
@@ -1210,79 +1334,116 @@
       currentPreviewDocId = null;
     }
 
-    // Submissão do Formulário de Upload
-    function handleDocSubmit(event) {
+    // Submissão do Formulário de Upload com Suporte a Ficheiros de Grande Porte via IndexedDB
+    async function handleDocSubmit(event) {
       event.preventDefault();
 
-      const title = document.getElementById('inputDocTitle').value.trim();
-      const category = document.getElementById('selectDocCategory').value;
-      const year = document.getElementById('inputDocYear').value.trim();
-      const status = document.getElementById('selectDocStatus').value;
-      const signatory = document.getElementById('inputDocSignatory').value.trim();
-      const notes = document.getElementById('inputDocNotes').value.trim();
+      const btnSubmit = document.getElementById('btnSubmitDoc');
+      const origContent = btnSubmit.innerHTML;
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+          <path d="M12 2a10 10 0 0 1 10 10"/>
+        </svg>
+        <span>A guardar...</span>
+      `;
 
-      if (!title || !category || !year) {
-        alert('Por favor preencha todos os campos obrigatórios (*).');
-        return;
+      try {
+        const title = document.getElementById('inputDocTitle').value.trim();
+        const category = document.getElementById('selectDocCategory').value;
+        const year = document.getElementById('inputDocYear').value.trim();
+        const status = document.getElementById('selectDocStatus').value;
+        const signatory = document.getElementById('inputDocSignatory').value.trim();
+        const notes = document.getElementById('inputDocNotes').value.trim();
+
+        if (!title || !category || !year) {
+          alert('Por favor preencha todos os campos obrigatórios (*).');
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = origContent;
+          return;
+        }
+
+        let format = 'pdf';
+        let fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.pdf';
+        let fileSize = '1.0 MB';
+        let fileBlob = null;
+
+        if (currentUploadedFileData) {
+          format = currentUploadedFileData.format;
+          fileName = currentUploadedFileData.fileName;
+          fileSize = currentUploadedFileData.fileSize;
+          fileBlob = currentUploadedFileData.fileBlob;
+        }
+
+        const today = new Date();
+        const dateFormatted = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+
+        const newDoc = {
+          id: 'doc-' + Date.now(),
+          title: title,
+          category: category,
+          year: year,
+          status: status,
+          format: format,
+          fileName: fileName,
+          fileSize: fileSize,
+          fileBlob: fileBlob,
+          date: dateFormatted,
+          signatory: signatory || 'Direção ARCA',
+          notes: notes || 'Documento registado na plataforma ARCA Gestão.'
+        };
+
+        // Guardar no IndexedDB (armazena nativamente Blobs de 4MB, 10MB, 50MB sem falhas!)
+        await dbPut(newDoc);
+
+        // Adicionar na coleção em memória
+        loadedDocuments.unshift(newDoc);
+
+        // Sincronizar metadados no localStorage
+        syncLocalStorageMetadata();
+
+        // Fechar modal
+        closeUploadModal();
+
+        // Mudar para a pasta do documento para o utilizador vê-lo imediatamente
+        setCategoryFilter(category);
+
+        showNotification(`Documento "${title}" guardado com sucesso na pasta "${CATEGORIES[category]?.name}".`);
+      } catch (err) {
+        console.error('Erro ao guardar documento:', err);
+        alert('Erro ao guardar o ficheiro: ' + (err.message || err));
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = origContent;
       }
-
-      // Se o utilizador carregou um ficheiro real
-      let format = 'pdf';
-      let fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.pdf';
-      let fileSize = '1.2 MB';
-      let fileData = null;
-
-      if (currentUploadedFileData) {
-        format = currentUploadedFileData.format;
-        fileName = currentUploadedFileData.fileName;
-        fileSize = currentUploadedFileData.fileSize;
-        fileData = currentUploadedFileData.base64;
-      }
-
-      const today = new Date();
-      const dateFormatted = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
-
-      const newDoc = {
-        id: 'doc-' + Date.now(),
-        title: title,
-        category: category,
-        year: year,
-        status: status,
-        format: format,
-        fileName: fileName,
-        fileSize: fileSize,
-        fileData: fileData,
-        date: dateFormatted,
-        signatory: signatory || 'Direção ARCA',
-        notes: notes || 'Documento registado na plataforma ARCA Gestão.'
-      };
-
-      const docs = getDocuments();
-      docs.unshift(newDoc); // Adicionar no topo
-      saveDocuments(docs);
-
-      closeUploadModal();
-
-      // Mudar para a pasta do documento para o utilizador vê-lo imediatamente
-      setCategoryFilter(category);
-
-      showNotification(`Documento "${title}" guardado com sucesso na pasta "${CATEGORIES[category]?.name}".`);
     }
 
     // Descarregar Documento (Download)
     function downloadDocument(docId) {
-      const docs = getDocuments();
-      const doc = docs.find(d => d.id === docId);
+      const doc = loadedDocuments.find(d => d.id === docId);
       if (!doc) return;
 
-      if (doc.fileData) {
-        // Ficheiro real carregado pelo utilizador (Base64)
+      if (doc.fileBlob) {
+        // Ficheiro real carregado pelo utilizador (Blob/File)
+        const url = URL.createObjectURL(doc.fileBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = doc.fileName || `${doc.title}.${doc.format === 'excel' ? 'xlsx' : (doc.format === 'word' ? 'docx' : 'pdf')}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        showNotification(`A descarregar "${doc.fileName || doc.title}"...`);
+      } else if (doc.fileData) {
+        // Suporte legado Base64
         const a = document.createElement('a');
         a.href = doc.fileData;
         a.download = doc.fileName || `${doc.title}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        showNotification(`A descarregar "${doc.fileName || doc.title}"...`);
       } else {
         // Ficheiro pré-definido oficial institucional: gerar exemplar oficial formatado
         const catName = CATEGORIES[doc.category]?.name || doc.category;
@@ -1317,16 +1478,14 @@ Este ficheiro digital atesta o arquivo oficial do documento.
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        showNotification(`A descarregar exemplar "${doc.title}"...`);
       }
-
-      showNotification(`A descarregar "${doc.title}"...`);
     }
 
     // Pré-visualizar / Ver Detalhes
     function previewDocument(docId) {
-      const docs = getDocuments();
-      const doc = docs.find(d => d.id === docId);
+      const doc = loadedDocuments.find(d => d.id === docId);
       if (!doc) return;
 
       currentPreviewDocId = docId;
@@ -1358,28 +1517,43 @@ Este ficheiro digital atesta o arquivo oficial do documento.
     }
 
     // Remover Documento
-    function deleteDocument(docId) {
-      const docs = getDocuments();
-      const doc = docs.find(d => d.id === docId);
+    async function deleteDocument(docId) {
+      const doc = loadedDocuments.find(d => d.id === docId);
       if (!doc) return;
 
       const confirmDelete = confirm(`Tem a certeza que deseja remover o documento oficial:\n"${doc.title}" da pasta "${CATEGORIES[doc.category]?.name}"?`);
       if (!confirmDelete) return;
 
-      const updatedDocs = docs.filter(d => d.id !== docId);
-      saveDocuments(updatedDocs);
-      renderDocuments();
-      showNotification(`Documento "${doc.title}" removido com sucesso.`);
+      try {
+        await dbDelete(docId);
+        loadedDocuments = loadedDocuments.filter(d => d.id !== docId);
+        syncLocalStorageMetadata();
+        renderDocuments();
+        showNotification(`Documento "${doc.title}" removido com sucesso.`);
+      } catch (err) {
+        console.error('Erro ao remover:', err);
+        alert('Erro ao remover documento.');
+      }
     }
 
     // Restaurar Coleção Padrão de Ficheiros
-    function resetDefaultDocs() {
+    async function resetDefaultDocs() {
       const confirmReset = confirm('Deseja restaurar a lista inicial dos documentos oficiais e atas predefinidas da ARCA?');
       if (!confirmReset) return;
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DOCUMENTS));
-      renderDocuments();
-      showNotification('Documentos padrão da ARCA restaurados.');
+      try {
+        await dbClear();
+        for (const d of DEFAULT_DOCUMENTS) {
+          await dbPut(d);
+        }
+        loadedDocuments = [...DEFAULT_DOCUMENTS];
+        syncLocalStorageMetadata();
+        renderDocuments();
+        showNotification('Documentos padrão da ARCA restaurados.');
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao restaurar documentos padrão.');
+      }
     }
 
     // Notificação Toast Simples
