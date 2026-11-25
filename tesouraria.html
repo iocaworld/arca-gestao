@@ -106,7 +106,7 @@
               </button>
               <ul class="nav-sublist open">
                 <li><a href="tesouraria.html?tab=caixa" class="nav-sublink" id="linkTabCaixa">Caixa/Movimentos</a></li>
-                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink" id="linkTabRecibos">Recibo Emitidos</a></li>
+                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink" id="linkTabRecibos">Recibos Emitidos</a></li>
                 <li><a href="tesouraria.html?tab=fornecedores" class="nav-sublink" id="linkTabFornecedores">Fornecedores</a></li>
                 <li><a href="tesouraria.html?tab=pos" class="nav-sublink" id="linkTabPos">P.O.S.</a></li>
               </ul>
@@ -539,6 +539,16 @@
                     <div class="col-picker-list" id="listColPickerRecibos"></div>
                   </div>
                 </div>
+
+                <!-- Botão Upload de Recibo Digitalizado / Livro -->
+                <button class="btn btn-primary btn-sm" onclick="openUploadReciboModal()" style="display: flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.75rem; font-size: 0.85rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <span>Upload Recibo</span>
+                </button>
               </div>
             </div>
 
@@ -546,7 +556,7 @@
               <table class="modern-table" id="tableRecibos">
                 <thead>
                   <tr id="headRowRecibos">
-                    <th class="sortable-th" data-col="recibo" style="width: 130px;" onclick="sortRecibos('recibo')">
+                    <th class="sortable-th" data-col="recibo" style="width: 140px;" onclick="sortRecibos('recibo')">
                       <span>Nº Recibo</span><span class="sort-indicator" id="sortInd_rec_recibo">⇅</span>
                     </th>
                     <th class="sortable-th" data-col="data" style="width: 110px;" onclick="sortRecibos('data')">
@@ -564,7 +574,7 @@
                     <th class="sortable-th" data-col="metodo" style="width: 140px;" onclick="sortRecibos('metodo')">
                       <span>Método</span><span class="sort-indicator" id="sortInd_rec_metodo">⇅</span>
                     </th>
-                    <th data-col="acoes" style="text-align: right; width: 120px;">Ações</th>
+                    <th data-col="acoes" style="text-align: right; width: 150px;">Ações</th>
                   </tr>
                 </thead>
                 <tbody id="tbodyRecibos">
@@ -807,9 +817,224 @@
     </div>
   </div>
 
+  <!-- Modal: Upload e Registo de Recibo Emitido Oficial -->
+  <div class="modal-overlay" id="modalUploadRecibo" onclick="if(event.target === this) closeUploadReciboModal()">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h2>Carregar Novo Recibo Emitido</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+            Anexe a digitalização do livro de recibos próprio ou registe o recibo legal emitido.
+          </p>
+        </div>
+        <button class="modal-close" onclick="closeUploadReciboModal()">&times;</button>
+      </div>
+
+      <form id="formUploadRecibo" onsubmit="handleSalvarUploadRecibo(event)">
+        <!-- Zona Drag & Drop -->
+        <div class="drop-zone" id="dropZoneRecibo" onclick="document.getElementById('reciboFileInput').click()" style="margin-bottom: 1.25rem;">
+          <input type="file" id="reciboFileInput" style="display: none;" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" onchange="handleReciboFileSelected(event)">
+          <div class="drop-zone-icon" id="dropZoneReciboIcon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div style="font-weight: 600; color: var(--text-title); font-size: 0.95rem;" id="dropZoneReciboTitle">
+            Clique para escolher recibo digitalizado ou arraste para aqui
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem;" id="dropZoneReciboHelp">
+            Formatos aceites: PDF, Digitalizações JPG/PNG (Máx. 15MB)
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 140px 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="upReciboNumero">Nº Recibo *</label>
+            <input type="text" id="upReciboNumero" class="form-control" placeholder="ex: 1350" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="upReciboData">Data de Emissão *</label>
+            <input type="date" id="upReciboData" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="upReciboTitular">Nome / Titular do Recibo *</label>
+          <input type="text" id="upReciboTitular" list="listSociosDatalist" class="form-control" placeholder="ex: Carlos Manuel Reis Rodrigues (Sócio 2)" required>
+          <datalist id="listSociosDatalist"></datalist>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 140px; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="upReciboFinalidade">Finalidade / Conceito *</label>
+            <input type="text" id="upReciboFinalidade" class="form-control" placeholder="ex: Liquidação Quotas 2026" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="upReciboValor">Valor (€) *</label>
+            <input type="number" id="upReciboValor" class="form-control" step="0.01" min="0.01" placeholder="6.00" required>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="upReciboMetodo">Forma de Liquidação *</label>
+          <select id="upReciboMetodo" class="form-control" required>
+            <option value="Numerário" selected>Numerário / Dinheiro</option>
+            <option value="MBWay">MBWay</option>
+            <option value="Transferência Bancária">Transferência Bancária</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="upReciboNotas">Observações / Livro de Recibos / Pauta</label>
+          <input type="text" id="upReciboNotas" class="form-control" placeholder="ex: Livro de Recibos nº 14, Folha 50">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" onclick="closeUploadReciboModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitRecibo">
+            <span>Guardar na Pasta de Recibos</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Ficha do Recibo Emitido -->
+  <div class="modal-overlay" id="modalEditRecibo" onclick="if(event.target === this) closeEditReciboModal()">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h2>Editar Ficha do Recibo</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+            Atualize os dados ou anexe/substitua a digitalização do recibo.
+          </p>
+        </div>
+        <button class="modal-close" onclick="closeEditReciboModal()">&times;</button>
+      </div>
+
+      <form id="formEditRecibo" onsubmit="handleSalvarEditRecibo(event)">
+        <input type="hidden" id="editReciboId">
+
+        <div style="display: grid; grid-template-columns: 140px 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="editReciboNumero">Nº Recibo *</label>
+            <input type="text" id="editReciboNumero" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editReciboData">Data de Emissão *</label>
+            <input type="date" id="editReciboData" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="editReciboTitular">Nome / Titular do Recibo *</label>
+          <input type="text" id="editReciboTitular" list="listSociosDatalist" class="form-control" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 140px; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="editReciboFinalidade">Finalidade / Conceito *</label>
+            <input type="text" id="editReciboFinalidade" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editReciboValor">Valor (€) *</label>
+            <input type="number" id="editReciboValor" class="form-control" step="0.01" min="0.01" required>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="editReciboMetodo">Forma de Liquidação *</label>
+          <select id="editReciboMetodo" class="form-control" required>
+            <option value="Numerário">Numerário / Dinheiro</option>
+            <option value="MBWay">MBWay</option>
+            <option value="Transferência Bancária">Transferência Bancária</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="editReciboNotas">Observações / Livro / Folha</label>
+          <input type="text" id="editReciboNotas" class="form-control">
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem; padding: 0.85rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm);">
+          <label class="form-label" style="margin-bottom: 0.35rem;">Substituir / Anexar Novo Ficheiro</label>
+          <input type="file" id="editReciboFileInput" class="form-control" accept=".pdf,.png,.jpg,.jpeg">
+          <small id="editReciboCurrentFileText" style="color: var(--text-muted); display: block; margin-top: 0.25rem;">Ficheiro atual: Nenhum anexo</small>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" onclick="closeEditReciboModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Gravar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Pré-visualização do Recibo Oficial -->
+  <div class="modal-overlay" id="modalPreviewRecibo" onclick="if(event.target === this) closePreviewReciboModal()">
+    <div class="modal-content" style="max-width: 680px;">
+      <div class="modal-header">
+        <div>
+          <h2 id="previewReciboTitle">Recibo Oficial Nº 1350</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;" id="previewReciboSubtitle">
+            Associação de Recreio, Cultura e Assistência de Aguada de Baixo
+          </p>
+        </div>
+        <button class="modal-close" onclick="closePreviewReciboModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding-top: 0.5rem;">
+        <div id="previewReciboDetails"></div>
+        <div id="previewReciboViewerArea" style="margin-top: 1rem;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-outline btn-sm" id="btnPreviewEditRecibo">
+              📝 Editar Ficha
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" style="color: #dc2626;" id="btnPreviewDeleteRecibo">
+              🗑 Eliminar
+            </button>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-outline btn-sm" id="btnPreviewPrintRecibo">
+              🖨 Imprimir
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnPreviewDownloadRecibo">
+              📥 Descarregar
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="closePreviewReciboModal()">
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/socios-data.js"></script>
   <script src="js/main.js"></script>
   <script>
+    // =========================================================================
+    // 0. UTILITÁRIOS GLOBAIS
+    // =========================================================================
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+    window.escapeHtml = escapeHtml;
+
     // =========================================================================
     // 1. DADOS DE TESOURARIA: MOVIMENTOS, RECIBOS E FORNECEDORES
     // =========================================================================
@@ -826,11 +1051,11 @@
     ];
 
     const INITIAL_RECIBOS = [
-      { id: 1, recibo: 'REC-2026/0412', data: '2026-11-25', titular: 'Carlos Manuel Reis Rodrigues (Sócio 2)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'Numerário' },
-      { id: 2, recibo: 'REC-2026/0411', data: '2026-11-24', titular: 'Manuel António Rodrigues (Sócio 3)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'MBWay' },
-      { id: 3, recibo: 'REC-2026/0410', data: '2026-11-20', titular: 'Grupo Amigos de Aguada', finalidade: 'Donativo Peregrinos 2026', valor: 350.00, metodo: 'Transferência Bancária' },
-      { id: 4, recibo: 'REC-2026/0409', data: '2026-11-15', titular: 'Arsénio da Costa Ferreira (Sócio 21)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'Numerário' },
-      { id: 5, recibo: 'REC-2026/0408', data: '2026-11-10', titular: 'Comissão de Festas de Aguada', finalidade: 'Donativo Institucional', valor: 250.00, metodo: 'Transferência Bancária' }
+      { id: 'rec_1350', numero: '1350', recibo: '1350', data: '2026-11-25', titular: 'Carlos Manuel Reis Rodrigues (Sócio 2)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'Numerário', notas: 'Livro de Recibos nº 14, Folha 50' },
+      { id: 'rec_1349', numero: '1349', recibo: '1349', data: '2026-11-24', titular: 'Manuel António Rodrigues (Sócio 3)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'MBWay', notas: 'Livro de Recibos nº 14, Folha 49' },
+      { id: 'rec_1348', numero: '1348', recibo: '1348', data: '2026-11-20', titular: 'Grupo Amigos de Aguada', finalidade: 'Donativo Peregrinos 2026', valor: 350.00, metodo: 'Transferência Bancária', notas: 'Comprovativo ref. TRF-88219' },
+      { id: 'rec_1347', numero: '1347', recibo: '1347', data: '2026-11-15', titular: 'Arsénio da Costa Ferreira (Sócio 21)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'Numerário', notas: 'Livro de Recibos nº 14, Folha 47' },
+      { id: 'rec_1346', numero: '1346', recibo: '1346', data: '2026-11-10', titular: 'Comissão de Festas de Aguada', finalidade: 'Donativo Institucional', valor: 250.00, metodo: 'Transferência Bancária', notas: 'Apoio cultural' }
     ];
 
     const INITIAL_FORNECEDORES = [
@@ -842,7 +1067,7 @@
     ];
 
     let movimentos = JSON.parse(localStorage.getItem(MOVIMENTOS_KEY)) || INITIAL_MOVIMENTOS;
-    let recibos = INITIAL_RECIBOS;
+    let recibos = (window.ARCA_RECIBOS ? window.ARCA_RECIBOS.getAll() : INITIAL_RECIBOS);
     let fornecedores = JSON.parse(localStorage.getItem(FORNECEDORES_KEY)) || INITIAL_FORNECEDORES;
 
     // Configuração de Colunas & Ordenação
@@ -1123,59 +1348,143 @@
       });
     }
 
+    // Estado e Ficheiro de Upload de Recibo
+    let uploadedReciboFile = null;
+    let editReciboFile = null;
+    let currentPreviewReciboId = null;
+
+    function populateSociosDatalist() {
+      const dl = document.getElementById('listSociosDatalist');
+      if (!dl || !window.socios || !Array.isArray(window.socios)) return;
+      dl.innerHTML = window.socios.slice(0, 100).map(s => `
+        <option value="${escapeHtml(s.nome)} (Sócio ${s.numero})">
+      `).join('');
+    }
+
     function renderRecibos() {
       const tbody = document.getElementById('tbodyRecibos');
       if (!tbody) return;
       tbody.innerHTML = '';
 
+      if (window.ARCA_RECIBOS) {
+        recibos = window.ARCA_RECIBOS.getAll();
+      }
+
+      populateSociosDatalist();
+
       let list = recibos.filter(r => {
-        return !searchRecQuery || 
-          r.recibo.toLowerCase().includes(searchRecQuery) || 
-          r.titular.toLowerCase().includes(searchRecQuery) || 
-          r.finalidade.toLowerCase().includes(searchRecQuery);
+        const q = searchRecQuery.toLowerCase();
+        const num = String(r.numero || r.recibo || '').toLowerCase();
+        const tit = String(r.titular || '').toLowerCase();
+        const fin = String(r.finalidade || '').toLowerCase();
+        const not = String(r.notas || '').toLowerCase();
+        return !q || num.includes(q) || tit.includes(q) || fin.includes(q) || not.includes(q);
       });
 
       list.sort((a, b) => {
         if (sortRecField === 'data') {
-          return sortRecDir === 'asc' ? a.data.localeCompare(b.data) : b.data.localeCompare(a.data);
+          return sortRecDir === 'asc' ? String(a.data).localeCompare(String(b.data)) : String(b.data).localeCompare(String(a.data));
         }
         if (sortRecField === 'recibo') {
-          return sortRecDir === 'asc' ? a.recibo.localeCompare(b.recibo) : b.recibo.localeCompare(a.recibo);
+          const na = parseInt(String(a.numero || a.recibo).replace(/[^\d]/g, '')) || 0;
+          const nb = parseInt(String(b.numero || b.recibo).replace(/[^\d]/g, '')) || 0;
+          return sortRecDir === 'asc' ? (na - nb) : (nb - na);
         }
         if (sortRecField === 'titular') {
-          const c = a.titular.localeCompare(b.titular, 'pt');
+          const c = String(a.titular).localeCompare(String(b.titular), 'pt');
           return sortRecDir === 'asc' ? c : -c;
         }
         if (sortRecField === 'valor') {
-          return sortRecDir === 'asc' ? (a.valor - b.valor) : (b.valor - a.valor);
+          return sortRecDir === 'asc' ? (parseFloat(a.valor) - parseFloat(b.valor)) : (parseFloat(b.valor) - parseFloat(a.valor));
         }
         if (sortRecField === 'finalidade') {
-          const c = a.finalidade.localeCompare(b.finalidade, 'pt');
+          const c = String(a.finalidade).localeCompare(String(b.finalidade), 'pt');
           return sortRecDir === 'asc' ? c : -c;
         }
         if (sortRecField === 'metodo') {
-          const c = a.metodo.localeCompare(b.metodo, 'pt');
+          const c = String(a.metodo).localeCompare(String(b.metodo), 'pt');
           return sortRecDir === 'asc' ? c : -c;
         }
         return 0;
       });
 
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">Nenhum recibo encontrado.</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+              <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-title); margin-bottom: 0.35rem;">Nenhum recibo oficial encontrado</div>
+              <p style="font-size: 0.85rem; margin-bottom: 1rem;">Não existem recibos para o termo de pesquisa ou ainda não foram carregados recibos.</p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="openUploadReciboModal()">
+                Carregar Novo Recibo
+              </button>
+            </td>
+          </tr>
+        `;
         return;
       }
 
       list.forEach(r => {
         const tr = document.createElement('tr');
+        tr.id = `row_rec_${r.numero || r.id}`;
+        const hasFile = Boolean(r.fileBlob || r.temFicheiro);
+        const dataFmt = r.data ? new Date(r.data).toLocaleDateString('pt-PT') : '—';
+
         tr.innerHTML = `
-          <td data-col="recibo"><strong>${r.recibo}</strong></td>
-          <td data-col="data">${r.data}</td>
-          <td data-col="titular"><strong>${r.titular}</strong></td>
-          <td data-col="finalidade"><span style="font-size: 0.85rem;">${r.finalidade}</span></td>
-          <td data-col="valor"><strong style="color: #16a34a;">${parseFloat(r.valor).toFixed(2).replace('.', ',')} €</strong></td>
-          <td data-col="metodo"><small>${r.metodo}</small></td>
-          <td data-col="acoes" style="text-align: right;">
-            <button class="btn btn-outline btn-sm" onclick="showToast('A preparar impressão do recibo oficial ${r.recibo}...', 'success')">📄 Ver Recibo</button>
+          <td data-col="recibo">
+            <div style="display: flex; align-items: center; gap: 0.45rem;">
+              <span style="font-weight: 800; color: var(--primary); font-size: 0.92rem;">${escapeHtml(String(r.numero || r.recibo))}</span>
+              ${hasFile ? `
+                <span class="status-pill em-dia" style="font-size: 0.65rem; padding: 1px 5px;" title="${escapeHtml(r.fileName || 'Ficheiro digitalizado')}">
+                  ${(r.format === 'image' ? 'IMG' : 'PDF')}
+                </span>
+              ` : ''}
+            </div>
+          </td>
+          <td data-col="data">${dataFmt}</td>
+          <td data-col="titular">
+            <div>
+              <strong>${escapeHtml(r.titular)}</strong>
+              ${r.notas ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${escapeHtml(r.notas)}</div>` : ''}
+            </div>
+          </td>
+          <td data-col="finalidade"><span style="font-size: 0.85rem;">${escapeHtml(r.finalidade)}</span></td>
+          <td data-col="valor"><strong style="color: #16a34a; font-size: 0.95rem;">${parseFloat(r.valor).toFixed(2).replace('.', ',')} €</strong></td>
+          <td data-col="metodo"><small>${escapeHtml(r.metodo)}</small></td>
+          <td data-col="acoes" style="text-align: right; white-space: nowrap;">
+            <div style="display: inline-flex; gap: 0.35rem; justify-content: flex-end;">
+              <!-- Botão Visualizar -->
+              <button type="button" class="btn-action-icon" onclick="previewRecibo('${r.id}')" title="Visualizar Recibo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+
+              <!-- Botão Editar Ficha -->
+              <button type="button" class="btn-action-icon" onclick="openEditReciboModal('${r.id}')" title="Editar Ficha do Recibo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+
+              <!-- Botão Descarregar (Download) -->
+              <button type="button" class="btn-action-icon" style="color: var(--primary);" onclick="downloadRecibo('${r.id}')" title="Descarregar Recibo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+              </button>
+
+              <!-- Botão Eliminar -->
+              <button type="button" class="btn-action-icon danger" onclick="deleteRecibo('${r.id}')" title="Eliminar Recibo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
@@ -1188,6 +1497,309 @@
     window.handleRecibosSearch = function(val) {
       searchRecQuery = val.toLowerCase().trim();
       renderRecibos();
+    };
+
+    // =========================================================================
+    // MODAIS E GESTÃO DE RECIBOS EMITIDOS (UPLOAD, EDIÇÃO, DOWNLOAD, DELETE)
+    // =========================================================================
+    window.openUploadReciboModal = function() {
+      const modal = document.getElementById('modalUploadRecibo');
+      const form = document.getElementById('formUploadRecibo');
+      if (form) form.reset();
+      uploadedReciboFile = null;
+
+      // Sugerir próximo número e data de hoje
+      const inputNum = document.getElementById('upReciboNumero');
+      const inputData = document.getElementById('upReciboData');
+      if (inputNum) inputNum.value = window.ARCA_RECIBOS ? window.ARCA_RECIBOS.getNextNumero() : '1351';
+      if (inputData) inputData.value = new Date().toISOString().slice(0, 10);
+
+      const zoneTitle = document.getElementById('dropZoneReciboTitle');
+      const zoneHelp = document.getElementById('dropZoneReciboHelp');
+      if (zoneTitle) zoneTitle.textContent = 'Clique para escolher recibo digitalizado ou arraste para aqui';
+      if (zoneHelp) zoneHelp.textContent = 'Formatos aceites: PDF, Digitalizações JPG/PNG (Máx. 15MB)';
+
+      populateSociosDatalist();
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeUploadReciboModal = function() {
+      const modal = document.getElementById('modalUploadRecibo');
+      if (modal) modal.classList.remove('active');
+      uploadedReciboFile = null;
+    };
+
+    window.handleReciboFileSelected = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      uploadedReciboFile = file;
+
+      const zoneTitle = document.getElementById('dropZoneReciboTitle');
+      const zoneHelp = document.getElementById('dropZoneReciboHelp');
+      if (zoneTitle) zoneTitle.textContent = `✓ Ficheiro Selecionado: ${file.name}`;
+      if (zoneHelp) zoneHelp.textContent = `Tamanho: ${(file.size / (1024*1024)).toFixed(2)} MB | Formato: ${file.type || 'Documento'}`;
+
+      showToast(`Ficheiro "${file.name}" pronto para ser guardado.`, 'info');
+    };
+
+    window.handleSalvarUploadRecibo = async function(e) {
+      e.preventDefault();
+      const numero = document.getElementById('upReciboNumero').value.trim();
+      const data = document.getElementById('upReciboData').value;
+      const titular = document.getElementById('upReciboTitular').value.trim();
+      const finalidade = document.getElementById('upReciboFinalidade').value.trim();
+      const valor = parseFloat(document.getElementById('upReciboValor').value) || 6.00;
+      const metodo = document.getElementById('upReciboMetodo').value;
+      const notas = document.getElementById('upReciboNotas').value.trim();
+
+      if (!numero || !titular || !finalidade) {
+        showToast('Por favor, preencha os campos obrigatórios (*).', 'error');
+        return;
+      }
+
+      const btnSubmit = document.getElementById('btnSubmitRecibo');
+      const origText = btnSubmit.innerHTML;
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = 'A guardar na pasta de recibos...';
+
+      try {
+        if (window.ARCA_RECIBOS) {
+          await window.ARCA_RECIBOS.salvar({
+            id: `rec_${Date.now()}`,
+            numero: numero,
+            recibo: numero,
+            data: data,
+            titular: titular,
+            finalidade: finalidade,
+            valor: valor,
+            metodo: metodo,
+            notas: notas
+          }, uploadedReciboFile);
+        }
+
+        renderRecibos();
+        closeUploadReciboModal();
+        showToast(`Recibo oficial nº ${numero} guardado com sucesso na pasta de Recibos Emitidos!`, 'success');
+      } catch (err) {
+        console.error('Erro ao guardar recibo:', err);
+        showToast('Erro ao guardar o ficheiro do recibo.', 'error');
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = origText;
+      }
+    };
+
+    // Edição de Recibo
+    window.openEditReciboModal = async function(id) {
+      let r = window.ARCA_RECIBOS ? await window.ARCA_RECIBOS.getById(id) : null;
+      if (!r) r = recibos.find(item => item.id === id);
+      if (!r) return;
+
+      editReciboFile = null;
+      document.getElementById('editReciboId').value = r.id;
+      document.getElementById('editReciboNumero').value = r.numero || r.recibo;
+      document.getElementById('editReciboData').value = r.data || '';
+      document.getElementById('editReciboTitular').value = r.titular || '';
+      document.getElementById('editReciboFinalidade').value = r.finalidade || '';
+      document.getElementById('editReciboValor').value = r.valor || '';
+      document.getElementById('editReciboMetodo').value = r.metodo || 'Numerário';
+      document.getElementById('editReciboNotas').value = r.notas || '';
+
+      const currentFileTxt = document.getElementById('editReciboCurrentFileText');
+      if (currentFileTxt) {
+        currentFileTxt.textContent = r.fileName 
+          ? `Ficheiro atual anexado: ${r.fileName} (${r.fileSize || 'PDF'})` 
+          : 'Ficheiro atual: Nenhum ficheiro digitalizado anexado.';
+      }
+
+      const fileInput = document.getElementById('editReciboFileInput');
+      if (fileInput) {
+        fileInput.value = '';
+        fileInput.onchange = (e) => {
+          editReciboFile = e.target.files[0] || null;
+          if (editReciboFile) {
+            currentFileTxt.textContent = `Novo ficheiro para anexar: ${editReciboFile.name} (${(editReciboFile.size/1024).toFixed(0)} KB)`;
+          }
+        };
+      }
+
+      populateSociosDatalist();
+      const modal = document.getElementById('modalEditRecibo');
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeEditReciboModal = function() {
+      const modal = document.getElementById('modalEditRecibo');
+      if (modal) modal.classList.remove('active');
+      editReciboFile = null;
+    };
+
+    window.handleSalvarEditRecibo = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('editReciboId').value;
+      const numero = document.getElementById('editReciboNumero').value.trim();
+      const data = document.getElementById('editReciboData').value;
+      const titular = document.getElementById('editReciboTitular').value.trim();
+      const finalidade = document.getElementById('editReciboFinalidade').value.trim();
+      const valor = parseFloat(document.getElementById('editReciboValor').value) || 6.00;
+      const metodo = document.getElementById('editReciboMetodo').value;
+      const notas = document.getElementById('editReciboNotas').value.trim();
+
+      if (window.ARCA_RECIBOS) {
+        await window.ARCA_RECIBOS.salvar({
+          id: id,
+          numero: numero,
+          recibo: numero,
+          data: data,
+          titular: titular,
+          finalidade: finalidade,
+          valor: valor,
+          metodo: metodo,
+          notas: notas
+        }, editReciboFile);
+      }
+
+      renderRecibos();
+      closeEditReciboModal();
+      showToast(`Ficha do recibo nº ${numero} atualizada com sucesso!`, 'success');
+    };
+
+    // Pré-visualização de Recibo
+    window.previewRecibo = async function(id) {
+      let r = window.ARCA_RECIBOS ? await window.ARCA_RECIBOS.getById(id) : null;
+      if (!r) r = recibos.find(item => item.id === id);
+      if (!r) return;
+
+      currentPreviewReciboId = id;
+      const modal = document.getElementById('modalPreviewRecibo');
+      const titleEl = document.getElementById('previewReciboTitle');
+      const detailsEl = document.getElementById('previewReciboDetails');
+      const viewerEl = document.getElementById('previewReciboViewerArea');
+      const btnDownload = document.getElementById('btnPreviewDownloadRecibo');
+      const btnEdit = document.getElementById('btnPreviewEditRecibo');
+      const btnDelete = document.getElementById('btnPreviewDeleteRecibo');
+      const btnPrint = document.getElementById('btnPreviewPrintRecibo');
+
+      const numStr = r.numero || r.recibo;
+      const dataFmt = r.data ? new Date(r.data).toLocaleDateString('pt-PT') : '—';
+      const valorFmt = `${parseFloat(r.valor).toFixed(2).replace('.', ',')} €`;
+
+      if (titleEl) titleEl.textContent = `Recibo Oficial Nº ${numStr}`;
+
+      if (detailsEl) {
+        detailsEl.innerHTML = `
+          <div style="background: rgba(28, 109, 66, 0.05); border: 1px solid rgba(28, 109, 66, 0.2); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; font-size: 0.88rem;">
+              <div><span style="color: var(--text-muted); font-size: 0.78rem;">Titular / Entidade:</span><br><strong>${escapeHtml(r.titular)}</strong></div>
+              <div><span style="color: var(--text-muted); font-size: 0.78rem;">Data de Emissão:</span><br><strong>${dataFmt}</strong></div>
+              <div><span style="color: var(--text-muted); font-size: 0.78rem;">Valor Liquidado:</span><br><strong style="color: #16a34a; font-size: 1.2rem;">${valorFmt}</strong></div>
+              <div><span style="color: var(--text-muted); font-size: 0.78rem;">Método de Liquidação:</span><br><strong>${escapeHtml(r.metodo)}</strong></div>
+              <div style="grid-column: 1 / -1;"><span style="color: var(--text-muted); font-size: 0.78rem;">Conceito / Finalidade:</span><br><strong>${escapeHtml(r.finalidade)}</strong></div>
+              ${r.notas ? `<div style="grid-column: 1 / -1;"><span style="color: var(--text-muted); font-size: 0.78rem;">Livro de Recibos / Observações:</span><br><span>${escapeHtml(r.notas)}</span></div>` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      if (viewerEl) {
+        if (r.fileBlob) {
+          const blobUrl = URL.createObjectURL(r.fileBlob);
+          if (r.fileBlob.type.includes('image') || (r.fileName && r.fileName.match(/\.(png|jpe?g|webp)$/i))) {
+            viewerEl.innerHTML = `
+              <div style="text-align: center; max-height: 440px; overflow: auto; background: #fafafa; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem;">
+                <img src="${blobUrl}" style="max-width: 100%; border-radius: 4px; box-shadow: var(--shadow-sm);" alt="Recibo Digitalizado ${numStr}">
+              </div>
+            `;
+          } else {
+            viewerEl.innerHTML = `
+              <iframe src="${blobUrl}" style="width: 100%; height: 440px; border: 1px solid var(--border-light); border-radius: var(--radius-sm);"></iframe>
+            `;
+          }
+        } else {
+          // Exemplar gráfico do livro de recibos oficial da ARCA
+          viewerEl.innerHTML = `
+            <div style="border: 2px solid #1c6d42; border-radius: 8px; padding: 1.5rem; background: #ffffff; position: relative;">
+              <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #eaf5ee; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="color: #1c6d42; margin: 0; font-size: 1.2rem;">A.R.C.A.</h3>
+                  <small style="color: #64748b;">Associação de Recreio, Cultura e Assistência &bull; NIF: 501 234 567</small>
+                </div>
+                <div style="text-align: right;">
+                  <strong style="color: #1c6d42; font-size: 1.1rem;">RECIBO Nº ${numStr}</strong><br>
+                  <small style="color: #64748b;">Data: ${dataFmt}</small>
+                </div>
+              </div>
+              <p style="font-size: 0.92rem; line-height: 1.7; margin: 0;">
+                Recebemos de <strong>${escapeHtml(r.titular)}</strong> a importância de <strong>${valorFmt}</strong>, correspondente a <strong>${escapeHtml(r.finalidade)}</strong>, liquidada através de <strong>${escapeHtml(r.metodo)}</strong>.
+              </p>
+              ${r.notas ? `<p style="font-size: 0.8rem; color: #64748b; margin-top: 0.75rem;">Anotações: ${escapeHtml(r.notas)}</p>` : ''}
+              <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                <div style="text-align: center; border-top: 1px solid #94a3b8; width: 220px; padding-top: 4px; font-size: 0.8rem; color: #475569;">
+                  A Direção / Tesouraria
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      if (btnDownload) {
+        btnDownload.onclick = () => {
+          if (window.ARCA_RECIBOS) window.ARCA_RECIBOS.download(r);
+        };
+      }
+
+      if (btnEdit) {
+        btnEdit.onclick = () => {
+          closePreviewReciboModal();
+          openEditReciboModal(r.id);
+        };
+      }
+
+      if (btnDelete) {
+        btnDelete.onclick = () => {
+          closePreviewReciboModal();
+          deleteRecibo(r.id);
+        };
+      }
+
+      if (btnPrint) {
+        btnPrint.onclick = () => {
+          if (window.ARCA_RECIBOS) window.ARCA_RECIBOS.download(r);
+        };
+      }
+
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closePreviewReciboModal = function() {
+      const modal = document.getElementById('modalPreviewRecibo');
+      if (modal) modal.classList.remove('active');
+      currentPreviewReciboId = null;
+    };
+
+    // Download de Recibo
+    window.downloadRecibo = async function(id) {
+      if (window.ARCA_RECIBOS) {
+        await window.ARCA_RECIBOS.download(id);
+      }
+    };
+
+    // Eliminar Recibo
+    window.deleteRecibo = async function(id) {
+      let r = window.ARCA_RECIBOS ? await window.ARCA_RECIBOS.getById(id) : null;
+      if (!r) r = recibos.find(item => item.id === id);
+      if (!r) return;
+
+      const confirmDel = confirm(`Tem a certeza de que deseja eliminar o recibo oficial nº ${r.numero || r.recibo} (${r.titular})?\n\nEsta ação removerá o registo da pasta de Recibos Emitidos.`);
+      if (!confirmDel) return;
+
+      if (window.ARCA_RECIBOS) {
+        await window.ARCA_RECIBOS.remover(id);
+      }
+
+      renderRecibos();
+      showToast(`Recibo nº ${r.numero || r.recibo} eliminado com sucesso.`, 'info');
     };
 
     // =========================================================================
@@ -1506,9 +2118,41 @@
 
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
-      if (tabParam && ['caixa', 'recibos', 'fornecedores', 'pos'].includes(tabParam)) {
+      const reciboParam = params.get('recibo');
+
+      if (reciboParam) {
+        switchTesourariaTab('recibos');
+        const searchInput = document.getElementById('searchRecibos');
+        if (searchInput) {
+          searchInput.value = reciboParam;
+          searchRecQuery = reciboParam.toLowerCase().trim();
+          renderRecibos();
+        }
+        setTimeout(() => {
+          const row = document.getElementById(`row_rec_${reciboParam}`);
+          if (row) {
+            row.style.background = 'rgba(28, 109, 66, 0.15)';
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          if (window.ARCA_RECIBOS) {
+            const found = window.ARCA_RECIBOS.getByNumero(reciboParam);
+            if (found) {
+              previewRecibo(found.id);
+            }
+          }
+        }, 300);
+      } else if (tabParam && ['caixa', 'recibos', 'fornecedores', 'pos'].includes(tabParam)) {
         switchTesourariaTab(tabParam);
       }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeUploadReciboModal();
+          closeEditReciboModal();
+          closePreviewReciboModal();
+          closeNovoMovimentoModal();
+        }
+      });
     });
   </script>
 </body>

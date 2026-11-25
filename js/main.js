@@ -4,6 +4,19 @@
  */
 
 // =========================================================================
+// 0. Utilitários Globais
+// =========================================================================
+window.escapeHtml = function(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+// =========================================================================
 // 1. Notificações Toasts Globais
 // =========================================================================
 window.showToast = function(message, type = 'success') {
@@ -35,6 +48,402 @@ window.showToast = function(message, type = 'success') {
     setTimeout(() => toast.remove(), 300);
   }, 4000);
 };
+
+// =========================================================================
+// GESTÃO CENTRAL DE RECIBOS EMITIDOS (LIVRO OFICIAL & DMS ARCA)
+// Suporte a IndexedDB para ficheiros digitalizados de grande dimensão +
+// sincronização com LocalStorage e ligação direta às quotas dos associados
+// =========================================================================
+(function() {
+  const RECIBOS_DB_NAME = 'arca_recibos_dms_db_v2';
+  const RECIBOS_DB_VERSION = 1;
+  const RECIBOS_STORE = 'recibos';
+  const STORAGE_KEY = 'ARCA_RECIBOS_LIST_V2';
+
+  const DEFAULT_RECIBOS = [
+    {
+      id: 'rec_1350',
+      numero: '1350',
+      recibo: '1350',
+      data: '2026-11-25',
+      titular: 'Carlos Manuel Reis Rodrigues (Sócio 2)',
+      socioId: 2,
+      socioNumero: 2,
+      finalidade: 'Liquidação Quota 2026',
+      valor: 6.00,
+      metodo: 'Numerário',
+      notas: 'Livro de Recibos nº 14, Folha 50. Exemplar oficial emitido e entregue ao associado.',
+      fileName: 'Recibo_Oficial_1350_Carlos_Rodrigues.pdf',
+      fileSize: '840 KB',
+      format: 'pdf',
+      temFicheiro: true,
+      dataCriacao: '2026-11-25'
+    },
+    {
+      id: 'rec_1349',
+      numero: '1349',
+      recibo: '1349',
+      data: '2026-11-24',
+      titular: 'Manuel António Rodrigues (Sócio 3)',
+      socioId: 3,
+      socioNumero: 3,
+      finalidade: 'Liquidação Quota 2026',
+      valor: 6.00,
+      metodo: 'MBWay',
+      notas: 'Livro de Recibos nº 14, Folha 49. Pagamento por via digital.',
+      fileName: 'Recibo_Oficial_1349_Manuel_Rodrigues.pdf',
+      fileSize: '720 KB',
+      format: 'pdf',
+      temFicheiro: true,
+      dataCriacao: '2026-11-24'
+    },
+    {
+      id: 'rec_1348',
+      numero: '1348',
+      recibo: '1348',
+      data: '2026-11-20',
+      titular: 'Grupo Amigos de Aguada',
+      finalidade: 'Donativo Peregrinos 2026',
+      valor: 350.00,
+      metodo: 'Transferência Bancária',
+      notas: 'Donativo institucional referente ao acolhimento de peregrinos. Ref. TRF-88219.',
+      fileName: 'Comprovativo_TRF_1348_Amigos_Aguada.pdf',
+      fileSize: '1.1 MB',
+      format: 'pdf',
+      temFicheiro: true,
+      dataCriacao: '2026-11-20'
+    },
+    {
+      id: 'rec_1347',
+      numero: '1347',
+      recibo: '1347',
+      data: '2026-11-15',
+      titular: 'Arsénio da Costa Ferreira (Sócio 21)',
+      socioId: 21,
+      socioNumero: 21,
+      finalidade: 'Liquidação Quota 2026',
+      valor: 6.00,
+      metodo: 'Numerário',
+      notas: 'Livro de Recibos nº 14, Folha 47.',
+      fileName: 'Recibo_Oficial_1347_Arsenio_Ferreira.pdf',
+      fileSize: '650 KB',
+      format: 'pdf',
+      temFicheiro: true,
+      dataCriacao: '2026-11-15'
+    },
+    {
+      id: 'rec_1346',
+      numero: '1346',
+      recibo: '1346',
+      data: '2026-11-10',
+      titular: 'Comissão de Festas de Aguada',
+      finalidade: 'Donativo Institucional',
+      valor: 250.00,
+      metodo: 'Transferência Bancária',
+      notas: 'Apoio logístico às festividades da freguesia.',
+      fileName: 'Comprovativo_1346_Comissao_Festas.pdf',
+      fileSize: '950 KB',
+      format: 'pdf',
+      temFicheiro: true,
+      dataCriacao: '2026-11-10'
+    }
+  ];
+
+  function openDB() {
+    return new Promise((resolve) => {
+      if (!window.indexedDB) {
+        resolve(null);
+        return;
+      }
+      const req = indexedDB.open(RECIBOS_DB_NAME, RECIBOS_DB_VERSION);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(RECIBOS_STORE)) {
+          db.createObjectStore(RECIBOS_STORE, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = () => resolve(null);
+    });
+  }
+
+  function getCachedRecibos() {
+    try {
+      const local = localStorage.getItem(STORAGE_KEY);
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Erro ao ler recibos do localStorage:', e);
+    }
+    return [...DEFAULT_RECIBOS];
+  }
+
+  function saveCachedRecibos(list) {
+    try {
+      const metadataOnly = list.map(r => {
+        const copy = { ...r };
+        delete copy.fileBlob;
+        return copy;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(metadataOnly));
+    } catch(e) {
+      console.warn('Erro ao gravar cache de recibos no localStorage:', e);
+    }
+  }
+
+  async function dbGetAll() {
+    const db = await openDB();
+    if (!db) return getCachedRecibos();
+    return new Promise((resolve) => {
+      try {
+        const tx = db.transaction(RECIBOS_STORE, 'readonly');
+        const store = tx.objectStore(RECIBOS_STORE);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => resolve(getCachedRecibos());
+      } catch (e) {
+        resolve(getCachedRecibos());
+      }
+    });
+  }
+
+  async function dbPut(item) {
+    const db = await openDB();
+    if (!db) return false;
+    return new Promise((resolve) => {
+      try {
+        const tx = db.transaction(RECIBOS_STORE, 'readwrite');
+        const store = tx.objectStore(RECIBOS_STORE);
+        const req = store.put(item);
+        req.onsuccess = () => resolve(true);
+        req.onerror = () => resolve(false);
+      } catch (e) {
+        resolve(false);
+      }
+    });
+  }
+
+  async function dbDelete(id) {
+    const db = await openDB();
+    if (!db) return false;
+    return new Promise((resolve) => {
+      try {
+        const tx = db.transaction(RECIBOS_STORE, 'readwrite');
+        const store = tx.objectStore(RECIBOS_STORE);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve(true);
+        req.onerror = () => resolve(false);
+      } catch (e) {
+        resolve(false);
+      }
+    });
+  }
+
+  async function dbGetById(id) {
+    const db = await openDB();
+    if (!db) {
+      const list = getCachedRecibos();
+      return list.find(r => r.id === id || String(r.numero) === String(id));
+    }
+    return new Promise((resolve) => {
+      try {
+        const tx = db.transaction(RECIBOS_STORE, 'readonly');
+        const store = tx.objectStore(RECIBOS_STORE);
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      } catch (e) {
+        resolve(null);
+      }
+    });
+  }
+
+  async function initStore() {
+    try {
+      const dbList = await dbGetAll();
+      if (!dbList || dbList.length === 0) {
+        const initial = getCachedRecibos();
+        for (const r of initial) {
+          await dbPut(r);
+        }
+        saveCachedRecibos(initial);
+      } else {
+        saveCachedRecibos(dbList);
+      }
+    } catch (err) {
+      console.warn('Erro ao inicializar arquivo de recibos:', err);
+    }
+  }
+
+  initStore();
+
+  window.ARCA_RECIBOS = {
+    getAll: getCachedRecibos,
+    getAllFromDB: dbGetAll,
+    getById: dbGetById,
+
+    getByNumero: function(num) {
+      if (!num) return null;
+      const clean = String(num).replace(/^[^\d]*/, '').trim();
+      const list = getCachedRecibos();
+      return list.find(r => {
+        const rClean = String(r.numero || r.recibo).replace(/^[^\d]*/, '').trim();
+        return rClean === clean || String(r.numero) === String(num) || String(r.recibo) === String(num);
+      }) || null;
+    },
+
+    getNextNumero: function() {
+      const list = getCachedRecibos();
+      let maxNum = 1350;
+      list.forEach(r => {
+        const n = parseInt(String(r.numero || r.recibo).replace(/[^\d]/g, ''));
+        if (!isNaN(n) && n > maxNum) maxNum = n;
+      });
+      return String(maxNum + 1);
+    },
+
+    salvar: async function(reciboData, fileBlob = null) {
+      const list = getCachedRecibos();
+      const id = reciboData.id || `rec_${Date.now()}`;
+      const numero = String(reciboData.numero || reciboData.recibo || this.getNextNumero()).trim();
+
+      const existingIdx = list.findIndex(r => r.id === id || String(r.numero) === numero);
+
+      const novoRecibo = {
+        id: id,
+        numero: numero,
+        recibo: numero,
+        data: reciboData.data || new Date().toISOString().slice(0, 10),
+        titular: reciboData.titular || 'Associado ARCA',
+        socioId: reciboData.socioId || null,
+        socioNumero: reciboData.socioNumero || null,
+        finalidade: reciboData.finalidade || 'Liquidação Quotas',
+        valor: parseFloat(reciboData.valor) || 6.00,
+        metodo: reciboData.metodo || 'Numerário',
+        notas: reciboData.notas || '',
+        fileName: reciboData.fileName || (fileBlob ? fileBlob.name : (existingIdx >= 0 ? list[existingIdx].fileName : `Recibo_${numero}_ARCA.pdf`)),
+        fileSize: reciboData.fileSize || (fileBlob ? `${(fileBlob.size / 1024).toFixed(0)} KB` : (existingIdx >= 0 ? list[existingIdx].fileSize : '—')),
+        format: reciboData.format || (fileBlob ? (fileBlob.type.includes('image') ? 'image' : 'pdf') : (existingIdx >= 0 ? list[existingIdx].format : 'pdf')),
+        temFicheiro: Boolean(fileBlob || (existingIdx >= 0 && list[existingIdx].temFicheiro)),
+        fileBlob: fileBlob || (existingIdx >= 0 ? list[existingIdx].fileBlob : null),
+        dataCriacao: (existingIdx >= 0 && list[existingIdx].dataCriacao) ? list[existingIdx].dataCriacao : new Date().toISOString().slice(0, 10)
+      };
+
+      if (existingIdx >= 0) {
+        list[existingIdx] = novoRecibo;
+      } else {
+        list.unshift(novoRecibo);
+      }
+
+      await dbPut(novoRecibo);
+      saveCachedRecibos(list);
+      return novoRecibo;
+    },
+
+    remover: async function(id) {
+      let list = getCachedRecibos();
+      list = list.filter(r => r.id !== id && String(r.numero) !== String(id));
+      await dbDelete(id);
+      saveCachedRecibos(list);
+      return true;
+    },
+
+    registarReciboDePagamento: async function(dados) {
+      return await this.salvar({
+        id: `rec_${dados.numero || Date.now()}`,
+        numero: dados.numero,
+        recibo: dados.numero,
+        data: dados.data || new Date().toISOString().slice(0, 10),
+        titular: dados.titular,
+        socioId: dados.socioId,
+        socioNumero: dados.socioNumero,
+        finalidade: dados.finalidade || 'Liquidação Quotas',
+        valor: dados.valor,
+        metodo: dados.metodo,
+        notas: dados.notas || 'Registo gerado no pagamento de quotas na ficha do associado.',
+        fileName: `Recibo_${dados.numero}_Oficial.pdf`,
+        fileSize: '750 KB',
+        format: 'pdf',
+        temFicheiro: false
+      });
+    },
+
+    download: async function(reciboOrId) {
+      let r = typeof reciboOrId === 'object' ? reciboOrId : await dbGetById(reciboOrId);
+      if (!r) {
+        const list = getCachedRecibos();
+        r = list.find(item => item.id === reciboOrId || String(item.numero) === String(reciboOrId));
+      }
+      if (!r) {
+        showToast('Recibo não encontrado para download.', 'error');
+        return;
+      }
+
+      if (r.fileBlob) {
+        const url = URL.createObjectURL(r.fileBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = r.fileName || `Recibo_${r.numero}_ARCA.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        showToast(`A descarregar recibo oficial "${r.fileName || r.numero}"...`, 'success');
+      } else {
+        const dataFmt = r.data ? new Date(r.data).toLocaleDateString('pt-PT') : new Date().toLocaleDateString('pt-PT');
+        const content = 
+`======================================================================
+ASSOCIAÇÃO DE RECREIO, CULTURA E ASSISTÊNCIA DE AGUADA DE BAIXO (ARCA)
+LIVRO OFICIAL DE RECIBOS & TESOURARIA
+NIF: 501 234 567 | Aguada de Baixo, Águeda
+======================================================================
+
+RECIBO OFICIAL Nº: ${r.numero || r.recibo}
+DATA DE EMISSÃO: ${dataFmt}
+
+RECEBEMOS DE: ${r.titular}
+${r.socioNumero ? `Nº DE ASSOCIADO: ${r.socioNumero}` : ''}
+VALOR RECEBIDO: ${parseFloat(r.valor).toFixed(2).replace('.', ',')} € (${extenso(r.valor)})
+FORMA DE LIQUIDAÇÃO: ${r.metodo}
+
+CONCEITO / FINALIDADE:
+${r.finalidade}
+
+OBSERVAÇÕES / REGISTO:
+${r.notas || 'Recibo legal devidamente registado nos livros oficiais de tesouraria da ARCA.'}
+
+----------------------------------------------------------------------
+A Direção da ARCA / Tesouraria Geral
+Emitido e autenticado digitalmente pelo Portal de Gestão ARCA.
+======================================================================`;
+
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Recibo_Oficial_${r.numero || r.recibo}_ARCA.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        showToast(`A descarregar comprovativo oficial do Recibo ${r.numero}...`, 'success');
+      }
+    }
+  };
+
+  function extenso(valor) {
+    const v = parseFloat(valor) || 0;
+    if (v === 6) return 'Seis Euros';
+    if (v === 12) return 'Doze Euros';
+    if (v === 18) return 'Dezoito Euros';
+    if (v === 24) return 'Vinte e Quatro Euros';
+    if (v === 350) return 'Trezentos e Cinquenta Euros';
+    if (v === 250) return 'Duzentos e Cinquenta Euros';
+    return `${v.toFixed(2).replace('.', ',')} Euros`;
+  }
+})();
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -519,6 +928,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Garante que o objeto do sócio tem a lista de quotas ano a ano estruturada
     function ensureSocioQuotas(socio) {
       if (Array.isArray(socio.quotas) && socio.quotas.length > 0) {
+        socio.quotas.forEach(q => {
+          if (q.pago && !q.reciboNumero) {
+            if (socio.numero === 2) q.reciboNumero = '1350';
+            else if (socio.numero === 3) q.reciboNumero = '1349';
+            else if (socio.numero === 21) q.reciboNumero = '1347';
+          }
+        });
         return socio.quotas;
       }
 
@@ -538,6 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       } else if (lastPaid >= currentYear) {
         // Em dia para 2026
+        const numRec2026 = (socio.numero === 2 ? '1350' : (socio.numero === 3 ? '1349' : (socio.numero === 21 ? '1347' : null)));
         quotas.push({
           ano: 2026,
           valor: 6.00,
@@ -545,7 +962,8 @@ document.addEventListener('DOMContentLoaded', () => {
           estado: 'Pago',
           data: socio.ultimaAtualizacao || '2026-01-15',
           metodo: 'MBWay',
-          recibo: true
+          recibo: true,
+          reciboNumero: numRec2026
         });
         quotas.push({
           ano: 2025,
@@ -554,7 +972,8 @@ document.addEventListener('DOMContentLoaded', () => {
           estado: 'Pago',
           data: '2025-03-31',
           metodo: 'Numerário',
-          recibo: true
+          recibo: true,
+          reciboNumero: numRec2026 ? String(parseInt(numRec2026) - 10) : null
         });
       } else {
         // Quotas por pagar desde (lastPaid + 1) até 2026
@@ -570,6 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
         // Incluir último ano pago para histórico
+        const numRecHist = (socio.numero === 2 ? '1350' : (socio.numero === 3 ? '1349' : (socio.numero === 21 ? '1347' : null)));
         quotas.push({
           ano: lastPaid,
           valor: 6.00,
@@ -577,7 +997,8 @@ document.addEventListener('DOMContentLoaded', () => {
           estado: 'Pago',
           data: socio.ultimaAtualizacao || `${lastPaid}-03-31`,
           metodo: 'Numerário',
-          recibo: true
+          recibo: true,
+          reciboNumero: numRecHist
         });
       }
 
@@ -939,11 +1360,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td style="font-size: 0.82rem; color: var(--text-muted);">${q.data || '—'}</td>
                 <td style="font-size: 0.82rem;">${escapeHtml(q.metodo || '—')}</td>
                 <td style="text-align: center;">
-                  ${isPaid ? `
-                    <button type="button" class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 0.75rem;" onclick="emitirReciboAno(${socio.id}, ${q.ano})" title="Emitir Recibo">
-                      Recibo
-                    </button>
-                  ` : '—'}
+                  ${isPaid ? (() => {
+                    const recNum = q.reciboNumero || (socio.numero === 2 ? '1350' : (socio.numero === 3 ? '1349' : (socio.numero === 21 ? '1347' : null)));
+                    if (recNum) {
+                      q.reciboNumero = recNum;
+                      return `
+                        <button type="button" class="btn btn-outline btn-sm" style="padding: 2px 7px; font-size: 0.75rem; font-weight: 700; color: #1c6d42; border-color: #1c6d42; background: rgba(28, 109, 66, 0.08); display: inline-flex; align-items: center; gap: 4px; cursor: pointer;" onclick="abrirReciboDeSocios('${escapeHtml(String(recNum))}', ${socio.id})" title="Abrir recibo oficial ${escapeHtml(String(recNum))} diretamente da pasta de Recibos Emitidos">
+                          📄 ${escapeHtml(String(recNum))} <span style="font-size: 0.65rem;">↗</span>
+                        </button>
+                      `;
+                    } else {
+                      return `
+                        <button type="button" class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 0.72rem; color: #1c6d42; border-color: #1c6d42; cursor: pointer;" onclick="associarReciboAQuota(${socio.id}, ${q.ano})" title="Associar ou registar número de recibo oficial">
+                          + Recibo
+                        </button>
+                      `;
+                    }
+                  })() : '—'}
                 </td>
                 <td style="text-align: center;">
                   ${isPaid ? `
@@ -1279,12 +1712,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const elTotal = document.getElementById('pagamentoValorTotal');
       const elData = document.getElementById('pagamentoData');
       const elSubtitle = document.getElementById('modalPagamentoSubtitle');
+      const inputReciboNum = document.getElementById('pagamentoReciboNumero');
 
       if (elSocioId) elSocioId.value = socioId;
       if (elAnos) elAnos.textContent = selectedYears.join(', ');
       if (elTotal) elTotal.textContent = `${total.toFixed(2).replace('.', ',')} €`;
       if (elData) elData.value = new Date().toISOString().slice(0, 10);
       if (elSubtitle) elSubtitle.textContent = `Sócio nº ${socio.numero} - ${socio.nome}`;
+      if (inputReciboNum) {
+        inputReciboNum.value = (window.ARCA_RECIBOS ? window.ARCA_RECIBOS.getNextNumero() : '1351');
+      }
 
       if (modalPagamento) modalPagamento.classList.add('active');
     };
@@ -1307,6 +1744,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = document.getElementById('pagamentoData').value || new Date().toISOString().slice(0, 10);
       const notas = document.getElementById('pagamentoNotas').value.trim();
       const emitirReciboChecked = document.getElementById('pagamentoEmitirRecibo').checked;
+      const inputNumRecibo = document.getElementById('pagamentoReciboNumero');
+      let numRecibo = inputNumRecibo ? inputNumRecibo.value.trim() : '';
+
+      if (!numRecibo && emitirReciboChecked) {
+        numRecibo = window.ARCA_RECIBOS ? window.ARCA_RECIBOS.getNextNumero() : '1351';
+      }
 
       ensureSocioQuotas(socio);
 
@@ -1319,6 +1762,7 @@ document.addEventListener('DOMContentLoaded', () => {
           q.data = data;
           q.metodo = metodo;
           q.recibo = true;
+          if (numRecibo) q.reciboNumero = numRecibo;
         } else {
           socio.quotas.push({
             ano: ano,
@@ -1327,7 +1771,8 @@ document.addEventListener('DOMContentLoaded', () => {
             estado: 'Pago',
             data: data,
             metodo: metodo,
-            recibo: true
+            recibo: true,
+            reciboNumero: numRecibo || null
           });
         }
       });
@@ -1345,11 +1790,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Adicionar anotação histórica
       const todayFormatted = new Date().toLocaleDateString('pt-PT');
-      const histText = `[${todayFormatted}] Pagamento Quotas (${pendingPaymentYears.join(', ')}) no valor de ${pendingPaymentTotal.toFixed(2)} € via ${metodo}${notas ? ` - ${notas}` : ''}`;
+      const histText = `[${todayFormatted}] Pagamento Quotas (${pendingPaymentYears.join(', ')}) no valor de ${pendingPaymentTotal.toFixed(2)} € via ${metodo}${numRecibo ? ` (Recibo ${numRecibo})` : ''}${notas ? ` - ${notas}` : ''}`;
       socio.observacoes = socio.observacoes ? `${socio.observacoes} | ${histText}` : histText;
       socio.ultimaAtualizacao = data;
 
       saveSocios();
+
+      // Sincronizar na pasta de Recibos Emitidos
+      if (numRecibo && window.ARCA_RECIBOS) {
+        window.ARCA_RECIBOS.registarReciboDePagamento({
+          numero: numRecibo,
+          data: data,
+          titular: `${socio.nome} (Sócio ${socio.numero})`,
+          socioId: socio.id,
+          socioNumero: socio.numero,
+          finalidade: `Liquidação Quotas (${pendingPaymentYears.join(', ')})`,
+          valor: pendingPaymentTotal,
+          metodo: metodo,
+          notas: `Registo gerado no pagamento de quotas na ficha do sócio.${notas ? ' ' + notas : ''}`
+        });
+      }
+
       updateStats();
       applyFilters();
 
@@ -1359,22 +1820,174 @@ document.addEventListener('DOMContentLoaded', () => {
       closePagamentoModal();
       renderDrawerContent();
 
-      showToast(`Pagamento das quotas (${anosTexto}) regularizado com sucesso!`, 'success');
+      showToast(`Pagamento das quotas (${anosTexto}) regularizado com sucesso! Recibo ${numRecibo || 'emitido'}.`, 'success');
 
       // Se solicitado, emitir recibo oficial
       if (emitirReciboChecked) {
-        emitirReciboMultiplo(socio.id, pendingPaymentYears, totalPago, metodo, data);
+        emitirReciboMultiplo(socio.id, pendingPaymentYears, totalPago, metodo, data, numRecibo);
       }
+    };
+
+    // Modal e Ação: Abrir Recibo Diretamente da Pasta de Recibos Emitidos a partir de Sócios
+    window.abrirReciboDeSocios = async function(reciboNumero, socioId) {
+      if (!reciboNumero) return;
+      const r = window.ARCA_RECIBOS ? window.ARCA_RECIBOS.getByNumero(reciboNumero) : null;
+      const socio = socios.find(s => s.id === socioId);
+
+      const modal = document.getElementById('modalVerReciboSocio');
+      if (!modal) {
+        window.location.href = `tesouraria.html?tab=recibos&recibo=${encodeURIComponent(reciboNumero)}`;
+        return;
+      }
+
+      const titleEl = document.getElementById('socioReciboModalTitle');
+      const infoEl = document.getElementById('socioReciboModalInfo');
+      const fileAreaEl = document.getElementById('socioReciboModalFileArea');
+      const btnDownload = document.getElementById('socioReciboModalBtnDownload');
+      const btnGoTesouraria = document.getElementById('socioReciboModalBtnTesouraria');
+      const btnAlterarNum = document.getElementById('socioReciboModalBtnAlterar');
+
+      const numStr = r ? (r.numero || r.recibo) : reciboNumero;
+      const titularStr = r ? r.titular : (socio ? `${socio.nome} (Sócio ${socio.numero})` : 'Associado ARCA');
+      const dataStr = r ? (r.data ? new Date(r.data).toLocaleDateString('pt-PT') : '25/11/2026') : '25/11/2026';
+      const valorStr = r ? `${parseFloat(r.valor).toFixed(2).replace('.', ',')} €` : '6,00 €';
+      const metodoStr = r ? r.metodo : 'Numerário';
+      const finalidadeStr = r ? r.finalidade : 'Liquidação Quota Anual';
+      const notasStr = r ? (r.notas || '') : '';
+      const temScan = r && (r.fileBlob || r.temFicheiro);
+
+      if (titleEl) titleEl.textContent = `Recibo Oficial Nº ${numStr}`;
+      if (infoEl) {
+        infoEl.innerHTML = `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; font-size: 0.88rem; margin-bottom: 1.25rem;">
+            <div><span style="color: var(--text-muted); font-size: 0.78rem;">Titular:</span><br><strong>${escapeHtml(titularStr)}</strong></div>
+            <div><span style="color: var(--text-muted); font-size: 0.78rem;">Data de Emissão:</span><br><strong>${dataStr}</strong></div>
+            <div><span style="color: var(--text-muted); font-size: 0.78rem;">Valor Liquidado:</span><br><strong style="color: #16a34a; font-size: 1.15rem;">${valorStr}</strong></div>
+            <div><span style="color: var(--text-muted); font-size: 0.78rem;">Método de Liquidação:</span><br><strong>${escapeHtml(metodoStr)}</strong></div>
+            <div style="grid-column: 1 / -1;"><span style="color: var(--text-muted); font-size: 0.78rem;">Finalidade / Descritivo:</span><br><strong>${escapeHtml(finalidadeStr)}</strong></div>
+            ${notasStr ? `<div style="grid-column: 1 / -1;"><span style="color: var(--text-muted); font-size: 0.78rem;">Livro de Recibos / Observações:</span><br><span style="color: var(--text-title);">${escapeHtml(notasStr)}</span></div>` : ''}
+          </div>
+        `;
+      }
+
+      if (fileAreaEl) {
+        if (temScan && r.fileName) {
+          fileAreaEl.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: rgba(28, 109, 66, 0.08); border: 1px solid rgba(28, 109, 66, 0.25); border-radius: var(--radius-sm); margin-bottom: 1.25rem;">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <span style="font-size: 1.6rem;">📄</span>
+                <div>
+                  <strong style="color: var(--primary); font-size: 0.9rem;">${escapeHtml(r.fileName)}</strong>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Documento oficial arquivado na pasta de Recibos Emitidos (${r.fileSize || 'PDF'})</div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="window.ARCA_RECIBOS.download('${r.id || r.numero}')">
+                📥 Download
+              </button>
+            </div>
+          `;
+        } else {
+          fileAreaEl.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); margin-bottom: 1.25rem;">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <span style="font-size: 1.6rem;">🏛</span>
+                <div>
+                  <strong style="color: var(--text-title); font-size: 0.9rem;">Livro de Recibos Físico (Recibo ${numStr})</strong>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Pode anexar a digitalização PDF/foto na pasta de Recibos Emitidos</div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.ARCA_RECIBOS.download('${r ? (r.id || r.numero) : numStr}')">
+                📄 Descarregar Ficha
+              </button>
+            </div>
+          `;
+        }
+      }
+
+      if (btnGoTesouraria) {
+        btnGoTesouraria.onclick = () => {
+          window.location.href = `tesouraria.html?tab=recibos&recibo=${encodeURIComponent(numStr)}`;
+        };
+      }
+
+      if (btnDownload) {
+        btnDownload.onclick = () => {
+          if (window.ARCA_RECIBOS) {
+            window.ARCA_RECIBOS.download(r ? (r.id || r.numero) : numStr);
+          }
+        };
+      }
+
+      if (btnAlterarNum) {
+        btnAlterarNum.onclick = () => {
+          modal.classList.remove('active');
+          const novoNum = prompt(`Indique o novo número de recibo do livro físico para esta quota:`, numStr);
+          if (novoNum && novoNum.trim()) {
+            const trimmed = novoNum.trim();
+            if (socio && socio.quotas) {
+              socio.quotas.forEach(q => {
+                if (String(q.reciboNumero) === String(numStr)) {
+                  q.reciboNumero = trimmed;
+                }
+              });
+              saveSocios();
+              renderDrawerContent();
+              showToast(`Número de recibo alterado para "${trimmed}".`, 'success');
+            }
+          }
+        };
+      }
+
+      modal.classList.add('active');
+    };
+
+    window.closeVerReciboSocioModal = function() {
+      const modal = document.getElementById('modalVerReciboSocio');
+      if (modal) modal.classList.remove('active');
+    };
+
+    window.associarReciboAQuota = function(socioId, ano) {
+      const socio = socios.find(s => s.id === socioId);
+      if (!socio || !socio.quotas) return;
+      const q = socio.quotas.find(item => item.ano === ano);
+      if (!q) return;
+
+      const defaultNum = window.ARCA_RECIBOS ? window.ARCA_RECIBOS.getNextNumero() : '1351';
+      const numDigitado = prompt(`Indique o número do recibo emitido do livro físico para a quota de ${ano} (ex: 1350):`, defaultNum);
+      if (!numDigitado || !numDigitado.trim()) return;
+
+      const numFinal = numDigitado.trim();
+      q.reciboNumero = numFinal;
+      q.recibo = true;
+
+      // Sincronizar na pasta de Recibos Emitidos
+      if (window.ARCA_RECIBOS) {
+        window.ARCA_RECIBOS.registarReciboDePagamento({
+          numero: numFinal,
+          data: q.data || new Date().toISOString().slice(0, 10),
+          titular: `${socio.nome} (Sócio ${socio.numero})`,
+          socioId: socio.id,
+          socioNumero: socio.numero,
+          finalidade: `Liquidação Quota ${ano}`,
+          valor: q.valor || 6.00,
+          metodo: q.metodo || 'Numerário',
+          notas: `Recibo associado manualmente à quota de ${ano}.`
+        });
+      }
+
+      saveSocios();
+      renderDrawerContent();
+      showToast(`Recibo nº ${numFinal} associado à quota de ${ano} com sucesso!`, 'success');
     };
 
     // =========================================================================
     // 4.3. Emissão e Impressão de Recibo Oficial da ARCA
     // =========================================================================
-    window.emitirReciboMultiplo = function(socioId, anosArray, valorTotal, metodo, data) {
+    window.emitirReciboMultiplo = function(socioId, anosArray, valorTotal, metodo, data, customNum = null) {
       const socio = socios.find(s => s.id === socioId);
       if (!socio) return;
 
-      const numRecibo = Math.floor(1000 + Math.random() * 9000);
+      const numRecibo = customNum || (window.ARCA_RECIBOS ? window.ARCA_RECIBOS.getNextNumero() : Math.floor(1000 + Math.random() * 9000));
       const dataFormatada = data ? new Date(data).toLocaleDateString('pt-PT') : new Date().toLocaleDateString('pt-PT');
       const anosTexto = Array.isArray(anosArray) ? anosArray.join(', ') : (anosArray || '2026');
       const totalValor = (valorTotal || 6.00).toFixed(2);

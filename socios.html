@@ -107,7 +107,7 @@
               </button>
               <ul class="nav-sublist">
                 <li><a href="tesouraria.html?tab=caixa" class="nav-sublink">Caixa/Movimentos</a></li>
-                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink">Recibo Emitidos</a></li>
+                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink">Recibos Emitidos</a></li>
                 <li><a href="tesouraria.html?tab=fornecedores" class="nav-sublink">Fornecedores</a></li>
                 <li><a href="tesouraria.html?tab=pos" class="nav-sublink">P.O.S.</a></li>
               </ul>
@@ -610,6 +610,14 @@
         </div>
 
         <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="pagamentoReciboNumero" style="display: flex; justify-content: space-between;">
+            <span>Nº do Recibo do Livro Físico</span>
+            <span style="font-size: 0.75rem; color: var(--primary); font-weight: normal;">Ex.: 1350</span>
+          </label>
+          <input type="text" id="pagamentoReciboNumero" class="form-control" placeholder="Indique o número do recibo (ex.: 1350)">
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
           <label class="form-label" for="pagamentoNotas">Notas / Pauta do Pagamento (Opcional)</label>
           <input type="text" id="pagamentoNotas" class="form-control" placeholder="Ex.: Liquidado no Jantar de Aniversário...">
         </div>
@@ -617,7 +625,7 @@
         <div style="margin-top: 1.25rem;">
           <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
             <input type="checkbox" id="pagamentoEmitirRecibo" checked>
-            <span>Emitir Recibo Oficial automaticamente</span>
+            <span>Registar na pasta de Recibos Emitidos e emitir comprovativo</span>
           </label>
         </div>
 
@@ -628,6 +636,40 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: Visualizar Recibo Oficial a partir da Ficha de Sócio -->
+  <div class="modal-overlay" id="modalVerReciboSocio" onclick="if(event.target === this) closeVerReciboSocioModal()">
+    <div class="modal-content" style="max-width: 540px;">
+      <div class="modal-header">
+        <div>
+          <h2 id="socioReciboModalTitle">Recibo Oficial ARCA</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+            Arquivo oficial guardado na pasta de Recibos Emitidos da Tesouraria.
+          </p>
+        </div>
+        <button class="modal-close" onclick="closeVerReciboSocioModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding-top: 0.5rem;">
+        <div id="socioReciboModalInfo"></div>
+        <div id="socioReciboModalFileArea"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
+          <button type="button" class="btn btn-outline btn-sm" id="socioReciboModalBtnAlterar">
+            Alterar Nº Recibo
+          </button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="socioReciboModalBtnTesouraria">
+              Abrir em Recibos Emitidos ↗
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="socioReciboModalBtnDownload">
+              📥 Descarregar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
