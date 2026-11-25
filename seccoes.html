@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.R.C.A. - Secções & Grupos | Aguada de Baixo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="assets/arca-logo.png" alt="ARCA Logótipo">
+        </div>
+        <div class="sidebar-brand">
+          <h2>A.R.C.A.</h2>
+          <span>Aguada de Baixo</span>
+        </div>
+        <button class="sidebar-close-btn" aria-label="Fechar menu">&times;</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="painel.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Visão Geral</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 2. Menu: Gestão -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="socios.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Sócios & Cotas</span>
+                <span class="nav-item-badge">248</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+                <li><a href="membros.html" class="nav-sublink">Membros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano" class="nav-sublink">Plano de Atividades</a></li>
+                <li><a href="documentos.html?cat=orcamento" class="nav-sublink">Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 6. Menu: Secções & Grupos (Aberto) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
+                  </svg>
+                  <span>Secções & Grupos</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="seccoes.html?sec=futsal_senior" id="sublinkFutsalSenior" class="nav-sublink">Futsal Sénior</a></li>
+                <li><a href="seccoes.html?sec=biciarca_team" id="sublinkBiciarcaTeam" class="nav-sublink">BiciArca Team</a></li>
+                <li><a href="seccoes.html?sec=biciarca_run" id="sublinkBiciarcaRun" class="nav-sublink">BiciArca Run Team</a></li>
+                <li><a href="seccoes.html?sec=zumba" id="sublinkZumba" class="nav-sublink">Zumba</a></li>
+                <li><a href="seccoes.html?sec=funcional" id="sublinkFuncional" class="nav-sublink">Treino Funcional</a></li>
+                <li><a href="seccoes.html?sec=pilates" id="sublinkPilates" class="nav-sublink">Pilates</a></li>
+                <li><a href="seccoes.html?sec=tea" id="sublinkTea" class="nav-sublink">TEA</a></li>
+                <li><a href="seccoes.html?sec=olhares_disparos" id="sublinkOlharesDisparos" class="nav-sublink">Olhares e Disparos</a></li>
+                <li><a href="seccoes.html?sec=bacharca" id="sublinkBacharca" class="nav-sublink">Bach'Arca</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 7. Menu: Eventos & Organizações -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
+                  </svg>
+                  <span>Eventos & Organizações</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
+                <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
+                <li><a href="eventos.html?ev=peregrinos" class="nav-sublink">Apoio Peregrinos</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Torneios</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=arca_cup" class="nav-nested-link">ARCA Cup</a></li>
+                    <li><a href="eventos.html?ev=futsal_fem" class="nav-nested-link">Torneio Futsal Feminino</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=cicloturismo" class="nav-sublink">Cicloturismo</a></li>
+                <li><a href="eventos.html?ev=dia_freguesia" class="nav-sublink">Dia da Freguesia</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Época Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=futsal_apresentacao" class="nav-nested-link">Apresentação</a></li>
+                    <li><a href="eventos.html?ev=futsal_encerramento" class="nav-nested-link">Encerramento</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=taca_jorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
+                <li><a href="eventos.html?ev=agitagueda" class="nav-sublink">AgitÁgueda</a></li>
+                <li><a href="eventos.html?ev=andebol" class="nav-sublink">Eventos Andebol ARCA</a></li>
+                <li><a href="eventos.html?ev=jogos_sem_fronteiras" class="nav-sublink">Jogos Sem Fronteiras</a></li>
+                <li><a href="eventos.html?ev=rota_minis" class="nav-sublink">Rota Das Minis</a></li>
+                <li><a href="eventos.html?ev=aniversario_arca" class="nav-sublink">Aniversário ARCA</a></li>
+                <li><a href="eventos.html?ev=jantar_natal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
+                <li><a href="eventos.html?ev=outros" class="nav-sublink">Outros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 8. Menu: Painel de Controlo -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">JC</div>
+        <div class="user-details">
+          <div class="user-name">Jorge Cunha</div>
+          <div class="user-role">Direção Geral</div>
+        </div>
+        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <div class="app-main">
+      
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">
+            &#9776;
+          </button>
+          <div class="breadcrumbs">
+            <a href="painel.html">ARCA</a>
+            <span>&rsaquo;</span>
+            <a href="seccoes.html">Secções & Grupos</a>
+            <span>&rsaquo;</span>
+            <span class="current" id="breadcrumbCurrent">Todas as Secções</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Formulário de inscrição de atleta/participante aberto!', 'success')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Inscrever Atleta / Membro</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Conteúdo da Página -->
+      <main class="page-container">
+        
+        <div class="page-title-bar">
+          <div>
+            <h1 id="pageHeadingTitle">Secções Desportivas & Grupos Culturais</h1>
+            <p id="pageHeadingSubtitle">Gestão e acompanhamento das 9 modalidades ativas, corpos técnicos, horários de treino e inscrições da ARCA.</p>
+          </div>
+          <div class="stats-badge-group" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <strong style="color: var(--primary);">9</strong> Secções Ativas
+            </div>
+            <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <strong style="color: var(--primary);">184</strong> Atletas & Praticantes
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros Rápidos de Secções -->
+        <div class="filter-pills-bar" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.4rem;">
+          <a href="seccoes.html" class="btn btn-sm btn-primary" id="pillAll">Todas as Secções</a>
+          <a href="seccoes.html?sec=futsal_senior" class="btn btn-sm btn-outline" id="pillFutsalSenior">Futsal Sénior</a>
+          <a href="seccoes.html?sec=biciarca_team" class="btn btn-sm btn-outline" id="pillBiciarcaTeam">BiciArca Team</a>
+          <a href="seccoes.html?sec=biciarca_run" class="btn btn-sm btn-outline" id="pillBiciarcaRun">BiciArca Run</a>
+          <a href="seccoes.html?sec=zumba" class="btn btn-sm btn-outline" id="pillZumba">Zumba</a>
+          <a href="seccoes.html?sec=funcional" class="btn btn-sm btn-outline" id="pillFuncional">Treino Funcional</a>
+          <a href="seccoes.html?sec=pilates" class="btn btn-sm btn-outline" id="pillPilates">Pilates</a>
+          <a href="seccoes.html?sec=tea" class="btn btn-sm btn-outline" id="pillTea">TEA</a>
+          <a href="seccoes.html?sec=olhares_disparos" class="btn btn-sm btn-outline" id="pillOlharesDisparos">Olhares e Disparos</a>
+          <a href="seccoes.html?sec=bacharca" class="btn btn-sm btn-outline" id="pillBacharca">Bach'Arca</a>
+        </div>
+
+        <!-- Grelha de Cartões das 9 Secções -->
+        <div class="sections-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem;">
+          
+          <!-- 1. Futsal Sénior -->
+          <div class="card-box section-card" data-sec="futsal_senior" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Desporto Federado</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">22 Atletas</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Futsal Sénior</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Equipa principal em competição distrital pela AF Aveiro. Treinos técnicos, táticos e jogos oficiais ao fim de semana.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Responsável:</strong> Jorge Cunha / Coordenação Futsal</div>
+                <div><strong>Treinos:</strong> Terças e Quintas &bull; 21h00 - 23h00</div>
+                <div><strong>Local:</strong> Pavilhão Polidesportivo ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir convocatórias e plantel de Futsal...', 'success')">Plantel & Convocatórias</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('A abrir calendário de jogos de Futsal...', 'success')">Jogos</button>
+            </div>
+          </div>
+
+          <!-- 2. BiciArca Team -->
+          <div class="card-box section-card" data-sec="biciarca_team" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Ciclismo & BTT</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">34 Praticantes</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">BiciArca Team</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Secção de ciclismo e BTT. Passeios em grupo, rotas da região da Bairrada, maratonas e organização do Cicloturismo ARCA.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenação:</strong> Secção de Cicloturismo ARCA</div>
+                <div><strong>Saídas em Grupo:</strong> Domingos &bull; 08h30</div>
+                <div><strong>Ponto de Encontro:</strong> Sede Social da ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir rotas e inscrições BiciArca Team...', 'success')">Rotas & Inscrições</button>
+            </div>
+          </div>
+
+          <!-- 3. BiciArca Run Team -->
+          <div class="card-box section-card" data-sec="biciarca_run" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Atletismo & Trail</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">28 Praticantes</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">BiciArca Run Team</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Grupo de corrida de estrada e trail running. Preparação física, treinos de grupo semanais e participação em provas oficiais.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenação:</strong> Equipa de Atletismo ARCA</div>
+                <div><strong>Treinos:</strong> Quartas (19h30) e Sábados (09h00)</div>
+                <div><strong>Local:</strong> Circuito da Freguesia / Pista</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir calendário de provas de corrida...', 'success')">Ver Provas & Atletas</button>
+            </div>
+          </div>
+
+          <!-- 4. Zumba -->
+          <div class="card-box section-card" data-sec="zumba" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Fitness & Dança</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">35 Alunas/os</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Zumba</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Aulas de dança e exercício aeróbico ao ritmo de música latina e internacional. Excelente energia e bem-estar comunitário.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Instrutora Certificada:</strong> Coordenação de Bem-Estar</div>
+                <div><strong>Horário:</strong> Segundas e Quartas &bull; 19h30 - 20h30</div>
+                <div><strong>Local:</strong> Salão Nobre / Sede ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A consultar lista de turmas de Zumba...', 'success')">Turmas & Inscrições</button>
+            </div>
+          </div>
+
+          <!-- 5. Treino Funcional -->
+          <div class="card-box section-card" data-sec="funcional" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Condicionamento</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">20 Alunos</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Treino Funcional</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Exercícios focados em força, resistência cardiovascular, agilidade e equilíbrio postural adaptados a todas as faixas etárias.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Preparador Físico:</strong> Gabinete Desportivo ARCA</div>
+                <div><strong>Horário:</strong> Terças e Sextas &bull; 19h00 - 20h00</div>
+                <div><strong>Local:</strong> Ginásio / Pavilhão ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir fichas de Treino Funcional...', 'success')">Ver Turma</button>
+            </div>
+          </div>
+
+          <!-- 6. Pilates -->
+          <div class="card-box section-card" data-sec="pilates" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Saúde & Postura</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">16 Alunos</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Pilates</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Aulas dedicadas ao controlo corporal, fortalecimento do core, respiração profunda, flexibilidade e prevenção de lesões.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Fisioterapeuta / Instrutor:</strong> Saúde & Movimento</div>
+                <div><strong>Horário:</strong> Sábados &bull; 10h00 - 11h00</div>
+                <div><strong>Local:</strong> Sala Multiusos da Sede</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir inscrições para Pilates...', 'success')">Ver Vagas</button>
+            </div>
+          </div>
+
+          <!-- 7. TEA -->
+          <div class="card-box section-card" data-sec="tea" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill atrasada">Cultura & Teatro</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">14 Membros</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">TEA</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Teatro Experimental de Aguada. Grupo de expressão cénica, encenação dramática e produções teatrais apresentadas em datas comemorativas.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Encenação:</strong> Grupo Cénico da ARCA</div>
+                <div><strong>Ensaios:</strong> Quintas-feiras &bull; 21h30</div>
+                <div><strong>Local:</strong> Auditório / Palco da Sede</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir peças e elenco do TEA...', 'success')">Elenco & Peças</button>
+            </div>
+          </div>
+
+          <!-- 8. Olhares e Disparos -->
+          <div class="card-box section-card" data-sec="olhares_disparos" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Fotografia & Artes</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">10 Membros</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Olhares e Disparos</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Grupo de fotografia da ARCA. Registo documental dos eventos da freguesia, passeios fotográficos, arquivo de memórias e exposições.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenação:</strong> Núcleo de Fotografia & Comunicação</div>
+                <div><strong>Encontros:</strong> Mensais e Cobertura de Eventos</div>
+                <div><strong>Arquivo:</strong> Galeria Digital ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir galeria de Olhares e Disparos...', 'success')">Galeria & Exposições</button>
+            </div>
+          </div>
+
+          <!-- 9. Bach'Arca -->
+          <div class="card-box section-card" data-sec="bacharca" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Música & Animação</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">12 Elementos</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Bach'Arca</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Grupo de música e animação cultural da ARCA. Repertório festivo, ritmos tradicionais e presença assídua nos convívios da terra.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Responsável Musical:</strong> Secção de Música ARCA</div>
+                <div><strong>Ensaios:</strong> Sextas-feiras &bull; 21h00</div>
+                <div><strong>Local:</strong> Sede Social da ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir agenda do grupo Bach\'Arca...', 'success')">Agenda & Repertório</button>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sec = urlParams.get('sec');
+
+      if (sec) {
+        const cards = document.querySelectorAll('.section-card');
+        cards.forEach(card => {
+          if (card.getAttribute('data-sec') === sec) {
+            card.style.display = 'flex';
+            card.style.borderColor = 'var(--primary)';
+            card.style.boxShadow = '0 0 0 2px var(--primary-light)';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        const secNames = {
+          futsal_senior: 'Futsal Sénior',
+          biciarca_team: 'BiciArca Team',
+          biciarca_run: 'BiciArca Run Team',
+          zumba: 'Zumba',
+          funcional: 'Treino Funcional',
+          pilates: 'Pilates',
+          tea: 'TEA - Teatro Experimental',
+          olhares_disparos: 'Olhares e Disparos (Fotografia)',
+          bacharca: "Bach'Arca (Música)"
+        };
+
+        if (secNames[sec]) {
+          document.getElementById('breadcrumbCurrent').textContent = secNames[sec];
+          document.getElementById('pageHeadingTitle').textContent = secNames[sec];
+          document.getElementById('pageHeadingSubtitle').textContent = 'Ficha detalhada da secção, corpos técnicos, calendário de atividades e atletas inscritos.';
+        }
+
+        // Realçar botão/pill de filtro
+        document.querySelectorAll('.filter-pills-bar a').forEach(a => {
+          a.className = 'btn btn-sm btn-outline';
+        });
+        const pillMap = {
+          futsal_senior: 'pillFutsalSenior',
+          biciarca_team: 'pillBiciarcaTeam',
+          biciarca_run: 'pillBiciarcaRun',
+          zumba: 'pillZumba',
+          funcional: 'pillFuncional',
+          pilates: 'pillPilates',
+          tea: 'pillTea',
+          olhares_disparos: 'pillOlharesDisparos',
+          bacharca: 'pillBacharca'
+        };
+        if (pillMap[sec]) {
+          const activePill = document.getElementById(pillMap[sec]);
+          if (activePill) activePill.className = 'btn btn-sm btn-primary';
+        }
+
+        // Realçar link da sidebar
+        document.querySelectorAll('.sidebar-nav .nav-sublink').forEach(link => link.classList.remove('active'));
+        const sublinkMap = {
+          futsal_senior: 'sublinkFutsalSenior',
+          biciarca_team: 'sublinkBiciarcaTeam',
+          biciarca_run: 'sublinkBiciarcaRun',
+          zumba: 'sublinkZumba',
+          funcional: 'sublinkFuncional',
+          pilates: 'sublinkPilates',
+          tea: 'sublinkTea',
+          olhares_disparos: 'sublinkOlharesDisparos',
+          bacharca: 'sublinkBacharca'
+        };
+        if (sublinkMap[sec]) {
+          const activeSub = document.getElementById(sublinkMap[sec]);
+          if (activeSub) activeSub.classList.add('active');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

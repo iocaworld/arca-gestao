@@ -127,6 +127,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
+  // 2.2. Alternância de Submenus Aninhados (ex: Torneios, Época Futsal)
+  // =========================================================================
+  const nestedParents = document.querySelectorAll('.nav-nested-parent');
+  nestedParents.forEach(nParent => {
+    nParent.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const nList = nParent.nextElementSibling;
+      const isOpen = nParent.classList.contains('open');
+
+      if (isOpen) {
+        nParent.classList.remove('open');
+        if (nList) nList.classList.remove('open');
+      } else {
+        nParent.classList.add('open');
+        if (nList) nList.classList.add('open');
+      }
+    });
+  });
+
+  // Garantir que sub-submenus ativos abrem todo o caminho hierárquico
+  const activeNestedLink = document.querySelector('.nav-nested-link.active');
+  if (activeNestedLink) {
+    const parentNestedList = activeNestedLink.closest('.nav-nested-list');
+    if (parentNestedList) {
+      parentNestedList.classList.add('open');
+      const parentNestedBtn = parentNestedList.previousElementSibling;
+      if (parentNestedBtn && parentNestedBtn.classList.contains('nav-nested-parent')) {
+        parentNestedBtn.classList.add('open');
+      }
+    }
+    const parentSublist = activeNestedLink.closest('.nav-sublist');
+    if (parentSublist) {
+      parentSublist.classList.add('open');
+      const parentBtn = parentSublist.previousElementSibling;
+      if (parentBtn && parentBtn.classList.contains('nav-item-parent')) {
+        parentBtn.classList.add('open');
+      }
+    }
+  }
+
+  // =========================================================================
   // 3. Autenticação na Página Principal (index.html)
   // =========================================================================
   const loginForm = document.getElementById('arcaLoginForm');

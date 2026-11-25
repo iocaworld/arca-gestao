@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.R.C.A. - Eventos & Organizações | Aguada de Baixo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="assets/arca-logo.png" alt="ARCA Logótipo">
+        </div>
+        <div class="sidebar-brand">
+          <h2>A.R.C.A.</h2>
+          <span>Aguada de Baixo</span>
+        </div>
+        <button class="sidebar-close-btn" aria-label="Fechar menu">&times;</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="painel.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Visão Geral</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 2. Menu: Gestão -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="socios.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Sócios & Cotas</span>
+                <span class="nav-item-badge">248</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+                <li><a href="membros.html" class="nav-sublink">Membros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano" class="nav-sublink">Plano de Atividades</a></li>
+                <li><a href="documentos.html?cat=orcamento" class="nav-sublink">Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 6. Menu: Secções & Grupos -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
+                  </svg>
+                  <span>Secções & Grupos</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="seccoes.html?sec=futsal_senior" class="nav-sublink">Futsal Sénior</a></li>
+                <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
+                <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
+                <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
+                <li><a href="seccoes.html?sec=funcional" class="nav-sublink">Treino Funcional</a></li>
+                <li><a href="seccoes.html?sec=pilates" class="nav-sublink">Pilates</a></li>
+                <li><a href="seccoes.html?sec=tea" class="nav-sublink">TEA</a></li>
+                <li><a href="seccoes.html?sec=olhares_disparos" class="nav-sublink">Olhares e Disparos</a></li>
+                <li><a href="seccoes.html?sec=bacharca" class="nav-sublink">Bach'Arca</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 7. Menu: Eventos & Organizações (Aberto) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
+                  </svg>
+                  <span>Eventos & Organizações</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="eventos.html?ev=janeiras" id="sublinkJaneiras" class="nav-sublink">Janeiras</a></li>
+                <li><a href="eventos.html?ev=noite_sopas" id="sublinkNoiteSopas" class="nav-sublink">Noite das Sopas</a></li>
+                <li><a href="eventos.html?ev=peregrinos" id="sublinkPeregrinos" class="nav-sublink">Apoio Peregrinos</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button" id="btnParentTorneios">
+                    <span>Torneios</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list" id="listTorneios">
+                    <li><a href="eventos.html?ev=arca_cup" id="nestedArcaCup" class="nav-nested-link">ARCA Cup</a></li>
+                    <li><a href="eventos.html?ev=futsal_fem" id="nestedFutsalFem" class="nav-nested-link">Torneio Futsal Feminino</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=cicloturismo" id="sublinkCicloturismo" class="nav-sublink">Cicloturismo</a></li>
+                <li><a href="eventos.html?ev=dia_freguesia" id="sublinkDiaFreguesia" class="nav-sublink">Dia da Freguesia</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button" id="btnParentEpocaFutsal">
+                    <span>Época Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list" id="listEpocaFutsal">
+                    <li><a href="eventos.html?ev=futsal_apresentacao" id="nestedFutsalApres" class="nav-nested-link">Apresentação</a></li>
+                    <li><a href="eventos.html?ev=futsal_encerramento" id="nestedFutsalEncer" class="nav-nested-link">Encerramento</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=taca_jorginho" id="sublinkTacaJorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
+                <li><a href="eventos.html?ev=agitagueda" id="sublinkAgitagueda" class="nav-sublink">AgitÁgueda</a></li>
+                <li><a href="eventos.html?ev=andebol" id="sublinkAndebol" class="nav-sublink">Eventos Andebol ARCA</a></li>
+                <li><a href="eventos.html?ev=jogos_sem_fronteiras" id="sublinkJogosSemFronteiras" class="nav-sublink">Jogos Sem Fronteiras</a></li>
+                <li><a href="eventos.html?ev=rota_minis" id="sublinkRotaMinis" class="nav-sublink">Rota Das Minis</a></li>
+                <li><a href="eventos.html?ev=aniversario_arca" id="sublinkAniversarioArca" class="nav-sublink">Aniversário ARCA</a></li>
+                <li><a href="eventos.html?ev=jantar_natal" id="sublinkJantarNatal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
+                <li><a href="eventos.html?ev=outros" id="sublinkOutros" class="nav-sublink">Outros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 8. Menu: Painel de Controlo -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">JC</div>
+        <div class="user-details">
+          <div class="user-name">Jorge Cunha</div>
+          <div class="user-role">Direção Geral</div>
+        </div>
+        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <div class="app-main">
+      
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">
+            &#9776;
+          </button>
+          <div class="breadcrumbs">
+            <a href="painel.html">ARCA</a>
+            <span>&rsaquo;</span>
+            <a href="eventos.html">Eventos & Organizações</a>
+            <span>&rsaquo;</span>
+            <span class="current" id="breadcrumbEvCurrent">Todos os Eventos</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Formulário de criação de novo evento aberto!', 'success')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Novo Evento / Organização</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Conteúdo da Página -->
+      <main class="page-container">
+        
+        <div class="page-title-bar">
+          <div>
+            <h1 id="pageEvHeadingTitle">Eventos Anuais & Organizações ARCA</h1>
+            <p id="pageEvHeadingSubtitle">Planeamento, orçamentação, equipas de voluntários e logística dos grandes eventos da associação em Aguada de Baixo.</p>
+          </div>
+          <div class="stats-badge-group" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <strong style="color: var(--primary);">15</strong> Eventos Anuais
+            </div>
+            <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <strong style="color: var(--primary);">1.800+</strong> Participantes Previstos
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros Rápidos de Eventos -->
+        <div class="filter-pills-bar" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.4rem;">
+          <a href="eventos.html" class="btn btn-sm btn-primary" id="pillEvAll">Todos (15)</a>
+          <a href="eventos.html?ev=janeiras" class="btn btn-sm btn-outline" id="pillEvJaneiras">Janeiras</a>
+          <a href="eventos.html?ev=noite_sopas" class="btn btn-sm btn-outline" id="pillEvNoiteSopas">Noite das Sopas</a>
+          <a href="eventos.html?ev=peregrinos" class="btn btn-sm btn-outline" id="pillEvPeregrinos">Apoio Peregrinos</a>
+          <a href="eventos.html?ev=arca_cup" class="btn btn-sm btn-outline" id="pillEvArcaCup">ARCA Cup</a>
+          <a href="eventos.html?ev=futsal_fem" class="btn btn-sm btn-outline" id="pillEvFutsalFem">Futsal Feminino</a>
+          <a href="eventos.html?ev=cicloturismo" class="btn btn-sm btn-outline" id="pillEvCicloturismo">Cicloturismo</a>
+          <a href="eventos.html?ev=dia_freguesia" class="btn btn-sm btn-outline" id="pillEvDiaFreguesia">Dia da Freguesia</a>
+          <a href="eventos.html?ev=futsal_apresentacao" class="btn btn-sm btn-outline" id="pillEvFutsalApres">Apresentação Futsal</a>
+          <a href="eventos.html?ev=futsal_encerramento" class="btn btn-sm btn-outline" id="pillEvFutsalEncer">Encerramento Futsal</a>
+          <a href="eventos.html?ev=taca_jorginho" class="btn btn-sm btn-outline" id="pillEvTacaJorginho">Taça Jorginho</a>
+          <a href="eventos.html?ev=agitagueda" class="btn btn-sm btn-outline" id="pillEvAgitagueda">AgitÁgueda</a>
+          <a href="eventos.html?ev=andebol" class="btn btn-sm btn-outline" id="pillEvAndebol">Andebol ARCA</a>
+          <a href="eventos.html?ev=jogos_sem_fronteiras" class="btn btn-sm btn-outline" id="pillEvJogosSemFronteiras">Jogos Sem Fronteiras</a>
+          <a href="eventos.html?ev=rota_minis" class="btn btn-sm btn-outline" id="pillEvRotaMinis">Rota Das Minis</a>
+          <a href="eventos.html?ev=aniversario_arca" class="btn btn-sm btn-outline" id="pillEvAniversarioArca">Aniversário ARCA</a>
+          <a href="eventos.html?ev=jantar_natal" class="btn btn-sm btn-outline" id="pillEvJantarNatal">Jantar Natal</a>
+          <a href="eventos.html?ev=outros" class="btn btn-sm btn-outline" id="pillEvOutros">Outros</a>
+        </div>
+
+        <!-- Grelha de Cartões de Todos os Eventos -->
+        <div class="events-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1.25rem;">
+          
+          <!-- 1. Janeiras -->
+          <div class="card-box event-card" data-ev="janeiras" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Concluído (Jan 2026)</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Tradição Anual</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Cantar das Janeiras</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Tradição viva de Cantar as Janeiras e Reisados pelas ruas e casas de Aguada de Baixo com grupo de cantares e sócios.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Data:</strong> 10 e 11 de Janeiro</div>
+                <div><strong>Local:</strong> Ruas e Lugares da Freguesia</div>
+                <div><strong>Receitas Revertidas:</strong> Obras de Conservação da Sede</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir relatório e fotos das Janeiras...', 'success')">Ver Relatório & Fotos</button>
+            </div>
+          </div>
+
+          <!-- 2. Noite das Sopas -->
+          <div class="card-box event-card" data-ev="noite_sopas" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Em Planeamento</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Março 2026</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Noite das Sopas</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Famoso certame gastronómico com degustação de mais de 15 tipos de sopas regionais tradicionais confecionadas por voluntários e restaurantes.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Data Prevista:</strong> 21 de Março &bull; 20h00</div>
+                <div><strong>Local:</strong> Salão de Eventos / Pavilhão ARCA</div>
+                <div><strong>Capacidade:</strong> 350 Lugares Sentados</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir lista de voluntários e ementa da Noite das Sopas...', 'success')">Ementa & Inscrições</button>
+            </div>
+          </div>
+
+          <!-- 3. Apoio Peregrinos -->
+          <div class="card-box event-card" data-ev="peregrinos" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Solidariedade & Acolhimento</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Maio & Outubro</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Apoio aos Peregrinos</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Ponto de apoio e descanso aos peregrinos a caminho de Fátima e Santiago. Distribuição de águas, fruta, massagens e apoio de enfermagem.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Datas Chave:</strong> 08 a 12 de Maio</div>
+                <div><strong>Posto de Apoio:</strong> Junto à EN1 / Entrada de Aguada de Baixo</div>
+                <div><strong>Equipa Voluntária:</strong> 25 Voluntários em Escalas</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir escala de voluntários para apoio aos peregrinos...', 'success')">Escala de Voluntários</button>
+            </div>
+          </div>
+
+          <!-- 4. ARCA Cup (Torneio) -->
+          <div class="card-box event-card" data-ev="arca_cup" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Torneio Principal</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Junho / Julho</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">ARCA Cup (Futsal)</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Grande torneio inter-freguesias e empresas de futsal. Fase de grupos, eliminatórias noturnas e grande final com troféus e prémios.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Equipas:</strong> 16 Equipas em Competição</div>
+                <div><strong>Local:</strong> Pavilhão Polidesportivo ARCA</div>
+                <div><strong>Organização:</strong> Secção de Futsal & Direção</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir regulamento e tabela da ARCA Cup...', 'success')">Tabela & Equipas</button>
+            </div>
+          </div>
+
+          <!-- 5. Torneio Futsal Feminino -->
+          <div class="card-box event-card" data-ev="futsal_fem" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Torneio Feminino</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Julho</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Torneio Futsal Feminino</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Competição dedicada ao futsal feminino regional, promovendo o desporto, o convívio e o talento das atletas do concelho de Águeda e arredores.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Equipas:</strong> 8 Equipas Inscritas</div>
+                <div><strong>Duração:</strong> Fim de Semana Intensivo</div>
+                <div><strong>Local:</strong> Pavilhão ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir quadro do Torneio Feminino...', 'success')">Quadro de Jogos</button>
+            </div>
+          </div>
+
+          <!-- 6. Cicloturismo -->
+          <div class="card-box event-card" data-ev="cicloturismo" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Passeio Regional</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Maio 2026</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Passeio de Cicloturismo</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Encontro anual de amantes das duas rodas. Percurso acessível pelas paisagens da freguesia, lanche convívio e reforço alimentar.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Organização:</strong> BiciArca Team & Direção</div>
+                <div><strong>Percurso:</strong> 35 km (Dificuldade Baixa/Média)</div>
+                <div><strong>Inscrições:</strong> Inclui Dorsal, Seguro e Almoço</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir track GPS e inscrições do Cicloturismo...', 'success')">Track GPS & Inscrições</button>
+            </div>
+          </div>
+
+          <!-- 7. Dia da Freguesia -->
+          <div class="card-box event-card" data-ev="dia_freguesia" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Comemoração Cívica</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Comunidade</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Dia da Freguesia</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Participação de destaque da ARCA nas festividades oficiais da Junta de Freguesia de Aguada de Baixo com stand, barraquinha e demonstrações.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Parceria:</strong> Junta de Freguesia de Aguada de Baixo</div>
+                <div><strong>Atividades:</strong> Apresentação das Secções e Convivência</div>
+                <div><strong>Local:</strong> Parque da Freguesia / Centro Cívico</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir programa do Dia da Freguesia...', 'success')">Programa Oficial</button>
+            </div>
+          </div>
+
+          <!-- 8. Apresentação Futsal -->
+          <div class="card-box event-card" data-ev="futsal_apresentacao" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Arranque de Época</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Setembro</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Apresentação Futsal Sénior</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Festa de apresentação do plantel, equipa técnica e equipamentos para a nova temporada desportiva aos sócios e simpatizantes.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Jogo de Apresentação:</strong> ARCA vs Equipa Convidada</div>
+                <div><strong>Momento:</strong> Entrega de Cartões de Sócio Atleta</div>
+                <div><strong>Local:</strong> Pavilhão Polidesportivo ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir detalhes do jogo de apresentação...', 'success')">Jogo & Plantel</button>
+            </div>
+          </div>
+
+          <!-- 9. Encerramento Futsal -->
+          <div class="card-box event-card" data-ev="futsal_encerramento" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Fecho de Temporada</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Junho</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Gala de Encerramento Futsal</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Jantar de encerramento da época desportiva, distinção dos atletas, homenagem aos patrocinadores e balanço dos resultados obtidos.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Destaques:</strong> Troféus de Mérito e Dedicação</div>
+                <div><strong>Participantes:</strong> Atletas, Direção, Patrocinadores e Sócios</div>
+                <div><strong>Local:</strong> Sede Social da ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir prémios da gala de encerramento...', 'success')">Prémios & Gala</button>
+            </div>
+          </div>
+
+          <!-- 10. Torneio Todos Arca - Taça Jorginho -->
+          <div class="card-box event-card" data-ev="taca_jorginho" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Memorial Histórico</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Emblemático</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Torneio Todos Arca - Taça Jorginho</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Torneio memorial e de enorme sentimento associativo. Reúne antigas glórias, sócios e jovens numa celebração memorável de união.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Homenagem:</strong> Figura histórica da ARCA</div>
+                <div><strong>Participantes:</strong> Equipas mistas de todas as gerações</div>
+                <div><strong>Troféu:</strong> Taça Jorginho Transmissível</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir histórico da Taça Jorginho...', 'success')">Histórico & Vencedores</button>
+            </div>
+          </div>
+
+          <!-- 11. AgitÁgueda -->
+          <div class="card-box event-card" data-ev="agitagueda" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Festival Municipal</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Julho</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">AgitÁgueda</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Exploração da tasquinha gastronómica da ARCA no festival AgitÁgueda. Fonte vital de angariação de fundos e promoção da associação.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Duração:</strong> 23 Dias de Festival</div>
+                <div><strong>Local:</strong> Praça do Município / Zona Ribeirinha</div>
+                <div><strong>Voluntários:</strong> Mais de 60 Voluntários em Turnos</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir escala da tasquinha AgitÁgueda...', 'success')">Escala da Tasquinha</button>
+            </div>
+          </div>
+
+          <!-- 12. Eventos Andebol ARCA -->
+          <div class="card-box event-card" data-ev="andebol" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Modalidade</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Encontros</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Eventos Andebol ARCA</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Concentrações de andebol, treinos de demonstração para a juventude e torneios comemorativos da secção desportiva.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenação:</strong> Secção de Andebol ARCA</div>
+                <div><strong>Destinatários:</strong> Formação e Seniores</div>
+                <div><strong>Local:</strong> Pavilhão Polidesportivo ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir calendário de andebol...', 'success')">Calendário Andebol</button>
+            </div>
+          </div>
+
+          <!-- 13. Jogos Sem Fronteiras -->
+          <div class="card-box event-card" data-ev="jogos_sem_fronteiras" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Animação Popular</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Agosto</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Jogos Sem Fronteiras</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Tarde hilariante e competitiva com jogos tradicionais, provas de água, pista de obstáculos e estafetas entre ruas da freguesia.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Participação:</strong> Equipas de Bairros e Associações Amigas</div>
+                <div><strong>Público:</strong> Para toda a família e crianças</div>
+                <div><strong>Local:</strong> Recinto Exterior da ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir regulamento dos Jogos Sem Fronteiras...', 'success')">Ver Provas & Inscrições</button>
+            </div>
+          </div>
+
+          <!-- 14. Rota Das Minis -->
+          <div class="card-box event-card" data-ev="rota_minis" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Convívio Popular</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Setembro</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Rota Das Minis</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Percurso pedestre informal e bem-humorado com paragens nas tasquinhas e recantos da aldeia, degustação de petiscos e muita animação.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Percurso:</strong> 6 Postos Gastronómicos</div>
+                <div><strong>Inclui:</strong> Caneca oficial da Rota, fitas e petiscos</div>
+                <div><strong>Animação:</strong> Bach'Arca e bombos</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir inscrições da Rota das Minis...', 'success')">Kit & Inscrições</button>
+            </div>
+          </div>
+
+          <!-- 15. Aniversário ARCA -->
+          <div class="card-box event-card" data-ev="aniversario_arca" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Sessão Solene</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Data Magna</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Aniversário da ARCA</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Comemoração solene do aniversário da fundação. Hastear da bandeira, missa pelos associados falecidos e entrega de emblemas de dedicação.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Cerimónia:</strong> Entrega de Emblemas de 25 e 50 Anos de Sócio</div>
+                <div><strong>Presenças:</strong> Autarquias, Entidades e Associados</div>
+                <div><strong>Local:</strong> Sede Social da ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir lista de homenageados...', 'success')">Lista de Homenageados</button>
+            </div>
+          </div>
+
+          <!-- 16. Jantar Natal e Agradecimento -->
+          <div class="card-box event-card" data-ev="jantar_natal" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Confraternização</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Dezembro</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Jantar de Natal & Agradecimento</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Grande jantar de confraternização natalícia reunindo todos os órgãos sociais, voluntários, atletas e amigos que apoiaram a ARCA no ano.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Data:</strong> Segunda quinzena de Dezembro</div>
+                <div><strong>Local:</strong> Sede Social da ARCA</div>
+                <div><strong>Momentos:</strong> Vídeo retrospetiva anual e sorteio de Natal</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir reservas do Jantar de Natal...', 'success')">Reservas & Menus</button>
+            </div>
+          </div>
+
+          <!-- 17. Outros Eventos -->
+          <div class="card-box event-card" data-ev="outros" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Iniciativas Diversas</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Todo o Ano</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Outros Eventos & Iniciativas</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Ações solidárias, colheitas benévolas de sangue, colóquios, workshops, sessões de cinema comunitário e acolhimento a iniciativas locais.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenação:</strong> Gabinete de Eventos & Ação Social</div>
+                <div><strong>Propostas:</strong> Abertas à participação de qualquer associado</div>
+                <div><strong>Apoio Logístico:</strong> Sede e Recursos da ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A registar nova proposta de evento...', 'success')">Propor Iniciativa</button>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ev = urlParams.get('ev');
+
+      if (ev) {
+        const cards = document.querySelectorAll('.event-card');
+        cards.forEach(card => {
+          if (card.getAttribute('data-ev') === ev) {
+            card.style.display = 'flex';
+            card.style.borderColor = 'var(--primary)';
+            card.style.boxShadow = '0 0 0 2px var(--primary-light)';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        const evNames = {
+          janeiras: 'Cantar das Janeiras',
+          noite_sopas: 'Noite das Sopas',
+          peregrinos: 'Apoio aos Peregrinos',
+          arca_cup: 'ARCA Cup (Torneio de Futsal)',
+          futsal_fem: 'Torneio de Futsal Feminino',
+          cicloturismo: 'Passeio de Cicloturismo',
+          dia_freguesia: 'Dia da Freguesia de Aguada de Baixo',
+          futsal_apresentacao: 'Apresentação do Plantel de Futsal',
+          futsal_encerramento: 'Gala de Encerramento Futsal',
+          taca_jorginho: 'Torneio Todos Arca - Taça Jorginho',
+          agitagueda: 'AgitÁgueda (Tasquinha ARCA)',
+          andebol: 'Eventos Andebol ARCA',
+          jogos_sem_fronteiras: 'Jogos Sem Fronteiras',
+          rota_minis: 'Rota Das Minis',
+          aniversario_arca: 'Aniversário da Fundação da ARCA',
+          jantar_natal: 'Jantar de Natal e Agradecimento',
+          outros: 'Outros Eventos & Iniciativas'
+        };
+
+        if (evNames[ev]) {
+          document.getElementById('breadcrumbEvCurrent').textContent = evNames[ev];
+          document.getElementById('pageEvHeadingTitle').textContent = evNames[ev];
+          document.getElementById('pageEvHeadingSubtitle').textContent = 'Ficha de organização, planeamento logístico, tarefas de voluntários e orçamento.';
+        }
+
+        // Realçar botão/pill de filtro
+        document.querySelectorAll('.filter-pills-bar a').forEach(a => {
+          a.className = 'btn btn-sm btn-outline';
+        });
+        const pillEvMap = {
+          janeiras: 'pillEvJaneiras',
+          noite_sopas: 'pillEvNoiteSopas',
+          peregrinos: 'pillEvPeregrinos',
+          arca_cup: 'pillEvArcaCup',
+          futsal_fem: 'pillEvFutsalFem',
+          cicloturismo: 'pillEvCicloturismo',
+          dia_freguesia: 'pillEvDiaFreguesia',
+          futsal_apresentacao: 'pillEvFutsalApres',
+          futsal_encerramento: 'pillEvFutsalEncer',
+          taca_jorginho: 'pillEvTacaJorginho',
+          agitagueda: 'pillEvAgitagueda',
+          andebol: 'pillEvAndebol',
+          jogos_sem_fronteiras: 'pillEvJogosSemFronteiras',
+          rota_minis: 'pillEvRotaMinis',
+          aniversario_arca: 'pillEvAniversarioArca',
+          jantar_natal: 'pillEvJantarNatal',
+          outros: 'pillEvOutros'
+        };
+        if (pillEvMap[ev]) {
+          const activePill = document.getElementById(pillEvMap[ev]);
+          if (activePill) activePill.className = 'btn btn-sm btn-primary';
+        }
+
+        // Realçar link da sidebar (seja sublink normal ou aninhado)
+        document.querySelectorAll('.sidebar-nav .nav-sublink, .sidebar-nav .nav-nested-link').forEach(link => link.classList.remove('active'));
+        
+        const sublinkEvMap = {
+          janeiras: 'sublinkJaneiras',
+          noite_sopas: 'sublinkNoiteSopas',
+          peregrinos: 'sublinkPeregrinos',
+          cicloturismo: 'sublinkCicloturismo',
+          dia_freguesia: 'sublinkDiaFreguesia',
+          taca_jorginho: 'sublinkTacaJorginho',
+          agitagueda: 'sublinkAgitagueda',
+          andebol: 'sublinkAndebol',
+          jogos_sem_fronteiras: 'sublinkJogosSemFronteiras',
+          rota_minis: 'sublinkRotaMinis',
+          aniversario_arca: 'sublinkAniversarioArca',
+          jantar_natal: 'sublinkJantarNatal',
+          outros: 'sublinkOutros'
+        };
+
+        const nestedEvMap = {
+          arca_cup: { linkId: 'nestedArcaCup', parentId: 'btnParentTorneios', listId: 'listTorneios' },
+          futsal_fem: { linkId: 'nestedFutsalFem', parentId: 'btnParentTorneios', listId: 'listTorneios' },
+          futsal_apresentacao: { linkId: 'nestedFutsalApres', parentId: 'btnParentEpocaFutsal', listId: 'listEpocaFutsal' },
+          futsal_encerramento: { linkId: 'nestedFutsalEncer', parentId: 'btnParentEpocaFutsal', listId: 'listEpocaFutsal' }
+        };
+
+        if (sublinkEvMap[ev]) {
+          const activeSub = document.getElementById(sublinkEvMap[ev]);
+          if (activeSub) activeSub.classList.add('active');
+        } else if (nestedEvMap[ev]) {
+          const config = nestedEvMap[ev];
+          const activeNest = document.getElementById(config.linkId);
+          if (activeNest) activeNest.classList.add('active');
+          const parentBtn = document.getElementById(config.parentId);
+          if (parentBtn) parentBtn.classList.add('open');
+          const parentList = document.getElementById(config.listId);
+          if (parentList) parentList.classList.add('open');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

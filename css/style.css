@@ -581,6 +581,84 @@ button, input, select, textarea {
   font-weight: 700;
 }
 
+/* Submenus Aninhados de 2º Nível (ex: Torneios, Época Futsal) */
+.nav-nested-wrapper {
+  margin: 0.1rem 0;
+}
+
+.nav-nested-parent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.42rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.nav-nested-parent:hover {
+  color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.nav-nested-parent.open {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.nav-nested-parent .chevron-sm {
+  font-size: 0.7rem;
+  transition: transform 0.25s ease;
+  color: var(--text-muted);
+}
+
+.nav-nested-parent.open .chevron-sm {
+  transform: rotate(90deg);
+  color: var(--primary);
+}
+
+.nav-nested-list {
+  list-style: none;
+  margin: 0.15rem 0 0.35rem 0.5rem;
+  padding-left: 0.65rem;
+  border-left: 2px dashed rgba(28, 109, 66, 0.25);
+  display: none;
+}
+
+.nav-nested-list.open {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nav-nested-link {
+  display: block;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-radius: var(--radius-xs);
+  transition: all 0.15s ease;
+}
+
+.nav-nested-link:hover {
+  color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.nav-nested-link.active {
+  color: var(--primary);
+  background: var(--primary-light);
+  font-weight: 700;
+}
+
 /* Rodapé da Sidebar */
 .sidebar-footer {
   padding: 1.25rem;
