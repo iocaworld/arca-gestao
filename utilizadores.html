@@ -372,64 +372,55 @@
         <div class="page-title-bar">
           <div>
             <h1>Painel de Controlo &bull; Utilizadores</h1>
-            <p>Gestão técnica de contas de acesso à plataforma da ARCA, palavras-passe, perfis de permissão e registo de acessos.</p>
+            <p>Gestão técnica de contas de acesso à plataforma oficial da ARCA, permissões por módulo e perfis de segurança.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="membros.html" class="btn btn-secondary btn-sm" style="display: flex; align-items: center; gap: 0.4rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <span>Ver Órgãos Sociais</span>
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Convidar novo utilizador em preparação!', 'success')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Novo Utilizador</span>
+            </button>
           </div>
         </div>
 
         <!-- Tabela de Utilizadores -->
         <div class="card-box">
-          <div class="card-header-bar">
-            <h2>Contas de Utilizadores da Plataforma</h2>
-            <span class="status-pill em-dia">Sistema Seguro</span>
+          <div class="card-header-bar" style="flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2>Contas Oficiais de Utilizadores da Plataforma</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">18 contas registadas &bull; Sincronizadas com o portal oficial de gestão ARCA</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <input type="text" id="filtroUtilizadores" class="form-control" placeholder="Pesquisar utilizador ou nome..." style="max-width: 250px; font-size: 0.85rem;" oninput="filtrarUtilizadores(this.value)">
+              <span class="status-pill em-dia">18 Ativos</span>
+            </div>
           </div>
 
           <div class="table-responsive">
-            <table class="modern-table">
+            <table class="modern-table" id="tabelaUtilizadores">
               <thead>
                 <tr>
-                  <th>Utilizador (Login)</th>
-                  <th>Nome do Titular</th>
+                  <th style="width: 200px;">Utilizador (Login)</th>
+                  <th>Titular & Cargo Oficial</th>
                   <th>E-mail</th>
-                  <th>Perfil de Permissões</th>
-                  <th>Último Acesso</th>
-                  <th>Estado</th>
-                  <th style="text-align: right;">Ações</th>
+                  <th>Módulos & Permissões</th>
+                  <th style="width: 100px;">Estado</th>
+                  <th style="text-align: right; width: 100px;">Ações</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><code>jorge</code></td>
-                  <td><strong>Jorge Cunha</strong></td>
-                  <td>jorge.cunha@arca.pt</td>
-                  <td><span class="status-pill em-dia">Administrador Total</span></td>
-                  <td>Hoje, às 15:15</td>
-                  <td><span class="status-pill em-dia">Ativo</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('Conta de Administrador Geral protegida', 'success')">Editar</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><code>secretaria</code></td>
-                  <td><strong>Secretaria ARCA</strong></td>
-                  <td>secretaria@arca-aguadadebaixo.pt</td>
-                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Sócios, Cotas & Atas</span></td>
-                  <td>Hoje, às 11:30</td>
-                  <td><span class="status-pill em-dia">Ativo</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir conta da secretaria...', 'success')">Editar</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><code>tesoureiro</code></td>
-                  <td><strong>Tesouraria ARCA</strong></td>
-                  <td>tesouraria@arca-aguadadebaixo.pt</td>
-                  <td><span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Cotas & Contabilidade</span></td>
-                  <td>21/11/2026</td>
-                  <td><span class="status-pill em-dia">Ativo</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('A gerir conta do tesoureiro...', 'success')">Editar</button>
-                  </td>
-                </tr>
+              <tbody id="tbodyUtilizadores">
+                <!-- Preenchido via script -->
               </tbody>
             </table>
           </div>
@@ -442,5 +433,296 @@
 
   <script src="js/socios-data.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    const CONTAS_UTILIZADORES = [
+      {
+        login: "jorge",
+        nome: "Jorge Manuel da Silva Cunha",
+        cargo: "Presidente da Direção",
+        orgao: "Direção",
+        email: "scunhajorge@gmail.com",
+        permissoes: "Administrador · acesso total",
+        perfil: "Administrador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/5304d380-65df-4c43-9006-2292c2fc4800/photo?v=1793641149133",
+        estado: "Ativo"
+      },
+      {
+        login: "jose.reis",
+        nome: "José Manuel Carreira dos Reis",
+        cargo: "Vice-Presidente",
+        orgao: "Direção",
+        email: "zreis93@gmail.com",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/37697823-46b7-4253-bfd3-dc404c36e043/photo?v=1793706476392",
+        estado: "Ativo"
+      },
+      {
+        login: "luis.santos",
+        nome: "Luis Carlos Antunes dos Santos",
+        cargo: "Vice-Presidente",
+        orgao: "Direção",
+        email: "luis.santos43@gmail.com",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/8af9e138-f56b-4b5f-90f2-b8a4c488d2fb/photo?v=1793818250454",
+        estado: "Ativo"
+      },
+      {
+        login: "raquel.cunha",
+        nome: "Raquel Alexandra Marques da Cunha",
+        cargo: "Secretária",
+        orgao: "Direção",
+        email: "raquelamc22@gmail.com",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas (alterar)",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/ea9ac505-8508-4502-88ef-7f8e11c0805a/photo?v=1793816777187",
+        estado: "Ativo"
+      },
+      {
+        login: "artur.cardoso",
+        nome: "Artur Jorge Ferreira Cardoso",
+        cargo: "Tesoureiro",
+        orgao: "Direção",
+        email: "alfamobile@gmail.com",
+        permissoes: "Agenda, Calendário geral, Acessos por país, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/19f5964a-8118-49a3-9e88-084ce2283994/photo?v=1793805612409",
+        estado: "Ativo"
+      },
+      {
+        login: "agostinho.martins",
+        nome: "Agostinho Rui Ferreira Martins",
+        cargo: "Vogal",
+        orgao: "Direção",
+        email: "—",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/0aa8b4a4-c628-4b4d-9b1f-99943cfc8130/photo?v=1793816737213",
+        estado: "Ativo"
+      },
+      {
+        login: "ana.marques",
+        nome: "Ana Catarina Rua Marques",
+        cargo: "Vogal",
+        orgao: "Direção",
+        email: "ana_rua@outlook.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/7908c27d-34f7-4ef5-9f9e-fe6aadd6177c/photo?v=1793816749143",
+        estado: "Ativo"
+      },
+      {
+        login: "danilo.saraiva",
+        nome: "Danilo Alexandre Estima Saraiva",
+        cargo: "Vogal",
+        orgao: "Direção",
+        email: "d.alex.saraiva@gmail.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/ba3816d7-84bc-44fa-a3e9-a0f1ea09bf4c/photo?v=1793816766487",
+        estado: "Ativo"
+      },
+      {
+        login: "gabriel.carlos",
+        nome: "Gabriel Antunes das Neves Carlos",
+        cargo: "Vogal",
+        orgao: "Direção",
+        email: "gabriel1113nunes@gmail.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/3d740c8f-3dae-49d9-bb58-3932e6fc8e03/photo?v=1793816790890",
+        estado: "Ativo"
+      },
+      {
+        login: "rui.abrantes",
+        nome: "Rui Miguel Baptista Abrantes",
+        cargo: "Vogal",
+        orgao: "Direção",
+        email: "rui.baptista.abrantes@gmail.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/c2bc802f-2d33-4f93-b26a-ce065e9c05e1/photo?v=1793816801944",
+        estado: "Ativo"
+      },
+      {
+        login: "sergio.novo",
+        nome: "Sérgio Tiago Rodrigues Novo",
+        cargo: "Vogal",
+        orgao: "Direção",
+        email: "sr.gionovo@gmail.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/4eb101b0-ec18-42f0-9113-5cc1e1ec676a/photo?v=1793816828945",
+        estado: "Ativo"
+      },
+      {
+        login: "veronica.abrantes",
+        nome: "Verónica Baptista Abrantes",
+        cargo: "Vogal",
+        orgao: "Direção",
+        email: "kika_abrantes@hotmail.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/da2c2194-2795-46eb-843c-6ca64d2d46e2/photo?v=1793816840744",
+        estado: "Ativo"
+      },
+      {
+        login: "eduardo.milton",
+        nome: "Eduardo Milton Tavares da Silva",
+        cargo: "Presidente",
+        orgao: "Assembleia Geral",
+        email: "miltonsilva@sapo.pt",
+        permissoes: "Agenda, Calendário geral, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/5d8b7b75-e8b9-43c2-a9b0-13f8d2279c0a/photo?v=1793818274483",
+        estado: "Ativo"
+      },
+      {
+        login: "soraia.martins",
+        nome: "Soraia Filipa da Silva Martins",
+        cargo: "Secretária",
+        orgao: "Assembleia Geral",
+        email: "—",
+        permissoes: "Agenda, Calendário geral, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/b5cb407d-959c-4613-afc2-03d9804b4dfd/photo?v=1793818287796",
+        estado: "Ativo"
+      },
+      {
+        login: "cristiana.marques",
+        nome: "Cristiana Simões Marques",
+        cargo: "Vogal",
+        orgao: "Assembleia Geral",
+        email: "—",
+        permissoes: "Agenda, Calendário geral, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/700a40a8-fc40-4131-bfa6-17b5f2a1ecf1/photo?v=1793818298782",
+        estado: "Ativo"
+      },
+      {
+        login: "rui.cardoso",
+        nome: "Rui Manuel da Silva Cardoso",
+        cargo: "Presidente",
+        orgao: "Conselho Fiscal",
+        email: "—",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/91e4a3b8-6f3b-4860-9ba2-c2e7b7f16bc4/photo?v=1793818314111",
+        estado: "Ativo"
+      },
+      {
+        login: "natalia.rodrigues",
+        nome: "Natália Cláudia Simões Rodrigues",
+        cargo: "Vogal",
+        orgao: "Conselho Fiscal",
+        email: "natalia.sr1974@gmail.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/c19d45ee-5c40-42ec-a068-d0f507ee64ae/photo?v=1793818329617",
+        estado: "Ativo"
+      },
+      {
+        login: "quelia.ribeiro",
+        nome: "Quélia Rodrigues Ribeiro",
+        cargo: "Vogal",
+        orgao: "Conselho Fiscal",
+        email: "queliaribeiro.qr@gmail.com",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Utilizador",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/d2361df4-ec2e-4b21-8178-c0b7fb5bbd9b/photo?v=1793818342407",
+        estado: "Ativo"
+      }
+    ];
+
+    function handleAvatarError(img, initial) {
+      const div = document.createElement('div');
+      div.style.cssText = 'width: 34px; height: 34px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: var(--primary); flex-shrink: 0;';
+      div.textContent = initial || 'U';
+      img.replaceWith(div);
+    }
+
+    function renderTabelaUtilizadores(lista) {
+      const tbody = document.getElementById('tbodyUtilizadores');
+      if (!tbody) return;
+
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Nenhum utilizador encontrado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = lista.map(u => {
+        const avatarHtml = u.foto 
+          ? `<img src="${u.foto}" alt="${u.nome}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary);" onerror="handleAvatarError(this, '${u.nome.charAt(0)}')">`
+          : `<div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: var(--primary);">${u.nome.charAt(0)}</div>`;
+
+        let orgaoBadge = '';
+        if (u.orgao === 'Direção') {
+          orgaoBadge = `<span style="font-size: 0.72rem; padding: 0.15rem 0.4rem; border-radius: 4px; background: rgba(28,109,66,0.1); color: var(--primary); font-weight: 600;">Direção</span>`;
+        } else if (u.orgao === 'Assembleia Geral') {
+          orgaoBadge = `<span style="font-size: 0.72rem; padding: 0.15rem 0.4rem; border-radius: 4px; background: #ede9fe; color: #6d28d9; font-weight: 600;">Assembleia Geral</span>`;
+        } else {
+          orgaoBadge = `<span style="font-size: 0.72rem; padding: 0.15rem 0.4rem; border-radius: 4px; background: #e0f2fe; color: #0369a1; font-weight: 600;">Conselho Fiscal</span>`;
+        }
+
+        const isAdmin = u.perfil === 'Administrador';
+
+        return `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                ${avatarHtml}
+                <div>
+                  <code style="font-weight: 700; color: var(--primary); font-size: 0.88rem;">@${u.login}</code>
+                  ${isAdmin ? '<div style="font-size: 0.7rem; color: #b45309; font-weight: 700;">★ Admin</div>' : ''}
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong style="color: var(--text-title);">${u.nome}</strong>
+              <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; margin-top: 0.15rem;">
+                <span>${u.cargo}</span> &bull; ${orgaoBadge}
+              </div>
+            </td>
+            <td>
+              ${u.email !== '—' ? `<a href="mailto:${u.email}" style="color: var(--text-body); text-decoration: none; font-size: 0.85rem;">${u.email}</a>` : '<span style="color: var(--text-muted); font-size: 0.85rem;">—</span>'}
+            </td>
+            <td>
+              <span style="font-size: 0.8rem; line-height: 1.35; display: inline-block; color: ${isAdmin ? 'var(--primary)' : 'var(--text-body)'}; font-weight: ${isAdmin ? '700' : '500'};">
+                ${u.permissoes}
+              </span>
+            </td>
+            <td>
+              <span class="status-pill em-dia">${u.estado}</span>
+            </td>
+            <td style="text-align: right;">
+              <a href="membros.html" class="btn btn-outline btn-sm" title="Ver no módulo Membros">Ver Ficha</a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filtrarUtilizadores(query) {
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        renderTabelaUtilizadores(CONTAS_UTILIZADORES);
+        return;
+      }
+      const filtrados = CONTAS_UTILIZADORES.filter(u => 
+        u.nome.toLowerCase().includes(q) ||
+        u.login.toLowerCase().includes(q) ||
+        u.cargo.toLowerCase().includes(q) ||
+        u.orgao.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.permissoes.toLowerCase().includes(q)
+      );
+      renderTabelaUtilizadores(filtrados);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTabelaUtilizadores(CONTAS_UTILIZADORES);
+    });
+  </script>
 </body>
 </html>

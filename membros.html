@@ -83,13 +83,12 @@
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
                 <span>Sócios & Cotas</span>
-                <span class="nav-item-badge">248</span>
+                <span class="nav-item-badge">425</span>
               </a>
             </li>
           </ul>
         </div>
 
-        
         <!-- Menu: Tesouraria -->
         <div>
           <ul class="nav-list">
@@ -98,8 +97,8 @@
                 <span class="nav-parent-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="4" width="20" height="16" rx="2"/>
-                    <line x1="2" y1="10" x2="22" y2="10"/>
-                    <circle cx="16" cy="15" r="1"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
                   </svg>
                   <span>Tesouraria</span>
                 </span>
@@ -115,11 +114,11 @@
           </ul>
         </div>
 
-        <!-- 4. Menu: Direção (Aberto) -->
-        <div>
+        <!-- 4. Menu: Direção -->
+        <div class="nav-section-active">
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent open" type="button">
+              <button class="nav-item-parent active open" type="button">
                 <span class="nav-parent-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
@@ -129,17 +128,19 @@
                   </svg>
                   <span>Direção</span>
                 </span>
-                <span class="chevron">&#9656;</span>
+                <span class="chevron">&#9662;</span>
               </button>
-              <ul class="nav-sublist open">
-                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+              <ul class="nav-sublist" style="display: block;">
                 <li><a href="membros.html" class="nav-sublink active">Membros</a></li>
+                <li><a href="atas.html" class="nav-sublink">Atas</a></li>
+                <li><a href="documentos.html?pasta=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?pasta=tomadas_posse" class="nav-sublink">Tomadas de Posse</a></li>
+                <li><a href="documentos.html?pasta=direcoes_anteriores" class="nav-sublink">Direções Anteriores</a></li>
               </ul>
             </li>
           </ul>
         </div>
 
-        
         <!-- Menu: Gestão Desportiva -->
         <div>
           <ul class="nav-list">
@@ -148,8 +149,10 @@
                 <span class="nav-parent-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-                    <path d="M2 12h20"/>
+                    <path d="M4.93 4.93l4.24 4.24"/>
+                    <path d="M14.83 9.17l4.24-4.24"/>
+                    <path d="M14.83 14.83l4.24 4.24"/>
+                    <path d="M4.93 19.07l4.24-4.24"/>
                   </svg>
                   <span>Gestão Desportiva</span>
                 </span>
@@ -174,179 +177,89 @@
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
                   </svg>
                   <span>Documentação ARCA</span>
                 </span>
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist">
-                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
-                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
-                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
-                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
-                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+                <li><a href="documentos.html?pasta=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
+                <li><a href="documentos.html?pasta=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?pasta=atas_assembleias" class="nav-sublink">Atas Assembleias Gerais</a></li>
+                <li><a href="documentos.html?pasta=tomadas_posse" class="nav-sublink">Atas Tomadas de Posse</a></li>
+                <li><a href="documentos.html?pasta=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
               </ul>
             </li>
           </ul>
         </div>
 
-        <!-- 6. Menu: Secções & Grupos -->
+        <!-- 6. Menu: Secções -->
         <div>
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                    <path d="M4 22h16"/>
-                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
-                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
-                  </svg>
-                  <span>Secções & Grupos</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist">
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Futsal</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="seccoes.html?sec=futsal_masculino" class="nav-nested-link">Séniores Masculino</a></li>
-                    <li><a href="seccoes.html?sec=futsal_feminino" class="nav-nested-link">Séniores Femininos</a></li>
-                    <li><a href="seccoes.html?sec=futsal_formacao" class="nav-nested-link">Formação</a></li>
-                  </ul>
-                </li>
-                <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
-                <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
-                <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
-                <li><a href="seccoes.html?sec=funcional" class="nav-sublink">Treino Funcional</a></li>
-                <li><a href="seccoes.html?sec=pilates" class="nav-sublink">Pilates</a></li>
-                <li><a href="seccoes.html?sec=tea" class="nav-sublink">TEA</a></li>
-                <li><a href="seccoes.html?sec=olhares_disparos" class="nav-sublink">Olhares e Disparos</a></li>
-                <li><a href="seccoes.html?sec=bacharca" class="nav-sublink">Bach'Arca</a></li>
-              </ul>
+              <a href="seccoes.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
+                <span>Secções</span>
+              </a>
             </li>
           </ul>
         </div>
 
-        <!-- 7. Menu: Eventos & Organizações -->
+        <!-- 7. Menu: Eventos -->
         <div>
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
-                  </svg>
-                  <span>Eventos & Organizações</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist">
-                <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
-                <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Assistência e Apoio</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=peregrinos" class="nav-nested-link">Peregrinos</a></li>
-                    <li><a href="eventos.html?ev=bombeiros" class="nav-nested-link">Bombeiros</a></li>
-                    <li><a href="eventos.html?ev=animais" class="nav-nested-link">Animais</a></li>
-                    <li><a href="eventos.html?ev=angariacoes" class="nav-nested-link">Angariações</a></li>
-                  </ul>
-                </li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Torneios</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=arca_cup" class="nav-nested-link">ARCA Cup</a></li>
-                    <li><a href="eventos.html?ev=futsal_fem" class="nav-nested-link">Torneio Futsal Feminino</a></li>
-                  </ul>
-                </li>
-                <li><a href="eventos.html?ev=cicloturismo" class="nav-sublink">Cicloturismo</a></li>
-                <li><a href="eventos.html?ev=dia_freguesia" class="nav-sublink">Dia da Freguesia</a></li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Época Futsal</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=futsal_apresentacao" class="nav-nested-link">Apresentação</a></li>
-                    <li><a href="eventos.html?ev=futsal_encerramento" class="nav-nested-link">Encerramento</a></li>
-                  </ul>
-                </li>
-                <li><a href="eventos.html?ev=taca_jorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
-                <li><a href="eventos.html?ev=agitagueda" class="nav-sublink">AgitÁgueda</a></li>
-                <li><a href="eventos.html?ev=andebol" class="nav-sublink">Eventos Andebol ARCA</a></li>
-                <li><a href="eventos.html?ev=jogos_sem_fronteiras" class="nav-sublink">Jogos Sem Fronteiras</a></li>
-                <li><a href="eventos.html?ev=rota_minis" class="nav-sublink">Rota Das Minis</a></li>
-                <li><a href="eventos.html?ev=aniversario_arca" class="nav-sublink">Aniversário ARCA</a></li>
-                <li><a href="eventos.html?ev=jantar_natal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
-                <li><a href="eventos.html?ev=outros" class="nav-sublink">Outros</a></li>
-              </ul>
+              <a href="eventos.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Eventos</span>
+              </a>
             </li>
           </ul>
         </div>
 
-        <!-- 8. Menu: Painel de Controlo -->
+        <!-- 8. Menu: Utilizadores -->
         <div>
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                  </svg>
-                  <span>Painel de Controlo</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist">
-                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
-              </ul>
+              <a href="utilizadores.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Utilizadores</span>
+              </a>
             </li>
           </ul>
         </div>
       </nav>
-
-      <div class="sidebar-footer">
-        <div class="user-avatar">JC</div>
-        <div class="user-details">
-          <div class="user-name">Jorge Cunha</div>
-          <div class="user-role">Direção Geral</div>
-        </div>
-        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-        </a>
-      </div>
     </aside>
 
     <!-- Área Principal de Conteúdo -->
     <div class="app-main">
       
-      <!-- Topbar -->
+      <!-- Topbar Institucional -->
       <header class="app-topbar">
         <div class="topbar-left">
-          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">
-            &#9776;
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir menu lateral">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
           </button>
-          <div class="breadcrumbs">
+          <div class="topbar-breadcrumb">
             <a href="painel.html">ARCA</a>
             <span>&rsaquo;</span>
             <span>Direção</span>
@@ -356,7 +269,7 @@
         </div>
 
         <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Adicionar membro aos Órgãos Sociais em preparação!', 'success')">
+          <button class="btn btn-primary btn-sm" onclick="openNovoMembroModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
@@ -372,148 +285,130 @@
         <div class="page-title-bar">
           <div>
             <h1>Membros dos Órgãos Sociais</h1>
-            <p>Fichas institucionais e composição da Direção, Mesa da Assembleia Geral e Conselho Fiscal da ARCA (Mandato 2025/2027).</p>
+            <p>Composição oficial da Direção, Mesa da Assembleia Geral e Conselho Fiscal da ARCA (Mandato Ativo).</p>
           </div>
         </div>
 
-        <!-- 1. Direção -->
-        <div class="card-box">
+        <!-- Indicadores Rápidos Conforme Sistema ARCA -->
+        <div class="metrics-row-4">
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">TOTAL MEMBROS</span>
+              <span class="metric-value" id="statTotalMembros" style="color: var(--primary); font-size: 2.1rem; margin-top: 0.2rem;">18</span>
+              <span class="metric-badge positive" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">Órgãos Sociais Ativos</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">DIREÇÃO</span>
+              <span class="metric-value" id="statDirecao" style="color: #16a34a; font-size: 2.1rem; margin-top: 0.2rem;">12</span>
+              <span class="metric-badge positive" style="font-weight: 500; font-size: 0.85rem; margin-top: 0.35rem;">Dirigentes Executivos</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-orange">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">ASSEMBLEIA GERAL</span>
+              <span class="metric-value" id="statAssembleia" style="color: #6d28d9; font-size: 2.1rem; margin-top: 0.2rem;">3</span>
+              <span class="metric-badge warning" style="font-weight: 500; font-size: 0.85rem; margin-top: 0.35rem;">Mesa Deliberativa</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-red">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">CONSELHO FISCAL</span>
+              <span class="metric-value" id="statConselhoFiscal" style="color: #0369a1; font-size: 2.1rem; margin-top: 0.2rem;">3</span>
+              <span class="metric-badge" style="color: #0369a1; font-weight: 700; font-size: 0.85rem; margin-top: 0.35rem;">Fiscalização de Contas</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela Principal de Membros -->
+        <div class="card-box" style="margin-top: 1.5rem;">
           <div class="card-header-bar">
-            <h2>Membros da Direção</h2>
-            <span class="status-pill em-dia">Mandato Ativo</span>
+            <h2>Membros e Dirigentes Oficiais da ARCA</h2>
+            
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              
+              <!-- Filtro de Órgão Social -->
+              <select id="filterOrgao" class="btn btn-secondary btn-sm" onchange="handleOrgaoFilter(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                <option value="all">Todos os Órgãos (18)</option>
+                <option value="Direção">Direção (12)</option>
+                <option value="Assembleia Geral">Assembleia Geral (3)</option>
+                <option value="Conselho Fiscal">Conselho Fiscal (3)</option>
+              </select>
+
+              <!-- Pesquisa de Membros -->
+              <input type="text" id="searchMembros" class="form-control" placeholder="Pesquisar por nome, cargo ou utilizador..." oninput="handleMembrosSearch(this.value)" style="width: 250px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+              <!-- Seletor de Ordenação -->
+              <select id="sortMembrosSelect" class="btn btn-secondary btn-sm" onchange="handleMembrosSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                <option value="hierarquia">Órgão & Hierarquia</option>
+                <option value="nome_asc">Nome (A → Z)</option>
+                <option value="nome_desc">Nome (Z → A)</option>
+                <option value="cargo_asc">Cargo Institucional</option>
+                <option value="socio_asc">Nº de Sócio (Menor → Maior)</option>
+              </select>
+
+              <!-- Seletor de Colunas -->
+              <div class="col-picker-dropdown">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerMembros" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                  </svg>
+                  <span>Colunas</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="col-picker-menu" id="menuColPickerMembros">
+                  <div class="col-picker-header">
+                    <span>Personalizar Colunas</span>
+                    <button type="button" onclick="resetMembrosCols()">Repor</button>
+                  </div>
+                  <div class="col-picker-list" id="listColPickerMembros"></div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-sm" onclick="openNovoMembroModal()">+ Adicionar Membro</button>
+            </div>
           </div>
 
           <div class="table-responsive">
-            <table class="modern-table">
+            <table class="modern-table" id="tableMembros">
               <thead>
-                <tr>
-                  <th>Nome do Dirigente</th>
-                  <th>Cargo Institucional</th>
-                  <th>Nº Sócio</th>
-                  <th>Contacto / E-mail</th>
-                  <th>Tomada de Posse</th>
-                  <th style="text-align: right;">Ações</th>
+                <tr id="headRowMembros">
+                  <th class="sortable-th" data-col="nome" onclick="sortMembros('nome')">
+                    <span>Nome do Dirigente</span><span class="sort-indicator" id="sortInd_mem_nome">▲</span>
+                  </th>
+                  <th class="sortable-th" data-col="cargo" style="width: 170px;" onclick="sortMembros('cargo')">
+                    <span>Cargo Institucional</span><span class="sort-indicator" id="sortInd_mem_cargo">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="orgao" style="width: 160px;" onclick="sortMembros('orgao')">
+                    <span>Órgão Social</span><span class="sort-indicator" id="sortInd_mem_orgao">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="socio" style="width: 110px;" onclick="sortMembros('socio')">
+                    <span>Nº Sócio</span><span class="sort-indicator" id="sortInd_mem_socio">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="login" style="width: 140px;" onclick="sortMembros('login')">
+                    <span>Utilizador</span><span class="sort-indicator" id="sortInd_mem_login">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="contacto" onclick="sortMembros('contacto')">
+                    <span>Contacto / E-mail</span><span class="sort-indicator" id="sortInd_mem_contacto">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="permissoes" style="width: 150px;" onclick="sortMembros('permissoes')">
+                    <span>Perfil de Acesso</span><span class="sort-indicator" id="sortInd_mem_permissoes">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="estado" style="width: 100px;" onclick="sortMembros('estado')">
+                    <span>Estado</span><span class="sort-indicator" id="sortInd_mem_estado">⇅</span>
+                  </th>
+                  <th data-col="acoes" style="text-align: right; width: 130px;">Ações</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Jorge Cunha</div>
-                    <small style="color: var(--text-muted);">Aguada de Baixo</small>
-                  </td>
-                  <td><strong>Presidente da Direção</strong></td>
-                  <td>Sócio #1</td>
-                  <td>912 345 678 &bull; jorge.cunha@arca.pt</td>
-                  <td>12/01/2025</td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa do dirigente...', 'success')">Ver Ficha</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Fernando José Almeida</div>
-                    <small style="color: var(--text-muted);">Aguada de Baixo</small>
-                  </td>
-                  <td><strong>Vice-Presidente</strong></td>
-                  <td>Sócio #23</td>
-                  <td>925 444 555 &bull; fernando.almeida@arca.pt</td>
-                  <td>12/01/2025</td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa...', 'success')">Ver Ficha</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Carlos Eduardo Pinto</div>
-                    <small style="color: var(--text-muted);">Aguada de Baixo</small>
-                  </td>
-                  <td><strong>Tesoureiro</strong></td>
-                  <td>Sócio #58</td>
-                  <td>964 333 444 &bull; tesouraria@arca-aguadadebaixo.pt</td>
-                  <td>12/01/2025</td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa...', 'success')">Ver Ficha</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Ana Beatriz Ramos</div>
-                    <small style="color: var(--text-muted);">Águeda</small>
-                  </td>
-                  <td><strong>Secretária</strong></td>
-                  <td>Sócia #42</td>
-                  <td>918 777 666 &bull; secretaria@arca-aguadadebaixo.pt</td>
-                  <td>12/01/2025</td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha completa...', 'success')">Ver Ficha</button>
-                  </td>
-                </tr>
+              <tbody id="tbodyMembros">
+                <!-- Inserido dinamicamente via JS -->
               </tbody>
             </table>
           </div>
-        </div>
-
-        <!-- 2. Mesa da Assembleia Geral & Conselho Fiscal -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
-          
-          <div class="card-box">
-            <div class="card-header-bar">
-              <h2>Mesa da Assembleia Geral</h2>
-            </div>
-            <div style="padding: 1.25rem;">
-              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <strong>Presidente da Mesa:</strong> Manuel António Rodrigues
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio Benemérito #2 &bull; Aguada de Baixo</div>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Manuel Rodrigues', 'success')">Ficha</button>
-              </div>
-              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <strong>1º Secretário:</strong> Maria Clara Santos
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócia #14 &bull; Barrô</div>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Maria Clara', 'success')">Ficha</button>
-              </div>
-              <div style="padding: 0.85rem 0; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <strong>2º Secretário:</strong> Rui Pedro Oliveira
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Sócio #74 &bull; Aguada de Cima</div>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Rui Pedro', 'success')">Ficha</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card-box">
-            <div class="card-header-bar">
-              <h2>Conselho Fiscal</h2>
-            </div>
-            <div style="padding: 1.25rem;">
-              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <strong>Presidente do Conselho:</strong> António Silva Pereira
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Pareceres e auditoria fiscal às contas</div>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de António Pereira', 'success')">Ficha</button>
-              </div>
-              <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <strong>Relator:</strong> José Manuel Martins
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Fiscalização de balancetes e fechos</div>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de José Martins', 'success')">Ficha</button>
-              </div>
-              <div style="padding: 0.85rem 0; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <strong>Secretário:</strong> Paula Cristina Soares
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Acompanhamento de relatórios</div>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="showToast('Ficha de Paula Soares', 'success')">Ficha</button>
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </main>
@@ -521,7 +416,912 @@
 
   </div>
 
+  <!-- Modal: Visualizar Ficha Completa do Membro -->
+  <div class="modal-overlay" id="modalFichaMembro" onclick="if(event.target === this) closeFichaMembroModal()">
+    <div class="modal-content" style="max-width: 620px;">
+      <div class="modal-header">
+        <div>
+          <h2 id="fichaMembroNome">Ficha Institucional do Membro</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;" id="fichaMembroCargo">
+            Dirigente Oficial dos Órgãos Sociais da ARCA
+          </p>
+        </div>
+        <button class="modal-close" onclick="closeFichaMembroModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding-top: 0.5rem;">
+        <div id="fichaMembroContent"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
+          <button type="button" class="btn btn-outline btn-sm" id="btnEditarMembroFromFicha">
+            📝 Editar Dados
+          </button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnVerSocioFromFicha">
+              Ver Ficha de Sócio ↗
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="closeFichaMembroModal()">
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Criar / Editar Membro -->
+  <div class="modal-overlay" id="modalFormMembro" onclick="if(event.target === this) closeFormMembroModal()">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2 id="modalFormMembroTitle">Adicionar Membro aos Órgãos Sociais</h2>
+        <button class="modal-close" onclick="closeFormMembroModal()">&times;</button>
+      </div>
+
+      <form id="formMembro" onsubmit="handleSalvarMembro(event)">
+        <input type="hidden" id="formMembroId">
+
+        <div class="form-group">
+          <label class="form-label" for="formMembroNome">Nome Completo *</label>
+          <input type="text" id="formMembroNome" class="form-control" required placeholder="ex: Jorge Manuel da Silva Cunha">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="formMembroOrgao">Órgão Social *</label>
+            <select id="formMembroOrgao" class="form-control" required onchange="handleFormOrgaoChange(this.value)">
+              <option value="Direção">Direção</option>
+              <option value="Assembleia Geral">Assembleia Geral</option>
+              <option value="Conselho Fiscal">Conselho Fiscal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formMembroCargo">Cargo Institucional *</label>
+            <input type="text" id="formMembroCargo" class="form-control" required placeholder="ex: Presidente, Vice-Presidente, Vogal...">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 140px 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="formMembroSocio">Nº de Sócio</label>
+            <input type="number" id="formMembroSocio" class="form-control" placeholder="ex: 314">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formMembroUsername">Nome de Utilizador</label>
+            <input type="text" id="formMembroUsername" class="form-control" placeholder="ex: @jorge">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="formMembroEmail">E-mail</label>
+            <input type="email" id="formMembroEmail" class="form-control" placeholder="exemplo@arca.pt">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formMembroTelefone">Contacto Telefónico</label>
+            <input type="tel" id="formMembroTelefone" class="form-control" placeholder="ex: 912 345 678">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="formMembroMorada">Morada / Localidade</label>
+          <input type="text" id="formMembroMorada" class="form-control" placeholder="ex: Aguada de Baixo">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="formMembroPerfil">Perfil de Acesso</label>
+            <select id="formMembroPerfil" class="form-control">
+              <option value="Utilizador">Utilizador</option>
+              <option value="Administrador">Administrador</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formMembroEstado">Estado da Conta</label>
+            <select id="formMembroEstado" class="form-control">
+              <option value="Ativo" selected>Ativo</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" onclick="closeFormMembroModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Gravar Membro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="js/socios-data.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    // =========================================================================
+    // BASE DE DADOS OFICIAL DOS 18 MEMBROS DOS ÓRGÃOS SOCIAIS DA ARCA
+    // Sincronizada diretamente do portal oficial de gestão ARCA
+    // =========================================================================
+    const MEMBROS_STORAGE_KEY = 'arca_membros_orgaos_v3';
+
+    const OFFICIAL_MEMBROS = [
+      // DIREÇÃO (12 Membros)
+      {
+        id: 1,
+        nome: "Jorge Manuel da Silva Cunha",
+        cargo: "Presidente",
+        orgao: "Direção",
+        numeroSocio: 314,
+        username: "@jorge",
+        email: "scunhajorge@gmail.com",
+        telefone: "966 100 115",
+        morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
+        perfil: "Administrador",
+        permissoes: "Administrador · acesso total",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/5304d380-65df-4c43-9006-2292c2fc4800/photo?v=1793641149133"
+      },
+      {
+        id: 2,
+        nome: "José Manuel Carreira dos Reis",
+        cargo: "Vice-Presidente",
+        orgao: "Direção",
+        numeroSocio: 413,
+        username: "@jose.reis",
+        email: "zreis93@gmail.com",
+        telefone: "932 997 857",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/37697823-46b7-4253-bfd3-dc404c36e043/photo?v=1793706476392"
+      },
+      {
+        id: 3,
+        nome: "Luis Carlos Antunes dos Santos",
+        cargo: "Vice-Presidente",
+        orgao: "Direção",
+        numeroSocio: 306,
+        username: "@luis.santos",
+        email: "luis.santos43@gmail.com",
+        telefone: "",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/8af9e138-f56b-4b5f-90f2-b8a4c488d2fb/photo?v=1793818250454"
+      },
+      {
+        id: 4,
+        nome: "Raquel Alexandra Marques da Cunha",
+        cargo: "Secretária",
+        orgao: "Direção",
+        numeroSocio: 414,
+        username: "@raquel.cunha",
+        email: "raquelamc22@gmail.com",
+        telefone: "968 010 436",
+        morada: "Rua Prior dr Cura rachão, 36 - Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas (alterar)",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/ea9ac505-8508-4502-88ef-7f8e11c0805a/photo?v=1793816777187"
+      },
+      {
+        id: 5,
+        nome: "Artur Jorge Ferreira Cardoso",
+        cargo: "Tesoureiro",
+        orgao: "Direção",
+        numeroSocio: 332,
+        username: "@artur.cardoso",
+        email: "alfamobile@gmail.com",
+        telefone: "911 970 345",
+        morada: "Rua Vale do Lobo, 11 - Landiosa, Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda, Calendário geral, Acessos por país, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/19f5964a-8118-49a3-9e88-084ce2283994/photo?v=1793805612409"
+      },
+      {
+        id: 6,
+        nome: "Agostinho Rui Ferreira Martins",
+        cargo: "Vogal",
+        orgao: "Direção",
+        numeroSocio: 424,
+        username: "@agostinho.martins",
+        email: "",
+        telefone: "912 944 380",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/0aa8b4a4-c628-4b4d-9b1f-99943cfc8130/photo?v=1793816737213"
+      },
+      {
+        id: 7,
+        nome: "Ana Catarina Rua Marques",
+        cargo: "Vogal",
+        orgao: "Direção",
+        numeroSocio: 423,
+        username: "@ana.marques",
+        email: "ana_rua@outlook.com",
+        telefone: "916 668 023",
+        morada: "Rua da Miragaia, 658, R/C Drt - Aguada de Cima",
+        perfil: "Utilizador",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/7908c27d-34f7-4ef5-9f9e-fe6aadd6177c/photo?v=1793816749143"
+      },
+      {
+        id: 8,
+        nome: "Danilo Alexandre Estima Saraiva",
+        cargo: "Vogal",
+        orgao: "Direção",
+        numeroSocio: 416,
+        username: "@danilo.saraiva",
+        email: "d.alex.saraiva@gmail.com",
+        telefone: "918 159 976",
+        morada: "Rua do Alto da Póvoa, 81 - Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/aa836b00-94c9-4df6-95f3-4de6aa51b586/photo?v=1793641300406"
+      },
+      {
+        id: 9,
+        nome: "Gabriel Antunes das Neves Carlos",
+        cargo: "Vogal",
+        orgao: "Direção",
+        numeroSocio: 421,
+        username: "@gabriel.carlos",
+        email: "gabriel1113nunes@gmail.com",
+        telefone: "915 469 288",
+        morada: "Rua do Sol, 38 - Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/7e95c4d9-d1bd-488f-aeda-fcf43b91a588/photo?v=1793816759797"
+      },
+      {
+        id: 10,
+        nome: "Rui Miguel Baptista Abrantes",
+        cargo: "Vogal",
+        orgao: "Direção",
+        numeroSocio: 419,
+        username: "@rui.abrantes",
+        email: "rui.baptista.abrantes@gmail.com",
+        telefone: "919 455 702",
+        morada: "Rua da Borralha, 6 - Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/8ee6174a-3174-416c-9747-b1be7ebfa300/photo?v=1793816785631"
+      },
+      {
+        id: 11,
+        nome: "Sérgio Tiago Rodrigues Novo",
+        cargo: "Vogal",
+        orgao: "Direção",
+        numeroSocio: 420,
+        username: "@sergio.novo",
+        email: "sr.gionovo@gmail.com",
+        telefone: "915 132 723",
+        morada: "Rua Póvoa do Nascido - Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/dd77f6e0-ea04-4682-9b0f-531a7a45dea2/photo?v=1793816792272"
+      },
+      {
+        id: 12,
+        nome: "Verónica Baptista Abrantes",
+        cargo: "Vogal",
+        orgao: "Direção",
+        numeroSocio: 422,
+        username: "@veronica.abrantes",
+        email: "kika_abrantes@hotmail.com",
+        telefone: "910 828 294",
+        morada: "Rua da Borralha, 6 - Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        estado: "Ativo",
+        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/54319a5f-2b87-4a13-8aa4-2a25b49dcd90/photo?v=1793816798927"
+      },
+
+      // MESA DA ASSEMBLEIA GERAL (3 Membros)
+      {
+        id: 13,
+        nome: "Eduardo Milton Tavares da Silva",
+        cargo: "Presidente da Mesa",
+        orgao: "Assembleia Geral",
+        numeroSocio: 27,
+        username: "@eduardo.milton",
+        email: "",
+        telefone: "962 591 611",
+        morada: "Rua Dr. Prior Cura Rachão, 97 - Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda (ver)",
+        estado: "Ativo",
+        foto: ""
+      },
+      {
+        id: 14,
+        nome: "Soraia Filipa da Silva Martins",
+        cargo: "Secretária da Mesa",
+        orgao: "Assembleia Geral",
+        numeroSocio: 331,
+        username: "@soraia.martins",
+        email: "",
+        telefone: "",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda, Atas",
+        estado: "Ativo",
+        foto: ""
+      },
+      {
+        id: 15,
+        nome: "Cristiana Simões Marques",
+        cargo: "Vogal da Mesa",
+        orgao: "Assembleia Geral",
+        numeroSocio: 385,
+        username: "@cristiana.marques",
+        email: "",
+        telefone: "917 337 981",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda (ver)",
+        estado: "Ativo",
+        foto: ""
+      },
+
+      // CONSELHO FISCAL (3 Membros)
+      {
+        id: 16,
+        nome: "Rui Manuel da Silva Cardoso",
+        cargo: "Presidente do Conselho",
+        orgao: "Conselho Fiscal",
+        numeroSocio: 265,
+        username: "@rui.cardoso",
+        email: "",
+        telefone: "918 609 599",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda (ver)",
+        estado: "Ativo",
+        foto: ""
+      },
+      {
+        id: 17,
+        nome: "Natália Cláudia Simões Rodrigues",
+        cargo: "Vogal do Conselho",
+        orgao: "Conselho Fiscal",
+        numeroSocio: 407,
+        username: "@natalia.rodrigues",
+        email: "natalia.sr1974@gmail.com",
+        telefone: "915 179 776",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda (ver)",
+        estado: "Ativo",
+        foto: ""
+      },
+      {
+        id: 18,
+        nome: "Quélia Rodrigues Ribeiro",
+        cargo: "Vogal do Conselho",
+        orgao: "Conselho Fiscal",
+        numeroSocio: 389,
+        username: "@quelia.ribeiro",
+        email: "queliaribeiro.qr@gmail.com",
+        telefone: "919 203 684",
+        morada: "Aguada de Baixo",
+        perfil: "Utilizador",
+        permissoes: "Agenda (ver)",
+        estado: "Ativo",
+        foto: ""
+      }
+    ];
+
+    let membros = JSON.parse(localStorage.getItem(MEMBROS_STORAGE_KEY)) || OFFICIAL_MEMBROS;
+
+    // Configuração de Colunas & Ordenação
+    const COLS_MEM_KEY = 'arca_cols_membros_v2';
+    let colsMem = JSON.parse(localStorage.getItem(COLS_MEM_KEY)) || {
+      nome: true,
+      cargo: true,
+      orgao: true,
+      socio: true,
+      login: true,
+      contacto: true,
+      permissoes: true,
+      estado: true,
+      acoes: true
+    };
+
+    let sortMemField = 'hierarquia';
+    let sortMemDir = 'asc';
+    let filterOrgaoValue = 'all';
+    let searchMemQuery = '';
+
+    function applyColsMembros() {
+      Object.entries(colsMem).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableMembros th[data-col="${col}"], #tableMembros td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function initColPickerMembros() {
+      const list = document.getElementById('listColPickerMembros');
+      const toggle = document.getElementById('btnToggleColPickerMembros');
+      const menu = document.getElementById('menuColPickerMembros');
+      if (!list) return;
+
+      const labels = {
+        nome: 'Nome do Dirigente',
+        cargo: 'Cargo Institucional',
+        orgao: 'Órgão Social',
+        socio: 'Nº Sócio',
+        login: 'Utilizador',
+        contacto: 'Contacto / E-mail',
+        permissoes: 'Perfil & Acesso',
+        estado: 'Estado',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsMem[key] ? 'checked' : ''} onchange="toggleMemCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleMemCol = function(key, isVisible) {
+      colsMem[key] = isVisible;
+      localStorage.setItem(COLS_MEM_KEY, JSON.stringify(colsMem));
+      applyColsMembros();
+    };
+
+    window.resetMembrosCols = function() {
+      colsMem = { nome: true, cargo: true, orgao: true, socio: true, login: true, contacto: true, permissoes: true, estado: true, acoes: true };
+      localStorage.setItem(COLS_MEM_KEY, JSON.stringify(colsMem));
+      initColPickerMembros();
+      applyColsMembros();
+    };
+
+    window.sortMembros = function(field) {
+      if (sortMemField === field) {
+        sortMemDir = (sortMemDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortMemField = field;
+        sortMemDir = 'asc';
+      }
+      updateMemSortIndicators();
+      renderMembros();
+    };
+
+    window.handleMembrosSortSelect = function(val) {
+      if (val === 'hierarquia') {
+        sortMemField = 'hierarquia';
+        sortMemDir = 'asc';
+      } else {
+        const last = val.lastIndexOf('_');
+        sortMemField = val.slice(0, last);
+        sortMemDir = val.slice(last + 1);
+      }
+      updateMemSortIndicators();
+      renderMembros();
+    };
+
+    function updateMemSortIndicators() {
+      const sel = document.getElementById('sortMembrosSelect');
+      if (sel) {
+        sel.value = (sortMemField === 'hierarquia') ? 'hierarquia' : `${sortMemField}_${sortMemDir}`;
+      }
+
+      document.querySelectorAll('#headRowMembros th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortMemField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = (sortMemDir === 'asc') ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    window.handleOrgaoFilter = function(val) {
+      filterOrgaoValue = val;
+      renderMembros();
+    };
+
+    window.handleMembrosSearch = function(val) {
+      searchMemQuery = val.toLowerCase().trim();
+      renderMembros();
+    };
+
+    window.handleAvatarError = function(img, initial) {
+      const div = document.createElement('div');
+      div.style.cssText = 'width: 36px; height: 36px; border-radius: 50%; background: rgba(28,109,66,0.12); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); font-size: 0.85rem; flex-shrink: 0;';
+      div.textContent = initial || 'M';
+      img.replaceWith(div);
+    };
+
+    window.handleBigAvatarError = function(img, initial) {
+      const div = document.createElement('div');
+      div.style.cssText = 'width: 72px; height: 72px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: var(--primary); flex-shrink: 0;';
+      div.textContent = initial || 'M';
+      img.replaceWith(div);
+    };
+
+    function renderMembros() {
+      const tbody = document.getElementById('tbodyMembros');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = membros.filter(m => {
+        const matchOrgao = (filterOrgaoValue === 'all') || (m.orgao === filterOrgaoValue);
+        const q = searchMemQuery;
+        const matchQuery = !q ||
+          m.nome.toLowerCase().includes(q) ||
+          m.cargo.toLowerCase().includes(q) ||
+          m.orgao.toLowerCase().includes(q) ||
+          (m.username && m.username.toLowerCase().includes(q)) ||
+          (m.email && m.email.toLowerCase().includes(q)) ||
+          (m.telefone && m.telefone.includes(q));
+        return matchOrgao && matchQuery;
+      });
+
+      // Ordenação
+      list.sort((a, b) => {
+        if (sortMemField === 'hierarquia') {
+          return a.id - b.id;
+        }
+        if (sortMemField === 'nome') {
+          const c = a.nome.localeCompare(b.nome, 'pt');
+          return (sortMemDir === 'asc') ? c : -c;
+        }
+        if (sortMemField === 'cargo') {
+          const c = a.cargo.localeCompare(b.cargo, 'pt');
+          return (sortMemDir === 'asc') ? c : -c;
+        }
+        if (sortMemField === 'orgao') {
+          const c = a.orgao.localeCompare(b.orgao, 'pt');
+          return (sortMemDir === 'asc') ? c : -c;
+        }
+        if (sortMemField === 'socio') {
+          const sa = a.numeroSocio || 9999;
+          const sb = b.numeroSocio || 9999;
+          return (sortMemDir === 'asc') ? (sa - sb) : (sb - sa);
+        }
+        if (sortMemField === 'login') {
+          const c = (a.username || '').localeCompare(b.username || '');
+          return (sortMemDir === 'asc') ? c : -c;
+        }
+        if (sortMemField === 'contacto') {
+          const c = (a.email || a.telefone || '').localeCompare(b.email || b.telefone || '');
+          return (sortMemDir === 'asc') ? c : -c;
+        }
+        if (sortMemField === 'permissoes') {
+          const c = (a.perfil || '').localeCompare(b.perfil || '');
+          return (sortMemDir === 'asc') ? c : -c;
+        }
+        if (sortMemField === 'estado') {
+          const c = (a.estado || '').localeCompare(b.estado || '');
+          return (sortMemDir === 'asc') ? c : -c;
+        }
+        return 0;
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+              Nenhum membro encontrado para o filtro selecionado.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      list.forEach(m => {
+        const tr = document.createElement('tr');
+        
+        let orgaoPillClass = 'em-dia';
+        let orgaoPillStyle = '';
+        if (m.orgao === 'Assembleia Geral') {
+          orgaoPillStyle = 'background: #ede9fe; color: #6d28d9;';
+        } else if (m.orgao === 'Conselho Fiscal') {
+          orgaoPillStyle = 'background: #e0f2fe; color: #0369a1;';
+        } else {
+          orgaoPillStyle = 'background: rgba(28, 109, 66, 0.12); color: #1c6d42;';
+        }
+
+        const avatarHtml = m.foto 
+          ? `<img src="${m.foto}" alt="${window.escapeHtml(m.nome)}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-light);" onerror="window.handleAvatarError(this, '${m.nome.charAt(0)}')">`
+          : `<div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(28,109,66,0.12); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); font-size: 0.85rem;">${m.nome.charAt(0)}</div>`;
+
+        tr.innerHTML = `
+          <td data-col="nome">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              ${avatarHtml}
+              <div>
+                <a href="javascript:void(0)" onclick="openFichaMembroModal(${m.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none;">
+                  ${window.escapeHtml(m.nome)}
+                </a>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 1px;">
+                  ${window.escapeHtml(m.morada || 'Aguada de Baixo')}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td data-col="cargo">
+            <strong style="color: var(--text-title); font-size: 0.88rem;">${window.escapeHtml(m.cargo)}</strong>
+          </td>
+          <td data-col="orgao">
+            <span class="status-pill" style="font-size: 0.75rem; padding: 2px 8px; font-weight: 600; ${orgaoPillStyle}">
+              ${window.escapeHtml(m.orgao)}
+            </span>
+          </td>
+          <td data-col="socio">
+            ${m.numeroSocio ? `<span style="font-weight: 600; color: var(--primary);">Sócio #${m.numeroSocio}</span>` : '<span style="color: var(--text-muted);">—</span>'}
+          </td>
+          <td data-col="login">
+            <code>${window.escapeHtml(m.username || '—')}</code>
+          </td>
+          <td data-col="contacto">
+            <div style="font-size: 0.82rem;">
+              ${m.telefone ? `<div><a href="tel:${m.telefone.replace(/\s+/g,'')}" style="color: var(--text-title); text-decoration: none; font-weight: 500;">📞 ${m.telefone}</a></div>` : ''}
+              ${m.email ? `<div><a href="mailto:${m.email}" style="color: var(--primary); text-decoration: none;">✉️ ${m.email}</a></div>` : ''}
+              ${(!m.telefone && !m.email) ? '<span style="color: var(--text-muted);">—</span>' : ''}
+            </div>
+          </td>
+          <td data-col="permissoes">
+            <span class="status-pill ${m.perfil === 'Administrador' ? 'em-dia' : ''}" style="font-size: 0.75rem;">
+              ${window.escapeHtml(m.perfil || 'Utilizador')}
+            </span>
+          </td>
+          <td data-col="estado">
+            <span class="status-pill em-dia" style="font-size: 0.75rem;">${m.estado || 'Ativo'}</span>
+          </td>
+          <td data-col="acoes" style="text-align: right; white-space: nowrap;">
+            <div style="display: inline-flex; gap: 0.35rem; justify-content: flex-end;">
+              <button class="btn btn-outline btn-sm" onclick="openFichaMembroModal(${m.id})" title="Ver Ficha Institucional">
+                Ver Ficha
+              </button>
+              <button class="btn-action-icon" onclick="openEditarMembroModal(${m.id})" title="Editar Membro">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      applyColsMembros();
+      if (window.initTableResizers) window.initTableResizers();
+    }
+
+    // Modal: Ver Ficha Completa do Membro
+    window.openFichaMembroModal = function(id) {
+      const m = membros.find(item => item.id === id);
+      if (!m) return;
+
+      const modal = document.getElementById('modalFichaMembro');
+      const nomeEl = document.getElementById('fichaMembroNome');
+      const cargoEl = document.getElementById('fichaMembroCargo');
+      const contentEl = document.getElementById('fichaMembroContent');
+      const btnEditar = document.getElementById('btnEditarMembroFromFicha');
+      const btnVerSocio = document.getElementById('btnVerSocioFromFicha');
+
+      if (nomeEl) nomeEl.textContent = m.nome;
+      if (cargoEl) cargoEl.textContent = `${m.cargo} da ${m.orgao} (Mandato Oficial ARCA)`;
+
+      let orgaoPillStyle = 'background: rgba(28, 109, 66, 0.12); color: #1c6d42;';
+      if (m.orgao === 'Assembleia Geral') orgaoPillStyle = 'background: #ede9fe; color: #6d28d9;';
+      if (m.orgao === 'Conselho Fiscal') orgaoPillStyle = 'background: #e0f2fe; color: #0369a1;';
+
+      const avatarBigHtml = m.foto
+        ? `<img src="${m.foto}" alt="${window.escapeHtml(m.nome)}" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);" onerror="window.handleBigAvatarError(this, '${m.nome.charAt(0)}')">`
+        : `<div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: var(--primary);">${m.nome.charAt(0)}</div>`;
+
+      if (contentEl) {
+        contentEl.innerHTML = `
+          <div style="display: flex; gap: 1.25rem; align-items: center; padding: 1.25rem; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+            ${avatarBigHtml}
+            <div>
+              <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-title);">${window.escapeHtml(m.nome)}</div>
+              <div style="margin-top: 0.35rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <span class="status-pill" style="${orgaoPillStyle}; font-weight: 700; font-size: 0.8rem;">${window.escapeHtml(m.cargo)} &bull; ${window.escapeHtml(m.orgao)}</span>
+                ${m.numeroSocio ? `<span style="font-size: 0.8rem; font-weight: 600; color: var(--primary);">Sócio #${m.numeroSocio}</span>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.88rem; margin-bottom: 1rem;">
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Utilizador de Acesso:</span><br>
+              <code>${window.escapeHtml(m.username || '—')}</code>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Perfil de Permissões:</span><br>
+              <strong>${window.escapeHtml(m.perfil || 'Utilizador')}</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Contacto Telefónico:</span><br>
+              <strong>${m.telefone ? m.telefone : 'Não indicado'}</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Correio Eletrónico:</span><br>
+              <strong>${m.email ? m.email : 'Não indicado'}</strong>
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Morada Oficial / Residência:</span><br>
+              <strong>${window.escapeHtml(m.morada || 'Aguada de Baixo, Águeda')}</strong>
+            </div>
+            <div style="grid-column: 1 / -1; padding: 0.85rem; background: rgba(28,109,66,0.06); border-radius: var(--radius-sm); border: 1px solid rgba(28,109,66,0.18);">
+              <span style="color: var(--primary); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Módulos & Permissões no Portal:</span><br>
+              <span style="font-size: 0.85rem; color: var(--text-title);">${window.escapeHtml(m.permissoes || 'Acesso Padrão aos Módulos da ARCA')}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      if (btnEditar) {
+        btnEditar.onclick = () => {
+          closeFichaMembroModal();
+          openEditarMembroModal(m.id);
+        };
+      }
+
+      if (btnVerSocio) {
+        if (m.numeroSocio) {
+          btnVerSocio.style.display = '';
+          btnVerSocio.onclick = () => {
+            window.location.href = `socios.html?busca=${encodeURIComponent(m.numeroSocio)}`;
+          };
+        } else {
+          btnVerSocio.style.display = 'none';
+        }
+      }
+
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeFichaMembroModal = function() {
+      const modal = document.getElementById('modalFichaMembro');
+      if (modal) modal.classList.remove('active');
+    };
+
+    // Modal: Criar / Editar Membro
+    window.openNovoMembroModal = function() {
+      document.getElementById('formMembroId').value = '';
+      document.getElementById('formMembro').reset();
+      document.getElementById('modalFormMembroTitle').textContent = 'Adicionar Membro aos Órgãos Sociais';
+      const modal = document.getElementById('modalFormMembro');
+      if (modal) modal.classList.add('active');
+    };
+
+    window.openEditarMembroModal = function(id) {
+      const m = membros.find(item => item.id === id);
+      if (!m) return;
+
+      document.getElementById('formMembroId').value = m.id;
+      document.getElementById('formMembroNome').value = m.nome;
+      document.getElementById('formMembroOrgao').value = m.orgao;
+      document.getElementById('formMembroCargo').value = m.cargo;
+      document.getElementById('formMembroSocio').value = m.numeroSocio || '';
+      document.getElementById('formMembroUsername').value = m.username || '';
+      document.getElementById('formMembroEmail').value = m.email || '';
+      document.getElementById('formMembroTelefone').value = m.telefone || '';
+      document.getElementById('formMembroMorada').value = m.morada || '';
+      document.getElementById('formMembroPerfil').value = m.perfil || 'Utilizador';
+      document.getElementById('formMembroEstado').value = m.estado || 'Ativo';
+
+      document.getElementById('modalFormMembroTitle').textContent = `Editar Membro: ${m.nome}`;
+      const modal = document.getElementById('modalFormMembro');
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeFormMembroModal = function() {
+      const modal = document.getElementById('modalFormMembro');
+      if (modal) modal.classList.remove('active');
+    };
+
+    window.handleSalvarMembro = function(e) {
+      e.preventDefault();
+      const idVal = document.getElementById('formMembroId').value;
+      const nome = document.getElementById('formMembroNome').value.trim();
+      const orgao = document.getElementById('formMembroOrgao').value;
+      const cargo = document.getElementById('formMembroCargo').value.trim();
+      const socioNum = parseInt(document.getElementById('formMembroSocio').value) || null;
+      const username = document.getElementById('formMembroUsername').value.trim();
+      const email = document.getElementById('formMembroEmail').value.trim();
+      const telefone = document.getElementById('formMembroTelefone').value.trim();
+      const morada = document.getElementById('formMembroMorada').value.trim();
+      const perfil = document.getElementById('formMembroPerfil').value;
+      const estado = document.getElementById('formMembroEstado').value;
+
+      if (idVal) {
+        // Atualizar existente
+        const idx = membros.findIndex(item => item.id === parseInt(idVal));
+        if (idx >= 0) {
+          membros[idx].nome = nome;
+          membros[idx].orgao = orgao;
+          membros[idx].cargo = cargo;
+          membros[idx].numeroSocio = socioNum;
+          membros[idx].username = username;
+          membros[idx].email = email;
+          membros[idx].telefone = telefone;
+          membros[idx].morada = morada;
+          membros[idx].perfil = perfil;
+          membros[idx].estado = estado;
+        }
+        showToast(`Membro "${nome}" atualizado com sucesso!`, 'success');
+      } else {
+        // Criar novo
+        const newMembro = {
+          id: Date.now(),
+          nome: nome,
+          cargo: cargo,
+          orgao: orgao,
+          numeroSocio: socioNum,
+          username: username || `@${nome.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+          email: email,
+          telefone: telefone,
+          morada: morada,
+          perfil: perfil,
+          permissoes: 'Acesso personalizado aos módulos',
+          estado: estado,
+          foto: ''
+        };
+        membros.push(newMembro);
+        showToast(`Novo membro "${nome}" adicionado aos Órgãos Sociais!`, 'success');
+      }
+
+      localStorage.setItem(MEMBROS_STORAGE_KEY, JSON.stringify(membros));
+      renderMembros();
+      updateMembrosStats();
+      closeFormMembroModal();
+    };
+
+    function updateMembrosStats() {
+      const elTotal = document.getElementById('statTotalMembros');
+      const elDir = document.getElementById('statDirecao');
+      const elAg = document.getElementById('statAssembleia');
+      const elCf = document.getElementById('statConselhoFiscal');
+
+      if (elTotal) elTotal.textContent = membros.length;
+      if (elDir) elDir.textContent = membros.filter(m => m.orgao === 'Direção').length;
+      if (elAg) elAg.textContent = membros.filter(m => m.orgao === 'Assembleia Geral').length;
+      if (elCf) elCf.textContent = membros.filter(m => m.orgao === 'Conselho Fiscal').length;
+    }
+
+    // Inicialização da Página
+    document.addEventListener('DOMContentLoaded', () => {
+      initColPickerMembros();
+      updateMemSortIndicators();
+      updateMembrosStats();
+      renderMembros();
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeFichaMembroModal();
+          closeFormMembroModal();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
