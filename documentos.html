@@ -128,8 +128,7 @@
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist open">
-                <li><a href="documentos.html?cat=plano" class="nav-sublink" id="sublinkPlano">Plano de Atividades</a></li>
-                <li><a href="documentos.html?cat=orcamento" class="nav-sublink" id="sublinkOrcamento">Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink" id="sublinkPlanoOrcamento">Plano de Atividades e Orçamento Provisional</a></li>
                 <li><a href="documentos.html?cat=exercicio" class="nav-sublink" id="sublinkExercicio">Exercício</a></li>
                 <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink" id="sublinkAtasAssembleias">Atas Assembleias</a></li>
                 <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink" id="sublinkTomadasPosse">Atas de Tomadas de Posse</a></li>
@@ -353,29 +352,16 @@
 
         <div class="folders-grid">
           
-          <!-- Pasta 1: Plano de Atividades -->
-          <div class="folder-card" data-cat="plano" onclick="setCategoryFilter('plano')">
+          <!-- Pasta 1: Plano de Atividades e Orçamento Provisional -->
+          <div class="folder-card" data-cat="plano_orcamento" onclick="setCategoryFilter('plano_orcamento')">
             <div class="folder-icon" style="background: rgba(28, 109, 66, 0.12); color: var(--primary);">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
               </svg>
             </div>
             <div class="folder-info">
-              <div class="folder-title">Plano de Atividades</div>
-              <div class="folder-meta" id="folderMeta_plano">2 ficheiros</div>
-            </div>
-          </div>
-
-          <!-- Pasta 2: Orçamento Provisional -->
-          <div class="folder-card" data-cat="orcamento" onclick="setCategoryFilter('orcamento')">
-            <div class="folder-icon" style="background: #fef3c7; color: #b45309;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-              </svg>
-            </div>
-            <div class="folder-info">
-              <div class="folder-title">Orçamento Provisional</div>
-              <div class="folder-meta" id="folderMeta_orcamento">2 ficheiros</div>
+              <div class="folder-title">Plano de Atividades & Orçamento</div>
+              <div class="folder-meta" id="folderMeta_plano_orcamento">0 ficheiros</div>
             </div>
           </div>
 
@@ -538,8 +524,7 @@
           <div class="form-group">
             <label class="form-label" for="selectDocCategory">Pasta Oficial de Destino *</label>
             <select class="form-control" id="selectDocCategory" required>
-              <option value="plano">Plano de Atividades</option>
-              <option value="orcamento">Orçamento Provisional</option>
+              <option value="plano_orcamento">Plano de Atividades e Orçamento Provisional</option>
               <option value="exercicio">Exercício (Relatórios & Contas)</option>
               <option value="atas_assembleias">Atas de Assembleias Gerais</option>
               <option value="tomadas_posse">Atas de Tomadas de Posse</option>
@@ -649,20 +634,28 @@
     // Configurações e Categorias Oficiais
     const STORAGE_KEY = 'arca_documentos_v2';
     const CATEGORIES = {
-      plano: { name: 'Plano de Atividades', badge: 'badge-blue' },
-      orcamento: { name: 'Orçamento Provisional', badge: 'badge-purple' },
+      plano_orcamento: { name: 'Plano de Atividades e Orçamento Provisional', badge: 'badge-blue' },
       exercicio: { name: 'Exercício (Relatórios & Contas)', badge: 'badge-primary' },
       atas_assembleias: { name: 'Atas de Assembleias Gerais', badge: 'badge-warning' },
       tomadas_posse: { name: 'Atas de Tomadas de Posse', badge: 'badge-info' },
-      direcoes_anteriores: { name: 'Listagem Direções Anteriores', badge: 'badge-secondary' }
+      direcoes_anteriores: { name: 'Listagem Direções Anteriores', badge: 'badge-secondary' },
+      // Suporte retroativo para compatibilidade
+      plano: { name: 'Plano de Atividades e Orçamento Provisional', badge: 'badge-blue' },
+      orcamento: { name: 'Plano de Atividades e Orçamento Provisional', badge: 'badge-blue' }
     };
+
+    function normalizeCat(cat) {
+      if (!cat) return 'all';
+      if (cat === 'plano' || cat === 'orcamento') return 'plano_orcamento';
+      return cat;
+    }
 
     // Coleção Predefinida de Documentos Oficiais da ARCA
     const DEFAULT_DOCUMENTS = [
       {
         id: 'doc-1',
         title: 'Plano de Atividades e Linhas Estratégicas 2025/2026',
-        category: 'plano',
+        category: 'plano_orcamento',
         year: '2025/2026',
         status: 'Aprovado',
         format: 'pdf',
@@ -675,7 +668,7 @@
       {
         id: 'doc-2',
         title: 'Plano Estratégico de Desenvolvimento Desportivo e Cultural (2024-2027)',
-        category: 'plano',
+        category: 'plano_orcamento',
         year: '2024-2027',
         status: 'Em Vigor',
         format: 'pdf',
@@ -688,7 +681,7 @@
       {
         id: 'doc-3',
         title: 'Calendarização Geral de Eventos e Competições 2026',
-        category: 'plano',
+        category: 'plano_orcamento',
         year: '2026',
         status: 'Aprovado',
         format: 'excel',
@@ -701,7 +694,7 @@
       {
         id: 'doc-4',
         title: 'Orçamento Provisional e Previsão Financeira para o Exercício 2026',
-        category: 'orcamento',
+        category: 'plano_orcamento',
         year: '2026',
         status: 'Aprovado',
         format: 'pdf',
@@ -714,7 +707,7 @@
       {
         id: 'doc-5',
         title: 'Mapa Detalhado de Receitas e Despesas Previsionais 2026',
-        category: 'orcamento',
+        category: 'plano_orcamento',
         year: '2026',
         status: 'Aprovado',
         format: 'excel',
@@ -1101,8 +1094,7 @@
 
       // 1. Atualizar contadores das pastas
       const counts = {
-        plano: 0,
-        orcamento: 0,
+        plano_orcamento: 0,
         exercicio: 0,
         atas_assembleias: 0,
         tomadas_posse: 0,
@@ -1110,14 +1102,17 @@
       };
 
       docs.forEach(d => {
-        if (counts[d.category] !== undefined) {
-          counts[d.category]++;
+        const cat = normalizeCat(d.category);
+        if (counts[cat] !== undefined) {
+          counts[cat]++;
         }
       });
 
       for (const [cat, count] of Object.entries(counts)) {
         const el = document.getElementById(`count-${cat}`);
         if (el) el.textContent = `${count} ficheiro${count === 1 ? '' : 's'}`;
+        const meta = document.getElementById(`folderMeta_${cat}`);
+        if (meta) meta.textContent = `${count} ficheiro${count === 1 ? '' : 's'}`;
       }
 
       const badgeTotal = document.getElementById('badgeTotalDocs');
@@ -1125,9 +1120,10 @@
 
       // 2. Atualizar estado visual das pastas
       document.querySelectorAll('.folder-card').forEach(card => {
-        const cat = card.getAttribute('data-folder');
-        if (currentCategory === 'all' || currentCategory === cat) {
-          card.classList.toggle('active', currentCategory === cat);
+        const cat = normalizeCat(card.getAttribute('data-cat') || card.getAttribute('data-folder'));
+        const activeCat = normalizeCat(currentCategory);
+        if (currentCategory === 'all' || activeCat === cat) {
+          card.classList.toggle('active', activeCat === cat);
         } else {
           card.classList.remove('active');
         }
@@ -1142,8 +1138,8 @@
         if (pageHeading) pageHeading.textContent = 'Documentação Oficial ARCA';
         if (breadcrumb) breadcrumb.textContent = 'Todas as Pastas Oficiais';
         if (currentFolderTitle) currentFolderTitle.textContent = 'Todos os Documentos Registados';
-      } else if (CATEGORIES[currentCategory]) {
-        const catName = CATEGORIES[currentCategory].name;
+      } else if (CATEGORIES[currentCategory] || CATEGORIES[normalizeCat(currentCategory)]) {
+        const catName = (CATEGORIES[currentCategory] || CATEGORIES[normalizeCat(currentCategory)]).name;
         if (pageHeading) pageHeading.textContent = catName;
         if (breadcrumb) breadcrumb.textContent = catName;
         if (currentFolderTitle) currentFolderTitle.textContent = `Documentos em "${catName}"`;
@@ -1152,7 +1148,8 @@
       // 4. Realçar submenu da Sidebar correspondente
       document.querySelectorAll('.sidebar-nav .nav-sublink').forEach(link => link.classList.remove('active'));
       if (currentCategory !== 'all') {
-        const sublinkId = 'sublink' + currentCategory.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+        const activeNorm = normalizeCat(currentCategory);
+        const sublinkId = 'sublink' + activeNorm.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
         const activeSublink = document.getElementById(sublinkId);
         if (activeSublink) activeSublink.classList.add('active');
       }
@@ -1160,7 +1157,11 @@
       // 5. Filtrar documentos
       const filtered = docs.filter(doc => {
         // Filtro de pasta
-        if (currentCategory !== 'all' && doc.category !== currentCategory) return false;
+        if (currentCategory !== 'all') {
+          const docCat = normalizeCat(doc.category);
+          const activeCat = normalizeCat(currentCategory);
+          if (docCat !== activeCat) return false;
+        }
 
         // Filtro de formato
         if (formatVal !== 'all' && doc.format !== formatVal) return false;
@@ -1171,7 +1172,7 @@
           const matchYear = (doc.year || '').toLowerCase().includes(searchVal);
           const matchFile = (doc.fileName || '').toLowerCase().includes(searchVal);
           const matchSignatory = (doc.signatory || '').toLowerCase().includes(searchVal);
-          const matchCat = (CATEGORIES[doc.category]?.name || '').toLowerCase().includes(searchVal);
+          const matchCat = (CATEGORIES[doc.category]?.name || CATEGORIES[normalizeCat(doc.category)]?.name || '').toLowerCase().includes(searchVal);
           if (!matchTitle && !matchYear && !matchFile && !matchSignatory && !matchCat) return false;
         }
 
@@ -1194,7 +1195,7 @@
                 </div>
                 <h4 style="font-size: 1.05rem; color: var(--text-title); margin-bottom: 0.25rem;">Nenhum documento encontrado</h4>
                 <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Não foram encontrados ficheiros para os filtros ou pasta selecionada.</p>
-                <button class="btn btn-primary btn-sm" onclick="openUploadModal('${currentCategory !== 'all' ? currentCategory : 'plano'}')">
+                <button class="btn btn-primary btn-sm" onclick="openUploadModal('${currentCategory !== 'all' ? normalizeCat(currentCategory) : 'plano_orcamento'}')">
                   Carregar Documento Agora
                 </button>
               </div>
@@ -1205,7 +1206,8 @@
       }
 
       tbody.innerHTML = filtered.map(doc => {
-        const catInfo = CATEGORIES[doc.category] || { name: doc.category, badge: 'badge-secondary' };
+        const catNormalized = normalizeCat(doc.category);
+        const catInfo = CATEGORIES[catNormalized] || { name: doc.category, badge: 'badge-secondary' };
         const formatBadgeClass = doc.format === 'pdf' ? 'pdf' : (doc.format === 'word' ? 'word' : (doc.format === 'excel' ? 'excel' : 'general'));
         const formatLabel = doc.format ? doc.format.toUpperCase() : 'DOC';
 
@@ -1214,7 +1216,7 @@
         if (doc.status === 'Histórico') statusBadgeClass = 'badge-secondary';
 
         return `
-          <tr class="doc-row" data-category="${doc.category}">
+          <tr class="doc-row" data-category="${catNormalized}">
             <td>
               <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <span class="doc-format-badge ${formatBadgeClass}">${formatLabel}</span>
@@ -1231,7 +1233,7 @@
               </div>
             </td>
             <td>
-              <span class="badge ${catInfo.badge}" style="cursor: pointer;" onclick="setCategoryFilter('${doc.category}')" title="Filtrar por esta pasta">
+              <span class="badge ${catInfo.badge}" style="cursor: pointer;" onclick="setCategoryFilter('${catNormalized}')" title="Filtrar por esta pasta">
                 ${catInfo.name}
               </span>
             </td>
@@ -1311,7 +1313,7 @@
       document.getElementById('inputDocYear').value = currentYear.toString();
 
       // Pré-selecionar categoria se aplicável
-      const targetCat = category || (currentCategory !== 'all' ? currentCategory : 'plano');
+      const targetCat = category ? normalizeCat(category) : (currentCategory !== 'all' ? normalizeCat(currentCategory) : 'plano_orcamento');
       if (selectCategory && CATEGORIES[targetCat]) {
         selectCategory.value = targetCat;
       }
