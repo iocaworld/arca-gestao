@@ -334,14 +334,28 @@
         <div class="metrics-row">
           <div class="metric-card">
             <div class="metric-content">
-              <span class="metric-label">Total de Associados</span>
+              <span class="metric-label">Total Cadastrado</span>
               <span class="metric-value" id="statTotal">0</span>
-              <span class="metric-badge positive">&check; Ficheiro ativo</span>
+              <span class="metric-badge positive">&check; Ficheiro Geral ARCA</span>
             </div>
             <div class="metric-icon-box green-dark">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                 <circle cx="9" cy="7" r="4"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-content">
+              <span class="metric-label">Sócios Ativos</span>
+              <span class="metric-value" id="statAtivos">0</span>
+              <span class="metric-badge neutral">Em atividade</span>
+            </div>
+            <div class="metric-icon-box blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
               </svg>
             </div>
           </div>
@@ -361,29 +375,14 @@
 
           <div class="metric-card">
             <div class="metric-content">
-              <span class="metric-label">Cotas Pendentes</span>
+              <span class="metric-label">Cotas Pendentes / Atraso</span>
               <span class="metric-value" id="statPendentes">0</span>
-              <span class="metric-badge warning">Aguardam pagamento</span>
+              <span class="metric-badge warning">Por liquidar</span>
             </div>
             <div class="metric-icon-box amber">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="8" x2="12" y2="12"/>
-              </svg>
-            </div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-content">
-              <span class="metric-label">Novas Inscrições (2026)</span>
-              <span class="metric-value" id="statNovos">0</span>
-              <span class="metric-badge neutral">Inscritos este ano</span>
-            </div>
-            <div class="metric-icon-box blue">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="8.5" cy="7" r="4"/>
-                <line x1="20" y1="8" x2="20" y2="14"/>
               </svg>
             </div>
           </div>
@@ -400,21 +399,32 @@
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input type="text" id="searchInput" placeholder="Filtrar por nome, nº ou NIF...">
+                <input type="text" id="searchInput" placeholder="Filtrar por nome, nº, NIF, morada...">
               </div>
 
-              <select id="filterStatus" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
-                <option value="all">Todas as Cotas</option>
-                <option value="Em Dia">Em Dia</option>
-                <option value="Pendente">Pendente</option>
-                <option value="Atrasado">Atrasado</option>
+              <!-- Filtro de Situação do Associado -->
+              <select id="filterMembro" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
+                <option value="all">Todos os Estados</option>
+                <option value="Ativo" selected>Sócios Ativos</option>
+                <option value="Falecido">Falecidos</option>
+                <option value="Inativo">Inativos / Anulados</option>
               </select>
 
+              <!-- Filtro de Estado da Cota -->
+              <select id="filterStatus" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
+                <option value="all">Todas as Cotas</option>
+                <option value="Em Dia">Em Dia (2026)</option>
+                <option value="Pendente">Pendente (2025)</option>
+                <option value="Atrasado">Em Atraso (&lt; 2025)</option>
+              </select>
+
+              <!-- Filtro de Categoria -->
               <select id="filterCategory" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
                 <option value="all">Todas as Categorias</option>
                 <option value="Efetivo">Efetivo</option>
-                <option value="Juvenil">Juvenil</option>
+                <option value="Fundador">Fundador</option>
                 <option value="Benemérito">Benemérito</option>
+                <option value="Juvenil">Juvenil</option>
               </select>
 
               <!-- Seletor de Ordenação -->
@@ -423,10 +433,11 @@
                 <option value="numero_desc">Nº (Maior → Menor)</option>
                 <option value="nome_asc">Nome (A → Z)</option>
                 <option value="nome_desc">Nome (Z → A)</option>
+                <option value="divida_desc">Maior Dívida (€)</option>
+                <option value="divida_asc">Menor Dívida (€)</option>
                 <option value="categoria_asc">Categoria (A → Z)</option>
                 <option value="estado_asc">Estado da Cota</option>
-                <option value="inscricao_desc">Admissão (Mais Recente)</option>
-                <option value="inscricao_asc">Admissão (Mais Antigo)</option>
+                <option value="estadoMembro_asc">Situação (Ativo/Falecido)</option>
               </select>
 
               <!-- Seletor de Colunas Personalizado -->
@@ -473,11 +484,11 @@
                   <th class="sortable-th" data-col="contacto" onclick="sortSociosTable('contacto')">
                     <span>Contacto</span><span class="sort-indicator" id="sortInd_contacto">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="inscricao" onclick="sortSociosTable('inscricao')">
-                    <span>Admissão</span><span class="sort-indicator" id="sortInd_inscricao">⇅</span>
+                  <th class="sortable-th" data-col="divida" onclick="sortSociosTable('divida')">
+                    <span>Dívida / Saldo</span><span class="sort-indicator" id="sortInd_divida">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="valorQuota" onclick="sortSociosTable('valorQuota')">
-                    <span>Quota</span><span class="sort-indicator" id="sortInd_valorQuota">⇅</span>
+                  <th class="sortable-th" data-col="estadoMembro" onclick="sortSociosTable('estadoMembro')">
+                    <span>Situação</span><span class="sort-indicator" id="sortInd_estadoMembro">⇅</span>
                   </th>
                   <th class="sortable-th" data-col="estado" onclick="sortSociosTable('estado')">
                     <span>Estado Cota</span><span class="sort-indicator" id="sortInd_estado">⇅</span>
@@ -485,11 +496,6 @@
                   <th data-col="acoes" style="text-align: right; width: 180px;">Ações</th>
                 </tr>
               </thead>
-              <tbody id="sociosTableBody">
-                <!-- Preenchido via JavaScript -->
-              </tbody>
-            </table>
-          </div>
               <tbody id="sociosTableBody">
                 <!-- Preenchido via JavaScript -->
               </tbody>
@@ -573,6 +579,7 @@
     </div>
   </div>
 
+  <script src="js/socios-data.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

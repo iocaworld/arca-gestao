@@ -212,31 +212,51 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 4. Módulo de Sócios Avançado (socios.html)
+  // 4. Módulo de Sócios Oficial da A.R.C.A. (socios.html)
   // =========================================================================
   const sociosTableBody = document.getElementById('sociosTableBody');
 
   if (sociosTableBody) {
-    const STORAGE_KEY = 'arca_socios_data_v2';
+    const STORAGE_KEY = 'arca_socios_data_v3';
+    const VERSION_KEY = 'arca_socios_version';
+    const currentVersion = (typeof ARCA_SOCIOS_DATA_VERSION !== 'undefined') ? ARCA_SOCIOS_DATA_VERSION : '2026-11-25_v3';
+    const storedVersion = localStorage.getItem(VERSION_KEY);
 
-    // Base de dados inicial de sócios da ARCA
-    let socios = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-      { id: 1, numero: 1, nome: "Jorge Cunha", nif: "214589632", categoria: "Efetivo", telefone: "912 345 678", email: "jorge.cunha@arca.pt", morada: "Rua Principal, Aguada de Baixo", dataInscricao: "15/03/1998", ultimaQuota: 2026, valorQuota: 15.00, estado: "Em Dia", historico: ["2024", "2025", "2026"] },
-      { id: 2, numero: 2, nome: "Manuel António Rodrigues", nif: "189456123", categoria: "Benemérito", telefone: "913 222 333", email: "m.rodrigues@email.pt", morada: "Largo do Rossio, Aguada de Baixo", dataInscricao: "20/01/1984", ultimaQuota: 2026, valorQuota: 25.00, estado: "Em Dia", historico: ["2024", "2025", "2026"] },
-      { id: 3, numero: 14, nome: "Maria Clara Santos", nif: "235689147", categoria: "Efetivo", telefone: "961 888 999", email: "clara.santos@gmail.com", morada: "Rua das Flores, Barrô", dataInscricao: "10/05/2012", ultimaQuota: 2025, valorQuota: 15.00, estado: "Pendente", historico: ["2024", "2025"] },
-      { id: 4, numero: 23, nome: "Fernando José Almeida", nif: "198753214", categoria: "Efetivo", telefone: "925 444 555", email: "fernando.almeida@arca.pt", morada: "Av. Central, Aguada de Baixo", dataInscricao: "05/11/2005", ultimaQuota: 2026, valorQuota: 15.00, estado: "Em Dia", historico: ["2024", "2025", "2026"] },
-      { id: 5, numero: 35, nome: "Tiago Silva Ferreira", nif: "256987412", categoria: "Juvenil", telefone: "933 111 222", email: "tiago.silva@sapo.pt", morada: "Rua do Pavilhão, Aguada de Baixo", dataInscricao: "12/09/2021", ultimaQuota: 2024, valorQuota: 7.50, estado: "Atrasado", historico: ["2024"] },
-      { id: 6, numero: 42, nome: "Ana Beatriz Ramos", nif: "241589632", categoria: "Efetivo", telefone: "918 777 666", email: "ana.ramos@outlook.pt", morada: "Rua da Igreja, Águeda", dataInscricao: "03/04/2018", ultimaQuota: 2026, valorQuota: 15.00, estado: "Em Dia", historico: ["2024", "2025", "2026"] },
-      { id: 7, numero: 58, nome: "Carlos Eduardo Pinto", nif: "178965412", categoria: "Efetivo", telefone: "964 333 444", email: "carlos.pinto@email.com", morada: "Quinta do Sol, Aguada de Baixo", dataInscricao: "18/07/2015", ultimaQuota: 2026, valorQuota: 15.00, estado: "Em Dia", historico: ["2024", "2025", "2026"] },
-      { id: 8, numero: 74, nome: "Rui Pedro Oliveira", nif: "223366554", categoria: "Efetivo", telefone: "921 654 987", email: "rui.pedro@arca.pt", morada: "Rua dos Pinheiros, Aguada de Cima", dataInscricao: "22/02/2026", ultimaQuota: 2025, valorQuota: 15.00, estado: "Pendente", historico: ["2025"] }
-    ];
+    // Carregar Base de Dados Oficial dos 425 Sócios (substituindo dados antigos)
+    let socios;
+    if (storedVersion !== currentVersion || !localStorage.getItem(STORAGE_KEY)) {
+      socios = (typeof ARCA_SOCIOS_BASE !== 'undefined') ? JSON.parse(JSON.stringify(ARCA_SOCIOS_BASE)) : [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(socios));
+      localStorage.setItem(VERSION_KEY, currentVersion);
+    } else {
+      try {
+        socios = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!Array.isArray(socios) || socios.length < 50) {
+          socios = (typeof ARCA_SOCIOS_BASE !== 'undefined') ? JSON.parse(JSON.stringify(ARCA_SOCIOS_BASE)) : [];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(socios));
+        }
+      } catch (e) {
+        socios = (typeof ARCA_SOCIOS_BASE !== 'undefined') ? JSON.parse(JSON.stringify(ARCA_SOCIOS_BASE)) : [];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(socios));
+      }
+    }
 
     function saveSocios() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(socios));
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     // Configurações de Personalização de Colunas & Ordenação de Sócios
-    const SOCIOS_COLS_KEY = 'arca_socios_cols_v2';
+    const SOCIOS_COLS_KEY = 'arca_socios_cols_v3';
     const DEFAULT_SOCIOS_COLS = {
       numero: true,
       nome: true,
@@ -244,8 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
       nif: true,
       categoria: true,
       contacto: true,
-      inscricao: false,
-      valorQuota: false,
+      divida: false,
+      estadoMembro: true,
       estado: true,
       acoes: true
     };
@@ -305,8 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
         nif: 'NIF',
         categoria: 'Categoria',
         contacto: 'Contacto (Telef. & Email)',
-        inscricao: 'Data de Admissão',
-        valorQuota: 'Quota Anual (€)',
+        divida: 'Dívida / Saldo (€)',
+        estadoMembro: 'Situação (Ativo / Falecido / Inativo)',
         estado: 'Estado da Cota',
         acoes: 'Ações'
       };
@@ -364,19 +384,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Indicadores do Topo
     function updateStats() {
       const total = socios.length;
-      const emDia = socios.filter(s => s.estado === 'Em Dia').length;
-      const pendentes = socios.filter(s => s.estado === 'Pendente' || s.estado === 'Atrasado').length;
-      const novos = socios.filter(s => s.numero >= 70).length;
+      const ativos = socios.filter(s => s.estadoMembro === 'Ativo').length;
+      const emDia = socios.filter(s => s.estadoMembro === 'Ativo' && s.estado === 'Em Dia').length;
+      const pendentes = socios.filter(s => s.estadoMembro === 'Ativo' && (s.estado === 'Pendente' || s.estado === 'Atrasado')).length;
 
       const elTotal = document.getElementById('statTotal');
+      const elAtivos = document.getElementById('statAtivos');
       const elEmDia = document.getElementById('statEmDia');
       const elPendentes = document.getElementById('statPendentes');
-      const elNovos = document.getElementById('statNovos');
 
       if (elTotal) elTotal.textContent = total;
+      if (elAtivos) elAtivos.textContent = ativos;
       if (elEmDia) elEmDia.textContent = emDia;
       if (elPendentes) elPendentes.textContent = pendentes;
-      if (elNovos) elNovos.textContent = novos;
+
+      // Atualizar badge do menu lateral
+      document.querySelectorAll('.nav-item-badge').forEach(b => {
+        b.textContent = ativos;
+      });
     }
 
     // Renderizar Tabela com Colunas Dinâmicas
@@ -399,12 +424,22 @@ document.addEventListener('DOMContentLoaded', () => {
       data.forEach(s => {
         const tr = document.createElement('tr');
 
+        // Status pill class
         let statusClass = 'em-dia';
         if (s.estado === 'Pendente') statusClass = 'pendente';
         if (s.estado === 'Atrasado') statusClass = 'atrasado';
 
+        // Badge de situação do membro
+        let membroBadge = `<span style="background: rgba(28,109,66,0.12); color: #1c6d42; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem;">Ativo</span>`;
+        if (s.estadoMembro === 'Falecido') {
+          membroBadge = `<span style="background: #e2e8f0; color: #475569; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem;">Falecido</span>`;
+        } else if (s.estadoMembro === 'Inativo') {
+          membroBadge = `<span style="background: rgba(217,119,6,0.12); color: #d97706; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem;">Inativo</span>`;
+        }
+
         // Iniciais para avatar
-        const initials = s.nome.split(' ').map(n => n[0]).slice(0, 2).join('');
+        const words = (s.nome || 'S').split(' ').filter(Boolean);
+        const initials = words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] ? words[0].slice(0, 2).toUpperCase() : 'SC');
 
         let html = '';
 
@@ -420,60 +455,74 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div>
                   <a href="javascript:void(0)" onclick="openSocioDrawer(${s.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none;">
-                    ${s.nome}
+                    ${escapeHtml(s.nome)}
                   </a>
-                  ${!isColVisible('morada') ? `<div style="font-size: 0.78rem; color: var(--text-muted);">${s.morada || ''}</div>` : ''}
+                  ${!isColVisible('morada') && s.morada ? `<div style="font-size: 0.78rem; color: var(--text-muted);">${escapeHtml(s.morada)}</div>` : ''}
                 </div>
               </div>
             </td>
           `;
         }
         if (isColVisible('morada')) {
-          html += `<td><span style="font-size: 0.85rem; color: var(--text-body);">${s.morada || '-'}</span></td>`;
+          html += `<td><span style="font-size: 0.85rem; color: var(--text-body);">${escapeHtml(s.morada || '-')}</span></td>`;
         }
         if (isColVisible('nif')) {
-          html += `<td><code>${s.nif}</code></td>`;
+          html += `<td><code>${escapeHtml(s.nif || '-')}</code></td>`;
         }
         if (isColVisible('categoria')) {
-          html += `<td><span style="font-weight: 600;">${s.categoria}</span></td>`;
+          html += `<td><span style="font-weight: 600;">${escapeHtml(s.categoria)}</span></td>`;
         }
         if (isColVisible('contacto')) {
           html += `
             <td>
-              <div>${s.telefone || '-'}</div>
-              <small style="color: var(--text-muted);">${s.email || '-'}</small>
+              <div>${escapeHtml(s.telefone || '-')}</div>
+              <small style="color: var(--text-muted);">${escapeHtml(s.email || '-')}</small>
             </td>
           `;
         }
-        if (isColVisible('inscricao')) {
-          html += `<td><span style="font-size: 0.85rem; color: var(--text-muted);">${s.dataInscricao || '-'}</span></td>`;
+        if (isColVisible('divida')) {
+          let dividaHtml = '<span style="color: #059669; font-weight: 600;">0.00 €</span>';
+          if (s.divida > 0) {
+            dividaHtml = `<strong style="color: #dc2626;">${s.divida.toFixed(2)} €</strong>`;
+          } else if (s.divida < 0) {
+            dividaHtml = `<strong style="color: #059669;">+${Math.abs(s.divida).toFixed(2)} € (Crédito)</strong>`;
+          }
+          html += `<td>${dividaHtml}</td>`;
         }
-        if (isColVisible('valorQuota')) {
-          html += `<td><strong>${s.valorQuota ? s.valorQuota.toFixed(2) + ' €' : '15.00 €'}</strong></td>`;
+        if (isColVisible('estadoMembro')) {
+          html += `<td>${membroBadge}</td>`;
         }
         if (isColVisible('estado')) {
-          html += `
-            <td>
-              <span class="status-pill ${statusClass}">${s.estado} (${s.ultimaQuota})</span>
-            </td>
-          `;
+          if (s.estadoMembro === 'Falecido') {
+            html += `<td><span class="status-pill" style="background: #f1f5f9; color: #64748b;">Arquivo</span></td>`;
+          } else if (s.estadoMembro === 'Inativo') {
+            html += `<td><span class="status-pill atrasado">Suspenso</span></td>`;
+          } else {
+            html += `
+              <td>
+                <span class="status-pill ${statusClass}">${s.estado} (${s.ultimaQuota || '2026'})</span>
+              </td>
+            `;
+          }
         }
         if (isColVisible('acoes')) {
           html += `
             <td style="text-align: right;">
               <div style="display: inline-flex; gap: 0.4rem;">
-                <button class="btn btn-outline btn-sm" onclick="openSocioDrawer(${s.id})" title="Ver Ficha">
+                <button class="btn btn-outline btn-sm" onclick="openSocioDrawer(${s.id})" title="Ver Ficha Completa">
                   Ver Ficha
                 </button>
-                ${s.estado !== 'Em Dia' ? `
-                  <button class="btn btn-primary btn-sm" onclick="liquidarQuota(${s.id})" title="Registar Quota 2026">
-                    Pagar
-                  </button>
-                ` : `
-                  <button class="btn btn-secondary btn-sm" onclick="emitirRecibo(${s.id})" title="Imprimir Recibo">
-                    Recibo
-                  </button>
-                `}
+                ${s.estadoMembro === 'Ativo' ? (
+                  s.estado !== 'Em Dia' ? `
+                    <button class="btn btn-primary btn-sm" onclick="liquidarQuota(${s.id})" title="Registar Liquidação Quota 2026">
+                      Pagar
+                    </button>
+                  ` : `
+                    <button class="btn btn-secondary btn-sm" onclick="emitirRecibo(${s.id})" title="Imprimir Recibo Oficial">
+                      Recibo
+                    </button>
+                  `
+                ) : ''}
               </div>
             </td>
           `;
@@ -489,8 +538,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const socio = socios.find(s => s.id === id);
       if (socio) {
         socio.ultimaQuota = 2026;
+        socio.divida = 0;
         socio.estado = 'Em Dia';
-        if (!socio.historico.includes('2026')) socio.historico.push('2026');
+        socio.ultimaAtualizacao = new Date().toISOString().slice(0, 10);
+        const todayStr = new Date().toLocaleDateString('pt-PT');
+        socio.observacoes = (socio.observacoes ? socio.observacoes + ' | ' : '') + `[${todayStr}] Quota 2026 liquidada (6.00 €)`;
         saveSocios();
         updateStats();
         applyFilters();
@@ -506,53 +558,81 @@ document.addEventListener('DOMContentLoaded', () => {
       const socio = socios.find(s => s.id === id);
       if (!socio || !drawerBackdrop || !drawerContent) return;
 
-      let statusBadge = `<span class="status-pill em-dia">Quota Regularizada</span>`;
-      if (socio.estado === 'Pendente') statusBadge = `<span class="status-pill pendente">Quota Pendente</span>`;
-      if (socio.estado === 'Atrasado') statusBadge = `<span class="status-pill atrasado">Quota Atrasada</span>`;
+      let statusBadge = `<span class="status-pill em-dia">Quota Regularizada (${socio.ultimaQuota || 2026})</span>`;
+      if (socio.estado === 'Pendente') statusBadge = `<span class="status-pill pendente">Quota Pendente (${socio.ultimaQuota || 2025})</span>`;
+      if (socio.estado === 'Atrasado') statusBadge = `<span class="status-pill atrasado">Quota em Atraso (${socio.ultimaQuota || 'Sem registo'})</span>`;
+      if (socio.estadoMembro === 'Falecido') statusBadge = `<span class="status-pill" style="background:#f1f5f9;color:#64748b;">Associado Falecido (Arquivo)</span>`;
+      if (socio.estadoMembro === 'Inativo') statusBadge = `<span class="status-pill atrasado">Associado Inativo / Desvinculado</span>`;
+
+      let membroTag = `<span style="background: rgba(28,109,66,0.12); color: #1c6d42; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85rem;">Ativo</span>`;
+      if (socio.estadoMembro === 'Falecido') membroTag = `<span style="background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85rem;">Falecido</span>`;
+      if (socio.estadoMembro === 'Inativo') membroTag = `<span style="background: rgba(217,119,6,0.12); color: #d97706; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85rem;">Inativo</span>`;
+
+      const words = (socio.nome || 'S').split(' ').filter(Boolean);
+      const initials = words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] ? words[0].slice(0, 2).toUpperCase() : 'SC');
 
       drawerContent.innerHTML = `
         <div style="text-align: center; margin-bottom: 2rem;">
           <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 1.5rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.75rem;">
-            ${socio.nome.split(' ').map(n=>n[0]).slice(0,2).join('')}
+            ${initials}
           </div>
-          <h2 style="font-size: 1.5rem; color: var(--text-title);">${socio.nome}</h2>
-          <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem;">Sócio Nº <strong>#${socio.numero}</strong> &bull; Categoria <strong>${socio.categoria}</strong></div>
+          <h2 style="font-size: 1.4rem; color: var(--text-title); line-height: 1.3;">${escapeHtml(socio.nome)}</h2>
+          <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.35rem;">
+            Sócio Nº <strong>#${socio.numero}</strong> &bull; Categoria <strong>${escapeHtml(socio.categoria)}</strong> &bull; ${membroTag}
+          </div>
           <div style="margin-top: 0.75rem;">${statusBadge}</div>
         </div>
 
         <div style="background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
-          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Dados Pessoais</h4>
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Dados Cadastrais</h4>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.9rem;">
-            <div><strong>NIF:</strong> ${socio.nif}</div>
-            <div><strong>Inscrição:</strong> ${socio.dataInscricao || '15/01/2020'}</div>
-            <div><strong>Telefone:</strong> ${socio.telefone || '-'}</div>
-            <div><strong>Email:</strong> ${socio.email || '-'}</div>
+            <div><strong>NIF:</strong> ${escapeHtml(socio.nif || '-')}</div>
+            <div><strong>Nascimento:</strong> ${escapeHtml(socio.dataNascimento || '-')}</div>
+            <div><strong>Telefone:</strong> ${escapeHtml(socio.telefone || '-')}</div>
+            <div><strong>Email:</strong> ${escapeHtml(socio.email || '-')}</div>
+            ${socio.oldNumero ? `<div><strong>OLD Nº:</strong> ${escapeHtml(socio.oldNumero)}</div>` : ''}
+            ${socio.grupo ? `<div><strong>Grupo:</strong> ${escapeHtml(socio.grupo)}</div>` : ''}
           </div>
           <div style="margin-top: 0.75rem; font-size: 0.9rem;">
-            <strong>Morada:</strong> ${socio.morada}
+            <strong>Morada:</strong> ${escapeHtml(socio.morada || 'Aguada de Baixo')}
           </div>
         </div>
 
         <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
-          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Situação de Quotas</h4>
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Situação Financeira & Quotas</h4>
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
-            <span>Valor Anual da Quota:</span>
-            <strong>${socio.valorQuota ? socio.valorQuota.toFixed(2) : '15.00'} €</strong>
+            <span>Valor Oficial da Quota Anual:</span>
+            <strong>6.00 €</strong>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; margin-top: 0.5rem;">
             <span>Último Ano Liquidado:</span>
-            <strong style="color: var(--primary);">${socio.ultimaQuota}</strong>
+            <strong style="color: var(--primary);">${socio.ultimaQuota || 'Sem registo'}</strong>
           </div>
-          <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-light); font-size: 0.85rem; color: var(--text-muted);">
-            Histórico recente: ${socio.historico ? socio.historico.join(', ') : '2024, 2025'}
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; margin-top: 0.5rem;">
+            <span>Dívida / Saldo em Aberto:</span>
+            <strong>${socio.divida > 0 ? `<span style="color:#dc2626;">${socio.divida.toFixed(2)} € em atraso</span>` : (socio.divida < 0 ? `<span style="color:#059669;">+${Math.abs(socio.divida).toFixed(2)} € (Saldo a favor)</span>` : `<span style="color:#059669;">0.00 € (Sem dívida)</span>`)}</strong>
           </div>
+          ${socio.ultimaAtualizacao ? `
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+              <span>Última Atualização Registada:</span>
+              <span>${socio.ultimaAtualizacao}</span>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Observações e Pautas Oficiais -->
+        <div style="background: rgba(28,109,66,0.04); border: 1px solid rgba(28,109,66,0.15); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--primary); margin-bottom: 0.5rem; letter-spacing: 0.05em;">Anotações & Histórico Financeiro</h4>
+          <p style="font-size: 0.88rem; color: var(--text-body); margin: 0; white-space: pre-line; line-height: 1.5;">
+            ${escapeHtml(socio.observacoes || 'Sem anotações ou ocorrências pendentes registadas nesta ficha.')}
+          </p>
         </div>
 
         <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
           <button class="btn btn-secondary" style="flex: 1;" onclick="emitirRecibo(${socio.id})">
             📄 Emitir Recibo Oficial
           </button>
-          ${socio.estado !== 'Em Dia' ? `
+          ${socio.estadoMembro === 'Ativo' && socio.estado !== 'Em Dia' ? `
             <button class="btn btn-primary" style="flex: 1;" onclick="liquidarQuota(${socio.id}); openSocioDrawer(${socio.id});">
               Confirmar Quota 2026
             </button>
@@ -574,6 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const numRecibo = Math.floor(1000 + Math.random() * 9000);
       const dataHoje = new Date().toLocaleDateString('pt-PT');
+      const valor = (socio.valorQuota || 6).toFixed(2);
 
       const printWindow = window.open('', '', 'width=780,height=600');
       printWindow.document.write(`
@@ -609,27 +690,27 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="row">
-              <span><strong>Recebemos de:</strong> ${socio.nome}</span>
+              <span><strong>Recebemos de:</strong> ${escapeHtml(socio.nome)}</span>
               <span><strong>Sócio Nº:</strong> #${socio.numero}</span>
             </div>
             <div class="row">
-              <span><strong>NIF:</strong> ${socio.nif}</span>
-              <span><strong>Categoria:</strong> ${socio.categoria}</span>
+              <span><strong>NIF:</strong> ${escapeHtml(socio.nif || 'Consumidor Final')}</span>
+              <span><strong>Categoria:</strong> ${escapeHtml(socio.categoria)}</span>
             </div>
             <div class="row">
-              <span><strong>Morada:</strong> ${socio.morada}</span>
+              <span><strong>Morada:</strong> ${escapeHtml(socio.morada || 'Aguada de Baixo')}</span>
             </div>
 
             <div style="background: #f1f7f3; padding: 15px; border-radius: 8px; margin: 25px 0;">
               <div class="row" style="margin: 0;">
-                <span>Liquidação da Quota Anual de Associado (${socio.ultimaQuota})</span>
-                <strong>${socio.valorQuota ? socio.valorQuota.toFixed(2) : '15.00'} €</strong>
+                <span>Liquidação da Quota Anual de Associado (${socio.ultimaQuota || 2026})</span>
+                <strong>${valor} €</strong>
               </div>
             </div>
 
             <div class="row total-row">
               <span>Total Liquidado</span>
-              <span style="color: #1c6d42;">${socio.valorQuota ? socio.valorQuota.toFixed(2) : '15.00'} €</span>
+              <span style="color: #1c6d42;">${valor} €</span>
             </div>
 
             <div class="signature">
@@ -652,59 +733,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Filtros, Pesquisa e Ordenação
     const searchInput = document.getElementById('searchInput');
+    const filterMembro = document.getElementById('filterMembro');
     const filterStatus = document.getElementById('filterStatus');
     const filterCategory = document.getElementById('filterCategory');
     const sortSociosSelect = document.getElementById('sortSociosSelect');
 
     function applyFilters() {
       const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      const membro = filterMembro ? filterMembro.value : 'Ativo';
       const status = filterStatus ? filterStatus.value : 'all';
       const cat = filterCategory ? filterCategory.value : 'all';
 
       const filtered = socios.filter(s => {
-        const matchesQuery = 
+        const matchesQuery = !query || 
           s.nome.toLowerCase().includes(query) ||
           s.numero.toString().includes(query) ||
-          s.nif.includes(query) ||
+          (s.nif && s.nif.toLowerCase().includes(query)) ||
           (s.morada && s.morada.toLowerCase().includes(query)) ||
           (s.email && s.email.toLowerCase().includes(query)) ||
-          (s.telefone && s.telefone.includes(query));
+          (s.telefone && s.telefone.includes(query)) ||
+          (s.observacoes && s.observacoes.toLowerCase().includes(query));
 
+        const matchesMembro = (membro === 'all') || (s.estadoMembro === membro);
         const matchesStatus = (status === 'all') || (s.estado === status);
-        const matchesCat = (cat === 'all') || (s.categoria === cat);
+        const matchesCat = (cat === 'all') || (s.categoria.toLowerCase() === cat.toLowerCase());
 
-        return matchesQuery && matchesStatus && matchesCat;
+        return matchesQuery && matchesMembro && matchesStatus && matchesCat;
       });
 
       // Ordenação Maior / Menor ou A-Z / Z-A
       filtered.sort((a, b) => {
-        let valA = a[currentSortField];
-        let valB = b[currentSortField];
-
         if (currentSortField === 'numero') {
           return currentSortDir === 'asc' ? (a.numero - b.numero) : (b.numero - a.numero);
         }
-        if (currentSortField === 'valorQuota') {
-          const vA = a.valorQuota || 15;
-          const vB = b.valorQuota || 15;
-          return currentSortDir === 'asc' ? (vA - vB) : (vB - vA);
+        if (currentSortField === 'divida') {
+          const dA = a.divida || 0;
+          const dB = b.divida || 0;
+          return currentSortDir === 'asc' ? (dA - dB) : (dB - dA);
         }
-        if (currentSortField === 'inscricao') {
-          const parseDate = (d) => {
-            if (!d) return 0;
-            const parts = d.split('/');
-            return parts.length === 3 ? new Date(parts[2], parts[1]-1, parts[0]).getTime() : 0;
-          };
-          const tA = parseDate(a.dataInscricao);
-          const tB = parseDate(b.dataInscricao);
-          return currentSortDir === 'asc' ? (tA - tB) : (tB - tA);
+        if (currentSortField === 'nome') {
+          const c = a.nome.localeCompare(b.nome || '', 'pt', { sensitivity: 'base' });
+          return currentSortDir === 'asc' ? c : -c;
         }
-        if (typeof valA === 'string') {
-          const comp = valA.localeCompare(valB || '', 'pt', { sensitivity: 'base' });
-          return currentSortDir === 'asc' ? comp : -comp;
+        if (currentSortField === 'categoria') {
+          const c = (a.categoria || '').localeCompare(b.categoria || '', 'pt', { sensitivity: 'base' });
+          return currentSortDir === 'asc' ? c : -c;
         }
-        if (valA < valB) return currentSortDir === 'asc' ? -1 : 1;
-        if (valA > valB) return currentSortDir === 'asc' ? 1 : -1;
+        if (currentSortField === 'estado') {
+          const c = (a.estado || '').localeCompare(b.estado || '', 'pt', { sensitivity: 'base' });
+          return currentSortDir === 'asc' ? c : -c;
+        }
+        if (currentSortField === 'estadoMembro') {
+          const c = (a.estadoMembro || '').localeCompare(b.estadoMembro || '', 'pt', { sensitivity: 'base' });
+          return currentSortDir === 'asc' ? c : -c;
+        }
         return 0;
       });
 
@@ -712,6 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (filterMembro) filterMembro.addEventListener('change', applyFilters);
     if (filterStatus) filterStatus.addEventListener('change', applyFilters);
     if (filterCategory) filterCategory.addEventListener('change', applyFilters);
 
@@ -755,7 +838,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const newNumero = maxNum + 1;
 
           const newSocio = {
-            id: Date.now(),
+            id: newNumero,
             numero: newNumero,
             nome,
             nif,
@@ -763,11 +846,13 @@ document.addEventListener('DOMContentLoaded', () => {
             telefone,
             email,
             morada,
+            divida: 0,
             dataInscricao: new Date().toLocaleDateString('pt-PT'),
             ultimaQuota: 2026,
-            valorQuota: categoria === 'Juvenil' ? 7.50 : 15.00,
+            valorQuota: 6.00,
+            estadoMembro: 'Ativo',
             estado: 'Em Dia',
-            historico: ['2026']
+            observacoes: `Inscrição efetuada em ${new Date().toLocaleDateString('pt-PT')}.`
           };
 
           socios.unshift(newSocio);
@@ -782,24 +867,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Exportar CSV
+    // Exportar CSV Oficial Completo
     const btnExportCsv = document.getElementById('btnExportCsv');
     if (btnExportCsv) {
       btnExportCsv.addEventListener('click', () => {
         let csv = "data:text/csv;charset=utf-8,\uFEFF";
-        csv += "Nº;Nome;NIF;Categoria;Telefone;Email;Morada;Última Quota;Estado\n";
+        csv += "Nº;Nome;NIF;Categoria;Telefone;Email;Morada;Dívida (€);Último Ano Pago;Situação;Estado Cota;Observações\n";
 
         socios.forEach(s => {
-          csv += `"${s.numero}";"${s.nome}";"${s.nif}";"${s.categoria}";"${s.telefone}";"${s.email}";"${s.morada}";"${s.ultimaQuota}";"${s.estado}"\n`;
+          const obsClean = (s.observacoes || '').replace(/"/g, '""').replace(/\r?\n/g, ' ');
+          const moradaClean = (s.morada || '').replace(/"/g, '""');
+          csv += `"${s.numero}";"${s.nome}";"${s.nif || ''}";"${s.categoria}";"${s.telefone || ''}";"${s.email || ''}";"${moradaClean}";"${s.divida || 0}";"${s.ultimaQuota || ''}";"${s.estadoMembro}";"${s.estado}";"${obsClean}"\n`;
         });
 
         const link = document.createElement("a");
         link.setAttribute("href", encodeURI(csv));
-        link.setAttribute("download", `ARCA_Socios_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `ARCA_Socios_Oficial_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        showToast('Lista de sócios exportada com sucesso!', 'success');
+        showToast('Lista oficial de sócios exportada com sucesso!', 'success');
       });
     }
 
