@@ -716,6 +716,180 @@ button, input, select, textarea {
   color: var(--color-red);
 }
 
+.btn-sidebar-profile {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: var(--radius-xs);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-sidebar-profile:hover {
+  color: var(--primary);
+  background: rgba(28, 109, 66, 0.1);
+}
+
+/* ==========================================================================
+   Campos de Avatar Interativos & Drag-and-Drop de Fotografias
+   ========================================================================== */
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Caixa de Avatar na Tabela (com suporte Drag-and-Drop) */
+.member-avatar-box {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.member-avatar-box:hover {
+  border-color: var(--primary);
+  transform: scale(1.06);
+  box-shadow: 0 3px 8px rgba(28, 109, 66, 0.2);
+}
+
+.member-avatar-box.drag-over {
+  border-color: #16a34a !important;
+  background: #dcfce7 !important;
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.35) !important;
+}
+
+.member-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.member-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 1.15rem;
+  background: #f1f5f9;
+}
+
+.member-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: 50%;
+}
+
+.member-avatar-box:hover .member-avatar-overlay {
+  opacity: 1;
+}
+
+/* Zona de Upload Drag-and-Drop nos Formulários e Perfil */
+.avatar-upload-zone {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.avatar-upload-zone.drag-over {
+  border-color: var(--primary) !important;
+  background: rgba(28, 109, 66, 0.08) !important;
+  box-shadow: 0 0 0 4px rgba(28, 109, 66, 0.15) !important;
+}
+
+.avatar-preview-wrapper {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+  cursor: pointer;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
+.avatar-preview-wrapper:hover {
+  transform: scale(1.02);
+}
+
+.avatar-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-placeholder-large {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #94a3b8;
+  font-size: 2rem;
+}
+
+.avatar-edit-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border: 2px solid #ffffff;
+  pointer-events: none;
+}
+
+.btn-xs {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  border-radius: var(--radius-xs);
+}
+
 /* ==========================================================================
    Área de Conteúdo Principal & Topbar
    ========================================================================== */

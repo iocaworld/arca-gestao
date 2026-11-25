@@ -603,6 +603,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (user) {
+        try {
+          const membrosKey = 'arca_membros_orgaos_v4';
+          const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
+          const found = membros.find(m => 
+            (m.username && m.username.replace('@','').toLowerCase() === user.toLowerCase()) || 
+            (m.nome && m.nome.toLowerCase().includes(user.toLowerCase())) ||
+            (m.email && m.email.toLowerCase() === user.toLowerCase())
+          );
+          if (found) {
+            window.setArcaCurrentUser(found);
+          }
+        } catch (err) {}
+      }
+
       if (loginBtn) {
         loginBtn.disabled = true;
         loginBtn.innerHTML = '<span>A validar acesso...</span>';
@@ -619,6 +634,440 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 700);
     });
   }
+
+  // Hook para login.html
+  const standardLoginForm = document.getElementById('loginForm');
+  if (standardLoginForm) {
+    standardLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById('email');
+      const val = emailInput ? emailInput.value.trim().toLowerCase() : '';
+      if (val) {
+        try {
+          const membrosKey = 'arca_membros_orgaos_v4';
+          const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
+          const found = membros.find(m => 
+            (m.email && m.email.toLowerCase() === val) || 
+            (m.username && m.username.replace('@','').toLowerCase() === val) ||
+            (m.nome && m.nome.toLowerCase().includes(val))
+          );
+          if (found) {
+            window.setArcaCurrentUser(found);
+          }
+        } catch (err) {}
+      }
+      const alertBox = document.getElementById('alertBox');
+      if (alertBox) {
+        alertBox.textContent = 'Autenticado com sucesso! A entrar...';
+        alertBox.className = 'alert alert-success';
+        alertBox.style.display = 'block';
+      }
+      setTimeout(() => {
+        window.location.href = 'painel.html';
+      }, 600);
+    });
+  }
+
+  // =========================================================================
+  // 3.1. Gestão Central de Sessão do Utilizador & Perfil com Foto Drag-and-Drop
+  // =========================================================================
+  const ARCA_SESSION_KEY = 'arca_logged_user_v2';
+
+  const JORGE_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>";
+
+  const DEFAULT_LOGGED_USER = {
+    id: 1,
+    login: "jorge",
+    username: "@jorge",
+    nome: "Jorge Manuel da Silva Cunha",
+    cargo: "Presidente da Direção",
+    orgao: "Direção",
+    email: "scunhajorge@gmail.com",
+    telefone: "966 100 115",
+    morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
+    perfil: "Administrador Total",
+    numeroSocio: 314,
+    foto: JORGE_AVATAR_SVG,
+    estado: "Ativo"
+  };
+
+  window.getArcaCurrentUser = function() {
+    try {
+      const saved = localStorage.getItem(ARCA_SESSION_KEY);
+      if (saved) {
+        const u = JSON.parse(saved);
+        if (u.foto && (u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users') || u.foto.includes('xmlns="http://www.w3.org/2000/svg"') || (u.id === 1 && !u.foto.startsWith('data:image/')))) {
+          u.foto = JORGE_AVATAR_SVG;
+          localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
+        }
+        return u;
+      }
+    } catch (e) {}
+    localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(DEFAULT_LOGGED_USER));
+    return DEFAULT_LOGGED_USER;
+  };
+
+  window.setArcaCurrentUser = function(user) {
+    localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(user));
+    window.updateSidebarUserProfile();
+    window.dispatchEvent(new CustomEvent('arca-user-updated', { detail: user }));
+  };
+
+  window.updateSidebarUserProfile = function() {
+    const user = window.getArcaCurrentUser();
+    document.querySelectorAll('.sidebar-footer').forEach(footer => {
+      const avatarEl = footer.querySelector('.user-avatar');
+      const nameEl = footer.querySelector('.user-name');
+      const roleEl = footer.querySelector('.user-role');
+
+      if (avatarEl) {
+        avatarEl.title = `Sessão iniciada como ${user.nome} • Clique para alterar o seu perfil e fotografia`;
+        avatarEl.style.cursor = 'pointer';
+        avatarEl.onclick = () => window.openMeuPerfilModal();
+        avatarEl.innerHTML = '';
+        if (user.foto) {
+          const img = document.createElement('img');
+          img.className = 'user-avatar-img';
+          img.alt = user.nome || '';
+          img.src = user.foto;
+          const fallback = document.createElement('div');
+          fallback.className = 'user-avatar-img';
+          fallback.style.cssText = 'display:none;align-items:center;justify-content:center;background:var(--primary);color:#fff;font-size:1.15rem;';
+          fallback.textContent = '👤';
+          img.onerror = function() {
+            img.style.display = 'none';
+            fallback.style.display = 'flex';
+          };
+          avatarEl.appendChild(img);
+          avatarEl.appendChild(fallback);
+        } else {
+          avatarEl.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:1.15rem;background:var(--primary);color:#fff;">👤</div>`;
+        }
+      }
+
+      if (nameEl) {
+        nameEl.textContent = user.nome;
+        nameEl.style.cursor = 'pointer';
+        nameEl.onclick = () => window.openMeuPerfilModal();
+      }
+
+      if (roleEl) {
+        roleEl.textContent = user.cargo || user.orgao || 'Membro Oficial';
+      }
+
+      // Adicionar botão de editar perfil se não existir
+      if (!footer.querySelector('.btn-sidebar-profile')) {
+        const logoutBtn = footer.querySelector('.btn-sidebar-logout');
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'btn-sidebar-profile';
+        editBtn.title = 'Editar o meu perfil e fotografia';
+        editBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        `;
+        editBtn.onclick = () => window.openMeuPerfilModal();
+        if (logoutBtn) {
+          footer.insertBefore(editBtn, logoutBtn);
+        } else {
+          footer.appendChild(editBtn);
+        }
+      }
+    });
+  };
+
+  // Injeção Dinâmica do Modal de Perfil Global (disponível em todas as páginas)
+  function ensurePerfilModalInjected() {
+    if (document.getElementById('modalMeuPerfilGlobal')) return;
+
+    const modalDiv = document.createElement('div');
+    modalDiv.className = 'modal-overlay';
+    modalDiv.id = 'modalMeuPerfilGlobal';
+    modalDiv.onclick = function(e) { if (e.target === this) window.closeMeuPerfilModal(); };
+    modalDiv.innerHTML = `
+      <div class="modal-content" style="max-width: 580px; max-height: 92vh; display: flex; flex-direction: column;">
+        <div class="modal-header">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin: 0;">👤 Os Meus Dados & Fotografia de Perfil</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">
+              Altere as suas informações pessoais e a fotografia de conta (suporte a arrastar foto).
+            </p>
+          </div>
+          <button class="modal-close" onclick="closeMeuPerfilModal()">&times;</button>
+        </div>
+
+        <form id="formMeuPerfilGlobal" onsubmit="window.salvarMeuPerfil(event)" style="display: flex; flex-direction: column; overflow: hidden; flex: 1;">
+          <div class="modal-body" style="padding: 1.25rem 1.5rem; overflow-y: auto;">
+
+            <!-- Zona de Upload Drag-and-Drop de Avatar -->
+            <div class="avatar-upload-zone" id="globalPerfilAvatarDropZone">
+              <div class="avatar-preview-wrapper" onclick="document.getElementById('inputGlobalPerfilFoto').click()" title="Clique para escolher ficheiro ou arraste uma foto para aqui">
+                <img id="globalPerfilFotoPreview" src="" class="avatar-preview-img" style="display: none;" alt="" onerror="this.style.display='none'; document.getElementById('globalPerfilFotoPlaceholder').style.display='flex';">
+                <div id="globalPerfilFotoPlaceholder" class="avatar-placeholder-large">👤</div>
+                <div class="avatar-edit-badge" title="Alterar fotografia">📷</div>
+              </div>
+              <div class="avatar-upload-info" style="flex: 1;">
+                <strong style="color: var(--text-title); font-size: 0.95rem;">Fotografia de Conta</strong>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0.5rem 0;">
+                  <strong>Arraste uma foto para aqui</strong> ou clique para carregar do seu dispositivo (PNG, JPG, WebP).
+                </p>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                  <button type="button" class="btn btn-outline btn-xs" onclick="document.getElementById('inputGlobalPerfilFoto').click()">
+                    📁 Escolher Ficheiro
+                  </button>
+                  <button type="button" class="btn btn-outline btn-xs" id="btnRemoverFotoGlobalPerfil" onclick="window.removerFotoGlobalPerfil()" style="color: #dc2626; display: none;">
+                    🗑️ Remover Foto
+                  </button>
+                </div>
+                <input type="file" id="inputGlobalPerfilFoto" accept="image/*" style="display: none;" onchange="window.handleGlobalPerfilFotoSelect(event)">
+                <input type="hidden" id="inputGlobalPerfilFotoData">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label" for="globalPerfilNome">Nome Completo *</label>
+                <input type="text" id="globalPerfilNome" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="globalPerfilLogin">Utilizador / Login</label>
+                <input type="text" id="globalPerfilLogin" class="form-control" readonly style="background: #f8fafc; cursor: not-allowed; color: var(--text-muted);">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="globalPerfilCargo">Cargo Institucional</label>
+                <input type="text" id="globalPerfilCargo" class="form-control" readonly style="background: #f8fafc; cursor: not-allowed; color: var(--text-muted);">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="globalPerfilEmail">Correio Eletrónico</label>
+                <input type="email" id="globalPerfilEmail" class="form-control" placeholder="exemplo@arca.pt">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="globalPerfilTelefone">Contacto Telefónico</label>
+                <input type="tel" id="globalPerfilTelefone" class="form-control" placeholder="9xx xxx xxx">
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label" for="globalPerfilMorada">Morada Oficial / Residência</label>
+                <input type="text" id="globalPerfilMorada" class="form-control" placeholder="Aguada de Baixo">
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label" for="globalPerfilPassword">Nova Palavra-passe (opcional)</label>
+                <input type="password" id="globalPerfilPassword" class="form-control" placeholder="Deixe em branco para manter a atual">
+              </div>
+            </div>
+
+            <!-- Troca rápida de utilizador para testes -->
+            <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-top: 0.5rem;">
+              <label class="form-label" for="selectTrocarUtilizadorSessao" style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+                <span>🔄</span> Mudar Utilizador em Sessão (Para Testar Outros Membros):
+              </label>
+              <select id="selectTrocarUtilizadorSessao" class="form-control" style="font-size: 0.85rem; padding: 0.35rem 0.6rem;" onchange="window.trocarUtilizadorSessao(this.value)">
+                <!-- Preenchido dinamicamente -->
+              </select>
+            </div>
+
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-top: 1px solid var(--border-light); background: #ffffff;">
+            <button type="button" class="btn btn-outline" onclick="window.closeMeuPerfilModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" style="font-weight: 700;">
+              💾 Gravar os Meus Dados
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modalDiv);
+
+    // Inicializar listeners Drag-and-Drop na zona de upload
+    const dropZone = document.getElementById('globalPerfilAvatarDropZone');
+    if (dropZone) {
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+      });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          const file = e.dataTransfer.files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (re) => {
+              window.setGlobalPerfilFoto(re.target.result);
+            };
+            reader.readAsDataURL(file);
+          } else {
+            window.showToast('Por favor, arraste um ficheiro de imagem válido (PNG, JPG, WebP).', 'error');
+          }
+        }
+      });
+    }
+  }
+
+  window.openMeuPerfilModal = function() {
+    ensurePerfilModalInjected();
+    const user = window.getArcaCurrentUser();
+    const modal = document.getElementById('modalMeuPerfilGlobal');
+    if (!modal) return;
+
+    document.getElementById('globalPerfilNome').value = user.nome || '';
+    document.getElementById('globalPerfilLogin').value = user.username || `@${user.login}`;
+    document.getElementById('globalPerfilCargo').value = `${user.cargo || ''} (${user.orgao || 'ARCA'})`;
+    document.getElementById('globalPerfilEmail').value = user.email || '';
+    document.getElementById('globalPerfilTelefone').value = user.telefone || '';
+    document.getElementById('globalPerfilMorada').value = user.morada || '';
+    document.getElementById('globalPerfilPassword').value = '';
+
+    window.setGlobalPerfilFoto(user.foto || '');
+
+    // Preencher o seletor de troca de utilizador
+    const select = document.getElementById('selectTrocarUtilizadorSessao');
+    if (select) {
+      let membrosLista = [];
+      try {
+        membrosLista = JSON.parse(localStorage.getItem('arca_membros_orgaos_v4')) || [];
+      } catch (e) {}
+
+      if (membrosLista.length === 0 && window.OFFICIAL_MEMBROS) {
+        membrosLista = window.OFFICIAL_MEMBROS;
+      }
+
+      select.innerHTML = membrosLista.map(m => {
+        const isSelected = (m.id === user.id || m.login === user.login || m.nome === user.nome);
+        return `<option value="${m.id}" ${isSelected ? 'selected' : ''}>${m.nome} — ${m.cargo} (${m.orgao})</option>`;
+      }).join('');
+    }
+
+    modal.classList.add('active');
+  };
+
+  window.closeMeuPerfilModal = function() {
+    const modal = document.getElementById('modalMeuPerfilGlobal');
+    if (modal) modal.classList.remove('active');
+  };
+
+  window.setGlobalPerfilFoto = function(dataUrl) {
+    const preview = document.getElementById('globalPerfilFotoPreview');
+    const placeholder = document.getElementById('globalPerfilFotoPlaceholder');
+    const hiddenData = document.getElementById('inputGlobalPerfilFotoData');
+    const btnRemover = document.getElementById('btnRemoverFotoGlobalPerfil');
+
+    if (hiddenData) hiddenData.value = dataUrl || '';
+
+    if (dataUrl) {
+      if (preview) {
+        preview.src = dataUrl;
+        preview.style.display = 'block';
+      }
+      if (placeholder) placeholder.style.display = 'none';
+      if (btnRemover) btnRemover.style.display = 'inline-flex';
+    } else {
+      if (preview) {
+        preview.src = '';
+        preview.style.display = 'none';
+      }
+      if (placeholder) placeholder.style.display = 'flex';
+      if (btnRemover) btnRemover.style.display = 'none';
+    }
+  };
+
+  window.removerFotoGlobalPerfil = function() {
+    window.setGlobalPerfilFoto('');
+    const fileInput = document.getElementById('inputGlobalPerfilFoto');
+    if (fileInput) fileInput.value = '';
+  };
+
+  window.handleGlobalPerfilFotoSelect = function(e) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        window.setGlobalPerfilFoto(re.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  window.salvarMeuPerfil = function(e) {
+    e.preventDefault();
+    const user = window.getArcaCurrentUser();
+
+    const novoNome = document.getElementById('globalPerfilNome').value.trim();
+    const novoEmail = document.getElementById('globalPerfilEmail').value.trim();
+    const novoTelefone = document.getElementById('globalPerfilTelefone').value.trim();
+    const novaMorada = document.getElementById('globalPerfilMorada').value.trim();
+    const novaFoto = document.getElementById('inputGlobalPerfilFotoData').value;
+
+    user.nome = novoNome;
+    user.email = novoEmail;
+    user.telefone = novoTelefone;
+    user.morada = novaMorada;
+    user.foto = novaFoto;
+
+    // Atualizar no storage da sessão
+    window.setArcaCurrentUser(user);
+
+    // Sincronizar também na base de dados de membros se este utilizador existir lá
+    try {
+      const membrosKey = 'arca_membros_orgaos_v4';
+      let membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
+      const mIdx = membros.findIndex(m => m.id === user.id || m.login === user.login || m.nome === user.nome);
+      if (mIdx >= 0) {
+        membros[mIdx].nome = novoNome;
+        membros[mIdx].email = novoEmail;
+        membros[mIdx].telefone = novoTelefone;
+        membros[mIdx].morada = novaMorada;
+        membros[mIdx].foto = novaFoto;
+        localStorage.setItem(membrosKey, JSON.stringify(membros));
+        if (typeof window.renderMembros === 'function') {
+          window.renderMembros();
+        }
+      }
+    } catch (err) {}
+
+    window.closeMeuPerfilModal();
+    window.showToast('Os seus dados e fotografia de perfil foram atualizados com sucesso!', 'success');
+  };
+
+  window.trocarUtilizadorSessao = function(membroId) {
+    membroId = parseInt(membroId);
+    let membros = [];
+    try {
+      membros = JSON.parse(localStorage.getItem('arca_membros_orgaos_v4')) || [];
+    } catch (e) {}
+
+    const m = membros.find(item => item.id === membroId);
+    if (!m) return;
+
+    const newUser = {
+      id: m.id,
+      login: m.username ? m.username.replace('@', '') : m.nome.toLowerCase().replace(/[^a-z0-9]/g, ''),
+      username: m.username || `@${m.nome.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+      nome: m.nome,
+      cargo: m.cargo,
+      orgao: m.orgao,
+      email: m.email || '',
+      telefone: m.telefone || '',
+      morada: m.morada || '',
+      perfil: m.perfil || 'Utilizador',
+      numeroSocio: m.numeroSocio || null,
+      foto: m.foto || '',
+      estado: m.estado || 'Ativo'
+    };
+
+    window.setArcaCurrentUser(newUser);
+    window.openMeuPerfilModal(); // Reabre com os novos dados
+    window.showToast(`Sessão alterada para ${m.nome} (${m.cargo})!`, 'info');
+  };
+
+  // Inicializar Perfil e Avatar do Utilizador na Barra Lateral
+  window.updateSidebarUserProfile();
 
   // =========================================================================
   // 3.5. Redimensionamento Universal de Colunas em Todas as Tabelas (.modern-table)
