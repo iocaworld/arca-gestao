@@ -350,7 +350,7 @@
         </div>
 
         <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Adicionar registo desportivo em preparação...', 'info')">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Registo rápido desportivo em preparação...', 'info')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
@@ -426,50 +426,68 @@
           <div class="card-box">
             <div class="card-header-bar">
               <h2>Coordenação Técnica e Escalões Oficiais</h2>
-              <button class="btn btn-primary btn-sm" onclick="showToast('A exportar mapa de escalões da época...', 'success')">Exportar Plantel</button>
+              
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchEscaloes" class="form-control" placeholder="Pesquisar escalão, treinador..." oninput="handleEscaloesSearch(this.value)" style="width: 220px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+                <!-- Ordenação de Escalões -->
+                <select id="sortEscaloesSelect" class="btn btn-secondary btn-sm" onchange="handleEscaloesSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                  <option value="escalao_asc">Escalão (A → Z)</option>
+                  <option value="escalao_desc">Escalão (Z → A)</option>
+                  <option value="atletas_desc">Mais Atletas</option>
+                  <option value="atletas_asc">Menos Atletas</option>
+                  <option value="competicao_asc">Competição (A → Z)</option>
+                </select>
+
+                <!-- Seletor de Colunas de Escalões -->
+                <div class="col-picker-dropdown">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerEscaloes" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                    </svg>
+                    <span>Colunas</span>
+                    <span style="font-size: 0.65rem;">▼</span>
+                  </button>
+                  <div class="col-picker-menu" id="menuColPickerEscaloes">
+                    <div class="col-picker-header">
+                      <span>Personalizar Colunas</span>
+                      <button type="button" onclick="resetEscaloesCols()">Repor</button>
+                    </div>
+                    <div class="col-picker-list" id="listColPickerEscaloes"></div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary btn-sm" onclick="showToast('A exportar mapa oficial de escalões...', 'success')">Exportar Plantel</button>
+              </div>
             </div>
 
             <div class="table-responsive">
-              <table class="modern-table">
+              <table class="modern-table" id="tableEscaloes">
                 <thead>
-                  <tr>
-                    <th>Escalão / Equipa</th>
-                    <th>Competição Oficial</th>
-                    <th>Treinador Principal</th>
-                    <th>Diretor Responsável</th>
-                    <th>Atletas</th>
-                    <th>Estado</th>
-                    <th style="text-align: right;">Ações</th>
+                  <tr id="headRowEscaloes">
+                    <th class="sortable-th" data-col="escalao" onclick="sortEscaloes('escalao')">
+                      <span>Escalão / Equipa</span><span class="sort-indicator" id="sortInd_esc_escalao">▲</span>
+                    </th>
+                    <th class="sortable-th" data-col="competicao" onclick="sortEscaloes('competicao')">
+                      <span>Competição Oficial</span><span class="sort-indicator" id="sortInd_esc_competicao">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="treinador" onclick="sortEscaloes('treinador')">
+                      <span>Treinador Principal</span><span class="sort-indicator" id="sortInd_esc_treinador">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="diretor" onclick="sortEscaloes('diretor')">
+                      <span>Diretor Responsável</span><span class="sort-indicator" id="sortInd_esc_diretor">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="atletas" style="width: 110px;" onclick="sortEscaloes('atletas')">
+                      <span>Atletas</span><span class="sort-indicator" id="sortInd_esc_atletas">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="estado" style="width: 130px;" onclick="sortEscaloes('estado')">
+                      <span>Estado</span><span class="sort-indicator" id="sortInd_esc_estado">⇅</span>
+                    </th>
+                    <th data-col="acoes" style="text-align: right; width: 110px;">Ações</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Futsal Sénior Masculino</strong></td>
-                    <td>1.ª Divisão Distrital AF Aveiro</td>
-                    <td>Rui Costa (Treinador UEFA B)</td>
-                    <td>António Silva</td>
-                    <td>18 Atletas</td>
-                    <td><span class="status-pill em-dia">Em Competição</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Plantel sénior masculino carregado.', 'info')">Plantel</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Futsal Sénior Feminino</strong></td>
-                    <td>Campeonato Distrital / Taça AF Aveiro</td>
-                    <td>Ana Martins</td>
-                    <td>Pedro Alves</td>
-                    <td>16 Atletas</td>
-                    <td><span class="status-pill em-dia">Em Competição</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Plantel sénior feminino carregado.', 'info')">Plantel</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Futsal Formação (Sub-15 & Sub-13)</strong></td>
-                    <td>Encontros Regionais & Formação</td>
-                    <td>Carlos Carvalho</td>
-                    <td>Jorge Cunha</td>
-                    <td>34 Atletas</td>
-                    <td><span class="status-pill em-dia">Ativo</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Plantel da formação carregado.', 'info')">Plantel</button></td>
-                  </tr>
+                <tbody id="tbodyEscaloes">
+                  <!-- Inserido dinamicamente via JS -->
                 </tbody>
               </table>
             </div>
@@ -481,46 +499,64 @@
           <div class="card-box">
             <div class="card-header-bar">
               <h2>Delegados Oficiais de Jogo e Credenciação</h2>
-              <button class="btn btn-primary btn-sm" onclick="showToast('Novo delegado credenciado adicionado.', 'success')">+ Credenciar Delegado</button>
+
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchDelegados" class="form-control" placeholder="Pesquisar delegado..." oninput="handleDelegadosSearch(this.value)" style="width: 200px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+                <!-- Ordenação de Delegados -->
+                <select id="sortDelegadosSelect" class="btn btn-secondary btn-sm" onchange="handleDelegadosSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                  <option value="nome_asc">Nome (A → Z)</option>
+                  <option value="nome_desc">Nome (Z → A)</option>
+                  <option value="credencial_asc">Credencial (Menor → Maior)</option>
+                  <option value="equipas_asc">Equipas (A → Z)</option>
+                </select>
+
+                <!-- Seletor de Colunas de Delegados -->
+                <div class="col-picker-dropdown">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerDelegados" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                    </svg>
+                    <span>Colunas</span>
+                    <span style="font-size: 0.65rem;">▼</span>
+                  </button>
+                  <div class="col-picker-menu" id="menuColPickerDelegados">
+                    <div class="col-picker-header">
+                      <span>Personalizar Colunas</span>
+                      <button type="button" onclick="resetDelegadosCols()">Repor</button>
+                    </div>
+                    <div class="col-picker-list" id="listColPickerDelegados"></div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary btn-sm" onclick="showToast('Novo delegado credenciado em preparação.', 'success')">+ Credenciar Delegado</button>
+              </div>
             </div>
 
             <div class="table-responsive">
-              <table class="modern-table">
+              <table class="modern-table" id="tableDelegados">
                 <thead>
-                  <tr>
-                    <th>Nome do Delegado</th>
-                    <th>Nº Credencial / AF Aveiro</th>
-                    <th>Contacto</th>
-                    <th>Equipas Atribuídas</th>
-                    <th>Checklist Pré-Jogo</th>
-                    <th style="text-align: right;">Ações</th>
+                  <tr id="headRowDelegados">
+                    <th class="sortable-th" data-col="nome" onclick="sortDelegados('nome')">
+                      <span>Nome do Delegado</span><span class="sort-indicator" id="sortInd_del_nome">▲</span>
+                    </th>
+                    <th class="sortable-th" data-col="credencial" style="width: 170px;" onclick="sortDelegados('credencial')">
+                      <span>Nº Credencial / AF Aveiro</span><span class="sort-indicator" id="sortInd_del_credencial">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="contacto" onclick="sortDelegados('contacto')">
+                      <span>Contacto</span><span class="sort-indicator" id="sortInd_del_contacto">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="equipas" onclick="sortDelegados('equipas')">
+                      <span>Equipas Atribuídas</span><span class="sort-indicator" id="sortInd_del_equipas">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="checklist" style="width: 150px;" onclick="sortDelegados('checklist')">
+                      <span>Checklist Pré-Jogo</span><span class="sort-indicator" id="sortInd_del_checklist">⇅</span>
+                    </th>
+                    <th data-col="acoes" style="text-align: right; width: 110px;">Ações</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>José Manuel Ferreira</strong></td>
-                    <td><code>DEL-AFA-2026/089</code></td>
-                    <td>914 332 100</td>
-                    <td>Séniores Masculino</td>
-                    <td><span class="status-pill em-dia">&check; Conforme</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Checklist de jogo aberta.', 'info')">Ficha Jogo</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Manuel António Rodrigues</strong></td>
-                    <td><code>DEL-AFA-2026/092</code></td>
-                    <td>913 222 333</td>
-                    <td>Séniores Feminino</td>
-                    <td><span class="status-pill em-dia">&check; Conforme</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Checklist de jogo aberta.', 'info')">Ficha Jogo</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Arménio Reis Rodrigues</strong></td>
-                    <td><code>DEL-AFA-2026/104</code></td>
-                    <td>937 509 584</td>
-                    <td>Formação Sub-15</td>
-                    <td><span class="status-pill em-dia">&check; Conforme</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Checklist de jogo aberta.', 'info')">Ficha Jogo</button></td>
-                  </tr>
+                <tbody id="tbodyDelegados">
+                  <!-- Inserido dinamicamente via JS -->
                 </tbody>
               </table>
             </div>
@@ -532,50 +568,70 @@
           <div class="card-box">
             <div class="card-header-bar">
               <h2>Gabinete de Fisioterapia & Departamento Médico</h2>
-              <button class="btn btn-primary btn-sm" onclick="showToast('Novo boletim clínico registado.', 'success')">+ Registar Boletim</button>
+
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchFisio" class="form-control" placeholder="Pesquisar atleta, lesão..." oninput="handleFisioSearch(this.value)" style="width: 200px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+                <!-- Ordenação de Fisioterapia -->
+                <select id="sortFisioSelect" class="btn btn-secondary btn-sm" onchange="handleFisioSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                  <option value="data_desc">Data da Ocorrência (Mais Recente)</option>
+                  <option value="data_asc">Data da Ocorrência (Mais Antiga)</option>
+                  <option value="atleta_asc">Atleta (A → Z)</option>
+                  <option value="atleta_desc">Atleta (Z → A)</option>
+                  <option value="aptidao_asc">Aptidão Clínica</option>
+                </select>
+
+                <!-- Seletor de Colunas de Fisioterapia -->
+                <div class="col-picker-dropdown">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerFisio" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                    </svg>
+                    <span>Colunas</span>
+                    <span style="font-size: 0.65rem;">▼</span>
+                  </button>
+                  <div class="col-picker-menu" id="menuColPickerFisio">
+                    <div class="col-picker-header">
+                      <span>Personalizar Colunas</span>
+                      <button type="button" onclick="resetFisioCols()">Repor</button>
+                    </div>
+                    <div class="col-picker-list" id="listColPickerFisio"></div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary btn-sm" onclick="showToast('Registo de novo boletim clínico aberto.', 'success')">+ Registar Boletim</button>
+              </div>
             </div>
 
             <div class="table-responsive">
-              <table class="modern-table">
+              <table class="modern-table" id="tableFisio">
                 <thead>
-                  <tr>
-                    <th>Atleta</th>
-                    <th>Equipa</th>
-                    <th>Diagnóstico / Lesão</th>
-                    <th>Data da Ocorrência</th>
-                    <th>Tratamento</th>
-                    <th>Previsão de Retorno</th>
-                    <th>Aptidão</th>
+                  <tr id="headRowFisio">
+                    <th class="sortable-th" data-col="atleta" onclick="sortFisio('atleta')">
+                      <span>Atleta</span><span class="sort-indicator" id="sortInd_fis_atleta">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="equipa" onclick="sortFisio('equipa')">
+                      <span>Equipa</span><span class="sort-indicator" id="sortInd_fis_equipa">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="diagnostico" onclick="sortFisio('diagnostico')">
+                      <span>Diagnóstico / Lesão</span><span class="sort-indicator" id="sortInd_fis_diagnostico">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="data" style="width: 110px;" onclick="sortFisio('data')">
+                      <span>Data</span><span class="sort-indicator" id="sortInd_fis_data">▼</span>
+                    </th>
+                    <th class="sortable-th" data-col="tratamento" onclick="sortFisio('tratamento')">
+                      <span>Tratamento em Curso</span><span class="sort-indicator" id="sortInd_fis_tratamento">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="previsao" style="width: 120px;" onclick="sortFisio('previsao')">
+                      <span>Previsão</span><span class="sort-indicator" id="sortInd_fis_previsao">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="aptidao" style="width: 130px;" onclick="sortFisio('aptidao')">
+                      <span>Aptidão</span><span class="sort-indicator" id="sortInd_fis_aptidao">⇅</span>
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Gonçalo Ribeiro</strong> (#7)</td>
-                    <td>Séniores Masculino</td>
-                    <td>Entorse tíbio-társica grau I</td>
-                    <td>18/11/2026</td>
-                    <td>Crioterapia, drenagem e reforço</td>
-                    <td>02/12/2026</td>
-                    <td><span class="status-pill atrasado">Inapto</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Mariana Santos</strong> (#10)</td>
-                    <td>Séniores Feminino</td>
-                    <td>Sobrecarga muscular gémeo direito</td>
-                    <td>21/11/2026</td>
-                    <td>Massagem de recuperação e alongamento</td>
-                    <td>28/11/2026</td>
-                    <td><span class="status-pill pendente">Condicionado</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Tiago Silva Ferreira</strong> (#4)</td>
-                    <td>Formação Sub-15</td>
-                    <td>Contusão no joelho esquerdo</td>
-                    <td>15/11/2026</td>
-                    <td>Fisioterapia e repouso articular</td>
-                    <td>26/11/2026</td>
-                    <td><span class="status-pill em-dia">Apto p/ Treino</span></td>
-                  </tr>
+                <tbody id="tbodyFisio">
+                  <!-- Inserido dinamicamente via JS -->
                 </tbody>
               </table>
             </div>
@@ -587,7 +643,39 @@
           <div class="card-box">
             <div class="card-header-bar">
               <h2>Apólices de Seguros de Acidentes Pessoais Desportivos</h2>
-              <button class="btn btn-primary btn-sm" onclick="showToast('Formulário de participação de sinistro descarregado.', 'success')">📄 Participação de Sinistro</button>
+
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchSeguros" class="form-control" placeholder="Pesquisar apólice..." oninput="handleSegurosSearch(this.value)" style="width: 200px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+                <!-- Ordenação de Seguros -->
+                <select id="sortSegurosSelect" class="btn btn-secondary btn-sm" onchange="handleSegurosSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                  <option value="escalao_asc">Escalão (A → Z)</option>
+                  <option value="escalao_desc">Escalão (Z → A)</option>
+                  <option value="segurados_desc">Mais Segurados</option>
+                  <option value="segurados_asc">Menos Segurados</option>
+                  <option value="sinistros_desc">Mais Sinistros</option>
+                </select>
+
+                <!-- Seletor de Colunas de Seguros -->
+                <div class="col-picker-dropdown">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerSeguros" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                    </svg>
+                    <span>Colunas</span>
+                    <span style="font-size: 0.65rem;">▼</span>
+                  </button>
+                  <div class="col-picker-menu" id="menuColPickerSeguros">
+                    <div class="col-picker-header">
+                      <span>Personalizar Colunas</span>
+                      <button type="button" onclick="resetSegurosCols()">Repor</button>
+                    </div>
+                    <div class="col-picker-list" id="listColPickerSeguros"></div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary btn-sm" onclick="showToast('Formulário de participação de sinistro descarregado.', 'success')">📄 Participação de Sinistro</button>
+              </div>
             </div>
 
             <div style="background: rgba(28,109,66,0.05); border: 1px solid rgba(28,109,66,0.2); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
@@ -599,42 +687,29 @@
             </div>
 
             <div class="table-responsive">
-              <table class="modern-table">
+              <table class="modern-table" id="tableSeguros">
                 <thead>
-                  <tr>
-                    <th>Escalão Coberto</th>
-                    <th>Nº de Segurados</th>
-                    <th>Vigência da Apólice</th>
-                    <th>Sinistros Ativos</th>
-                    <th>Estado da Cobertura</th>
-                    <th style="text-align: right;">Ações</th>
+                  <tr id="headRowSeguros">
+                    <th class="sortable-th" data-col="escalao" onclick="sortSeguros('escalao')">
+                      <span>Escalão Coberto</span><span class="sort-indicator" id="sortInd_seg_escalao">▲</span>
+                    </th>
+                    <th class="sortable-th" data-col="segurados" style="width: 140px;" onclick="sortSeguros('segurados')">
+                      <span>Nº Segurados</span><span class="sort-indicator" id="sortInd_seg_segurados">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="vigencia" onclick="sortSeguros('vigencia')">
+                      <span>Vigência da Apólice</span><span class="sort-indicator" id="sortInd_seg_vigencia">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="sinistros" style="width: 150px;" onclick="sortSeguros('sinistros')">
+                      <span>Sinistros Ativos</span><span class="sort-indicator" id="sortInd_seg_sinistros">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="estado" style="width: 130px;" onclick="sortSeguros('estado')">
+                      <span>Estado Cobertura</span><span class="sort-indicator" id="sortInd_seg_estado">⇅</span>
+                    </th>
+                    <th data-col="acoes" style="text-align: right; width: 120px;">Ações</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Futsal Sénior Masculino</strong></td>
-                    <td>22 Elementos (Atletas + Staff)</td>
-                    <td>01/09/2026 a 31/08/2027</td>
-                    <td>1 participação em curso</td>
-                    <td><span class="status-pill em-dia">Ativa</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Apólice descarregada.', 'info')">Apólice PDF</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Futsal Sénior Feminino</strong></td>
-                    <td>20 Elementos (Atletas + Staff)</td>
-                    <td>01/09/2026 a 31/08/2027</td>
-                    <td>0 participações</td>
-                    <td><span class="status-pill em-dia">Ativa</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Apólice descarregada.', 'info')">Apólice PDF</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Formação e Escolas ARCA</strong></td>
-                    <td>38 Elementos</td>
-                    <td>01/09/2026 a 31/08/2027</td>
-                    <td>0 participações</td>
-                    <td><span class="status-pill em-dia">Ativa</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Apólice descarregada.', 'info')">Apólice PDF</button></td>
-                  </tr>
+                <tbody id="tbodySeguros">
+                  <!-- Inserido dinamicamente via JS -->
                 </tbody>
               </table>
             </div>
@@ -649,7 +724,612 @@
   <script src="js/socios-data.js"></script>
   <script src="js/main.js"></script>
   <script>
-    function switchDesportoTab(cargo) {
+    // =========================================================================
+    // 1. DADOS DE GESTÃO DESPORTIVA
+    // =========================================================================
+    const INITIAL_ESCALOES = [
+      { id: 1, escalao: 'Futsal Sénior Masculino', competicao: '1.ª Divisão Distrital AF Aveiro', treinador: 'Rui Costa (UEFA B)', diretor: 'António Silva', atletas: 18, estado: 'Em Competição' },
+      { id: 2, escalao: 'Futsal Sénior Feminino', competicao: 'Campeonato Distrital / Taça AF Aveiro', treinador: 'Ana Martins', diretor: 'Pedro Alves', atletas: 16, estado: 'Em Competição' },
+      { id: 3, escalao: 'Futsal Formação (Sub-15 & Sub-13)', competicao: 'Encontros Regionais & Formação', treinador: 'Carlos Carvalho', diretor: 'Jorge Cunha', atletas: 34, estado: 'Ativo' },
+      { id: 4, escalao: 'BiciARCA Team (BTT & Estrada)', competicao: 'Provas Regionais e Nacionais', treinador: 'Coletivo', diretor: 'Manuel Rodrigues', atletas: 28, estado: 'Ativo' }
+    ];
+
+    const INITIAL_DELEGADOS = [
+      { id: 1, nome: 'José Manuel Ferreira', credencial: 'DEL-AFA-2026/089', contacto: '914 332 100', equipas: 'Séniores Masculino', checklist: 'Conforme' },
+      { id: 2, nome: 'Manuel António Rodrigues', credencial: 'DEL-AFA-2026/092', contacto: '913 222 333', equipas: 'Séniores Feminino', checklist: 'Conforme' },
+      { id: 3, nome: 'Arménio Reis Rodrigues', credencial: 'DEL-AFA-2026/104', contacto: '937 509 584', equipas: 'Formação Sub-15', checklist: 'Conforme' },
+      { id: 4, nome: 'Carlos Alberto Santos Almeida', credencial: 'DEL-AFA-2026/112', contacto: '964 227 954', equipas: 'Geral / Suplente', checklist: 'Conforme' }
+    ];
+
+    const INITIAL_FISIO = [
+      { id: 1, atleta: 'Gonçalo Ribeiro (#7)', equipa: 'Séniores Masculino', diagnostico: 'Entorse tíbio-társica grau I', data: '2026-11-18', tratamento: 'Crioterapia, drenagem e reforço', previsao: '02/12/2026', aptidao: 'Inapto' },
+      { id: 2, atleta: 'Mariana Santos (#10)', equipa: 'Séniores Feminino', diagnostico: 'Sobrecarga muscular gémeo direito', data: '2026-11-21', tratamento: 'Massagem de recuperação e alongamento', previsao: '28/11/2026', aptidao: 'Condicionado' },
+      { id: 3, atleta: 'Tiago Silva Ferreira (#4)', equipa: 'Formação Sub-15', diagnostico: 'Contusão no joelho esquerdo', data: '2026-11-15', tratamento: 'Fisioterapia e repouso articular', previsao: '26/11/2026', aptidao: 'Apto' }
+    ];
+
+    const INITIAL_SEGUROS = [
+      { id: 1, escalao: 'Futsal Sénior Masculino', segurados: 22, vigencia: '01/09/2026 a 31/08/2027', sinistros: 1, estado: 'Ativa' },
+      { id: 2, escalao: 'Futsal Sénior Feminino', segurados: 20, vigencia: '01/09/2026 a 31/08/2027', sinistros: 0, estado: 'Ativa' },
+      { id: 3, escalao: 'Formação e Escolas ARCA', segurados: 38, vigencia: '01/09/2026 a 31/08/2027', sinistros: 0, estado: 'Ativa' },
+      { id: 4, escalao: 'Secção Cicloturismo / BiciARCA', segurados: 28, vigencia: '01/01/2026 a 31/12/2026', sinistros: 0, estado: 'Ativa' }
+    ];
+
+    let escaloes = INITIAL_ESCALOES;
+    let delegados = INITIAL_DELEGADOS;
+    let fisio = INITIAL_FISIO;
+    let seguros = INITIAL_SEGUROS;
+
+    // Configuração de Colunas & Ordenação
+    const COLS_ESC_KEY = 'arca_cols_desp_escaloes';
+    const COLS_DEL_KEY = 'arca_cols_desp_delegados';
+    const COLS_FIS_KEY = 'arca_cols_desp_fisio';
+    const COLS_SEG_KEY = 'arca_cols_desp_seguros';
+
+    let colsEsc = JSON.parse(localStorage.getItem(COLS_ESC_KEY)) || { escalao: true, competicao: true, treinador: true, diretor: true, atletas: true, estado: true, acoes: true };
+    let colsDel = JSON.parse(localStorage.getItem(COLS_DEL_KEY)) || { nome: true, credencial: true, contacto: true, equipas: true, checklist: true, acoes: true };
+    let colsFis = JSON.parse(localStorage.getItem(COLS_FIS_KEY)) || { atleta: true, equipa: true, diagnostico: true, data: true, tratamento: true, previsao: true, aptidao: true };
+    let colsSeg = JSON.parse(localStorage.getItem(COLS_SEG_KEY)) || { escalao: true, segurados: true, vigencia: true, sinistros: true, estado: true, acoes: true };
+
+    let sortEscField = 'escalao'; let sortEscDir = 'asc';
+    let sortDelField = 'nome'; let sortDelDir = 'asc';
+    let sortFisField = 'data'; let sortFisDir = 'desc';
+    let sortSegField = 'escalao'; let sortSegDir = 'asc';
+
+    let searchEscQuery = '';
+    let searchDelQuery = '';
+    let searchFisQuery = '';
+    let searchSegQuery = '';
+
+    // =========================================================================
+    // 2. FUNÇÕES TABELA ESCALÕES (DIRETOR DESPORTIVO)
+    // =========================================================================
+    function applyColsEsc() {
+      Object.entries(colsEsc).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableEscaloes th[data-col="${col}"], #tableEscaloes td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function initColPickerEsc() {
+      const list = document.getElementById('listColPickerEscaloes');
+      const toggle = document.getElementById('btnToggleColPickerEscaloes');
+      const menu = document.getElementById('menuColPickerEscaloes');
+      if (!list) return;
+
+      const labels = {
+        escalao: 'Escalão / Equipa',
+        competicao: 'Competição Oficial',
+        treinador: 'Treinador Principal',
+        diretor: 'Diretor Responsável',
+        atletas: 'Atletas',
+        estado: 'Estado',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsEsc[key] ? 'checked' : ''} onchange="toggleEscCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleEscCol = function(key, isVisible) {
+      colsEsc[key] = isVisible;
+      localStorage.setItem(COLS_ESC_KEY, JSON.stringify(colsEsc));
+      applyColsEsc();
+    };
+
+    window.resetEscaloesCols = function() {
+      colsEsc = { escalao: true, competicao: true, treinador: true, diretor: true, atletas: true, estado: true, acoes: true };
+      localStorage.setItem(COLS_ESC_KEY, JSON.stringify(colsEsc));
+      initColPickerEsc();
+      applyColsEsc();
+    };
+
+    window.sortEscaloes = function(field) {
+      if (sortEscField === field) {
+        sortEscDir = (sortEscDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortEscField = field;
+        sortEscDir = (field === 'atletas') ? 'desc' : 'asc';
+      }
+      updateEscSortIndicators();
+      renderEscaloes();
+    };
+
+    window.handleEscaloesSortSelect = function(val) {
+      const last = val.lastIndexOf('_');
+      sortEscField = val.slice(0, last);
+      sortEscDir = val.slice(last + 1);
+      updateEscSortIndicators();
+      renderEscaloes();
+    };
+
+    function updateEscSortIndicators() {
+      const sel = document.getElementById('sortEscaloesSelect');
+      if (sel) sel.value = `${sortEscField}_${sortEscDir}`;
+
+      document.querySelectorAll('#headRowEscaloes th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortEscField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = sortEscDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function renderEscaloes() {
+      const tbody = document.getElementById('tbodyEscaloes');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = escaloes.filter(e => {
+        return !searchEscQuery || 
+          e.escalao.toLowerCase().includes(searchEscQuery) || 
+          e.competicao.toLowerCase().includes(searchEscQuery) || 
+          e.treinador.toLowerCase().includes(searchEscQuery);
+      });
+
+      list.sort((a, b) => {
+        if (sortEscField === 'atletas') {
+          return sortEscDir === 'asc' ? (a.atletas - b.atletas) : (b.atletas - a.atletas);
+        }
+        const valA = (a[sortEscField] || '').toString();
+        const valB = (b[sortEscField] || '').toString();
+        const c = valA.localeCompare(valB, 'pt');
+        return sortEscDir === 'asc' ? c : -c;
+      });
+
+      list.forEach(e => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td data-col="escalao"><strong>${e.escalao}</strong></td>
+          <td data-col="competicao">${e.competicao}</td>
+          <td data-col="treinador">${e.treinador}</td>
+          <td data-col="diretor">${e.diretor}</td>
+          <td data-col="atletas"><strong>${e.atletas}</strong> Atletas</td>
+          <td data-col="estado"><span class="status-pill em-dia">${e.estado}</span></td>
+          <td data-col="acoes" style="text-align: right;">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Plantel do ${e.escalao} carregado.', 'info')">Plantel</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      applyColsEsc();
+      if (window.initTableResizers) window.initTableResizers();
+    }
+
+    window.handleEscaloesSearch = function(val) {
+      searchEscQuery = val.toLowerCase().trim();
+      renderEscaloes();
+    };
+
+    // =========================================================================
+    // 3. FUNÇÕES TABELA DELEGADOS
+    // =========================================================================
+    function applyColsDel() {
+      Object.entries(colsDel).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableDelegados th[data-col="${col}"], #tableDelegados td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function initColPickerDel() {
+      const list = document.getElementById('listColPickerDelegados');
+      const toggle = document.getElementById('btnToggleColPickerDelegados');
+      const menu = document.getElementById('menuColPickerDelegados');
+      if (!list) return;
+
+      const labels = {
+        nome: 'Nome do Delegado',
+        credencial: 'Nº Credencial',
+        contacto: 'Contacto',
+        equipas: 'Equipas Atribuídas',
+        checklist: 'Checklist',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsDel[key] ? 'checked' : ''} onchange="toggleDelCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleDelCol = function(key, isVisible) {
+      colsDel[key] = isVisible;
+      localStorage.setItem(COLS_DEL_KEY, JSON.stringify(colsDel));
+      applyColsDel();
+    };
+
+    window.resetDelegadosCols = function() {
+      colsDel = { nome: true, credencial: true, contacto: true, equipas: true, checklist: true, acoes: true };
+      localStorage.setItem(COLS_DEL_KEY, JSON.stringify(colsDel));
+      initColPickerDel();
+      applyColsDel();
+    };
+
+    window.sortDelegados = function(field) {
+      if (sortDelField === field) {
+        sortDelDir = (sortDelDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortDelField = field;
+        sortDelDir = 'asc';
+      }
+      updateDelSortIndicators();
+      renderDelegados();
+    };
+
+    window.handleDelegadosSortSelect = function(val) {
+      const last = val.lastIndexOf('_');
+      sortDelField = val.slice(0, last);
+      sortDelDir = val.slice(last + 1);
+      updateDelSortIndicators();
+      renderDelegados();
+    };
+
+    function updateDelSortIndicators() {
+      const sel = document.getElementById('sortDelegadosSelect');
+      if (sel) sel.value = `${sortDelField}_${sortDelDir}`;
+
+      document.querySelectorAll('#headRowDelegados th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortDelField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = sortDelDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function renderDelegados() {
+      const tbody = document.getElementById('tbodyDelegados');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = delegados.filter(d => {
+        return !searchDelQuery || 
+          d.nome.toLowerCase().includes(searchDelQuery) || 
+          d.credencial.toLowerCase().includes(searchDelQuery) || 
+          d.equipas.toLowerCase().includes(searchDelQuery);
+      });
+
+      list.sort((a, b) => {
+        const valA = (a[sortDelField] || '').toString();
+        const valB = (b[sortDelField] || '').toString();
+        const c = valA.localeCompare(valB, 'pt');
+        return sortDelDir === 'asc' ? c : -c;
+      });
+
+      list.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td data-col="nome"><strong>${d.nome}</strong></td>
+          <td data-col="credencial"><code>${d.credencial}</code></td>
+          <td data-col="contacto">${d.contacto}</td>
+          <td data-col="equipas">${d.equipas}</td>
+          <td data-col="checklist"><span class="status-pill em-dia">&check; ${d.checklist}</span></td>
+          <td data-col="acoes" style="text-align: right;">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Checklist de jogo aberta.', 'info')">Ficha Jogo</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      applyColsDel();
+      if (window.initTableResizers) window.initTableResizers();
+    }
+
+    window.handleDelegadosSearch = function(val) {
+      searchDelQuery = val.toLowerCase().trim();
+      renderDelegados();
+    };
+
+    // =========================================================================
+    // 4. FUNÇÕES TABELA FISIO & CLINICA
+    // =========================================================================
+    function applyColsFis() {
+      Object.entries(colsFis).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableFisio th[data-col="${col}"], #tableFisio td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function initColPickerFis() {
+      const list = document.getElementById('listColPickerFisio');
+      const toggle = document.getElementById('btnToggleColPickerFisio');
+      const menu = document.getElementById('menuColPickerFisio');
+      if (!list) return;
+
+      const labels = {
+        atleta: 'Atleta',
+        equipa: 'Equipa',
+        diagnostico: 'Diagnóstico / Lesão',
+        data: 'Data Ocorrência',
+        tratamento: 'Tratamento',
+        previsao: 'Previsão',
+        aptidao: 'Aptidão Clínica'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsFis[key] ? 'checked' : ''} onchange="toggleFisCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleFisCol = function(key, isVisible) {
+      colsFis[key] = isVisible;
+      localStorage.setItem(COLS_FIS_KEY, JSON.stringify(colsFis));
+      applyColsFis();
+    };
+
+    window.resetFisioCols = function() {
+      colsFis = { atleta: true, equipa: true, diagnostico: true, data: true, tratamento: true, previsao: true, aptidao: true };
+      localStorage.setItem(COLS_FIS_KEY, JSON.stringify(colsFis));
+      initColPickerFis();
+      applyColsFis();
+    };
+
+    window.sortFisio = function(field) {
+      if (sortFisField === field) {
+        sortFisDir = (sortFisDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortFisField = field;
+        sortFisDir = (field === 'data' || field === 'previsao') ? 'desc' : 'asc';
+      }
+      updateFisSortIndicators();
+      renderFisio();
+    };
+
+    window.handleFisioSortSelect = function(val) {
+      const last = val.lastIndexOf('_');
+      sortFisField = val.slice(0, last);
+      sortFisDir = val.slice(last + 1);
+      updateFisSortIndicators();
+      renderFisio();
+    };
+
+    function updateFisSortIndicators() {
+      const sel = document.getElementById('sortFisioSelect');
+      if (sel) sel.value = `${sortFisField}_${sortFisDir}`;
+
+      document.querySelectorAll('#headRowFisio th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortFisField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = sortFisDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function renderFisio() {
+      const tbody = document.getElementById('tbodyFisio');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = fisio.filter(f => {
+        return !searchFisQuery || 
+          f.atleta.toLowerCase().includes(searchFisQuery) || 
+          f.diagnostico.toLowerCase().includes(searchFisQuery) || 
+          f.equipa.toLowerCase().includes(searchFisQuery);
+      });
+
+      list.sort((a, b) => {
+        const valA = (a[sortFisField] || '').toString();
+        const valB = (b[sortFisField] || '').toString();
+        const c = valA.localeCompare(valB, 'pt');
+        return sortFisDir === 'asc' ? c : -c;
+      });
+
+      list.forEach(f => {
+        const tr = document.createElement('tr');
+        let aptPill = `<span class="status-pill em-dia">Apto</span>`;
+        if (f.aptidao === 'Inapto') aptPill = `<span class="status-pill atrasado">Inapto</span>`;
+        if (f.aptidao === 'Condicionado') aptPill = `<span class="status-pill pendente">Condicionado</span>`;
+
+        tr.innerHTML = `
+          <td data-col="atleta"><strong>${f.atleta}</strong></td>
+          <td data-col="equipa">${f.equipa}</td>
+          <td data-col="diagnostico">${f.diagnostico}</td>
+          <td data-col="data">${f.data}</td>
+          <td data-col="tratamento"><small>${f.tratamento}</small></td>
+          <td data-col="previsao"><strong>${f.previsao}</strong></td>
+          <td data-col="aptidao">${aptPill}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      applyColsFis();
+      if (window.initTableResizers) window.initTableResizers();
+    }
+
+    window.handleFisioSearch = function(val) {
+      searchFisQuery = val.toLowerCase().trim();
+      renderFisio();
+    };
+
+    // =========================================================================
+    // 5. FUNÇÕES TABELA SEGUROS
+    // =========================================================================
+    function applyColsSeg() {
+      Object.entries(colsSeg).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableSeguros th[data-col="${col}"], #tableSeguros td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function initColPickerSeg() {
+      const list = document.getElementById('listColPickerSeguros');
+      const toggle = document.getElementById('btnToggleColPickerSeguros');
+      const menu = document.getElementById('menuColPickerSeguros');
+      if (!list) return;
+
+      const labels = {
+        escalao: 'Escalão Coberto',
+        segurados: 'Nº Segurados',
+        vigencia: 'Vigência da Apólice',
+        sinistros: 'Sinistros Ativos',
+        estado: 'Estado da Cobertura',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsSeg[key] ? 'checked' : ''} onchange="toggleSegCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleSegCol = function(key, isVisible) {
+      colsSeg[key] = isVisible;
+      localStorage.setItem(COLS_SEG_KEY, JSON.stringify(colsSeg));
+      applyColsSeg();
+    };
+
+    window.resetSegurosCols = function() {
+      colsSeg = { escalao: true, segurados: true, vigencia: true, sinistros: true, estado: true, acoes: true };
+      localStorage.setItem(COLS_SEG_KEY, JSON.stringify(colsSeg));
+      initColPickerSeg();
+      applyColsSeg();
+    };
+
+    window.sortSeguros = function(field) {
+      if (sortSegField === field) {
+        sortSegDir = (sortSegDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortSegField = field;
+        sortSegDir = (field === 'segurados' || field === 'sinistros') ? 'desc' : 'asc';
+      }
+      updateSegSortIndicators();
+      renderSeguros();
+    };
+
+    window.handleSegurosSortSelect = function(val) {
+      const last = val.lastIndexOf('_');
+      sortSegField = val.slice(0, last);
+      sortSegDir = val.slice(last + 1);
+      updateSegSortIndicators();
+      renderSeguros();
+    };
+
+    function updateSegSortIndicators() {
+      const sel = document.getElementById('sortSegurosSelect');
+      if (sel) sel.value = `${sortSegField}_${sortSegDir}`;
+
+      document.querySelectorAll('#headRowSeguros th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortSegField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = sortSegDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function renderSeguros() {
+      const tbody = document.getElementById('tbodySeguros');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = seguros.filter(s => {
+        return !searchSegQuery || 
+          s.escalao.toLowerCase().includes(searchSegQuery) || 
+          s.vigencia.toLowerCase().includes(searchSegQuery);
+      });
+
+      list.sort((a, b) => {
+        if (sortSegField === 'segurados') {
+          return sortSegDir === 'asc' ? (a.segurados - b.segurados) : (b.segurados - a.segurados);
+        }
+        if (sortSegField === 'sinistros') {
+          return sortSegDir === 'asc' ? (a.sinistros - b.sinistros) : (b.sinistros - a.sinistros);
+        }
+        const valA = (a[sortSegField] || '').toString();
+        const valB = (b[sortSegField] || '').toString();
+        const c = valA.localeCompare(valB, 'pt');
+        return sortSegDir === 'asc' ? c : -c;
+      });
+
+      list.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td data-col="escalao"><strong>${s.escalao}</strong></td>
+          <td data-col="segurados"><strong>${s.segurados}</strong> Elementos</td>
+          <td data-col="vigencia"><small>${s.vigencia}</small></td>
+          <td data-col="sinistros">${s.sinistros > 0 ? `<strong style="color: #d97706;">${s.sinistros} em curso</strong>` : '<span style="color: #16a34a;">0 sinistros</span>'}</td>
+          <td data-col="estado"><span class="status-pill em-dia">${s.estado}</span></td>
+          <td data-col="acoes" style="text-align: right;">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Apólice ${s.escalao} descarregada.', 'info')">Apólice PDF</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      applyColsSeg();
+      if (window.initTableResizers) window.initTableResizers();
+    }
+
+    window.handleSegurosSearch = function(val) {
+      searchSegQuery = val.toLowerCase().trim();
+      renderSeguros();
+    };
+
+    // =========================================================================
+    // 6. GESTÃO DE TABS
+    // =========================================================================
+    window.switchDesportoTab = function(cargo) {
       const cargos = ['diretor', 'delegado', 'fisio', 'seguros'];
       cargos.forEach(c => {
         const btn = document.getElementById(`tabBtn${capitalize(c)}`);
@@ -659,13 +1339,33 @@
         if (section) section.style.display = (c === cargo) ? 'block' : 'none';
         if (link) link.classList.toggle('active', c === cargo);
       });
-    }
+
+      if (cargo === 'diretor') renderEscaloes();
+      if (cargo === 'delegado') renderDelegados();
+      if (cargo === 'fisio') renderFisio();
+      if (cargo === 'seguros') renderSeguros();
+    };
 
     function capitalize(s) {
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      initColPickerEsc();
+      initColPickerDel();
+      initColPickerFis();
+      initColPickerSeg();
+
+      updateEscSortIndicators();
+      updateDelSortIndicators();
+      updateFisSortIndicators();
+      updateSegSortIndicators();
+
+      renderEscaloes();
+      renderDelegados();
+      renderFisio();
+      renderSeguros();
+
       const params = new URLSearchParams(window.location.search);
       const cargoParam = params.get('cargo');
       if (cargoParam && ['diretor', 'delegado', 'fisio', 'seguros'].includes(cargoParam)) {

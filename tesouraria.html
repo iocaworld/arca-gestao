@@ -426,12 +426,45 @@
           <div class="card-box">
             <div class="card-header-bar">
               <h2>Movimentos Financeiros Recentes</h2>
-              <div style="display: flex; gap: 0.75rem; align-items: center;">
-                <select id="filterTipoMovimento" class="btn btn-secondary btn-sm" onchange="filterMovimentos(this.value)">
+              
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchMovimentos" class="form-control" placeholder="Pesquisar movimento..." oninput="handleMovimentosSearch(this.value)" style="width: 220px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+                
+                <select id="filterTipoMovimento" class="btn btn-secondary btn-sm" onchange="filterMovimentos(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
                   <option value="all">Todos os Movimentos</option>
                   <option value="Entrada">Entradas (+)</option>
                   <option value="Saída">Saídas (-)</option>
                 </select>
+
+                <!-- Seletor de Ordenação -->
+                <select id="sortMovimentosSelect" class="btn btn-secondary btn-sm" onchange="handleMovimentosSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                  <option value="data_desc">Data (Mais Recentes)</option>
+                  <option value="data_asc">Data (Mais Antigos)</option>
+                  <option value="descricao_asc">Descrição (A → Z)</option>
+                  <option value="descricao_desc">Descrição (Z → A)</option>
+                  <option value="valor_desc">Valor (Maior → Menor)</option>
+                  <option value="valor_asc">Valor (Menor → Maior)</option>
+                  <option value="categoria_asc">Categoria (A → Z)</option>
+                </select>
+
+                <!-- Seletor de Colunas Personalizado -->
+                <div class="col-picker-dropdown">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerMovimentos" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                    </svg>
+                    <span>Colunas</span>
+                    <span style="font-size: 0.65rem;">▼</span>
+                  </button>
+                  <div class="col-picker-menu" id="menuColPickerMovimentos">
+                    <div class="col-picker-header">
+                      <span>Personalizar Colunas</span>
+                      <button type="button" onclick="resetMovimentosCols()">Repor</button>
+                    </div>
+                    <div class="col-picker-list" id="listColPickerMovimentos"></div>
+                  </div>
+                </div>
+
                 <button class="btn btn-primary btn-sm" onclick="openNovoMovimentoModal()">+ Lançar Movimento</button>
               </div>
             </div>
@@ -439,14 +472,26 @@
             <div class="table-responsive">
               <table class="modern-table" id="tableMovimentos">
                 <thead>
-                  <tr>
-                    <th style="width: 100px;">Data</th>
-                    <th>Descrição do Movimento</th>
-                    <th style="width: 140px;">Categoria</th>
-                    <th style="width: 110px;">Tipo</th>
-                    <th style="width: 110px;">Valor</th>
-                    <th style="width: 130px;">Método</th>
-                    <th style="text-align: right; width: 100px;">Ações</th>
+                  <tr id="headRowMovimentos">
+                    <th class="sortable-th" data-col="data" style="width: 110px;" onclick="sortMovimentos('data')">
+                      <span>Data</span><span class="sort-indicator" id="sortInd_mov_data">▼</span>
+                    </th>
+                    <th class="sortable-th" data-col="descricao" onclick="sortMovimentos('descricao')">
+                      <span>Descrição do Movimento</span><span class="sort-indicator" id="sortInd_mov_descricao">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="categoria" style="width: 140px;" onclick="sortMovimentos('categoria')">
+                      <span>Categoria</span><span class="sort-indicator" id="sortInd_mov_categoria">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="tipo" style="width: 115px;" onclick="sortMovimentos('tipo')">
+                      <span>Tipo</span><span class="sort-indicator" id="sortInd_mov_tipo">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="valor" style="width: 120px;" onclick="sortMovimentos('valor')">
+                      <span>Valor (€)</span><span class="sort-indicator" id="sortInd_mov_valor">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="metodo" style="width: 150px;" onclick="sortMovimentos('metodo')">
+                      <span>Forma de Liquidação</span><span class="sort-indicator" id="sortInd_mov_metodo">⇅</span>
+                    </th>
+                    <th data-col="acoes" style="text-align: right; width: 100px;">Ações</th>
                   </tr>
                 </thead>
                 <tbody id="tbodyMovimentos">
@@ -462,22 +507,64 @@
           <div class="card-box">
             <div class="card-header-bar">
               <h2>Histórico de Recibos Emitidos</h2>
-              <div style="display: flex; gap: 0.75rem;">
-                <input type="text" id="searchRecibos" class="form-control" placeholder="Filtrar por recibo, sócio ou NIF..." oninput="filterRecibos(this.value)" style="width: 260px; font-size: 0.88rem;">
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchRecibos" class="form-control" placeholder="Filtrar por recibo, sócio ou NIF..." oninput="handleRecibosSearch(this.value)" style="width: 240px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+                <!-- Seletor de Ordenação de Recibos -->
+                <select id="sortRecibosSelect" class="btn btn-secondary btn-sm" onchange="handleRecibosSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                  <option value="data_desc">Data (Mais Recentes)</option>
+                  <option value="data_asc">Data (Mais Antigos)</option>
+                  <option value="recibo_desc">Nº Recibo (Maior → Menor)</option>
+                  <option value="recibo_asc">Nº Recibo (Menor → Maior)</option>
+                  <option value="titular_asc">Titular (A → Z)</option>
+                  <option value="titular_desc">Titular (Z → A)</option>
+                  <option value="valor_desc">Valor (Maior → Menor)</option>
+                  <option value="valor_asc">Valor (Menor → Maior)</option>
+                </select>
+
+                <!-- Seletor de Colunas de Recibos -->
+                <div class="col-picker-dropdown">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerRecibos" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                    </svg>
+                    <span>Colunas</span>
+                    <span style="font-size: 0.65rem;">▼</span>
+                  </button>
+                  <div class="col-picker-menu" id="menuColPickerRecibos">
+                    <div class="col-picker-header">
+                      <span>Personalizar Colunas</span>
+                      <button type="button" onclick="resetRecibosCols()">Repor</button>
+                    </div>
+                    <div class="col-picker-list" id="listColPickerRecibos"></div>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="table-responsive">
               <table class="modern-table" id="tableRecibos">
                 <thead>
-                  <tr>
-                    <th style="width: 120px;">Nº Recibo</th>
-                    <th style="width: 110px;">Data</th>
-                    <th>Nome / Titular</th>
-                    <th style="width: 140px;">Finalidade</th>
-                    <th style="width: 100px;">Valor</th>
-                    <th style="width: 120px;">Método</th>
-                    <th style="text-align: right; width: 120px;">Ações</th>
+                  <tr id="headRowRecibos">
+                    <th class="sortable-th" data-col="recibo" style="width: 130px;" onclick="sortRecibos('recibo')">
+                      <span>Nº Recibo</span><span class="sort-indicator" id="sortInd_rec_recibo">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="data" style="width: 110px;" onclick="sortRecibos('data')">
+                      <span>Data</span><span class="sort-indicator" id="sortInd_rec_data">▼</span>
+                    </th>
+                    <th class="sortable-th" data-col="titular" onclick="sortRecibos('titular')">
+                      <span>Nome / Titular</span><span class="sort-indicator" id="sortInd_rec_titular">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="finalidade" style="width: 160px;" onclick="sortRecibos('finalidade')">
+                      <span>Finalidade</span><span class="sort-indicator" id="sortInd_rec_finalidade">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="valor" style="width: 110px;" onclick="sortRecibos('valor')">
+                      <span>Valor (€)</span><span class="sort-indicator" id="sortInd_rec_valor">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="metodo" style="width: 140px;" onclick="sortRecibos('metodo')">
+                      <span>Método</span><span class="sort-indicator" id="sortInd_rec_metodo">⇅</span>
+                    </th>
+                    <th data-col="acoes" style="text-align: right; width: 120px;">Ações</th>
                   </tr>
                 </thead>
                 <tbody id="tbodyRecibos">
@@ -493,59 +580,68 @@
           <div class="card-box">
             <div class="card-header-bar">
               <h2>Fornecedores & Contas Institucionais</h2>
-              <button class="btn btn-primary btn-sm" onclick="showToast('Registo de novo fornecedor em preparação!', 'info')">+ Adicionar Fornecedor</button>
+              
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="searchFornecedores" class="form-control" placeholder="Pesquisar fornecedor ou NIF..." oninput="handleFornecedoresSearch(this.value)" style="width: 240px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+                <!-- Seletor de Ordenação de Fornecedores -->
+                <select id="sortFornecedoresSelect" class="btn btn-secondary btn-sm" onchange="handleFornecedoresSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                  <option value="entidade_asc">Entidade (A → Z)</option>
+                  <option value="entidade_desc">Entidade (Z → A)</option>
+                  <option value="valor_desc">Maior Valor Pendente</option>
+                  <option value="valor_asc">Menor Valor Pendente</option>
+                  <option value="estado_asc">Estado (A Pagamento)</option>
+                </select>
+
+                <!-- Seletor de Colunas de Fornecedores -->
+                <div class="col-picker-dropdown">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerFornecedores" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                    </svg>
+                    <span>Colunas</span>
+                    <span style="font-size: 0.65rem;">▼</span>
+                  </button>
+                  <div class="col-picker-menu" id="menuColPickerFornecedores">
+                    <div class="col-picker-header">
+                      <span>Personalizar Colunas</span>
+                      <button type="button" onclick="resetFornecedoresCols()">Repor</button>
+                    </div>
+                    <div class="col-picker-list" id="listColPickerFornecedores"></div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary btn-sm" onclick="showToast('Registo de novo fornecedor em preparação!', 'info')">+ Adicionar Fornecedor</button>
+              </div>
             </div>
 
             <div class="table-responsive">
               <table class="modern-table" id="tableFornecedores">
                 <thead>
-                  <tr>
-                    <th>Entidade / Empresa</th>
-                    <th>NIF</th>
-                    <th>Contacto / Email</th>
-                    <th>Serviço / Fornecimento</th>
-                    <th>Valor Pendente</th>
-                    <th>Estado</th>
-                    <th style="text-align: right;">Ações</th>
+                  <tr id="headRowFornecedores">
+                    <th class="sortable-th" data-col="entidade" onclick="sortFornecedores('entidade')">
+                      <span>Entidade / Empresa</span><span class="sort-indicator" id="sortInd_forn_entidade">▲</span>
+                    </th>
+                    <th class="sortable-th" data-col="nif" style="width: 120px;" onclick="sortFornecedores('nif')">
+                      <span>NIF</span><span class="sort-indicator" id="sortInd_forn_nif">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="contacto" onclick="sortFornecedores('contacto')">
+                      <span>Contacto / Email</span><span class="sort-indicator" id="sortInd_forn_contacto">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="servico" onclick="sortFornecedores('servico')">
+                      <span>Serviço / Fornecimento</span><span class="sort-indicator" id="sortInd_forn_servico">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="valor" style="width: 130px;" onclick="sortFornecedores('valor')">
+                      <span>Valor Pendente</span><span class="sort-indicator" id="sortInd_forn_valor">⇅</span>
+                    </th>
+                    <th class="sortable-th" data-col="estado" style="width: 120px;" onclick="sortFornecedores('estado')">
+                      <span>Estado</span><span class="sort-indicator" id="sortInd_forn_estado">⇅</span>
+                    </th>
+                    <th data-col="acoes" style="text-align: right; width: 110px;">Ações</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>ÁguedaDesporto, Lda.</strong><br><small style="color:var(--text-muted)">Águeda</small></td>
-                    <td><code>509 881 234</code></td>
-                    <td>234 600 110 &bull; encomendas@aguedadesporto.pt</td>
-                    <td>Equipamentos de Jogo e Treino Futsal</td>
-                    <td><strong style="color: #dc2626;">245,00 €</strong></td>
-                    <td><span class="status-pill atrasado">A Pagamento</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A liquidar fatura...', 'success')">Liquidar</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Distribuidora Bairrada Bebidas</strong><br><small style="color:var(--text-muted)">Anadia</small></td>
-                    <td><code>502 119 443</code></td>
-                    <td>231 511 200 &bull; comercial@bairradabebidas.pt</td>
-                    <td>Abastecimento Bar Pavilhão & Eventos</td>
-                    <td><span style="color: #16a34a; font-weight: 600;">0,00 €</span></td>
-                    <td><span class="status-pill em-dia">Regularizado</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Histórico de compras carregado.', 'info')">Histórico</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Gráfica & Estúdio Aveirense</strong><br><small style="color:var(--text-muted)">Aveiro</small></td>
-                    <td><code>504 772 109</code></td>
-                    <td>234 420 500 &bull; geral@graficaaveirense.pt</td>
-                    <td>Impressão de Cartões de Sócio, Pautas e Recibos</td>
-                    <td><strong style="color: #dc2626;">90,00 €</strong></td>
-                    <td><span class="status-pill pendente">Pendente</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A liquidar fatura...', 'success')">Liquidar</button></td>
-                  </tr>
-                  <tr>
-                    <td><strong>E-Redes / Eletricidade Pavilhão</strong></td>
-                    <td><code>500 220 119</code></td>
-                    <td>800 506 506 &bull; servicos@e-redes.pt</td>
-                    <td>Iluminação Pavilhão e Balneários</td>
-                    <td><span style="color: #16a34a; font-weight: 600;">0,00 €</span></td>
-                    <td><span class="status-pill em-dia">Débito Direto</span></td>
-                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Fatura arquivada.', 'info')">Comprovativo</button></td>
-                  </tr>
+                <tbody id="tbodyFornecedores">
+                  <!-- Inserido dinamicamente via JS -->
                 </tbody>
               </table>
             </div>
@@ -714,11 +810,14 @@
   <script src="js/socios-data.js"></script>
   <script src="js/main.js"></script>
   <script>
-    // Inicialização da Página de Tesouraria
-    const MOVIMENTOS_KEY = 'arca_tesouraria_movimentos_v1';
-    
+    // =========================================================================
+    // 1. DADOS DE TESOURARIA: MOVIMENTOS, RECIBOS E FORNECEDORES
+    // =========================================================================
+    const MOVIMENTOS_KEY = 'arca_tesouraria_movimentos_v2';
+    const FORNECEDORES_KEY = 'arca_tesouraria_fornecedores_v2';
+
     const INITIAL_MOVIMENTOS = [
-      { id: 1, data: '2026-11-25', descricao: 'Liquidação Quota Anual 2026 (Manuel Rodrigues #2)', categoria: 'Quotas', tipo: 'Entrada', valor: 6.00, metodo: 'Numerário' },
+      { id: 1, data: '2026-11-25', descricao: 'Liquidação Quota Anual 2026 (Carlos Manuel Reis Rodrigues #2)', categoria: 'Quotas', tipo: 'Entrada', valor: 6.00, metodo: 'Numerário' },
       { id: 2, data: '2026-11-24', descricao: 'Vendas Bar Pavilhão (Jogo Séniores Masculino)', categoria: 'Bar Pavilhão', tipo: 'Entrada', valor: 215.50, metodo: 'Numerário' },
       { id: 3, data: '2026-11-22', descricao: 'Fatura ÁguedaDesporto - Bolas e Coletes Futsal', categoria: 'Desporto', tipo: 'Saída', valor: 140.00, metodo: 'Transferência Bancária' },
       { id: 4, data: '2026-11-20', descricao: 'Recebimento Donativo Peregrinos 2026', categoria: 'Donativos', tipo: 'Entrada', valor: 350.00, metodo: 'Transferência Bancária' },
@@ -726,67 +825,563 @@
       { id: 6, data: '2026-11-15', descricao: 'Inscrições BiciARCA Team (Novos atletas)', categoria: 'Desporto', tipo: 'Entrada', valor: 90.00, metodo: 'MBWay' }
     ];
 
-    let movimentos = JSON.parse(localStorage.getItem(MOVIMENTOS_KEY)) || INITIAL_MOVIMENTOS;
+    const INITIAL_RECIBOS = [
+      { id: 1, recibo: 'REC-2026/0412', data: '2026-11-25', titular: 'Carlos Manuel Reis Rodrigues (Sócio 2)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'Numerário' },
+      { id: 2, recibo: 'REC-2026/0411', data: '2026-11-24', titular: 'Manuel António Rodrigues (Sócio 3)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'MBWay' },
+      { id: 3, recibo: 'REC-2026/0410', data: '2026-11-20', titular: 'Grupo Amigos de Aguada', finalidade: 'Donativo Peregrinos 2026', valor: 350.00, metodo: 'Transferência Bancária' },
+      { id: 4, recibo: 'REC-2026/0409', data: '2026-11-15', titular: 'Arsénio da Costa Ferreira (Sócio 21)', finalidade: 'Liquidação Quota 2026', valor: 6.00, metodo: 'Numerário' },
+      { id: 5, recibo: 'REC-2026/0408', data: '2026-11-10', titular: 'Comissão de Festas de Aguada', finalidade: 'Donativo Institucional', valor: 250.00, metodo: 'Transferência Bancária' }
+    ];
 
-    function saveMovimentos() {
-      localStorage.setItem(MOVIMENTOS_KEY, JSON.stringify(movimentos));
-      renderMovimentos();
+    const INITIAL_FORNECEDORES = [
+      { id: 1, entidade: 'ÁguedaDesporto, Lda.', nif: '509881234', contacto: '234 600 110 • encomendas@aguedadesporto.pt', servico: 'Equipamentos de Jogo e Treino Futsal', valor: 245.00, estado: 'A Pagamento' },
+      { id: 2, entidade: 'Distribuidora Bairrada Bebidas', nif: '502119443', contacto: '231 511 200 • comercial@bairradabebidas.pt', servico: 'Abastecimento Bar Pavilhão & Eventos', valor: 0.00, estado: 'Regularizado' },
+      { id: 3, entidade: 'Gráfica & Estúdio Aveirense', nif: '504772109', contacto: '234 420 500 • geral@graficaaveirense.pt', servico: 'Impressão de Cartões, Pautas e Recibos', valor: 90.00, estado: 'Pendente' },
+      { id: 4, entidade: 'E-Redes / Eletricidade Pavilhão', nif: '500220119', contacto: '800 506 506 • servicos@e-redes.pt', servico: 'Iluminação Pavilhão e Balneários', valor: 0.00, estado: 'Regularizado' },
+      { id: 5, entidade: 'Fidelidade Companhia de Seguros', nif: '500918880', contacto: '213 237 000 • desporto@fidelidade.pt', servico: 'Seguro Desportivo Coletivo F.P.F. / ARCA', valor: 0.00, estado: 'Regularizado' }
+    ];
+
+    let movimentos = JSON.parse(localStorage.getItem(MOVIMENTOS_KEY)) || INITIAL_MOVIMENTOS;
+    let recibos = INITIAL_RECIBOS;
+    let fornecedores = JSON.parse(localStorage.getItem(FORNECEDORES_KEY)) || INITIAL_FORNECEDORES;
+
+    // Configuração de Colunas & Ordenação
+    const COLS_MOV_KEY = 'arca_cols_movimentos';
+    const COLS_REC_KEY = 'arca_cols_recibos';
+    const COLS_FORN_KEY = 'arca_cols_fornecedores';
+
+    let colsMov = JSON.parse(localStorage.getItem(COLS_MOV_KEY)) || { data: true, descricao: true, categoria: true, tipo: true, valor: true, metodo: true, acoes: true };
+    let colsRec = JSON.parse(localStorage.getItem(COLS_REC_KEY)) || { recibo: true, data: true, titular: true, finalidade: true, valor: true, metodo: true, acoes: true };
+    let colsForn = JSON.parse(localStorage.getItem(COLS_FORN_KEY)) || { entidade: true, nif: true, contacto: true, servico: true, valor: true, estado: true, acoes: true };
+
+    let sortMovField = 'data';
+    let sortMovDir = 'desc';
+
+    let sortRecField = 'data';
+    let sortRecDir = 'desc';
+
+    let sortFornField = 'entidade';
+    let sortFornDir = 'asc';
+
+    let searchMovQuery = '';
+    let filterMovTipo = 'all';
+    let searchRecQuery = '';
+    let searchFornQuery = '';
+
+    // =========================================================================
+    // 2. FUNÇÕES DA TABELA DE MOVIMENTOS (ORDENAÇÃO + SELEÇÃO DE COLUNAS)
+    // =========================================================================
+    function applyColsMov() {
+      Object.entries(colsMov).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableMovimentos th[data-col="${col}"], #tableMovimentos td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
     }
 
-    function renderMovimentos(data = movimentos) {
+    function initColPickerMov() {
+      const list = document.getElementById('listColPickerMovimentos');
+      const toggle = document.getElementById('btnToggleColPickerMovimentos');
+      const menu = document.getElementById('menuColPickerMovimentos');
+      if (!list) return;
+
+      const labels = {
+        data: 'Data',
+        descricao: 'Descrição do Movimento',
+        categoria: 'Categoria',
+        tipo: 'Tipo (Entrada / Saída)',
+        valor: 'Valor (€)',
+        metodo: 'Forma de Liquidação',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsMov[key] ? 'checked' : ''} onchange="toggleMovCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleMovCol = function(key, isVisible) {
+      colsMov[key] = isVisible;
+      localStorage.setItem(COLS_MOV_KEY, JSON.stringify(colsMov));
+      applyColsMov();
+    };
+
+    window.resetMovimentosCols = function() {
+      colsMov = { data: true, descricao: true, categoria: true, tipo: true, valor: true, metodo: true, acoes: true };
+      localStorage.setItem(COLS_MOV_KEY, JSON.stringify(colsMov));
+      initColPickerMov();
+      applyColsMov();
+    };
+
+    window.sortMovimentos = function(field) {
+      if (sortMovField === field) {
+        sortMovDir = (sortMovDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortMovField = field;
+        sortMovDir = (field === 'data' || field === 'valor') ? 'desc' : 'asc';
+      }
+      updateMovSortIndicators();
+      renderMovimentos();
+    };
+
+    window.handleMovimentosSortSelect = function(val) {
+      const last = val.lastIndexOf('_');
+      sortMovField = val.slice(0, last);
+      sortMovDir = val.slice(last + 1);
+      updateMovSortIndicators();
+      renderMovimentos();
+    };
+
+    function updateMovSortIndicators() {
+      const sel = document.getElementById('sortMovimentosSelect');
+      if (sel) sel.value = `${sortMovField}_${sortMovDir}`;
+
+      document.querySelectorAll('#headRowMovimentos th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortMovField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = sortMovDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function renderMovimentos() {
       const tbody = document.getElementById('tbodyMovimentos');
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Nenhum movimento encontrado.</td></tr>';
+      let list = movimentos.filter(m => {
+        const matchQ = !searchMovQuery || m.descricao.toLowerCase().includes(searchMovQuery) || m.categoria.toLowerCase().includes(searchMovQuery) || m.metodo.toLowerCase().includes(searchMovQuery);
+        const matchTipo = (filterMovTipo === 'all') || (m.tipo === filterMovTipo);
+        return matchQ && matchTipo;
+      });
+
+      list.sort((a, b) => {
+        if (sortMovField === 'data') {
+          return sortMovDir === 'asc' ? a.data.localeCompare(b.data) : b.data.localeCompare(a.data);
+        }
+        if (sortMovField === 'valor') {
+          return sortMovDir === 'asc' ? (a.valor - b.valor) : (b.valor - a.valor);
+        }
+        if (sortMovField === 'descricao') {
+          const c = a.descricao.localeCompare(b.descricao, 'pt');
+          return sortMovDir === 'asc' ? c : -c;
+        }
+        if (sortMovField === 'categoria') {
+          const c = a.categoria.localeCompare(b.categoria, 'pt');
+          return sortMovDir === 'asc' ? c : -c;
+        }
+        if (sortMovField === 'tipo') {
+          const c = a.tipo.localeCompare(b.tipo, 'pt');
+          return sortMovDir === 'asc' ? c : -c;
+        }
+        if (sortMovField === 'metodo') {
+          const c = a.metodo.localeCompare(b.metodo, 'pt');
+          return sortMovDir === 'asc' ? c : -c;
+        }
+        return 0;
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">Nenhum movimento encontrado.</td></tr>';
         return;
       }
 
-      data.forEach(m => {
-        const tr = document.createElement('tr');
+      list.forEach(m => {
         const isEntrada = m.tipo === 'Entrada';
+        const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${m.data}</td>
-          <td><strong>${m.descricao}</strong></td>
-          <td><span style="font-size: 0.85rem; font-weight: 600;">${m.categoria}</span></td>
-          <td>
-            <span class="status-pill ${isEntrada ? 'em-dia' : 'atrasado'}">
-              ${isEntrada ? '+ Entrada' : '- Saída'}
-            </span>
-          </td>
-          <td><strong style="color: ${isEntrada ? '#16a34a' : '#dc2626'};">${isEntrada ? '+' : '-'}${parseFloat(m.valor).toFixed(2).replace('.', ',')} €</strong></td>
-          <td><small>${m.metodo}</small></td>
-          <td style="text-align: right;">
-            <button class="btn btn-outline btn-sm" onclick="showToast('Comprovativo digital gerado!', 'success')" title="Comprovativo">📄</button>
+          <td data-col="data"><strong>${m.data}</strong></td>
+          <td data-col="descricao">${m.descricao}</td>
+          <td data-col="categoria"><span style="font-size: 0.85rem; font-weight: 600;">${m.categoria}</span></td>
+          <td data-col="tipo"><span class="status-pill ${isEntrada ? 'em-dia' : 'atrasado'}">${isEntrada ? '+ Entrada' : '- Saída'}</span></td>
+          <td data-col="valor"><strong style="color: ${isEntrada ? '#16a34a' : '#dc2626'};">${isEntrada ? '+' : '-'}${parseFloat(m.valor).toFixed(2).replace('.', ',')} €</strong></td>
+          <td data-col="metodo"><small style="font-weight: 500;">${m.metodo}</small></td>
+          <td data-col="acoes" style="text-align: right;">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Comprovativo do lançamento carregado.', 'success')">📄</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
+
+      applyColsMov();
+      if (window.initTableResizers) window.initTableResizers();
     }
 
-    function filterMovimentos(tipo) {
-      if (tipo === 'all') {
-        renderMovimentos(movimentos);
-      } else {
-        renderMovimentos(movimentos.filter(m => m.tipo === tipo));
+    window.handleMovimentosSearch = function(val) {
+      searchMovQuery = val.toLowerCase().trim();
+      renderMovimentos();
+    };
+
+    window.filterMovimentos = function(val) {
+      filterMovTipo = val;
+      renderMovimentos();
+    };
+
+    // =========================================================================
+    // 3. FUNÇÕES DA TABELA DE RECIBOS (ORDENAÇÃO + SELEÇÃO DE COLUNAS)
+    // =========================================================================
+    function applyColsRec() {
+      Object.entries(colsRec).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableRecibos th[data-col="${col}"], #tableRecibos td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function initColPickerRec() {
+      const list = document.getElementById('listColPickerRecibos');
+      const toggle = document.getElementById('btnToggleColPickerRecibos');
+      const menu = document.getElementById('menuColPickerRecibos');
+      if (!list) return;
+
+      const labels = {
+        recibo: 'Nº Recibo',
+        data: 'Data',
+        titular: 'Nome / Titular',
+        finalidade: 'Finalidade',
+        valor: 'Valor (€)',
+        metodo: 'Método',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsRec[key] ? 'checked' : ''} onchange="toggleRecCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
       }
     }
 
-    // Modal Novo Movimento
-    function openNovoMovimentoModal() {
+    window.toggleRecCol = function(key, isVisible) {
+      colsRec[key] = isVisible;
+      localStorage.setItem(COLS_REC_KEY, JSON.stringify(colsRec));
+      applyColsRec();
+    };
+
+    window.resetRecibosCols = function() {
+      colsRec = { recibo: true, data: true, titular: true, finalidade: true, valor: true, metodo: true, acoes: true };
+      localStorage.setItem(COLS_REC_KEY, JSON.stringify(colsRec));
+      initColPickerRec();
+      applyColsRec();
+    };
+
+    window.sortRecibos = function(field) {
+      if (sortRecField === field) {
+        sortRecDir = (sortRecDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortRecField = field;
+        sortRecDir = (field === 'data' || field === 'valor' || field === 'recibo') ? 'desc' : 'asc';
+      }
+      updateRecSortIndicators();
+      renderRecibos();
+    };
+
+    window.handleRecibosSortSelect = function(val) {
+      const last = val.lastIndexOf('_');
+      sortRecField = val.slice(0, last);
+      sortRecDir = val.slice(last + 1);
+      updateRecSortIndicators();
+      renderRecibos();
+    };
+
+    function updateRecSortIndicators() {
+      const sel = document.getElementById('sortRecibosSelect');
+      if (sel) sel.value = `${sortRecField}_${sortRecDir}`;
+
+      document.querySelectorAll('#headRowRecibos th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortRecField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = sortRecDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function renderRecibos() {
+      const tbody = document.getElementById('tbodyRecibos');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = recibos.filter(r => {
+        return !searchRecQuery || 
+          r.recibo.toLowerCase().includes(searchRecQuery) || 
+          r.titular.toLowerCase().includes(searchRecQuery) || 
+          r.finalidade.toLowerCase().includes(searchRecQuery);
+      });
+
+      list.sort((a, b) => {
+        if (sortRecField === 'data') {
+          return sortRecDir === 'asc' ? a.data.localeCompare(b.data) : b.data.localeCompare(a.data);
+        }
+        if (sortRecField === 'recibo') {
+          return sortRecDir === 'asc' ? a.recibo.localeCompare(b.recibo) : b.recibo.localeCompare(a.recibo);
+        }
+        if (sortRecField === 'titular') {
+          const c = a.titular.localeCompare(b.titular, 'pt');
+          return sortRecDir === 'asc' ? c : -c;
+        }
+        if (sortRecField === 'valor') {
+          return sortRecDir === 'asc' ? (a.valor - b.valor) : (b.valor - a.valor);
+        }
+        if (sortRecField === 'finalidade') {
+          const c = a.finalidade.localeCompare(b.finalidade, 'pt');
+          return sortRecDir === 'asc' ? c : -c;
+        }
+        if (sortRecField === 'metodo') {
+          const c = a.metodo.localeCompare(b.metodo, 'pt');
+          return sortRecDir === 'asc' ? c : -c;
+        }
+        return 0;
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">Nenhum recibo encontrado.</td></tr>';
+        return;
+      }
+
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td data-col="recibo"><strong>${r.recibo}</strong></td>
+          <td data-col="data">${r.data}</td>
+          <td data-col="titular"><strong>${r.titular}</strong></td>
+          <td data-col="finalidade"><span style="font-size: 0.85rem;">${r.finalidade}</span></td>
+          <td data-col="valor"><strong style="color: #16a34a;">${parseFloat(r.valor).toFixed(2).replace('.', ',')} €</strong></td>
+          <td data-col="metodo"><small>${r.metodo}</small></td>
+          <td data-col="acoes" style="text-align: right;">
+            <button class="btn btn-outline btn-sm" onclick="showToast('A preparar impressão do recibo oficial ${r.recibo}...', 'success')">📄 Ver Recibo</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      applyColsRec();
+      if (window.initTableResizers) window.initTableResizers();
+    }
+
+    window.handleRecibosSearch = function(val) {
+      searchRecQuery = val.toLowerCase().trim();
+      renderRecibos();
+    };
+
+    // =========================================================================
+    // 4. FUNÇÕES DA TABELA DE FORNECEDORES (ORDENAÇÃO + SELEÇÃO DE COLUNAS)
+    // =========================================================================
+    function applyColsForn() {
+      Object.entries(colsForn).forEach(([col, visible]) => {
+        document.querySelectorAll(`#tableFornecedores th[data-col="${col}"], #tableFornecedores td[data-col="${col}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function initColPickerForn() {
+      const list = document.getElementById('listColPickerFornecedores');
+      const toggle = document.getElementById('btnToggleColPickerFornecedores');
+      const menu = document.getElementById('menuColPickerFornecedores');
+      if (!list) return;
+
+      const labels = {
+        entidade: 'Entidade / Empresa',
+        nif: 'NIF',
+        contacto: 'Contacto / Email',
+        servico: 'Serviço / Fornecimento',
+        valor: 'Valor Pendente (€)',
+        estado: 'Estado',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsForn[key] ? 'checked' : ''} onchange="toggleFornCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleFornCol = function(key, isVisible) {
+      colsForn[key] = isVisible;
+      localStorage.setItem(COLS_FORN_KEY, JSON.stringify(colsForn));
+      applyColsForn();
+    };
+
+    window.resetFornecedoresCols = function() {
+      colsForn = { entidade: true, nif: true, contacto: true, servico: true, valor: true, estado: true, acoes: true };
+      localStorage.setItem(COLS_FORN_KEY, JSON.stringify(colsForn));
+      initColPickerForn();
+      applyColsForn();
+    };
+
+    window.sortFornecedores = function(field) {
+      if (sortFornField === field) {
+        sortFornDir = (sortFornDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortFornField = field;
+        sortFornDir = (field === 'valor') ? 'desc' : 'asc';
+      }
+      updateFornSortIndicators();
+      renderFornecedores();
+    };
+
+    window.handleFornecedoresSortSelect = function(val) {
+      const last = val.lastIndexOf('_');
+      sortFornField = val.slice(0, last);
+      sortFornDir = val.slice(last + 1);
+      updateFornSortIndicators();
+      renderFornecedores();
+    };
+
+    function updateFornSortIndicators() {
+      const sel = document.getElementById('sortFornecedoresSelect');
+      if (sel) sel.value = `${sortFornField}_${sortFornDir}`;
+
+      document.querySelectorAll('#headRowFornecedores th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === sortFornField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = sortFornDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function renderFornecedores() {
+      const tbody = document.getElementById('tbodyFornecedores');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = fornecedores.filter(f => {
+        return !searchFornQuery || 
+          f.entidade.toLowerCase().includes(searchFornQuery) || 
+          f.nif.includes(searchFornQuery) || 
+          f.servico.toLowerCase().includes(searchFornQuery);
+      });
+
+      list.sort((a, b) => {
+        if (sortFornField === 'entidade') {
+          const c = a.entidade.localeCompare(b.entidade, 'pt');
+          return sortFornDir === 'asc' ? c : -c;
+        }
+        if (sortFornField === 'nif') {
+          return sortFornDir === 'asc' ? a.nif.localeCompare(b.nif) : b.nif.localeCompare(a.nif);
+        }
+        if (sortFornField === 'valor') {
+          return sortFornDir === 'asc' ? (a.valor - b.valor) : (b.valor - a.valor);
+        }
+        if (sortFornField === 'estado') {
+          const c = a.estado.localeCompare(b.estado, 'pt');
+          return sortFornDir === 'asc' ? c : -c;
+        }
+        return 0;
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">Nenhum fornecedor encontrado.</td></tr>';
+        return;
+      }
+
+      list.forEach(f => {
+        const tr = document.createElement('tr');
+        const isEmDia = f.valor === 0;
+        tr.innerHTML = `
+          <td data-col="entidade"><strong>${f.entidade}</strong></td>
+          <td data-col="nif"><code>${f.nif}</code></td>
+          <td data-col="contacto"><small>${f.contacto}</small></td>
+          <td data-col="servico">${f.servico}</td>
+          <td data-col="valor"><strong style="color: ${isEmDia ? '#16a34a' : '#dc2626'};">${f.valor.toFixed(2).replace('.', ',')} €</strong></td>
+          <td data-col="estado"><span class="status-pill ${isEmDia ? 'em-dia' : (f.estado === 'Pendente' ? 'pendente' : 'atrasado')}">${f.estado}</span></td>
+          <td data-col="acoes" style="text-align: right;">
+            ${!isEmDia ? `
+              <button class="btn btn-outline btn-sm" onclick="showToast('A liquidar fatura do fornecedor...', 'success')">Liquidar</button>
+            ` : `
+              <button class="btn btn-outline btn-sm" onclick="showToast('Histórico regularizado.', 'info')">Histórico</button>
+            `}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      applyColsForn();
+      if (window.initTableResizers) window.initTableResizers();
+    }
+
+    window.handleFornecedoresSearch = function(val) {
+      searchFornQuery = val.toLowerCase().trim();
+      renderFornecedores();
+    };
+
+    // =========================================================================
+    // 5. GESTÃO DE TABS, MODAL E P.O.S.
+    // =========================================================================
+    window.switchTesourariaTab = function(tab) {
+      const tabs = ['caixa', 'recibos', 'fornecedores', 'pos'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn${capitalize(t)}`);
+        const section = document.getElementById(`sectionTab${capitalize(t)}`);
+        const link = document.getElementById(`linkTab${capitalize(t)}`);
+        if (btn) btn.classList.toggle('active', t === tab);
+        if (section) section.style.display = (t === tab) ? 'block' : 'none';
+        if (link) link.classList.toggle('active', t === tab);
+      });
+
+      if (tab === 'caixa') renderMovimentos();
+      if (tab === 'recibos') renderRecibos();
+      if (tab === 'fornecedores') renderFornecedores();
+    };
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    window.openNovoMovimentoModal = function() {
       const modal = document.getElementById('modalNovoMovimento');
       const inputData = document.getElementById('movData');
       if (inputData) inputData.value = new Date().toISOString().slice(0, 10);
       if (modal) modal.classList.add('active');
-    }
+    };
 
-    function closeNovoMovimentoModal() {
+    window.closeNovoMovimentoModal = function() {
       const modal = document.getElementById('modalNovoMovimento');
       if (modal) modal.classList.remove('active');
-    }
+    };
 
-    function handleSalvarMovimento(e) {
+    window.handleSalvarMovimento = function(e) {
       e.preventDefault();
       const desc = document.getElementById('movDescricao').value.trim();
       const tipo = document.getElementById('movTipo').value;
@@ -806,69 +1401,17 @@
       };
 
       movimentos.unshift(novo);
-      saveMovimentos();
+      localStorage.setItem(MOVIMENTOS_KEY, JSON.stringify(movimentos));
+      renderMovimentos();
       closeNovoMovimentoModal();
       document.getElementById('formNovoMovimento').reset();
       showToast('Movimento financeiro registado com sucesso!', 'success');
-    }
+    };
 
-    // Tabs da Tesouraria
-    function switchTesourariaTab(tab) {
-      const tabs = ['caixa', 'recibos', 'fornecedores', 'pos'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tabBtn${capitalize(t)}`);
-        const section = document.getElementById(`sectionTab${capitalize(t)}`);
-        const link = document.getElementById(`linkTab${capitalize(t)}`);
-        if (btn) btn.classList.toggle('active', t === tab);
-        if (section) section.style.display = (t === tab) ? 'block' : 'none';
-        if (link) link.classList.toggle('active', t === tab);
-      });
-      if (tab === 'recibos') renderRecibos();
-    }
-
-    function capitalize(s) {
-      return s.charAt(0).toUpperCase() + s.slice(1);
-    }
-
-    // Recibos Emitidos
-    function renderRecibos() {
-      const tbody = document.getElementById('tbodyRecibos');
-      if (!tbody) return;
-      tbody.innerHTML = `
-        <tr>
-          <td><strong>REC-2026/0412</strong></td>
-          <td>25/11/2026</td>
-          <td><strong>Carlos Manuel Reis Rodrigues</strong> (Sócio 2)</td>
-          <td>Liquidação Quota 2026</td>
-          <td><strong>6,00 €</strong></td>
-          <td>Numerário</td>
-          <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A abrir impressão do recibo oficial...', 'success')">📄 Ver Recibo</button></td>
-        </tr>
-        <tr>
-          <td><strong>REC-2026/0411</strong></td>
-          <td>24/11/2026</td>
-          <td><strong>Manuel António Rodrigues</strong> (Sócio 3)</td>
-          <td>Liquidação Quota 2026</td>
-          <td><strong>6,00 €</strong></td>
-          <td>MBWay</td>
-          <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A abrir impressão do recibo oficial...', 'success')">📄 Ver Recibo</button></td>
-        </tr>
-        <tr>
-          <td><strong>REC-2026/0410</strong></td>
-          <td>20/11/2026</td>
-          <td><strong>Grupo Amigos de Aguada</strong></td>
-          <td>Donativo Peregrinos 2026</td>
-          <td><strong>350,00 €</strong></td>
-          <td>Transferência Bancária</td>
-          <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A abrir impressão do recibo oficial...', 'success')">📄 Ver Recibo</button></td>
-        </tr>
-      `;
-    }
-
-    // P.O.S. Logic
+    // P.O.S.
     let posCart = [];
 
-    function posAddItem(nome, preco) {
+    window.posAddItem = function(nome, preco) {
       const existing = posCart.find(i => i.nome === nome);
       if (existing) {
         existing.qty++;
@@ -876,7 +1419,7 @@
         posCart.push({ nome, preco, qty: 1 });
       }
       renderPosCart();
-    }
+    };
 
     function renderPosCart() {
       const container = document.getElementById('posCartList');
@@ -912,24 +1455,23 @@
       totalEl.textContent = `${total.toFixed(2).replace('.', ',')} €`;
     }
 
-    function posRemoveItem(idx) {
+    window.posRemoveItem = function(idx) {
       posCart.splice(idx, 1);
       renderPosCart();
-    }
+    };
 
-    function posClearCart() {
+    window.posClearCart = function() {
       posCart = [];
       renderPosCart();
-    }
+    };
 
-    function posCheckout(metodo) {
+    window.posCheckout = function(metodo) {
       if (posCart.length === 0) {
         showToast('Adicione pelo menos um produto à conta antes de concluir a venda.', 'error');
         return;
       }
       const total = posCart.reduce((sum, i) => sum + (i.preco * i.qty), 0);
       
-      // Adicionar aos movimentos de caixa
       const novoMov = {
         id: Date.now(),
         data: new Date().toISOString().slice(0, 10),
@@ -941,15 +1483,27 @@
       };
 
       movimentos.unshift(novoMov);
-      saveMovimentos();
+      localStorage.setItem(MOVIMENTOS_KEY, JSON.stringify(movimentos));
+      renderMovimentos();
 
       showToast(`Venda concluída no valor de ${total.toFixed(2).replace('.', ',')} € via ${metodo}!`, 'success');
       posClearCart();
-    }
+    };
 
-    // Leitura do parâmetro ?tab= da URL
+    // Inicialização da Página
     document.addEventListener('DOMContentLoaded', () => {
+      initColPickerMov();
+      initColPickerRec();
+      initColPickerForn();
+
+      updateMovSortIndicators();
+      updateRecSortIndicators();
+      updateFornSortIndicators();
+
       renderMovimentos();
+      renderRecibos();
+      renderFornecedores();
+
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
       if (tabParam && ['caixa', 'recibos', 'fornecedores', 'pos'].includes(tabParam)) {
