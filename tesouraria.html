@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.R.C.A. - Tesouraria | Aguada de Baixo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="assets/arca-logo.png" alt="ARCA Logótipo">
+        </div>
+        <div class="sidebar-brand">
+          <h2>A.R.C.A.</h2>
+          <span>Aguada de Baixo</span>
+        </div>
+        <button class="sidebar-close-btn" aria-label="Fechar menu">&times;</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="painel.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Visão Geral</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 2. Menu: Gestão -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios (Link Direto Unificado) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="socios.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Sócios & Cotas</span>
+                <span class="nav-item-badge">386</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Menu: Tesouraria (Ativo) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                    <circle cx="16" cy="15" r="1"/>
+                  </svg>
+                  <span>Tesouraria</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="tesouraria.html?tab=caixa" class="nav-sublink" id="linkTabCaixa">Caixa/Movimentos</a></li>
+                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink" id="linkTabRecibos">Recibo Emitidos</a></li>
+                <li><a href="tesouraria.html?tab=fornecedores" class="nav-sublink" id="linkTabFornecedores">Fornecedores</a></li>
+                <li><a href="tesouraria.html?tab=pos" class="nav-sublink" id="linkTabPos">P.O.S.</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+                <li><a href="membros.html" class="nav-sublink">Membros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Menu: Gestão Desportiva -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                    <path d="M2 12h20"/>
+                  </svg>
+                  <span>Gestão Desportiva</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="desporto.html?cargo=diretor" class="nav-sublink">Diretor Desportivo</a></li>
+                <li><a href="desporto.html?cargo=delegado" class="nav-sublink">Delegado</a></li>
+                <li><a href="desporto.html?cargo=fisio" class="nav-sublink">Fisio & Clinica</a></li>
+                <li><a href="desporto.html?cargo=seguros" class="nav-sublink">Seguros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 6. Menu: Secções & Grupos -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
+                  </svg>
+                  <span>Secções & Grupos</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="seccoes.html?sec=futsal_masculino" class="nav-nested-link">Séniores Masculino</a></li>
+                    <li><a href="seccoes.html?sec=futsal_feminino" class="nav-nested-link">Séniores Femininos</a></li>
+                    <li><a href="seccoes.html?sec=futsal_formacao" class="nav-nested-link">Formação</a></li>
+                  </ul>
+                </li>
+                <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
+                <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
+                <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
+                <li><a href="seccoes.html?sec=funcional" class="nav-sublink">Treino Funcional</a></li>
+                <li><a href="seccoes.html?sec=pilates" class="nav-sublink">Pilates</a></li>
+                <li><a href="seccoes.html?sec=tea" class="nav-sublink">TEA</a></li>
+                <li><a href="seccoes.html?sec=olhares_disparos" class="nav-sublink">Olhares e Disparos</a></li>
+                <li><a href="seccoes.html?sec=bacharca" class="nav-sublink">Bach'Arca</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 7. Menu: Eventos & Organizações -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
+                  </svg>
+                  <span>Eventos & Organizações</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
+                <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Assistência e Apoio</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=peregrinos" class="nav-nested-link">Peregrinos</a></li>
+                    <li><a href="eventos.html?ev=bombeiros" class="nav-nested-link">Bombeiros</a></li>
+                    <li><a href="eventos.html?ev=animais" class="nav-nested-link">Animais</a></li>
+                    <li><a href="eventos.html?ev=angariacoes" class="nav-nested-link">Angariações</a></li>
+                  </ul>
+                </li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Torneios</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=arca_cup" class="nav-nested-link">ARCA Cup</a></li>
+                    <li><a href="eventos.html?ev=futsal_fem" class="nav-nested-link">Torneio Futsal Feminino</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=cicloturismo" class="nav-sublink">Cicloturismo</a></li>
+                <li><a href="eventos.html?ev=dia_freguesia" class="nav-sublink">Dia da Freguesia</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Época Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=futsal_apresentacao" class="nav-nested-link">Apresentação</a></li>
+                    <li><a href="eventos.html?ev=futsal_encerramento" class="nav-nested-link">Encerramento</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=taca_jorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
+                <li><a href="eventos.html?ev=agitagueda" class="nav-sublink">AgitÁgueda</a></li>
+                <li><a href="eventos.html?ev=andebol" class="nav-sublink">Eventos Andebol ARCA</a></li>
+                <li><a href="eventos.html?ev=jogos_sem_fronteiras" class="nav-sublink">Jogos Sem Fronteiras</a></li>
+                <li><a href="eventos.html?ev=rota_minis" class="nav-sublink">Rota Das Minis</a></li>
+                <li><a href="eventos.html?ev=aniversario_arca" class="nav-sublink">Aniversário ARCA</a></li>
+                <li><a href="eventos.html?ev=jantar_natal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
+                <li><a href="eventos.html?ev=outros" class="nav-sublink">Outros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 8. Menu: Painel de Controlo -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">JC</div>
+        <div class="user-details">
+          <div class="user-name">Jorge Cunha</div>
+          <div class="user-role">Direção Geral</div>
+        </div>
+        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <div class="app-main">
+      
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">&#9776;</button>
+          <div class="breadcrumbs">
+            <a href="painel.html">ARCA</a>
+            <span>&rsaquo;</span>
+            <span class="current">Tesouraria</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="openNovoMovimentoModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Novo Movimento</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Conteúdo da Página -->
+      <main class="page-container">
+        
+        <div class="page-title-bar">
+          <div>
+            <h1>Tesouraria</h1>
+            <p>Controlo de caixa, movimentos financeiros, recibos emitidos, fornecedores e terminal P.O.S. da A.R.C.A.</p>
+          </div>
+        </div>
+
+        <!-- Indicadores Rápidos de Tesouraria -->
+        <div class="metrics-row-4">
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">SALDO EM CAIXA</span>
+              <span class="metric-value" style="color: #16a34a; font-size: 2.1rem; margin-top: 0.2rem;" id="statSaldoCaixa">1 485,50 €</span>
+              <span class="metric-badge positive" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">Disponível em numerário</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-blue">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">SALDO BANCÁRIO</span>
+              <span class="metric-value" style="color: #0284c7; font-size: 2.1rem; margin-top: 0.2rem;" id="statSaldoBanco">18 940,25 €</span>
+              <span class="metric-badge neutral" style="font-weight: 500; font-size: 0.85rem; margin-top: 0.35rem;">Conta à ordem ARCA</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">ENTRADAS (MÊS)</span>
+              <span class="metric-value" style="color: #16a34a; font-size: 2.1rem; margin-top: 0.2rem;" id="statEntradasMes">2 380,00 €</span>
+              <span class="metric-badge positive" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">Quotas, bar e eventos</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-red">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">SAÍDAS (MÊS)</span>
+              <span class="metric-value" style="color: #dc2626; font-size: 2.1rem; margin-top: 0.2rem;" id="statSaidasMes">1 125,40 €</span>
+              <span class="metric-badge" style="color: #dc2626; font-weight: 700; font-size: 0.85rem; margin-top: 0.35rem;">Fornecedores e serviços</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abas Principais da Tesouraria -->
+        <div class="drawer-tabs" style="padding: 0; background: transparent; border-bottom: 2px solid var(--border-light); margin-bottom: 1.5rem;">
+          <button type="button" class="drawer-tab active" id="tabBtnCaixa" onclick="switchTesourariaTab('caixa')">
+            Caixa / Movimentos
+          </button>
+          <button type="button" class="drawer-tab" id="tabBtnRecibos" onclick="switchTesourariaTab('recibos')">
+            Recibos Emitidos
+          </button>
+          <button type="button" class="drawer-tab" id="tabBtnFornecedores" onclick="switchTesourariaTab('fornecedores')">
+            Fornecedores
+          </button>
+          <button type="button" class="drawer-tab" id="tabBtnPos" onclick="switchTesourariaTab('pos')">
+            P.O.S. (Terminal de Venda)
+          </button>
+        </div>
+
+        <!-- TAB 1: CAIXA / MOVIMENTOS -->
+        <div id="sectionTabCaixa" class="tab-pane-content">
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Movimentos Financeiros Recentes</h2>
+              <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <select id="filterTipoMovimento" class="btn btn-secondary btn-sm" onchange="filterMovimentos(this.value)">
+                  <option value="all">Todos os Movimentos</option>
+                  <option value="Entrada">Entradas (+)</option>
+                  <option value="Saída">Saídas (-)</option>
+                </select>
+                <button class="btn btn-primary btn-sm" onclick="openNovoMovimentoModal()">+ Lançar Movimento</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="modern-table" id="tableMovimentos">
+                <thead>
+                  <tr>
+                    <th style="width: 100px;">Data</th>
+                    <th>Descrição do Movimento</th>
+                    <th style="width: 140px;">Categoria</th>
+                    <th style="width: 110px;">Tipo</th>
+                    <th style="width: 110px;">Valor</th>
+                    <th style="width: 130px;">Método</th>
+                    <th style="text-align: right; width: 100px;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyMovimentos">
+                  <!-- Inserido dinamicamente via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: RECIBOS EMITIDOS -->
+        <div id="sectionTabRecibos" class="tab-pane-content" style="display: none;">
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Histórico de Recibos Emitidos</h2>
+              <div style="display: flex; gap: 0.75rem;">
+                <input type="text" id="searchRecibos" class="form-control" placeholder="Filtrar por recibo, sócio ou NIF..." oninput="filterRecibos(this.value)" style="width: 260px; font-size: 0.88rem;">
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="modern-table" id="tableRecibos">
+                <thead>
+                  <tr>
+                    <th style="width: 120px;">Nº Recibo</th>
+                    <th style="width: 110px;">Data</th>
+                    <th>Nome / Titular</th>
+                    <th style="width: 140px;">Finalidade</th>
+                    <th style="width: 100px;">Valor</th>
+                    <th style="width: 120px;">Método</th>
+                    <th style="text-align: right; width: 120px;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyRecibos">
+                  <!-- Inserido dinamicamente via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: FORNECEDORES -->
+        <div id="sectionTabFornecedores" class="tab-pane-content" style="display: none;">
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Fornecedores & Contas Institucionais</h2>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Registo de novo fornecedor em preparação!', 'info')">+ Adicionar Fornecedor</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="modern-table" id="tableFornecedores">
+                <thead>
+                  <tr>
+                    <th>Entidade / Empresa</th>
+                    <th>NIF</th>
+                    <th>Contacto / Email</th>
+                    <th>Serviço / Fornecimento</th>
+                    <th>Valor Pendente</th>
+                    <th>Estado</th>
+                    <th style="text-align: right;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>ÁguedaDesporto, Lda.</strong><br><small style="color:var(--text-muted)">Águeda</small></td>
+                    <td><code>509 881 234</code></td>
+                    <td>234 600 110 &bull; encomendas@aguedadesporto.pt</td>
+                    <td>Equipamentos de Jogo e Treino Futsal</td>
+                    <td><strong style="color: #dc2626;">245,00 €</strong></td>
+                    <td><span class="status-pill atrasado">A Pagamento</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A liquidar fatura...', 'success')">Liquidar</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Distribuidora Bairrada Bebidas</strong><br><small style="color:var(--text-muted)">Anadia</small></td>
+                    <td><code>502 119 443</code></td>
+                    <td>231 511 200 &bull; comercial@bairradabebidas.pt</td>
+                    <td>Abastecimento Bar Pavilhão & Eventos</td>
+                    <td><span style="color: #16a34a; font-weight: 600;">0,00 €</span></td>
+                    <td><span class="status-pill em-dia">Regularizado</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Histórico de compras carregado.', 'info')">Histórico</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Gráfica & Estúdio Aveirense</strong><br><small style="color:var(--text-muted)">Aveiro</small></td>
+                    <td><code>504 772 109</code></td>
+                    <td>234 420 500 &bull; geral@graficaaveirense.pt</td>
+                    <td>Impressão de Cartões de Sócio, Pautas e Recibos</td>
+                    <td><strong style="color: #dc2626;">90,00 €</strong></td>
+                    <td><span class="status-pill pendente">Pendente</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A liquidar fatura...', 'success')">Liquidar</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>E-Redes / Eletricidade Pavilhão</strong></td>
+                    <td><code>500 220 119</code></td>
+                    <td>800 506 506 &bull; servicos@e-redes.pt</td>
+                    <td>Iluminação Pavilhão e Balneários</td>
+                    <td><span style="color: #16a34a; font-weight: 600;">0,00 €</span></td>
+                    <td><span class="status-pill em-dia">Débito Direto</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Fatura arquivada.', 'info')">Comprovativo</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: P.O.S. (TERMINAL PONTO DE VENDA) -->
+        <div id="sectionTabPos" class="tab-pane-content" style="display: none;">
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+            
+            <!-- Itens do Bar e Bilheteira -->
+            <div class="card-box">
+              <div class="card-header-bar">
+                <h2>Terminal P.O.S. - Bar & Bilheteira Pavilhão</h2>
+                <span class="status-pill em-dia">&bull; Caixa Aberto</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('Café / Bica', 0.80)">
+                  <span style="font-size: 1.6rem;">☕</span>
+                  <strong style="font-size: 0.9rem;">Café</strong>
+                  <span style="color: var(--primary); font-weight: 700;">0,80 €</span>
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('Água 0.5L', 1.00)">
+                  <span style="font-size: 1.6rem;">💧</span>
+                  <strong style="font-size: 0.9rem;">Água 0.5L</strong>
+                  <span style="color: var(--primary); font-weight: 700;">1,00 €</span>
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('Refrigerante', 1.50)">
+                  <span style="font-size: 1.6rem;">🥤</span>
+                  <strong style="font-size: 0.9rem;">Refrigerante</strong>
+                  <span style="color: var(--primary); font-weight: 700;">1,50 €</span>
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('Cerveja Mini', 1.30)">
+                  <span style="font-size: 1.6rem;">🍺</span>
+                  <strong style="font-size: 0.9rem;">Cerveja Mini</strong>
+                  <span style="color: var(--primary); font-weight: 700;">1,30 €</span>
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('Sande Mista', 2.00)">
+                  <span style="font-size: 1.6rem;">🥪</span>
+                  <strong style="font-size: 0.9rem;">Sande Mista</strong>
+                  <span style="color: var(--primary); font-weight: 700;">2,00 €</span>
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('Bilhete Jogo Futsal', 2.50)">
+                  <span style="font-size: 1.6rem;">🎟️</span>
+                  <strong style="font-size: 0.9rem;">Bilhete Jogo</strong>
+                  <span style="color: var(--primary); font-weight: 700;">2,50 €</span>
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('Cachecol ARCA', 10.00)">
+                  <span style="font-size: 1.6rem;">🧣</span>
+                  <strong style="font-size: 0.9rem;">Cachecol ARCA</strong>
+                  <span style="color: var(--primary); font-weight: 700;">10,00 €</span>
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 1.25rem 0.5rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;" onclick="posAddItem('T-Shirt BiciARCA', 15.00)">
+                  <span style="font-size: 1.6rem;">👕</span>
+                  <strong style="font-size: 0.9rem;">T-Shirt Oficial</strong>
+                  <span style="color: var(--primary); font-weight: 700;">15,00 €</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Resumo da Conta P.O.S. -->
+            <div class="card-box" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <h3 style="font-size: 1.15rem; margin-bottom: 1rem;">Conta Atual</h3>
+                <div id="posCartList" style="min-height: 180px; max-height: 260px; overflow-y: auto; border-bottom: 1px dashed var(--border-light); padding-bottom: 1rem;">
+                  <p style="color: var(--text-muted); font-size: 0.88rem; text-align: center; padding-top: 2rem;">
+                    Nenhum item adicionado à conta.
+                  </p>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; font-size: 1.25rem; font-weight: 800;">
+                  <span>Total:</span>
+                  <span id="posTotalAmount" style="color: var(--primary);">0,00 €</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <button type="button" class="btn btn-primary" style="width: 100%; padding: 0.85rem;" onclick="posCheckout('Numerário')">
+                  💵 Concluir Venda (Dinheiro)
+                </button>
+                <button type="button" class="btn btn-secondary" style="width: 100%; padding: 0.85rem;" onclick="posCheckout('MBWay / Multibanco')">
+                  💳 Concluir Venda (MBWay / Cartão)
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" style="color: #dc2626;" onclick="posClearCart()">
+                  ✕ Limpar Conta
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Modal: Novo Movimento de Caixa -->
+  <div class="modal-overlay" id="modalNovoMovimento">
+    <div class="modal-content" style="max-width: 520px;">
+      <div class="modal-header">
+        <h2>Lançar Movimento de Caixa</h2>
+        <button class="modal-close" onclick="closeNovoMovimentoModal()">&times;</button>
+      </div>
+
+      <form id="formNovoMovimento" onsubmit="handleSalvarMovimento(event)">
+        <div class="form-group">
+          <label class="form-label" for="movDescricao">Descrição do Movimento *</label>
+          <input type="text" id="movDescricao" class="form-control" placeholder="ex: Compra de materiais de limpeza" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="movTipo">Tipo de Movimento *</label>
+            <select id="movTipo" class="form-control" required>
+              <option value="Entrada">Entrada (+ Receita)</option>
+              <option value="Saída">Saída (- Despesa)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="movValor">Valor (€) *</label>
+            <input type="number" id="movValor" class="form-control" step="0.01" min="0.01" placeholder="0.00" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="movCategoria">Categoria *</label>
+            <select id="movCategoria" class="form-control" required>
+              <option value="Quotas">Quotas de Sócios</option>
+              <option value="Bar Pavilhão">Bar do Pavilhão</option>
+              <option value="Eventos">Eventos & Bilheteira</option>
+              <option value="Donativos">Donativos & Apoios</option>
+              <option value="Fornecedores">Fornecedores / Compras</option>
+              <option value="Instalações">Manutenção / Pavilhão</option>
+              <option value="Desporto">Material Desportivo / Futsal</option>
+              <option value="Outros">Outras Despesas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="movMetodo">Forma de Liquidação *</label>
+            <select id="movMetodo" class="form-control" required>
+              <option value="Numerário">Numerário / Caixa</option>
+              <option value="MBWay">MBWay</option>
+              <option value="Transferência Bancária">Transferência Bancária</option>
+              <option value="Cartão de Débito">Cartão de Débito</option>
+              <option value="Cheque">Cheque</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="movData">Data do Lançamento *</label>
+          <input type="date" id="movData" class="form-control" required>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" onclick="closeNovoMovimentoModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Registar Lançamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/socios-data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Inicialização da Página de Tesouraria
+    const MOVIMENTOS_KEY = 'arca_tesouraria_movimentos_v1';
+    
+    const INITIAL_MOVIMENTOS = [
+      { id: 1, data: '2026-11-25', descricao: 'Liquidação Quota Anual 2026 (Manuel Rodrigues #2)', categoria: 'Quotas', tipo: 'Entrada', valor: 6.00, metodo: 'Numerário' },
+      { id: 2, data: '2026-11-24', descricao: 'Vendas Bar Pavilhão (Jogo Séniores Masculino)', categoria: 'Bar Pavilhão', tipo: 'Entrada', valor: 215.50, metodo: 'Numerário' },
+      { id: 3, data: '2026-11-22', descricao: 'Fatura ÁguedaDesporto - Bolas e Coletes Futsal', categoria: 'Desporto', tipo: 'Saída', valor: 140.00, metodo: 'Transferência Bancária' },
+      { id: 4, data: '2026-11-20', descricao: 'Recebimento Donativo Peregrinos 2026', categoria: 'Donativos', tipo: 'Entrada', valor: 350.00, metodo: 'Transferência Bancária' },
+      { id: 5, data: '2026-11-18', descricao: 'Reparação Fechadura Balneários Pavilhão', categoria: 'Instalações', tipo: 'Saída', valor: 45.00, metodo: 'Numerário' },
+      { id: 6, data: '2026-11-15', descricao: 'Inscrições BiciARCA Team (Novos atletas)', categoria: 'Desporto', tipo: 'Entrada', valor: 90.00, metodo: 'MBWay' }
+    ];
+
+    let movimentos = JSON.parse(localStorage.getItem(MOVIMENTOS_KEY)) || INITIAL_MOVIMENTOS;
+
+    function saveMovimentos() {
+      localStorage.setItem(MOVIMENTOS_KEY, JSON.stringify(movimentos));
+      renderMovimentos();
+    }
+
+    function renderMovimentos(data = movimentos) {
+      const tbody = document.getElementById('tbodyMovimentos');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Nenhum movimento encontrado.</td></tr>';
+        return;
+      }
+
+      data.forEach(m => {
+        const tr = document.createElement('tr');
+        const isEntrada = m.tipo === 'Entrada';
+        tr.innerHTML = `
+          <td>${m.data}</td>
+          <td><strong>${m.descricao}</strong></td>
+          <td><span style="font-size: 0.85rem; font-weight: 600;">${m.categoria}</span></td>
+          <td>
+            <span class="status-pill ${isEntrada ? 'em-dia' : 'atrasado'}">
+              ${isEntrada ? '+ Entrada' : '- Saída'}
+            </span>
+          </td>
+          <td><strong style="color: ${isEntrada ? '#16a34a' : '#dc2626'};">${isEntrada ? '+' : '-'}${parseFloat(m.valor).toFixed(2).replace('.', ',')} €</strong></td>
+          <td><small>${m.metodo}</small></td>
+          <td style="text-align: right;">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Comprovativo digital gerado!', 'success')" title="Comprovativo">📄</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterMovimentos(tipo) {
+      if (tipo === 'all') {
+        renderMovimentos(movimentos);
+      } else {
+        renderMovimentos(movimentos.filter(m => m.tipo === tipo));
+      }
+    }
+
+    // Modal Novo Movimento
+    function openNovoMovimentoModal() {
+      const modal = document.getElementById('modalNovoMovimento');
+      const inputData = document.getElementById('movData');
+      if (inputData) inputData.value = new Date().toISOString().slice(0, 10);
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeNovoMovimentoModal() {
+      const modal = document.getElementById('modalNovoMovimento');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function handleSalvarMovimento(e) {
+      e.preventDefault();
+      const desc = document.getElementById('movDescricao').value.trim();
+      const tipo = document.getElementById('movTipo').value;
+      const valor = parseFloat(document.getElementById('movValor').value);
+      const cat = document.getElementById('movCategoria').value;
+      const metodo = document.getElementById('movMetodo').value;
+      const data = document.getElementById('movData').value;
+
+      const novo = {
+        id: Date.now(),
+        data,
+        descricao: desc,
+        categoria: cat,
+        tipo,
+        valor,
+        metodo
+      };
+
+      movimentos.unshift(novo);
+      saveMovimentos();
+      closeNovoMovimentoModal();
+      document.getElementById('formNovoMovimento').reset();
+      showToast('Movimento financeiro registado com sucesso!', 'success');
+    }
+
+    // Tabs da Tesouraria
+    function switchTesourariaTab(tab) {
+      const tabs = ['caixa', 'recibos', 'fornecedores', 'pos'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn${capitalize(t)}`);
+        const section = document.getElementById(`sectionTab${capitalize(t)}`);
+        const link = document.getElementById(`linkTab${capitalize(t)}`);
+        if (btn) btn.classList.toggle('active', t === tab);
+        if (section) section.style.display = (t === tab) ? 'block' : 'none';
+        if (link) link.classList.toggle('active', t === tab);
+      });
+      if (tab === 'recibos') renderRecibos();
+    }
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    // Recibos Emitidos
+    function renderRecibos() {
+      const tbody = document.getElementById('tbodyRecibos');
+      if (!tbody) return;
+      tbody.innerHTML = `
+        <tr>
+          <td><strong>REC-2026/0412</strong></td>
+          <td>25/11/2026</td>
+          <td><strong>Carlos Manuel Reis Rodrigues</strong> (Sócio 2)</td>
+          <td>Liquidação Quota 2026</td>
+          <td><strong>6,00 €</strong></td>
+          <td>Numerário</td>
+          <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A abrir impressão do recibo oficial...', 'success')">📄 Ver Recibo</button></td>
+        </tr>
+        <tr>
+          <td><strong>REC-2026/0411</strong></td>
+          <td>24/11/2026</td>
+          <td><strong>Manuel António Rodrigues</strong> (Sócio 3)</td>
+          <td>Liquidação Quota 2026</td>
+          <td><strong>6,00 €</strong></td>
+          <td>MBWay</td>
+          <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A abrir impressão do recibo oficial...', 'success')">📄 Ver Recibo</button></td>
+        </tr>
+        <tr>
+          <td><strong>REC-2026/0410</strong></td>
+          <td>20/11/2026</td>
+          <td><strong>Grupo Amigos de Aguada</strong></td>
+          <td>Donativo Peregrinos 2026</td>
+          <td><strong>350,00 €</strong></td>
+          <td>Transferência Bancária</td>
+          <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('A abrir impressão do recibo oficial...', 'success')">📄 Ver Recibo</button></td>
+        </tr>
+      `;
+    }
+
+    // P.O.S. Logic
+    let posCart = [];
+
+    function posAddItem(nome, preco) {
+      const existing = posCart.find(i => i.nome === nome);
+      if (existing) {
+        existing.qty++;
+      } else {
+        posCart.push({ nome, preco, qty: 1 });
+      }
+      renderPosCart();
+    }
+
+    function renderPosCart() {
+      const container = document.getElementById('posCartList');
+      const totalEl = document.getElementById('posTotalAmount');
+      if (!container || !totalEl) return;
+
+      if (posCart.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.88rem; text-align: center; padding-top: 2rem;">Nenhum item adicionado à conta.</p>';
+        totalEl.textContent = '0,00 €';
+        return;
+      }
+
+      let total = 0;
+      let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+      posCart.forEach((item, idx) => {
+        const itemTotal = item.preco * item.qty;
+        total += itemTotal;
+        html += `
+          <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.45rem 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem;">
+            <div>
+              <strong>${item.nome}</strong><br>
+              <small style="color: var(--text-muted);">${item.qty}x ${item.preco.toFixed(2).replace('.', ',')} €</small>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <strong style="color: var(--text-title);">${itemTotal.toFixed(2).replace('.', ',')} €</strong>
+              <button type="button" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 1rem;" onclick="posRemoveItem(${idx})">&times;</button>
+            </div>
+          </li>
+        `;
+      });
+      html += '</ul>';
+      container.innerHTML = html;
+      totalEl.textContent = `${total.toFixed(2).replace('.', ',')} €`;
+    }
+
+    function posRemoveItem(idx) {
+      posCart.splice(idx, 1);
+      renderPosCart();
+    }
+
+    function posClearCart() {
+      posCart = [];
+      renderPosCart();
+    }
+
+    function posCheckout(metodo) {
+      if (posCart.length === 0) {
+        showToast('Adicione pelo menos um produto à conta antes de concluir a venda.', 'error');
+        return;
+      }
+      const total = posCart.reduce((sum, i) => sum + (i.preco * i.qty), 0);
+      
+      // Adicionar aos movimentos de caixa
+      const novoMov = {
+        id: Date.now(),
+        data: new Date().toISOString().slice(0, 10),
+        descricao: `Venda P.O.S. Bar Pavilhão (${posCart.map(i => `${i.qty}x ${i.nome}`).join(', ')})`,
+        categoria: 'Bar Pavilhão',
+        tipo: 'Entrada',
+        valor: total,
+        metodo: metodo
+      };
+
+      movimentos.unshift(novoMov);
+      saveMovimentos();
+
+      showToast(`Venda concluída no valor de ${total.toFixed(2).replace('.', ',')} € via ${metodo}!`, 'success');
+      posClearCart();
+    }
+
+    // Leitura do parâmetro ?tab= da URL
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMovimentos();
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam && ['caixa', 'recibos', 'fornecedores', 'pos'].includes(tabParam)) {
+        switchTesourariaTab(tabParam);
+      }
+    });
+  </script>
+</body>
+</html>

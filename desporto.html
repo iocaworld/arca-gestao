@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.R.C.A. - Gestão Desportiva | Aguada de Baixo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="assets/arca-logo.png" alt="ARCA Logótipo">
+        </div>
+        <div class="sidebar-brand">
+          <h2>A.R.C.A.</h2>
+          <span>Aguada de Baixo</span>
+        </div>
+        <button class="sidebar-close-btn" aria-label="Fechar menu">&times;</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="painel.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Visão Geral</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 2. Menu: Gestão -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios (Link Direto Unificado) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="socios.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Sócios & Cotas</span>
+                <span class="nav-item-badge">386</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Menu: Tesouraria -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                    <circle cx="16" cy="15" r="1"/>
+                  </svg>
+                  <span>Tesouraria</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="tesouraria.html?tab=caixa" class="nav-sublink">Caixa/Movimentos</a></li>
+                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink">Recibo Emitidos</a></li>
+                <li><a href="tesouraria.html?tab=fornecedores" class="nav-sublink">Fornecedores</a></li>
+                <li><a href="tesouraria.html?tab=pos" class="nav-sublink">P.O.S.</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+                <li><a href="membros.html" class="nav-sublink">Membros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Menu: Gestão Desportiva (Ativo) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                    <path d="M2 12h20"/>
+                  </svg>
+                  <span>Gestão Desportiva</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist open">
+                <li><a href="desporto.html?cargo=diretor" class="nav-sublink" id="linkCargoDiretor">Diretor Desportivo</a></li>
+                <li><a href="desporto.html?cargo=delegado" class="nav-sublink" id="linkCargoDelegado">Delegado</a></li>
+                <li><a href="desporto.html?cargo=fisio" class="nav-sublink" id="linkCargoFisio">Fisio & Clinica</a></li>
+                <li><a href="desporto.html?cargo=seguros" class="nav-sublink" id="linkCargoSeguros">Seguros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 6. Menu: Secções & Grupos -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
+                  </svg>
+                  <span>Secções & Grupos</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="seccoes.html?sec=futsal_masculino" class="nav-nested-link">Séniores Masculino</a></li>
+                    <li><a href="seccoes.html?sec=futsal_feminino" class="nav-nested-link">Séniores Femininos</a></li>
+                    <li><a href="seccoes.html?sec=futsal_formacao" class="nav-nested-link">Formação</a></li>
+                  </ul>
+                </li>
+                <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
+                <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
+                <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
+                <li><a href="seccoes.html?sec=funcional" class="nav-sublink">Treino Funcional</a></li>
+                <li><a href="seccoes.html?sec=pilates" class="nav-sublink">Pilates</a></li>
+                <li><a href="seccoes.html?sec=tea" class="nav-sublink">TEA</a></li>
+                <li><a href="seccoes.html?sec=olhares_disparos" class="nav-sublink">Olhares e Disparos</a></li>
+                <li><a href="seccoes.html?sec=bacharca" class="nav-sublink">Bach'Arca</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 7. Menu: Eventos & Organizações -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
+                  </svg>
+                  <span>Eventos & Organizações</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
+                <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Assistência e Apoio</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=peregrinos" class="nav-nested-link">Peregrinos</a></li>
+                    <li><a href="eventos.html?ev=bombeiros" class="nav-nested-link">Bombeiros</a></li>
+                    <li><a href="eventos.html?ev=animais" class="nav-nested-link">Animais</a></li>
+                    <li><a href="eventos.html?ev=angariacoes" class="nav-nested-link">Angariações</a></li>
+                  </ul>
+                </li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Torneios</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=arca_cup" class="nav-nested-link">ARCA Cup</a></li>
+                    <li><a href="eventos.html?ev=futsal_fem" class="nav-nested-link">Torneio Futsal Feminino</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=cicloturismo" class="nav-sublink">Cicloturismo</a></li>
+                <li><a href="eventos.html?ev=dia_freguesia" class="nav-sublink">Dia da Freguesia</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Época Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=futsal_apresentacao" class="nav-nested-link">Apresentação</a></li>
+                    <li><a href="eventos.html?ev=futsal_encerramento" class="nav-nested-link">Encerramento</a></li>
+                  </ul>
+                </li>
+                <li><a href="eventos.html?ev=taca_jorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
+                <li><a href="eventos.html?ev=agitagueda" class="nav-sublink">AgitÁgueda</a></li>
+                <li><a href="eventos.html?ev=andebol" class="nav-sublink">Eventos Andebol ARCA</a></li>
+                <li><a href="eventos.html?ev=jogos_sem_fronteiras" class="nav-sublink">Jogos Sem Fronteiras</a></li>
+                <li><a href="eventos.html?ev=rota_minis" class="nav-sublink">Rota Das Minis</a></li>
+                <li><a href="eventos.html?ev=aniversario_arca" class="nav-sublink">Aniversário ARCA</a></li>
+                <li><a href="eventos.html?ev=jantar_natal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
+                <li><a href="eventos.html?ev=outros" class="nav-sublink">Outros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 8. Menu: Painel de Controlo -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">JC</div>
+        <div class="user-details">
+          <div class="user-name">Jorge Cunha</div>
+          <div class="user-role">Direção Geral</div>
+        </div>
+        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <div class="app-main">
+      
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">&#9776;</button>
+          <div class="breadcrumbs">
+            <a href="painel.html">ARCA</a>
+            <span>&rsaquo;</span>
+            <span class="current">Gestão Desportiva</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Adicionar registo desportivo em preparação...', 'info')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Novo Registo</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Conteúdo da Página -->
+      <main class="page-container">
+        
+        <div class="page-title-bar">
+          <div>
+            <h1>Gestão Desportiva</h1>
+            <p>Coordenação técnica, delegados oficiais de jogo, gabinete de fisioterapia & clínica e apólices de seguros da A.R.C.A.</p>
+          </div>
+        </div>
+
+        <!-- Indicadores Rápidos -->
+        <div class="metrics-row-4">
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">ATLETAS FEDERADOS</span>
+              <span class="metric-value" style="color: #16a34a; font-size: 2.1rem; margin-top: 0.2rem;">68</span>
+              <span class="metric-badge positive" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">Futsal Masc., Fem. e Formação</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-blue">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">JOGOS OFICIAIS (ÉPOCA)</span>
+              <span class="metric-value" style="color: #0284c7; font-size: 2.1rem; margin-top: 0.2rem;">24</span>
+              <span class="metric-badge neutral" style="font-weight: 500; font-size: 0.85rem; margin-top: 0.35rem;">16 realizados &bull; 8 agendados</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-orange">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">BOLETINS CLÍNICOS</span>
+              <span class="metric-value" style="color: #d97706; font-size: 2.1rem; margin-top: 0.2rem;">3</span>
+              <span class="metric-badge warning" style="font-weight: 500; font-size: 0.85rem; margin-top: 0.35rem;">Em tratamento / recuperação</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">SEGUROS DESPORTIVOS</span>
+              <span class="metric-value" style="color: #16a34a; font-size: 2.1rem; margin-top: 0.2rem;">100%</span>
+              <span class="metric-badge positive" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">Todos os atletas cobertos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abas da Gestão Desportiva -->
+        <div class="drawer-tabs" style="padding: 0; background: transparent; border-bottom: 2px solid var(--border-light); margin-bottom: 1.5rem;">
+          <button type="button" class="drawer-tab active" id="tabBtnDiretor" onclick="switchDesportoTab('diretor')">
+            Diretor Desportivo
+          </button>
+          <button type="button" class="drawer-tab" id="tabBtnDelegado" onclick="switchDesportoTab('delegado')">
+            Delegado
+          </button>
+          <button type="button" class="drawer-tab" id="tabBtnFisio" onclick="switchDesportoTab('fisio')">
+            Fisio & Clinica
+          </button>
+          <button type="button" class="drawer-tab" id="tabBtnSeguros" onclick="switchDesportoTab('seguros')">
+            Seguros
+          </button>
+        </div>
+
+        <!-- TAB 1: DIRETOR DESPORTIVO -->
+        <div id="sectionTabDiretor" class="tab-pane-desporto">
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Coordenação Técnica e Escalões Oficiais</h2>
+              <button class="btn btn-primary btn-sm" onclick="showToast('A exportar mapa de escalões da época...', 'success')">Exportar Plantel</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Escalão / Equipa</th>
+                    <th>Competição Oficial</th>
+                    <th>Treinador Principal</th>
+                    <th>Diretor Responsável</th>
+                    <th>Atletas</th>
+                    <th>Estado</th>
+                    <th style="text-align: right;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Futsal Sénior Masculino</strong></td>
+                    <td>1.ª Divisão Distrital AF Aveiro</td>
+                    <td>Rui Costa (Treinador UEFA B)</td>
+                    <td>António Silva</td>
+                    <td>18 Atletas</td>
+                    <td><span class="status-pill em-dia">Em Competição</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Plantel sénior masculino carregado.', 'info')">Plantel</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Futsal Sénior Feminino</strong></td>
+                    <td>Campeonato Distrital / Taça AF Aveiro</td>
+                    <td>Ana Martins</td>
+                    <td>Pedro Alves</td>
+                    <td>16 Atletas</td>
+                    <td><span class="status-pill em-dia">Em Competição</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Plantel sénior feminino carregado.', 'info')">Plantel</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Futsal Formação (Sub-15 & Sub-13)</strong></td>
+                    <td>Encontros Regionais & Formação</td>
+                    <td>Carlos Carvalho</td>
+                    <td>Jorge Cunha</td>
+                    <td>34 Atletas</td>
+                    <td><span class="status-pill em-dia">Ativo</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Plantel da formação carregado.', 'info')">Plantel</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: DELEGADO -->
+        <div id="sectionTabDelegado" class="tab-pane-desporto" style="display: none;">
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Delegados Oficiais de Jogo e Credenciação</h2>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Novo delegado credenciado adicionado.', 'success')">+ Credenciar Delegado</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Nome do Delegado</th>
+                    <th>Nº Credencial / AF Aveiro</th>
+                    <th>Contacto</th>
+                    <th>Equipas Atribuídas</th>
+                    <th>Checklist Pré-Jogo</th>
+                    <th style="text-align: right;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>José Manuel Ferreira</strong></td>
+                    <td><code>DEL-AFA-2026/089</code></td>
+                    <td>914 332 100</td>
+                    <td>Séniores Masculino</td>
+                    <td><span class="status-pill em-dia">&check; Conforme</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Checklist de jogo aberta.', 'info')">Ficha Jogo</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Manuel António Rodrigues</strong></td>
+                    <td><code>DEL-AFA-2026/092</code></td>
+                    <td>913 222 333</td>
+                    <td>Séniores Feminino</td>
+                    <td><span class="status-pill em-dia">&check; Conforme</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Checklist de jogo aberta.', 'info')">Ficha Jogo</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Arménio Reis Rodrigues</strong></td>
+                    <td><code>DEL-AFA-2026/104</code></td>
+                    <td>937 509 584</td>
+                    <td>Formação Sub-15</td>
+                    <td><span class="status-pill em-dia">&check; Conforme</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Checklist de jogo aberta.', 'info')">Ficha Jogo</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: FISIO & CLINICA -->
+        <div id="sectionTabFisio" class="tab-pane-desporto" style="display: none;">
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Gabinete de Fisioterapia & Departamento Médico</h2>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Novo boletim clínico registado.', 'success')">+ Registar Boletim</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Atleta</th>
+                    <th>Equipa</th>
+                    <th>Diagnóstico / Lesão</th>
+                    <th>Data da Ocorrência</th>
+                    <th>Tratamento</th>
+                    <th>Previsão de Retorno</th>
+                    <th>Aptidão</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Gonçalo Ribeiro</strong> (#7)</td>
+                    <td>Séniores Masculino</td>
+                    <td>Entorse tíbio-társica grau I</td>
+                    <td>18/11/2026</td>
+                    <td>Crioterapia, drenagem e reforço</td>
+                    <td>02/12/2026</td>
+                    <td><span class="status-pill atrasado">Inapto</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Mariana Santos</strong> (#10)</td>
+                    <td>Séniores Feminino</td>
+                    <td>Sobrecarga muscular gémeo direito</td>
+                    <td>21/11/2026</td>
+                    <td>Massagem de recuperação e alongamento</td>
+                    <td>28/11/2026</td>
+                    <td><span class="status-pill pendente">Condicionado</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tiago Silva Ferreira</strong> (#4)</td>
+                    <td>Formação Sub-15</td>
+                    <td>Contusão no joelho esquerdo</td>
+                    <td>15/11/2026</td>
+                    <td>Fisioterapia e repouso articular</td>
+                    <td>26/11/2026</td>
+                    <td><span class="status-pill em-dia">Apto p/ Treino</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: SEGUROS -->
+        <div id="sectionTabSeguros" class="tab-pane-desporto" style="display: none;">
+          <div class="card-box">
+            <div class="card-header-bar">
+              <h2>Apólices de Seguros de Acidentes Pessoais Desportivos</h2>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Formulário de participação de sinistro descarregado.', 'success')">📄 Participação de Sinistro</button>
+            </div>
+
+            <div style="background: rgba(28,109,66,0.05); border: 1px solid rgba(28,109,66,0.2); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h4 style="color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem;">Apólice Coletiva Oficial da F.P.F. / A.F. Aveiro & ARCA</h4>
+              <p style="font-size: 0.88rem; color: var(--text-body); margin: 0; line-height: 1.5;">
+                Companhia Seguradora: <strong>Fidelidade Seguros</strong> &bull; Nº de Apólice: <strong>ES-2026-ARCA-99412</strong><br>
+                Cobertura: Despesas de tratamento até 10.000 €, invalidez permanente e transporte de emergência para todos os atletas, equipas técnicas e delegados devidamente inscritos.
+              </p>
+            </div>
+
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Escalão Coberto</th>
+                    <th>Nº de Segurados</th>
+                    <th>Vigência da Apólice</th>
+                    <th>Sinistros Ativos</th>
+                    <th>Estado da Cobertura</th>
+                    <th style="text-align: right;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Futsal Sénior Masculino</strong></td>
+                    <td>22 Elementos (Atletas + Staff)</td>
+                    <td>01/09/2026 a 31/08/2027</td>
+                    <td>1 participação em curso</td>
+                    <td><span class="status-pill em-dia">Ativa</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Apólice descarregada.', 'info')">Apólice PDF</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Futsal Sénior Feminino</strong></td>
+                    <td>20 Elementos (Atletas + Staff)</td>
+                    <td>01/09/2026 a 31/08/2027</td>
+                    <td>0 participações</td>
+                    <td><span class="status-pill em-dia">Ativa</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Apólice descarregada.', 'info')">Apólice PDF</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Formação e Escolas ARCA</strong></td>
+                    <td>38 Elementos</td>
+                    <td>01/09/2026 a 31/08/2027</td>
+                    <td>0 participações</td>
+                    <td><span class="status-pill em-dia">Ativa</span></td>
+                    <td style="text-align: right;"><button class="btn btn-outline btn-sm" onclick="showToast('Apólice descarregada.', 'info')">Apólice PDF</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <script src="js/socios-data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    function switchDesportoTab(cargo) {
+      const cargos = ['diretor', 'delegado', 'fisio', 'seguros'];
+      cargos.forEach(c => {
+        const btn = document.getElementById(`tabBtn${capitalize(c)}`);
+        const section = document.getElementById(`sectionTab${capitalize(c)}`);
+        const link = document.getElementById(`linkCargo${capitalize(c)}`);
+        if (btn) btn.classList.toggle('active', c === cargo);
+        if (section) section.style.display = (c === cargo) ? 'block' : 'none';
+        if (link) link.classList.toggle('active', c === cargo);
+      });
+    }
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const cargoParam = params.get('cargo');
+      if (cargoParam && ['diretor', 'delegado', 'fisio', 'seguros'].includes(cargoParam)) {
+        switchDesportoTab(cargoParam);
+      }
+    });
+  </script>
+</body>
+</html>
