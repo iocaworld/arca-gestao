@@ -304,14 +304,23 @@
           </div>
         </div>
 
-        <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Carregamento de novo documento oficial em preparação!', 'success')">
+        <div class="topbar-right" style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="btn btn-primary btn-sm" onclick="openUploadModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="17 8 12 3 7 8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            <span>Novo Documento</span>
+            <span>Carregar Documento (Upload)</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="resetDefaultDocs()" title="Restaurar ficheiros predefinidos">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+              <path d="M3 21v-5h5"/>
+            </svg>
+            <span>Restaurar</span>
           </button>
         </div>
       </header>
@@ -321,125 +330,163 @@
         
         <div class="page-title-bar">
           <div>
-            <h1 id="pageHeadingDocs">Documentação Oficial da ARCA</h1>
-            <p>Arquivo institucional de planos, orçamentos previsionais, relatórios de contas, atas de assembleias e histórico associativo.</p>
+            <h1 id="pageHeadingDocs">Gestor de Documentação Oficial</h1>
+            <p id="pageHeadingSubtitle">Arquivo institucional da ARCA: consulte, carregue, descarregue e organize documentos oficiais pelas respetivas pastas.</p>
+          </div>
+          <div class="stats-badge-group" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <strong style="color: var(--primary);" id="statTotalDocs">0</strong> Documentos Arquivados
+            </div>
+            <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <strong style="color: var(--primary);" id="statTotalSize">0 MB</strong> Ocupados
+            </div>
           </div>
         </div>
 
-        <!-- Filtros de Categoria em Botões -->
-        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-          <a href="documentos.html" class="btn btn-secondary btn-sm" id="btnCatAll">Todos os Documentos</a>
-          <a href="documentos.html?cat=plano" class="btn btn-outline btn-sm" id="btnCatPlano">Plano de Atividades</a>
-          <a href="documentos.html?cat=orcamento" class="btn btn-outline btn-sm" id="btnCatOrcamento">Orçamento Provisional</a>
-          <a href="documentos.html?cat=exercicio" class="btn btn-outline btn-sm" id="btnCatExercicio">Exercício (Relatórios & Contas)</a>
-          <a href="documentos.html?cat=atas_assembleias" class="btn btn-outline btn-sm" id="btnCatAtasAssembleias">Atas Assembleias</a>
-          <a href="documentos.html?cat=tomadas_posse" class="btn btn-outline btn-sm" id="btnCatTomadasPosse">Atas de Tomadas de Posse</a>
-          <a href="documentos.html?cat=direcoes_anteriores" class="btn btn-outline btn-sm" id="btnCatDirecoesAnteriores">Listagem Direções Anteriores</a>
+        <!-- 1. Grelha de Pastas da Documentação ARCA -->
+        <div style="margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-title); text-transform: uppercase; letter-spacing: 0.05em;">Pastas Oficiais ARCA</h3>
+          <button class="btn btn-outline btn-sm" onclick="setCategoryFilter('all')" id="btnViewAllFolders">
+            Ver Todas as Pastas
+          </button>
         </div>
 
-        <!-- Tabela Geral de Documentos -->
+        <div class="folders-grid">
+          
+          <!-- Pasta 1: Plano de Atividades -->
+          <div class="folder-card" data-cat="plano" onclick="setCategoryFilter('plano')">
+            <div class="folder-icon" style="background: rgba(28, 109, 66, 0.12); color: var(--primary);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="folder-info">
+              <div class="folder-title">Plano de Atividades</div>
+              <div class="folder-meta" id="folderMeta_plano">2 ficheiros</div>
+            </div>
+          </div>
+
+          <!-- Pasta 2: Orçamento Provisional -->
+          <div class="folder-card" data-cat="orcamento" onclick="setCategoryFilter('orcamento')">
+            <div class="folder-icon" style="background: #fef3c7; color: #b45309;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="folder-info">
+              <div class="folder-title">Orçamento Provisional</div>
+              <div class="folder-meta" id="folderMeta_orcamento">2 ficheiros</div>
+            </div>
+          </div>
+
+          <!-- Pasta 3: Exercício -->
+          <div class="folder-card" data-cat="exercicio" onclick="setCategoryFilter('exercicio')">
+            <div class="folder-icon" style="background: #e0f2fe; color: #0369a1;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="folder-info">
+              <div class="folder-title">Exercício (Contas)</div>
+              <div class="folder-meta" id="folderMeta_exercicio">3 ficheiros</div>
+            </div>
+          </div>
+
+          <!-- Pasta 4: Atas Assembleias -->
+          <div class="folder-card" data-cat="atas_assembleias" onclick="setCategoryFilter('atas_assembleias')">
+            <div class="folder-icon" style="background: #ede9fe; color: #6d28d9;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="folder-info">
+              <div class="folder-title">Atas Assembleias</div>
+              <div class="folder-meta" id="folderMeta_atas_assembleias">2 ficheiros</div>
+            </div>
+          </div>
+
+          <!-- Pasta 5: Atas de Tomadas de Posse -->
+          <div class="folder-card" data-cat="tomadas_posse" onclick="setCategoryFilter('tomadas_posse')">
+            <div class="folder-icon" style="background: #fae8ff; color: #a21caf;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="folder-info">
+              <div class="folder-title">Tomadas de Posse</div>
+              <div class="folder-meta" id="folderMeta_tomadas_posse">1 ficheiro</div>
+            </div>
+          </div>
+
+          <!-- Pasta 6: Listagem Direções Anteriores -->
+          <div class="folder-card" data-cat="direcoes_anteriores" onclick="setCategoryFilter('direcoes_anteriores')">
+            <div class="folder-icon" style="background: #f1f5f9; color: #334155;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="folder-info">
+              <div class="folder-title">Direções Anteriores</div>
+              <div class="folder-meta" id="folderMeta_direcoes_anteriores">1 ficheiro</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 2. Caixa da Tabela de Documentos com Ferramentas de Gestão -->
         <div class="card-box">
-          <div class="card-header-bar">
-            <h2>Arquivo Documental Oficial</h2>
+          <div class="card-header-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 id="currentFolderHeading" style="margin-bottom: 0.2rem;">Todos os Documentos Oficiais</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;" id="currentFolderSubheading">Apresentando todos os ficheiros guardados nas pastas da ARCA.</p>
+            </div>
+            
+            <div style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
+              <!-- Barra de Pesquisa Rápida -->
+              <div style="position: relative; width: 230px;">
+                <input type="text" id="docSearchInput" placeholder="Pesquisar documento..." 
+                       style="width: 100%; padding: 0.45rem 0.75rem 0.45rem 2rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); font-size: 0.85rem;"
+                       oninput="renderDocuments()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </div>
+
+              <!-- Filtro de Formato -->
+              <select id="docFormatFilter" onchange="renderDocuments()" style="padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); font-size: 0.85rem; background: white; color: var(--text-body);">
+                <option value="all">Todos os Formatos</option>
+                <option value="pdf">Apenas PDF</option>
+                <option value="word">Word (DOCX)</option>
+                <option value="excel">Excel (XLSX)</option>
+              </select>
+
+              <!-- Botão Rápido de Carregar Nesta Pasta -->
+              <button class="btn btn-primary btn-sm" onclick="openUploadModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Upload Ficheiro</span>
+              </button>
+            </div>
           </div>
 
+          <!-- Tabela Responsiva de Ficheiros -->
           <div class="table-responsive">
             <table class="modern-table">
               <thead>
                 <tr>
-                  <th>Designação do Documento</th>
-                  <th>Secção / Categoria</th>
-                  <th>Ano / Data</th>
-                  <th>Estado</th>
-                  <th style="text-align: right;">Ação</th>
+                  <th style="width: 44%;">Ficheiro & Designação Oficial</th>
+                  <th style="width: 18%;">Pasta de Destino</th>
+                  <th style="width: 10%;">Ano / Data</th>
+                  <th style="width: 12%;">Estado</th>
+                  <th style="text-align: right; width: 16%;">Ações de Gestão</th>
                 </tr>
               </thead>
               <tbody id="docsTableBody">
-                
-                <!-- 1. Plano de Atividades -->
-                <tr class="doc-row" data-category="plano">
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Plano Anual de Atividades 2026/2027</div>
-                    <small style="color: var(--text-muted);">Iniciativas desportivas, culturais e sociais estipuladas pela Direção</small>
-                  </td>
-                  <td><span class="status-pill em-dia">Plano de Atividades</span></td>
-                  <td>2026</td>
-                  <td><span class="status-pill em-dia">Aprovado</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A transferir Plano de Atividades...', 'success')">Transferir PDF</button>
-                  </td>
-                </tr>
-
-                <!-- 2. Orçamento Provisional -->
-                <tr class="doc-row" data-category="orcamento">
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Orçamento Provisional para o Ano de 2026</div>
-                    <small style="color: var(--text-muted);">Previsão de receitas de cotas, eventos e mapa de despesas do Pavilhão</small>
-                  </td>
-                  <td><span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Orçamento Provisional</span></td>
-                  <td>2026</td>
-                  <td><span class="status-pill em-dia">Aprovado em AG</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A transferir Orçamento Provisional...', 'success')">Transferir PDF</button>
-                  </td>
-                </tr>
-
-                <!-- 3. Exercício -->
-                <tr class="doc-row" data-category="exercicio">
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Relatório de Gestão e Contas do Exercício 2025</div>
-                    <small style="color: var(--text-muted);">Relatório de Direção, Balanço, Demonstração de Resultados e Parecer do Conselho Fiscal</small>
-                  </td>
-                  <td><span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Exercício</span></td>
-                  <td>2025</td>
-                  <td><span class="status-pill em-dia">Com Parecer Fiscal</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A transferir Relatório e Parecer Fiscal...', 'success')">Transferir PDF</button>
-                  </td>
-                </tr>
-
-                <!-- 4. Atas Assembleias -->
-                <tr class="doc-row" data-category="atas_assembleias">
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Ata da Assembleia Geral Ordinária de Aprovação de Contas</div>
-                    <small style="color: var(--text-muted);">Reunião magna de associados com deliberação unânime do relatório e contas</small>
-                  </td>
-                  <td><span class="status-pill em-dia">Atas Assembleias</span></td>
-                  <td>22/03/2026</td>
-                  <td><span class="status-pill em-dia">Registada & Assinada</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Ata da Assembleia Geral...', 'success')">Ver Ata</button>
-                  </td>
-                </tr>
-
-                <!-- 5. Atas de Tomadas de Posse -->
-                <tr class="doc-row" data-category="tomadas_posse">
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Auto de Posse dos Corpos Sociais da ARCA &bull; Triénio 2025/2027</div>
-                    <small style="color: var(--text-muted);">Tomada de posse da Direção, Mesa da Assembleia Geral e Conselho Fiscal</small>
-                  </td>
-                  <td><span class="status-pill" style="background: var(--primary-light); color: var(--primary);">Tomada de Posse</span></td>
-                  <td>12/01/2025</td>
-                  <td><span class="status-pill em-dia">Oficial</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A transferir Auto de Posse...', 'success')">Ver Auto</button>
-                  </td>
-                </tr>
-
-                <!-- 6. Listagem Direções Anteriores -->
-                <tr class="doc-row" data-category="direcoes_anteriores">
-                  <td>
-                    <div style="font-weight: 700; color: var(--text-title);">Histórico de Direções e Corpos Sociais Anteriores (1984 - Presente)</div>
-                    <small style="color: var(--text-muted);">Registo comemorativo dos presidentes, diretores e associados fundadores da ARCA</small>
-                  </td>
-                  <td><span class="status-pill" style="background: #f1f5f9; color: #475569;">Histórico ARCA</span></td>
-                  <td>Arquivo Geral</td>
-                  <td><span class="status-pill em-dia">Arquivo Histórico</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Arquivo Histórico de Direções...', 'success')">Consultar</button>
-                  </td>
-                </tr>
-
+                <!-- Preenchido dinamicamente por renderDocuments() -->
               </tbody>
             </table>
           </div>
@@ -450,52 +497,940 @@
 
   </div>
 
+  <!-- Modal: Upload e Registo de Documento Oficial -->
+  <div class="modal-overlay" id="uploadDocModal">
+    <div class="modal-content" style="max-width: 620px;">
+      <div class="modal-header">
+        <div>
+          <h2>Carregar Novo Documento Oficial</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+            Adicione atas, orçamentos, relatórios ou ficheiros institucionais da ARCA.
+          </p>
+        </div>
+        <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+      </div>
+
+      <form id="docUploadForm" onsubmit="handleDocSubmit(event)">
+        <!-- Zona Drag & Drop -->
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('docFileInput').click()">
+          <input type="file" id="docFileInput" style="display: none;" accept=".pdf,.docx,.doc,.xlsx,.xls,.png,.jpg,.jpeg" onchange="handleFileSelected(event)">
+          <div class="drop-zone-icon" id="dropZoneIcon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div style="font-weight: 600; color: var(--text-title); font-size: 0.95rem;" id="dropZoneTitle">
+            Clique para escolher ficheiro ou arraste para aqui
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem;" id="dropZoneHelp">
+            Formatos aceites: PDF, DOCX, XLSX, Imagens (Máx. 10MB)
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.25rem;">
+          <label class="form-label" for="inputDocTitle">Título / Designação Oficial do Documento *</label>
+          <input type="text" class="form-control" id="inputDocTitle" required placeholder="Ex.: Ata nº 45 da Assembleia Geral Ordinária">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="selectDocCategory">Pasta Oficial de Destino *</label>
+            <select class="form-control" id="selectDocCategory" required>
+              <option value="plano">Plano de Atividades</option>
+              <option value="orcamento">Orçamento Provisional</option>
+              <option value="exercicio">Exercício (Relatórios & Contas)</option>
+              <option value="atas_assembleias">Atas de Assembleias Gerais</option>
+              <option value="tomadas_posse">Atas de Tomadas de Posse</option>
+              <option value="direcoes_anteriores">Listagem Direções Anteriores</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inputDocYear">Ano / Exercício / Data *</label>
+            <input type="text" class="form-control" id="inputDocYear" required placeholder="Ex.: 2026 ou 2026/2027">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="selectDocStatus">Estado / Aprovação</label>
+            <select class="form-control" id="selectDocStatus">
+              <option value="Aprovado" selected>Aprovado</option>
+              <option value="Em Vigor">Em Vigor</option>
+              <option value="Em Análise">Em Análise</option>
+              <option value="Histórico">Histórico / Arquivado</option>
+              <option value="Rascunho">Rascunho</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inputDocSignatory">Órgão / Responsável</label>
+            <input type="text" class="form-control" id="inputDocSignatory" placeholder="Ex.: Mesa Assembleia Geral / Direção">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="inputDocNotes">Observações / Pauta / Descrição</label>
+          <textarea class="form-control" id="inputDocNotes" rows="2" placeholder="Notas sobre a aprovação, deliberações ou contexto do documento..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" onclick="closeUploadModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitDoc">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            <span>Guardar na Pasta</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Pré-visualização e Detalhes do Documento -->
+  <div class="modal-overlay" id="previewDocModal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div id="previewDocBadge" class="doc-format-badge pdf">PDF</div>
+          <div>
+            <h2 id="previewDocTitle" style="font-size: 1.15rem; margin: 0;">Título do Documento</h2>
+            <span id="previewDocCategory" style="font-size: 0.8rem; color: var(--text-muted);">Pasta Oficial</span>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+      </div>
+
+      <div style="background: var(--bg-main); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem;">
+          <div><strong style="color: var(--text-title);">Ano / Data:</strong> <span id="previewDocYear">-</span></div>
+          <div><strong style="color: var(--text-title);">Estado:</strong> <span id="previewDocStatus">-</span></div>
+          <div><strong style="color: var(--text-title);">Formato:</strong> <span id="previewDocFormat">-</span></div>
+          <div><strong style="color: var(--text-title);">Tamanho:</strong> <span id="previewDocSize">-</span></div>
+          <div><strong style="color: var(--text-title);">Data de Entrada:</strong> <span id="previewDocDate">-</span></div>
+          <div><strong style="color: var(--text-title);">Órgão Responsável:</strong> <span id="previewDocSignatory">-</span></div>
+        </div>
+        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-light); font-size: 0.85rem;">
+          <strong style="color: var(--text-title);">Observações / Resumo:</strong>
+          <p id="previewDocNotes" style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-style: italic;">Sem observações adicionais.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5;" id="btnDeleteFromPreview">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          <span>Remover Ficheiro</span>
+        </button>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline" onclick="closePreviewModal()">Fechar</button>
+          <button type="button" class="btn btn-primary" id="btnDownloadFromPreview">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Descarregar (Download)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/main.js"></script>
   <script>
-    // Filtro automático de acordo com o submenu selecionado na lateral
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const cat = urlParams.get('cat');
+    // Configurações e Categorias Oficiais
+    const STORAGE_KEY = 'arca_documentos_v2';
+    const CATEGORIES = {
+      plano: { name: 'Plano de Atividades', badge: 'badge-blue' },
+      orcamento: { name: 'Orçamento Provisional', badge: 'badge-purple' },
+      exercicio: { name: 'Exercício (Relatórios & Contas)', badge: 'badge-primary' },
+      atas_assembleias: { name: 'Atas de Assembleias Gerais', badge: 'badge-warning' },
+      tomadas_posse: { name: 'Atas de Tomadas de Posse', badge: 'badge-info' },
+      direcoes_anteriores: { name: 'Listagem Direções Anteriores', badge: 'badge-secondary' }
+    };
 
-      if (cat) {
-        const rows = document.querySelectorAll('.doc-row');
-        rows.forEach(r => {
-          if (r.getAttribute('data-category') === cat) {
-            r.style.display = '';
-          } else {
-            r.style.display = 'none';
+    // Coleção Predefinida de Documentos Oficiais da ARCA
+    const DEFAULT_DOCUMENTS = [
+      {
+        id: 'doc-1',
+        title: 'Plano de Atividades e Linhas Estratégicas 2025/2026',
+        category: 'plano',
+        year: '2025/2026',
+        status: 'Aprovado',
+        format: 'pdf',
+        fileName: 'Plano_Atividades_ARCA_2025_2026.pdf',
+        fileSize: '1.8 MB',
+        date: '15/11/2025',
+        signatory: 'Direção Geral ARCA',
+        notes: 'Aprovado por unanimidade na Assembleia Geral Extraordinária de Novembro de 2025.'
+      },
+      {
+        id: 'doc-2',
+        title: 'Plano Estratégico de Desenvolvimento Desportivo e Cultural (2024-2027)',
+        category: 'plano',
+        year: '2024-2027',
+        status: 'Em Vigor',
+        format: 'pdf',
+        fileName: 'Plano_Estrategico_Trienal_ARCA.pdf',
+        fileSize: '3.4 MB',
+        date: '20/03/2024',
+        signatory: 'Direção & Secções',
+        notes: 'Documento orientador para o mandato com metas para Futsal, BiciArca, TEA e Dança.'
+      },
+      {
+        id: 'doc-3',
+        title: 'Calendarização Geral de Eventos e Competições 2026',
+        category: 'plano',
+        year: '2026',
+        status: 'Aprovado',
+        format: 'excel',
+        fileName: 'Calendario_Eventos_ARCA_2026.xlsx',
+        fileSize: '460 KB',
+        date: '10/01/2026',
+        signatory: 'Coordenação de Atividades',
+        notes: 'Previsão de datas para ARCA Cup, Noite das Sopas, Rota das Minis e Peregrinos.'
+      },
+      {
+        id: 'doc-4',
+        title: 'Orçamento Provisional e Previsão Financeira para o Exercício 2026',
+        category: 'orcamento',
+        year: '2026',
+        status: 'Aprovado',
+        format: 'pdf',
+        fileName: 'Orcamento_Provisional_2026_ARCA.pdf',
+        fileSize: '1.4 MB',
+        date: '15/12/2025',
+        signatory: 'Tesouraria ARCA',
+        notes: 'Previsão orçamental com estimativas de receitas de cotas, subsídios e eventos.'
+      },
+      {
+        id: 'doc-5',
+        title: 'Mapa Detalhado de Receitas e Despesas Previsionais 2026',
+        category: 'orcamento',
+        year: '2026',
+        status: 'Aprovado',
+        format: 'excel',
+        fileName: 'Mapa_Orcamental_Detalhado_2026.xlsx',
+        fileSize: '680 KB',
+        date: '12/12/2025',
+        signatory: 'Gabinete Financeiro',
+        notes: 'Desdobramento por centros de custo das secções desportivas e culturais.'
+      },
+      {
+        id: 'doc-6',
+        title: 'Relatório de Gestão e Contas do Exercício de 2024',
+        category: 'exercicio',
+        year: '2024',
+        status: 'Aprovado',
+        format: 'pdf',
+        fileName: 'Relatorio_Contas_Exercicio_2024.pdf',
+        fileSize: '2.9 MB',
+        date: '28/03/2025',
+        signatory: 'Direção Executiva',
+        notes: 'Apresentação detalhada da execução financeira e desportiva do ano 2024.'
+      },
+      {
+        id: 'doc-7',
+        title: 'Parecer do Conselho Fiscal sobre as Contas do Exercício 2024',
+        category: 'exercicio',
+        year: '2024',
+        status: 'Aprovado',
+        format: 'pdf',
+        fileName: 'Parecer_Conselho_Fiscal_2024.pdf',
+        fileSize: '620 KB',
+        date: '25/03/2025',
+        signatory: 'Conselho Fiscal ARCA',
+        notes: 'Parecer favorável à aprovação de contas sem reservas.'
+      },
+      {
+        id: 'doc-8',
+        title: 'Balanço Patrimonial e Demonstração de Resultados 2024',
+        category: 'exercicio',
+        year: '2024',
+        status: 'Aprovado',
+        format: 'excel',
+        fileName: 'Balanco_Resultados_2024.xlsx',
+        fileSize: '530 KB',
+        date: '20/03/2025',
+        signatory: 'Contabilista Certificado',
+        notes: 'Demonstrações financeiras oficiais arquivadas para efeitos fiscais.'
+      },
+      {
+        id: 'doc-9',
+        title: 'Ata nº 44 - Assembleia Geral Ordinária de Aprovação de Contas 2024',
+        category: 'atas_assembleias',
+        year: '2025',
+        status: 'Aprovado',
+        format: 'pdf',
+        fileName: 'Ata_Assembleia_Geral_44_2025.pdf',
+        fileSize: '890 KB',
+        date: '31/03/2025',
+        signatory: 'Mesa da Assembleia Geral',
+        notes: 'Aprovação unânime do Relatório e Contas com 48 sócios presentes.'
+      },
+      {
+        id: 'doc-10',
+        title: 'Ata nº 43 - Assembleia Geral Extraordinária (Revisão Regulamentar)',
+        category: 'atas_assembleias',
+        year: '2024',
+        status: 'Aprovado',
+        format: 'pdf',
+        fileName: 'Ata_Assembleia_Geral_43_2024.pdf',
+        fileSize: '1.1 MB',
+        date: '18/10/2024',
+        signatory: 'Mesa da Assembleia Geral',
+        notes: 'Atualização das normas internas das secções desportivas da ARCA.'
+      },
+      {
+        id: 'doc-11',
+        title: 'Auto de Tomada de Posse dos Órgãos Sociais da ARCA (Mandato 2024-2027)',
+        category: 'tomadas_posse',
+        year: '2024-2027',
+        status: 'Em Vigor',
+        format: 'pdf',
+        fileName: 'Auto_Tomada_Posse_Orgaos_Sociais_2024_2027.pdf',
+        fileSize: '1.3 MB',
+        date: '14/01/2024',
+        signatory: 'Presidente da Mesa da Assembleia Geral',
+        notes: 'Investidura solene dos membros da Direção, Assembleia Geral e Conselho Fiscal.'
+      },
+      {
+        id: 'doc-12',
+        title: 'Registo Histórico de Corpos Sociais e Direções da ARCA (1980 - 2024)',
+        category: 'direcoes_anteriores',
+        year: '1980-2024',
+        status: 'Histórico',
+        format: 'pdf',
+        fileName: 'Historico_Direcoes_ARCA_1980_2024.pdf',
+        fileSize: '4.6 MB',
+        date: '01/01/2024',
+        signatory: 'Arquivo Histórico ARCA',
+        notes: 'Compilação de todos os dirigentes, presidentes e mandatos desde a fundação da associação.'
+      },
+      {
+        id: 'doc-13',
+        title: 'Quadro de Honra e Distinções de Dirigentes Anteriores',
+        category: 'direcoes_anteriores',
+        year: '2024',
+        status: 'Histórico',
+        format: 'word',
+        fileName: 'Quadro_Honra_Dirigentes_ARCA.docx',
+        fileSize: '780 KB',
+        date: '15/06/2024',
+        signatory: 'Direção Geral',
+        notes: 'Lista de sócios beneméritos e distinções atribuídas aos antigos dirigentes.'
+      }
+    ];
+
+    // Variáveis de Estado
+    let currentCategory = 'all';
+    let currentUploadedFileData = null;
+    let currentPreviewDocId = null;
+
+    // Inicialização da Aplicação
+    document.addEventListener('DOMContentLoaded', () => {
+      initDocumentStore();
+
+      // Ler parâmetro da URL se existir (?cat=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get('cat');
+      if (catParam && (CATEGORIES[catParam] || catParam === 'all')) {
+        currentCategory = catParam;
+      }
+
+      setupDragAndDrop();
+      setupSidebarSublinks();
+      renderDocuments();
+    });
+
+    function setupSidebarSublinks() {
+      document.querySelectorAll('.sidebar-nav a[href*="documentos.html?cat="]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          try {
+            const url = new URL(link.href, window.location.origin);
+            const cat = url.searchParams.get('cat');
+            if (cat) {
+              setCategoryFilter(cat);
+              document.querySelector('.app-sidebar')?.classList.remove('open');
+              document.querySelector('.sidebar-overlay')?.classList.remove('active');
+            }
+          } catch(err) {
+            console.error(err);
           }
         });
+      });
+    }
 
-        const categoryNames = {
-          plano: 'Plano de Atividades',
-          orcamento: 'Orçamento Provisional',
-          exercicio: 'Exercício (Relatórios & Contas)',
-          atas_assembleias: 'Atas de Assembleias Gerais',
-          tomadas_posse: 'Atas de Tomadas de Posse',
-          direcoes_anteriores: 'Listagem de Direções Anteriores'
+    // Inicializar LocalStorage
+    function initDocumentStore() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DOCUMENTS));
+      }
+    }
+
+    function getDocuments() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : DEFAULT_DOCUMENTS;
+      } catch (e) {
+        console.error('Erro ao ler documentos:', e);
+        return DEFAULT_DOCUMENTS;
+      }
+    }
+
+    function saveDocuments(docs) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+    }
+
+    // Configurar Drag & Drop
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('dropZone');
+      if (!dropZone) return;
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          processFile(files[0]);
+        }
+      }, false);
+    }
+
+    function handleFileSelected(event) {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        processFile(files[0]);
+      }
+    }
+
+    function processFile(file) {
+      const dropZoneTitle = document.getElementById('dropZoneTitle');
+      const dropZoneHelp = document.getElementById('dropZoneHelp');
+      const inputDocTitle = document.getElementById('inputDocTitle');
+
+      // Determinar formato
+      let format = 'general';
+      const name = file.name.toLowerCase();
+      if (name.endsWith('.pdf')) format = 'pdf';
+      else if (name.endsWith('.docx') || name.endsWith('.doc')) format = 'word';
+      else if (name.endsWith('.xlsx') || name.endsWith('.xls') || name.endsWith('.csv')) format = 'excel';
+      else if (name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')) format = 'general';
+
+      const sizeFormatted = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+      // Atualizar zona visual
+      dropZoneTitle.textContent = `✓ Ficheiro Selecionado: ${file.name}`;
+      dropZoneTitle.style.color = 'var(--primary)';
+      dropZoneHelp.textContent = `Tamanho: ${sizeFormatted} | Formato: ${format.toUpperCase()}`;
+
+      // Preencher título se vazio
+      if (!inputDocTitle.value.trim()) {
+        const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+        inputDocTitle.value = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+      }
+
+      // Ler ficheiro para Base64 para persistência local
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentUploadedFileData = {
+          fileName: file.name,
+          fileSize: sizeFormatted,
+          format: format,
+          base64: e.target.result
         };
+      };
+      reader.readAsDataURL(file);
+    }
 
-        if (categoryNames[cat]) {
-          document.getElementById('pageHeadingDocs').textContent = categoryNames[cat];
-          document.getElementById('docCategoryBreadcrumb').textContent = categoryNames[cat];
+    // Renderização dos Documentos e Pastas
+    function renderDocuments() {
+      const docs = getDocuments();
+      const tbody = document.getElementById('docsTableBody');
+      const searchVal = (document.getElementById('docSearchInput')?.value || '').toLowerCase().trim();
+      const formatVal = document.getElementById('docFormatFilter')?.value || 'all';
+
+      // 1. Atualizar contadores das pastas
+      const counts = {
+        plano: 0,
+        orcamento: 0,
+        exercicio: 0,
+        atas_assembleias: 0,
+        tomadas_posse: 0,
+        direcoes_anteriores: 0
+      };
+
+      docs.forEach(d => {
+        if (counts[d.category] !== undefined) {
+          counts[d.category]++;
         }
+      });
 
-        // Realçar botão selecionado
-        const catButtonId = 'btnCat' + cat.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
-        const catBtn = document.getElementById(catButtonId);
-        if (catBtn) {
-          catBtn.className = 'btn btn-primary btn-sm';
-          document.getElementById('btnCatAll').className = 'btn btn-outline btn-sm';
+      for (const [cat, count] of Object.entries(counts)) {
+        const el = document.getElementById(`count-${cat}`);
+        if (el) el.textContent = `${count} ficheiro${count === 1 ? '' : 's'}`;
+      }
+
+      const badgeTotal = document.getElementById('badgeTotalDocs');
+      if (badgeTotal) badgeTotal.textContent = `${docs.length} no total`;
+
+      // 2. Atualizar estado visual das pastas
+      document.querySelectorAll('.folder-card').forEach(card => {
+        const cat = card.getAttribute('data-folder');
+        if (currentCategory === 'all' || currentCategory === cat) {
+          card.classList.toggle('active', currentCategory === cat);
+        } else {
+          card.classList.remove('active');
         }
+      });
 
-        // Realçar link da sidebar
-        document.querySelectorAll('.sidebar-nav .nav-sublink').forEach(link => link.classList.remove('active'));
-        const sublinkId = 'sublink' + cat.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+      // 3. Atualizar títulos de cabeçalho
+      const pageHeading = document.getElementById('pageHeadingDocs');
+      const breadcrumb = document.getElementById('docCategoryBreadcrumb');
+      const currentFolderTitle = document.getElementById('currentFolderTitle');
+
+      if (currentCategory === 'all') {
+        if (pageHeading) pageHeading.textContent = 'Documentação Oficial ARCA';
+        if (breadcrumb) breadcrumb.textContent = 'Todas as Pastas Oficiais';
+        if (currentFolderTitle) currentFolderTitle.textContent = 'Todos os Documentos Registados';
+      } else if (CATEGORIES[currentCategory]) {
+        const catName = CATEGORIES[currentCategory].name;
+        if (pageHeading) pageHeading.textContent = catName;
+        if (breadcrumb) breadcrumb.textContent = catName;
+        if (currentFolderTitle) currentFolderTitle.textContent = `Documentos em "${catName}"`;
+      }
+
+      // 4. Realçar submenu da Sidebar correspondente
+      document.querySelectorAll('.sidebar-nav .nav-sublink').forEach(link => link.classList.remove('active'));
+      if (currentCategory !== 'all') {
+        const sublinkId = 'sublink' + currentCategory.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
         const activeSublink = document.getElementById(sublinkId);
         if (activeSublink) activeSublink.classList.add('active');
       }
-    });
+
+      // 5. Filtrar documentos
+      const filtered = docs.filter(doc => {
+        // Filtro de pasta
+        if (currentCategory !== 'all' && doc.category !== currentCategory) return false;
+
+        // Filtro de formato
+        if (formatVal !== 'all' && doc.format !== formatVal) return false;
+
+        // Filtro de pesquisa
+        if (searchVal) {
+          const matchTitle = (doc.title || '').toLowerCase().includes(searchVal);
+          const matchYear = (doc.year || '').toLowerCase().includes(searchVal);
+          const matchFile = (doc.fileName || '').toLowerCase().includes(searchVal);
+          const matchSignatory = (doc.signatory || '').toLowerCase().includes(searchVal);
+          const matchCat = (CATEGORIES[doc.category]?.name || '').toLowerCase().includes(searchVal);
+          if (!matchTitle && !matchYear && !matchFile && !matchSignatory && !matchCat) return false;
+        }
+
+        return true;
+      });
+
+      // 6. Construir linhas da tabela
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 3rem 1rem;">
+              <div style="max-width: 380px; margin: 0 auto; color: var(--text-muted);">
+                <div style="width: 56px; height: 56px; margin: 0 auto 1rem; border-radius: 50%; background: rgba(28, 109, 66, 0.08); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                </div>
+                <h4 style="font-size: 1.05rem; color: var(--text-title); margin-bottom: 0.25rem;">Nenhum documento encontrado</h4>
+                <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Não foram encontrados ficheiros para os filtros ou pasta selecionada.</p>
+                <button class="btn btn-primary btn-sm" onclick="openUploadModal('${currentCategory !== 'all' ? currentCategory : 'plano'}')">
+                  Carregar Documento Agora
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(doc => {
+        const catInfo = CATEGORIES[doc.category] || { name: doc.category, badge: 'badge-secondary' };
+        const formatBadgeClass = doc.format === 'pdf' ? 'pdf' : (doc.format === 'word' ? 'word' : (doc.format === 'excel' ? 'excel' : 'general'));
+        const formatLabel = doc.format ? doc.format.toUpperCase() : 'DOC';
+
+        let statusBadgeClass = 'badge-success';
+        if (doc.status === 'Em Análise' || doc.status === 'Rascunho') statusBadgeClass = 'badge-warning';
+        if (doc.status === 'Histórico') statusBadgeClass = 'badge-secondary';
+
+        return `
+          <tr class="doc-row" data-category="${doc.category}">
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span class="doc-format-badge ${formatBadgeClass}">${formatLabel}</span>
+                <div style="min-width: 0;">
+                  <div style="font-weight: 600; color: var(--text-title); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px;" title="${escapeHtml(doc.title)}">
+                    ${escapeHtml(doc.title)}
+                  </div>
+                  <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; margin-top: 0.15rem;">
+                    <span>${escapeHtml(doc.fileName || 'documento')}</span>
+                    <span>•</span>
+                    <span>${escapeHtml(doc.fileSize || '1 MB')}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge ${catInfo.badge}" style="cursor: pointer;" onclick="setCategoryFilter('${doc.category}')" title="Filtrar por esta pasta">
+                ${catInfo.name}
+              </span>
+            </td>
+            <td>
+              <span style="font-weight: 600; color: var(--text-title); font-size: 0.88rem;">${escapeHtml(doc.year)}</span>
+            </td>
+            <td>
+              <span class="badge ${statusBadgeClass}">${escapeHtml(doc.status || 'Aprovado')}</span>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                <!-- Botão Pré-visualizar / Detalhes -->
+                <button class="btn-action-icon" onclick="previewDocument('${doc.id}')" title="Ver Detalhes do Documento">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+
+                <!-- Botão Descarregar (Download) -->
+                <button class="btn-action-icon" style="color: var(--primary);" onclick="downloadDocument('${doc.id}')" title="Descarregar Ficheiro">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                </button>
+
+                <!-- Botão Remover -->
+                <button class="btn-action-icon btn-danger" onclick="deleteDocument('${doc.id}')" title="Remover Documento">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Filtrar por Categoria / Submenu
+    function setCategoryFilter(category) {
+      currentCategory = category;
+
+      // Atualizar URL sem recarregar a página
+      const url = new URL(window.location);
+      if (category === 'all') {
+        url.searchParams.delete('cat');
+      } else {
+        url.searchParams.set('cat', category);
+      }
+      window.history.replaceState({}, '', url);
+
+      renderDocuments();
+    }
+
+    // Abertura e Fecho de Modais
+    function openUploadModal(category = null) {
+      const modal = document.getElementById('uploadDocModal');
+      const selectCategory = document.getElementById('selectDocCategory');
+      const form = document.getElementById('docUploadForm');
+      
+      form.reset();
+      currentUploadedFileData = null;
+
+      // Repor textos do dropzone
+      const dropZoneTitle = document.getElementById('dropZoneTitle');
+      const dropZoneHelp = document.getElementById('dropZoneHelp');
+      dropZoneTitle.textContent = 'Clique para escolher ficheiro ou arraste para aqui';
+      dropZoneTitle.style.color = 'var(--text-title)';
+      dropZoneHelp.textContent = 'Formatos aceites: PDF, DOCX, XLSX, Imagens (Máx. 10MB)';
+
+      // Predefinir ano atual
+      const currentYear = new Date().getFullYear();
+      document.getElementById('inputDocYear').value = currentYear.toString();
+
+      // Pré-selecionar categoria se aplicável
+      const targetCat = category || (currentCategory !== 'all' ? currentCategory : 'plano');
+      if (selectCategory && CATEGORIES[targetCat]) {
+        selectCategory.value = targetCat;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeUploadModal() {
+      const modal = document.getElementById('uploadDocModal');
+      modal.classList.remove('active');
+      currentUploadedFileData = null;
+    }
+
+    function openPreviewModal() {
+      document.getElementById('previewDocModal').classList.add('active');
+    }
+
+    function closePreviewModal() {
+      document.getElementById('previewDocModal').classList.remove('active');
+      currentPreviewDocId = null;
+    }
+
+    // Submissão do Formulário de Upload
+    function handleDocSubmit(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('inputDocTitle').value.trim();
+      const category = document.getElementById('selectDocCategory').value;
+      const year = document.getElementById('inputDocYear').value.trim();
+      const status = document.getElementById('selectDocStatus').value;
+      const signatory = document.getElementById('inputDocSignatory').value.trim();
+      const notes = document.getElementById('inputDocNotes').value.trim();
+
+      if (!title || !category || !year) {
+        alert('Por favor preencha todos os campos obrigatórios (*).');
+        return;
+      }
+
+      // Se o utilizador carregou um ficheiro real
+      let format = 'pdf';
+      let fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '_') + '.pdf';
+      let fileSize = '1.2 MB';
+      let fileData = null;
+
+      if (currentUploadedFileData) {
+        format = currentUploadedFileData.format;
+        fileName = currentUploadedFileData.fileName;
+        fileSize = currentUploadedFileData.fileSize;
+        fileData = currentUploadedFileData.base64;
+      }
+
+      const today = new Date();
+      const dateFormatted = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+
+      const newDoc = {
+        id: 'doc-' + Date.now(),
+        title: title,
+        category: category,
+        year: year,
+        status: status,
+        format: format,
+        fileName: fileName,
+        fileSize: fileSize,
+        fileData: fileData,
+        date: dateFormatted,
+        signatory: signatory || 'Direção ARCA',
+        notes: notes || 'Documento registado na plataforma ARCA Gestão.'
+      };
+
+      const docs = getDocuments();
+      docs.unshift(newDoc); // Adicionar no topo
+      saveDocuments(docs);
+
+      closeUploadModal();
+
+      // Mudar para a pasta do documento para o utilizador vê-lo imediatamente
+      setCategoryFilter(category);
+
+      showNotification(`Documento "${title}" guardado com sucesso na pasta "${CATEGORIES[category]?.name}".`);
+    }
+
+    // Descarregar Documento (Download)
+    function downloadDocument(docId) {
+      const docs = getDocuments();
+      const doc = docs.find(d => d.id === docId);
+      if (!doc) return;
+
+      if (doc.fileData) {
+        // Ficheiro real carregado pelo utilizador (Base64)
+        const a = document.createElement('a');
+        a.href = doc.fileData;
+        a.download = doc.fileName || `${doc.title}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        // Ficheiro pré-definido oficial institucional: gerar exemplar oficial formatado
+        const catName = CATEGORIES[doc.category]?.name || doc.category;
+        const officialText = 
+`======================================================================
+ASSOCIAÇÃO RECREATIVA E CULTURAL DE AGUADA DE CIMA (ARCA)
+Ficheiro Oficial do Arquivo Documental Digital
+======================================================================
+
+TÍTULO OFICIAL: ${doc.title}
+PASTA / SUBMENU: ${catName}
+EXERCÍCIO / ANO: ${doc.year}
+ESTADO DO REGISTO: ${doc.status}
+ÓRGÃO EMISSOR: ${doc.signatory || 'Direção ARCA'}
+DATA DE ARQUIVO: ${doc.date}
+TAMANHO ESTIMADO: ${doc.fileSize}
+
+NOTAS E DESCRITIVO:
+${doc.notes || 'Documento oficial registado e validado pelos Corpos Sociais da ARCA.'}
+
+----------------------------------------------------------------------
+ARCA - Aguada de Cima, Águeda | Plataforma Integrada de Gestão
+Este ficheiro digital atesta o arquivo oficial do documento.
+======================================================================`;
+
+        const blob = new Blob([officialText], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const cleanName = (doc.fileName || doc.title).replace(/\.[^/.]+$/, '');
+        a.download = `${cleanName}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      showNotification(`A descarregar "${doc.title}"...`);
+    }
+
+    // Pré-visualizar / Ver Detalhes
+    function previewDocument(docId) {
+      const docs = getDocuments();
+      const doc = docs.find(d => d.id === docId);
+      if (!doc) return;
+
+      currentPreviewDocId = docId;
+
+      document.getElementById('previewDocTitle').textContent = doc.title;
+      const catName = CATEGORIES[doc.category]?.name || doc.category;
+      document.getElementById('previewDocCategory').textContent = `Pasta: ${catName}`;
+      
+      const badge = document.getElementById('previewDocBadge');
+      badge.textContent = (doc.format || 'pdf').toUpperCase();
+      badge.className = `doc-format-badge ${doc.format === 'pdf' ? 'pdf' : (doc.format === 'word' ? 'word' : (doc.format === 'excel' ? 'excel' : 'general'))}`;
+
+      document.getElementById('previewDocYear').textContent = doc.year;
+      document.getElementById('previewDocStatus').textContent = doc.status;
+      document.getElementById('previewDocFormat').textContent = (doc.format || 'PDF').toUpperCase();
+      document.getElementById('previewDocSize').textContent = doc.fileSize || '1 MB';
+      document.getElementById('previewDocDate').textContent = doc.date || 'Recente';
+      document.getElementById('previewDocSignatory').textContent = doc.signatory || 'Direção Geral ARCA';
+      document.getElementById('previewDocNotes').textContent = doc.notes || 'Sem notas adicionais.';
+
+      // Ações do modal
+      document.getElementById('btnDownloadFromPreview').onclick = () => downloadDocument(docId);
+      document.getElementById('btnDeleteFromPreview').onclick = () => {
+        closePreviewModal();
+        deleteDocument(docId);
+      };
+
+      openPreviewModal();
+    }
+
+    // Remover Documento
+    function deleteDocument(docId) {
+      const docs = getDocuments();
+      const doc = docs.find(d => d.id === docId);
+      if (!doc) return;
+
+      const confirmDelete = confirm(`Tem a certeza que deseja remover o documento oficial:\n"${doc.title}" da pasta "${CATEGORIES[doc.category]?.name}"?`);
+      if (!confirmDelete) return;
+
+      const updatedDocs = docs.filter(d => d.id !== docId);
+      saveDocuments(updatedDocs);
+      renderDocuments();
+      showNotification(`Documento "${doc.title}" removido com sucesso.`);
+    }
+
+    // Restaurar Coleção Padrão de Ficheiros
+    function resetDefaultDocs() {
+      const confirmReset = confirm('Deseja restaurar a lista inicial dos documentos oficiais e atas predefinidas da ARCA?');
+      if (!confirmReset) return;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DOCUMENTS));
+      renderDocuments();
+      showNotification('Documentos padrão da ARCA restaurados.');
+    }
+
+    // Notificação Toast Simples
+    function showNotification(msg) {
+      let toast = document.getElementById('arcaToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'arcaToast';
+        toast.style.cssText = `
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          background: #1c6d42;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-weight: 500;
+          font-size: 0.9rem;
+          box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+          z-index: 9999;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        `;
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>${escapeHtml(msg)}</span>
+      `;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+      }, 3500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
   </script>
 </body>
 </html>
