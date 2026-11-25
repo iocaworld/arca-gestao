@@ -8,6 +8,211 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Tabs nos Modais de Membros */
+    .member-modal-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border-light);
+      margin-bottom: 1.25rem;
+      background: #f8fafc;
+      padding: 0.35rem 0.75rem 0 0.75rem;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+    .member-modal-tab {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      background: transparent;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .member-modal-tab:hover {
+      color: var(--primary);
+    }
+    .member-modal-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: #ffffff;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+    .member-tab-content {
+      display: none;
+    }
+    .member-tab-content.active {
+      display: block;
+      animation: tabFadeIn 0.15s ease-in-out;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Barra de Presets de Permissões Rápidas */
+    .perm-preset-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .perm-preset-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .perm-preset-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .perm-preset-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text-title);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+    .perm-preset-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(28, 109, 66, 0.06);
+    }
+    .perm-preset-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Cartões de Módulos de Permissões Granulares */
+    .perm-module-card {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      margin-bottom: 0.85rem;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .perm-module-card.module-enabled {
+      border-color: #94a3b8;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .perm-module-card.module-disabled {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+      opacity: 0.65;
+    }
+    .perm-module-card.module-tesouraria.module-enabled {
+      border-color: #60a5fa;
+      box-shadow: 0 2px 6px rgba(37,99,235,0.08);
+    }
+    .perm-module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-light);
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .perm-module-card.module-enabled .perm-module-header {
+      background: #f0fdf4;
+      border-bottom-color: #bbf7d0;
+    }
+    .perm-module-card.module-tesouraria.module-enabled .perm-module-header {
+      background: #eff6ff;
+      border-bottom-color: #bfdbfe;
+    }
+    .perm-module-name {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-title);
+    }
+    .perm-module-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.84rem;
+      flex-wrap: wrap;
+    }
+    .perm-submenus-list {
+      padding: 0.75rem 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.6rem;
+    }
+    .perm-submenu-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+    }
+    .perm-submenu-row.active {
+      background: #ffffff;
+      border-color: #cbd5e1;
+    }
+    .perm-checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+    }
+    .perm-checkbox-group label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .perm-badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .perm-badge-tag.tag-full {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .perm-badge-tag.tag-view {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .perm-badge-tag.tag-none {
+      background: #f1f5f9;
+      color: #94a3b8;
+    }
+  </style>
 </head>
 <body>
 
@@ -418,7 +623,7 @@
 
   <!-- Modal: Visualizar Ficha Completa do Membro -->
   <div class="modal-overlay" id="modalFichaMembro" onclick="if(event.target === this) closeFichaMembroModal()">
-    <div class="modal-content" style="max-width: 620px;">
+    <div class="modal-content" style="max-width: 780px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-header">
         <div>
           <h2 id="fichaMembroNome">Ficha Institucional do Membro</h2>
@@ -429,12 +634,30 @@
         <button class="modal-close" onclick="closeFichaMembroModal()">&times;</button>
       </div>
 
-      <div class="modal-body" style="padding-top: 0.5rem;">
-        <div id="fichaMembroContent"></div>
+      <!-- Abas da Ficha do Membro -->
+      <div class="member-modal-tabs">
+        <button type="button" class="member-modal-tab active" id="tabBtnFichaDados" onclick="switchFichaTab('dados')">
+          📋 Dados Pessoais & Mandato
+        </button>
+        <button type="button" class="member-modal-tab" id="tabBtnFichaPerms" onclick="switchFichaTab('perms')">
+          🔐 Permissões & Menus do Site
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding-top: 0; overflow-y: auto;">
+        <!-- Conteúdo Aba 1: Dados Pessoais -->
+        <div class="member-tab-content active" id="tabContentFichaDados">
+          <div id="fichaMembroContent"></div>
+        </div>
+
+        <!-- Conteúdo Aba 2: Permissões por Módulo -->
+        <div class="member-tab-content" id="tabContentFichaPerms">
+          <div id="fichaMembroPermsContent"></div>
+        </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
           <button type="button" class="btn btn-outline btn-sm" id="btnEditarMembroFromFicha">
-            📝 Editar Dados
+            📝 Editar Dados & Permissões
           </button>
           <div style="display: flex; gap: 0.5rem;">
             <button type="button" class="btn btn-secondary btn-sm" id="btnVerSocioFromFicha">
@@ -451,83 +674,166 @@
 
   <!-- Modal: Criar / Editar Membro -->
   <div class="modal-overlay" id="modalFormMembro" onclick="if(event.target === this) closeFormMembroModal()">
-    <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-content" style="max-width: 860px; max-height: 92vh; display: flex; flex-direction: column;">
       <div class="modal-header">
-        <h2 id="modalFormMembroTitle">Adicionar Membro aos Órgãos Sociais</h2>
+        <div>
+          <h2 id="modalFormMembroTitle">Editar Membro dos Órgãos Sociais</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">
+            Gestão cadastral de dirigentes e configuração granular de permissões de acesso ao portal.
+          </p>
+        </div>
         <button class="modal-close" onclick="closeFormMembroModal()">&times;</button>
       </div>
 
-      <form id="formMembro" onsubmit="handleSalvarMembro(event)">
+      <!-- Abas de Edição -->
+      <div class="member-modal-tabs">
+        <button type="button" class="member-modal-tab active" id="tabBtnFormDados" onclick="switchFormTab('dados')">
+          📋 1. Dados Pessoais & Mandato
+        </button>
+        <button type="button" class="member-modal-tab" id="tabBtnFormPerms" onclick="switchFormTab('perms')">
+          🔐 2. Permissões de Módulos & Menus
+        </button>
+      </div>
+
+      <form id="formMembro" onsubmit="handleSalvarMembro(event)" style="display: flex; flex-direction: column; overflow: hidden; flex: 1;">
         <input type="hidden" id="formMembroId">
 
-        <div class="form-group">
-          <label class="form-label" for="formMembroNome">Nome Completo *</label>
-          <input type="text" id="formMembroNome" class="form-control" required placeholder="ex: Jorge Manuel da Silva Cunha">
+        <div class="modal-body" style="padding-top: 0; overflow-y: auto; flex: 1;">
+          
+          <!-- Aba 1: Dados Pessoais & Mandato -->
+          <div class="member-tab-content active" id="tabContentFormDados">
+            <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.25rem;">
+              <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 1rem 0; color: var(--text-title); display: flex; align-items: center; gap: 0.4rem;">
+                <span>🏛️</span> Identificação & Cargo Institucional
+              </h3>
+
+              <div class="form-group">
+                <label class="form-label" for="formMembroNome">Nome Completo do Dirigente *</label>
+                <input type="text" id="formMembroNome" class="form-control" required placeholder="ex: Jorge Manuel da Silva Cunha">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="formMembroOrgao">Órgão Social *</label>
+                  <select id="formMembroOrgao" class="form-control" required onchange="handleFormOrgaoChange(this.value)">
+                    <option value="Direção">Direção</option>
+                    <option value="Assembleia Geral">Assembleia Geral</option>
+                    <option value="Conselho Fiscal">Conselho Fiscal</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="formMembroCargo">Cargo Institucional *</label>
+                  <input type="text" id="formMembroCargo" class="form-control" required placeholder="ex: Presidente, Vice-Presidente, Tesoureiro...">
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 1rem; margin-top: 1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="formMembroSocio">Nº de Sócio (sem #)</label>
+                  <input type="number" id="formMembroSocio" class="form-control" placeholder="ex: 314">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="formMembroUsername">Nome de Utilizador / Login</label>
+                  <input type="text" id="formMembroUsername" class="form-control" placeholder="ex: @jorge">
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem;">
+              <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 1rem 0; color: var(--text-title); display: flex; align-items: center; gap: 0.4rem;">
+                <span>📞</span> Contactos & Residência Oficial
+              </h3>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="formMembroTelefone">Contacto Telefónico</label>
+                  <input type="tel" id="formMembroTelefone" class="form-control" placeholder="ex: 912 345 678">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="formMembroEmail">Correio Eletrónico (E-mail)</label>
+                  <input type="email" id="formMembroEmail" class="form-control" placeholder="exemplo@arca.pt">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top: 1rem;">
+                <label class="form-label" for="formMembroMorada">Morada Oficial / Residência</label>
+                <input type="text" id="formMembroMorada" class="form-control" placeholder="ex: Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="formMembroPerfil">Perfil Geral Recomendado</label>
+                  <select id="formMembroPerfil" class="form-control" onchange="handlePerfilSelectChange(this.value)">
+                    <option value="Administrador Total">Administrador Total (Acesso Completo)</option>
+                    <option value="Tesoureiro / Finanças">Tesoureiro / Finanças</option>
+                    <option value="Secretária & Atas">Secretária & Atas</option>
+                    <option value="Direção Executiva">Direção Executiva</option>
+                    <option value="Gestão Desportiva">Gestão Desportiva</option>
+                    <option value="Apenas Consulta">Apenas Consulta (Leitura)</option>
+                    <option value="Personalizado">Personalizado (Manual)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="formMembroEstado">Estado da Conta</label>
+                  <select id="formMembroEstado" class="form-control">
+                    <option value="Ativo" selected>Ativo</option>
+                    <option value="Inativo">Inativo</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aba 2: Permissões Granulares por Módulo & Menu -->
+          <div class="member-tab-content" id="tabContentFormPerms">
+            
+            <!-- Barra de Presets Rápidos -->
+            <div class="perm-preset-box">
+              <div class="perm-preset-title">
+                <span>Perfis Rápidos de Permissão (Atribuição com 1 Clique):</span>
+                <span style="font-weight: 500; font-size: 0.75rem; text-transform: none; color: var(--text-muted);">Pode personalizar módulos em baixo</span>
+              </div>
+              <div class="perm-preset-buttons">
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetNoFormulario('admin')">👑 Administrador Total</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetNoFormulario('tesoureiro')">💰 Tesoureiro / Finanças</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetNoFormulario('secretaria')">✍️ Secretaria & Atas</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetNoFormulario('direcao')">🏛️ Direção Executiva</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetNoFormulario('desporto')">⚽ Gestão Desportiva</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetNoFormulario('consulta')">👁️ Apenas Consulta</button>
+                <button type="button" class="perm-preset-btn" style="color: #dc2626;" onclick="aplicarPresetNoFormulario('restringir')">🚫 Restringir Tudo</button>
+              </div>
+            </div>
+
+            <!-- Callout Informativo -->
+            <div style="background: rgba(28, 109, 66, 0.06); border: 1px solid rgba(28, 109, 66, 0.2); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.85rem; color: var(--text-title); display: flex; align-items: center; gap: 0.6rem;">
+              <span style="font-size: 1.2rem;">💡</span>
+              <div>
+                <strong>Acesso Granular:</strong> Selecione os menus aos quais este membro tem acesso. Para cada menu pode permitir <strong>apenas visualização (Ver)</strong> ou <strong>gestão total (Alterar)</strong>, ou conceder acesso apenas a determinados submenus (ex: apenas <em>Caixa</em> e <em>Recibos</em> na Tesouraria).
+              </div>
+            </div>
+
+            <!-- Container Dinâmico dos 10 Módulos -->
+            <div id="containerModulosPermissoesForm">
+              <!-- Renderizado via JavaScript -->
+            </div>
+
+          </div>
+
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-          <div class="form-group">
-            <label class="form-label" for="formMembroOrgao">Órgão Social *</label>
-            <select id="formMembroOrgao" class="form-control" required onchange="handleFormOrgaoChange(this.value)">
-              <option value="Direção">Direção</option>
-              <option value="Assembleia Geral">Assembleia Geral</option>
-              <option value="Conselho Fiscal">Conselho Fiscal</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="formMembroCargo">Cargo Institucional *</label>
-            <input type="text" id="formMembroCargo" class="form-control" required placeholder="ex: Presidente, Vice-Presidente, Vogal...">
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 140px 1fr; gap: 1rem; margin-top: 1rem;">
-          <div class="form-group">
-            <label class="form-label" for="formMembroSocio">Nº de Sócio</label>
-            <input type="number" id="formMembroSocio" class="form-control" placeholder="ex: 314">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="formMembroUsername">Nome de Utilizador</label>
-            <input type="text" id="formMembroUsername" class="form-control" placeholder="ex: @jorge">
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-          <div class="form-group">
-            <label class="form-label" for="formMembroEmail">E-mail</label>
-            <input type="email" id="formMembroEmail" class="form-control" placeholder="exemplo@arca.pt">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="formMembroTelefone">Contacto Telefónico</label>
-            <input type="tel" id="formMembroTelefone" class="form-control" placeholder="ex: 912 345 678">
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-top: 1rem;">
-          <label class="form-label" for="formMembroMorada">Morada / Localidade</label>
-          <input type="text" id="formMembroMorada" class="form-control" placeholder="ex: Aguada de Baixo">
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-          <div class="form-group">
-            <label class="form-label" for="formMembroPerfil">Perfil de Acesso</label>
-            <select id="formMembroPerfil" class="form-control">
-              <option value="Utilizador">Utilizador</option>
-              <option value="Administrador">Administrador</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="formMembroEstado">Estado da Conta</label>
-            <select id="formMembroEstado" class="form-control">
-              <option value="Ativo" selected>Ativo</option>
-              <option value="Inativo">Inativo</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <!-- Rodapé do Modal -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-top: 1px solid var(--border-light); background: #ffffff; flex-wrap: wrap; gap: 0.75rem; box-sizing: border-box; width: 100%;">
           <button type="button" class="btn btn-outline" onclick="closeFormMembroModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Gravar Membro</button>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <button type="button" class="btn btn-secondary" id="btnNextTabForm" onclick="switchFormTab('perms')">
+              Avançar para Permissões &rarr;
+            </button>
+            <button type="submit" class="btn btn-primary" style="font-weight: 700; white-space: nowrap;">
+              💾 Gravar Membro & Permissões
+            </button>
+          </div>
         </div>
+
       </form>
     </div>
   </div>
@@ -536,13 +842,274 @@
   <script src="js/main.js"></script>
   <script>
     // =========================================================================
-    // BASE DE DADOS OFICIAL DOS 18 MEMBROS DOS ÓRGÃOS SOCIAIS DA ARCA
-    // Sincronizada diretamente do portal oficial de gestão ARCA
+    // ESTRUTURA DOS MÓDULOS E MENUS DA PLATAFORMA A.R.C.A.
     // =========================================================================
-    const MEMBROS_STORAGE_KEY = 'arca_membros_orgaos_v3';
+    const MODULOS_SISTEMA = [
+      {
+        id: 'tesouraria',
+        nome: 'Tesouraria & Finanças',
+        icone: '💰',
+        badge: 'Sensível / Financeiro',
+        descricao: 'Gestão dos movimentos de caixa, emissão de recibos, fornecedores e P.O.S.',
+        submenus: [
+          { id: 'caixa', nome: 'Caixa / Movimentos Financeiros' },
+          { id: 'recibos', nome: 'Recibos Emitidos' },
+          { id: 'fornecedores', nome: 'Fornecedores' },
+          { id: 'pos', nome: 'P.O.S. (Ponto de Venda)' }
+        ]
+      },
+      {
+        id: 'socios',
+        nome: 'Sócios & Cotas',
+        icone: '👥',
+        badge: 'Associativo',
+        descricao: 'Base de dados de sócios, cobrança de quotas anuais e histórico associativo',
+        submenus: [
+          { id: 'listagem', nome: 'Listagem Geral de Sócios' },
+          { id: 'quotas', nome: 'Registo e Cobrança de Quotas' },
+          { id: 'editar', nome: 'Criar / Editar Ficha de Sócio' },
+          { id: 'exportar', nome: 'Exportar / Imprimir Relatórios' }
+        ]
+      },
+      {
+        id: 'gestao',
+        nome: 'Gestão & Calendário',
+        icone: '📅',
+        badge: 'Operacional',
+        descricao: 'Agenda associativa, marcação de jogos, eventos, reuniões e tarefas',
+        submenus: [
+          { id: 'calendario', nome: 'Calendário Geral' },
+          { id: 'jogos', nome: 'Jogos Futsal' },
+          { id: 'eventos', nome: 'Eventos da ARCA' },
+          { id: 'reunioes', nome: 'Reuniões de Direção' },
+          { id: 'tarefas', nome: 'Tarefas e Avisos Importantes' }
+        ]
+      },
+      {
+        id: 'direcao',
+        nome: 'Direção',
+        icone: '🏛️',
+        badge: 'Institucional',
+        descricao: 'Membros dos órgãos sociais, atas de reuniões, mandatos e tomadas de posse',
+        submenus: [
+          { id: 'membros', nome: 'Membros dos Órgãos Sociais' },
+          { id: 'atas', nome: 'Atas de Reuniões da Direção' },
+          { id: 'exercicio', nome: 'Relatórios de Exercício' },
+          { id: 'tomadas', nome: 'Atas de Tomadas de Posse' },
+          { id: 'anteriores', nome: 'Listagem de Direções Anteriores' }
+        ]
+      },
+      {
+        id: 'desporto',
+        nome: 'Gestão Desportiva',
+        icone: '⚽',
+        badge: 'Desporto',
+        descricao: 'Organização técnica do futsal, equipas, fisioterapia, clínica e seguros',
+        submenus: [
+          { id: 'diretor', nome: 'Diretor Desportivo' },
+          { id: 'delegado', nome: 'Delegado de Jogo' },
+          { id: 'fisio', nome: 'Fisio & Clínica' },
+          { id: 'seguros', nome: 'Seguros Desportivos' }
+        ]
+      },
+      {
+        id: 'documentos',
+        nome: 'Documentação ARCA',
+        icone: '📑',
+        badge: 'Arquivo Digital',
+        descricao: 'Planos de atividades, orçamentos previsionais, atas de AG e arquivo',
+        submenus: [
+          { id: 'plano_orcamento', nome: 'Plano de Atividades e Orçamento Provisional' },
+          { id: 'exercicio', nome: 'Relatórios de Exercício e Contas' },
+          { id: 'atas_assembleias', nome: 'Atas de Assembleias Gerais' },
+          { id: 'estatutos', nome: 'Estatutos e Regulamentos' }
+        ]
+      },
+      {
+        id: 'seccoes',
+        nome: 'Secções & Grupos',
+        icone: '🏃',
+        badge: 'Atividades',
+        descricao: 'Secções ativas: Futsal, BiciArca, Ginásio, Dança e grupos culturais',
+        submenus: [
+          { id: 'futsal_seniores', nome: 'Futsal Séniores (Masc/Fem)' },
+          { id: 'futsal_formacao', nome: 'Futsal Formação' },
+          { id: 'biciarca', nome: 'BiciArca Team & Run' },
+          { id: 'atividades_pavilhao', nome: 'Pilates, Zumba e Treino Funcional' },
+          { id: 'cultura', nome: 'Olhares & Disparos, TEA, Bach\'Arca' }
+        ]
+      },
+      {
+        id: 'eventos',
+        nome: 'Eventos & Organizações',
+        icone: '🏆',
+        badge: 'Comunidade',
+        descricao: 'Eventos anuais da freguesia, torneios desportivos e jantares associativos',
+        submenus: [
+          { id: 'arca_cup', nome: 'ARCA Cup e Torneios' },
+          { id: 'culturais', nome: 'Janeiras e Noite das Sopas' },
+          { id: 'apoio', nome: 'Assistência e Apoio Social' },
+          { id: 'comemoracoes', nome: 'Aniversário ARCA e Jantar de Natal' }
+        ]
+      },
+      {
+        id: 'visao_geral',
+        nome: 'Visão Geral',
+        icone: '📊',
+        badge: 'Dashboard',
+        descricao: 'Painel principal com métricas, resumo financeiro e gráficos globais',
+        submenus: [
+          { id: 'metricas', nome: 'Painel de Indicadores Globais' }
+        ]
+      },
+      {
+        id: 'painel',
+        nome: 'Painel de Controlo',
+        icone: '⚙️',
+        badge: 'Segurança',
+        descricao: 'Gestão técnica de utilizadores, senhas e configurações da plataforma',
+        submenus: [
+          { id: 'utilizadores', nome: 'Gestão de Utilizadores e Contas' }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // PREDEFINIÇÕES RÁPIDAS DE PERMISSÃO (PRESETS)
+    // =========================================================================
+    const PRESETS_PERMISSOES = {
+      admin: {
+        nome: 'Administrador Total',
+        gerar: () => {
+          const perms = {};
+          MODULOS_SISTEMA.forEach(m => {
+            perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+            m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: true });
+          });
+          return perms;
+        }
+      },
+      tesoureiro: {
+        nome: 'Tesoureiro / Finanças',
+        gerar: () => {
+          const perms = {};
+          MODULOS_SISTEMA.forEach(m => {
+            if (m.id === 'tesouraria') {
+              perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: true });
+            } else if (m.id === 'socios') {
+              perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: (s.id === 'quotas') });
+            } else if (m.id === 'documentos' || m.id === 'gestao' || m.id === 'visao_geral') {
+              perms[m.id] = { aceder: true, nivel: 'ver', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: false });
+            } else {
+              perms[m.id] = { aceder: false, nivel: 'nenhum', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: false, alterar: false });
+            }
+          });
+          return perms;
+        }
+      },
+      secretaria: {
+        nome: 'Secretária & Atas',
+        gerar: () => {
+          const perms = {};
+          MODULOS_SISTEMA.forEach(m => {
+            if (m.id === 'socios' || m.id === 'gestao' || m.id === 'documentos') {
+              perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: true });
+            } else if (m.id === 'direcao') {
+              perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: (s.id === 'atas' || s.id === 'membros') });
+            } else if (m.id === 'visao_geral' || m.id === 'eventos') {
+              perms[m.id] = { aceder: true, nivel: 'ver', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: false });
+            } else {
+              perms[m.id] = { aceder: false, nivel: 'nenhum', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: false, alterar: false });
+            }
+          });
+          return perms;
+        }
+      },
+      direcao: {
+        nome: 'Direção Executiva',
+        gerar: () => {
+          const perms = {};
+          MODULOS_SISTEMA.forEach(m => {
+            if (m.id === 'direcao' || m.id === 'gestao' || m.id === 'eventos') {
+              perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: true });
+            } else if (m.id === 'socios' || m.id === 'documentos' || m.id === 'visao_geral') {
+              perms[m.id] = { aceder: true, nivel: 'ver', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: false });
+            } else {
+              perms[m.id] = { aceder: false, nivel: 'nenhum', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: false, alterar: false });
+            }
+          });
+          return perms;
+        }
+      },
+      desporto: {
+        nome: 'Gestão Desportiva',
+        gerar: () => {
+          const perms = {};
+          MODULOS_SISTEMA.forEach(m => {
+            if (m.id === 'desporto' || m.id === 'seccoes') {
+              perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: true });
+            } else if (m.id === 'gestao') {
+              perms[m.id] = { aceder: true, nivel: 'alterar', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: (s.id === 'jogos') });
+            } else if (m.id === 'visao_geral') {
+              perms[m.id] = { aceder: true, nivel: 'ver', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: false });
+            } else {
+              perms[m.id] = { aceder: false, nivel: 'nenhum', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: false, alterar: false });
+            }
+          });
+          return perms;
+        }
+      },
+      consulta: {
+        nome: 'Apenas Consulta',
+        gerar: () => {
+          const perms = {};
+          MODULOS_SISTEMA.forEach(m => {
+            if (m.id === 'tesouraria' || m.id === 'painel') {
+              perms[m.id] = { aceder: false, nivel: 'nenhum', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: false, alterar: false });
+            } else {
+              perms[m.id] = { aceder: true, nivel: 'ver', submenus: {} };
+              m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: true, alterar: false });
+            }
+          });
+          return perms;
+        }
+      },
+      restringir: {
+        nome: 'Restringir Tudo',
+        gerar: () => {
+          const perms = {};
+          MODULOS_SISTEMA.forEach(m => {
+            perms[m.id] = { aceder: false, nivel: 'nenhum', submenus: {} };
+            m.submenus.forEach(s => perms[m.id].submenus[s.id] = { ver: false, alterar: false });
+          });
+          return perms;
+        }
+      }
+    };
+
+    // =========================================================================
+    // BASE DE DADOS DOS 18 MEMBROS COM PERMISSÕES ESTRUTURADAS
+    // =========================================================================
+    const MEMBROS_STORAGE_KEY = 'arca_membros_orgaos_v4';
 
     const OFFICIAL_MEMBROS = [
-      // DIREÇÃO (12 Membros)
+      // 1. DIREÇÃO (12 Membros)
       {
         id: 1,
         nome: "Jorge Manuel da Silva Cunha",
@@ -553,10 +1120,9 @@
         email: "scunhajorge@gmail.com",
         telefone: "966 100 115",
         morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
-        perfil: "Administrador",
-        permissoes: "Administrador · acesso total",
+        perfil: "Administrador Total",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/5304d380-65df-4c43-9006-2292c2fc4800/photo?v=1793641149133"
+        permissoes_modulos: PRESETS_PERMISSOES.admin.gerar()
       },
       {
         id: 2,
@@ -568,10 +1134,9 @@
         email: "zreis93@gmail.com",
         telefone: "932 997 857",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Direção Executiva",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/37697823-46b7-4253-bfd3-dc404c36e043/photo?v=1793706476392"
+        permissoes_modulos: PRESETS_PERMISSOES.direcao.gerar()
       },
       {
         id: 3,
@@ -583,10 +1148,9 @@
         email: "luis.santos43@gmail.com",
         telefone: "",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Direção Executiva",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/8af9e138-f56b-4b5f-90f2-b8a4c488d2fb/photo?v=1793818250454"
+        permissoes_modulos: PRESETS_PERMISSOES.direcao.gerar()
       },
       {
         id: 4,
@@ -598,10 +1162,9 @@
         email: "raquelamc22@gmail.com",
         telefone: "968 010 436",
         morada: "Rua Prior dr Cura rachão, 36 - Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas (alterar)",
+        perfil: "Secretária & Atas",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/ea9ac505-8508-4502-88ef-7f8e11c0805a/photo?v=1793816777187"
+        permissoes_modulos: PRESETS_PERMISSOES.secretaria.gerar()
       },
       {
         id: 5,
@@ -613,10 +1176,9 @@
         email: "alfamobile@gmail.com",
         telefone: "911 970 345",
         morada: "Rua Vale do Lobo, 11 - Landiosa, Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda, Calendário geral, Acessos por país, Sócios, Atas",
+        perfil: "Tesoureiro / Finanças",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/19f5964a-8118-49a3-9e88-084ce2283994/photo?v=1793805612409"
+        permissoes_modulos: PRESETS_PERMISSOES.tesoureiro.gerar()
       },
       {
         id: 6,
@@ -628,10 +1190,9 @@
         email: "",
         telefone: "912 944 380",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/0aa8b4a4-c628-4b4d-9b1f-99943cfc8130/photo?v=1793816737213"
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 7,
@@ -643,10 +1204,9 @@
         email: "ana_rua@outlook.com",
         telefone: "916 668 023",
         morada: "Rua da Miragaia, 658, R/C Drt - Aguada de Cima",
-        perfil: "Utilizador",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/7908c27d-34f7-4ef5-9f9e-fe6aadd6177c/photo?v=1793816749143"
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 8,
@@ -658,10 +1218,9 @@
         email: "d.alex.saraiva@gmail.com",
         telefone: "918 159 976",
         morada: "Rua do Alto da Póvoa, 81 - Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/aa836b00-94c9-4df6-95f3-4de6aa51b586/photo?v=1793641300406"
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 9,
@@ -673,10 +1232,9 @@
         email: "gabriel1113nunes@gmail.com",
         telefone: "915 469 288",
         morada: "Rua do Sol, 38 - Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/7e95c4d9-d1bd-488f-aeda-fcf43b91a588/photo?v=1793816759797"
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 10,
@@ -688,10 +1246,9 @@
         email: "rui.baptista.abrantes@gmail.com",
         telefone: "919 455 702",
         morada: "Rua da Borralha, 6 - Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/8ee6174a-3174-416c-9747-b1be7ebfa300/photo?v=1793816785631"
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 11,
@@ -703,10 +1260,9 @@
         email: "sr.gionovo@gmail.com",
         telefone: "915 132 723",
         morada: "Rua Póvoa do Nascido - Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/dd77f6e0-ea04-4682-9b0f-531a7a45dea2/photo?v=1793816792272"
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 12,
@@ -718,13 +1274,12 @@
         email: "kika_abrantes@hotmail.com",
         telefone: "910 828 294",
         morada: "Rua da Borralha, 6 - Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/54319a5f-2b87-4a13-8aa4-2a25b49dcd90/photo?v=1793816798927"
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
 
-      // MESA DA ASSEMBLEIA GERAL (3 Membros)
+      // 2. MESA DA ASSEMBLEIA GERAL (3 Membros)
       {
         id: 13,
         nome: "Eduardo Milton Tavares da Silva",
@@ -732,13 +1287,12 @@
         orgao: "Assembleia Geral",
         numeroSocio: 27,
         username: "@eduardo.milton",
-        email: "",
+        email: "miltonsilva@sapo.pt",
         telefone: "962 591 611",
         morada: "Rua Dr. Prior Cura Rachão, 97 - Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda (ver)",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: ""
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 14,
@@ -750,10 +1304,9 @@
         email: "",
         telefone: "",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda, Atas",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: ""
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
       {
         id: 15,
@@ -765,13 +1318,12 @@
         email: "",
         telefone: "917 337 981",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda (ver)",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: ""
+        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
       },
 
-      // CONSELHO FISCAL (3 Membros)
+      // 3. CONSELHO FISCAL (3 Membros - Auditoria de Contas)
       {
         id: 16,
         nome: "Rui Manuel da Silva Cardoso",
@@ -782,10 +1334,16 @@
         email: "",
         telefone: "918 609 599",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda (ver)",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: ""
+        permissoes_modulos: {
+          ...PRESETS_PERMISSOES.consulta.gerar(),
+          tesouraria: {
+            aceder: true,
+            nivel: 'ver',
+            submenus: { caixa: {ver: true, alterar: false}, recibos: {ver: true, alterar: false}, fornecedores: {ver: true, alterar: false}, pos: {ver: true, alterar: false} }
+          }
+        }
       },
       {
         id: 17,
@@ -797,10 +1355,16 @@
         email: "natalia.sr1974@gmail.com",
         telefone: "915 179 776",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda (ver)",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: ""
+        permissoes_modulos: {
+          ...PRESETS_PERMISSOES.consulta.gerar(),
+          tesouraria: {
+            aceder: true,
+            nivel: 'ver',
+            submenus: { caixa: {ver: true, alterar: false}, recibos: {ver: true, alterar: false}, fornecedores: {ver: true, alterar: false}, pos: {ver: true, alterar: false} }
+          }
+        }
       },
       {
         id: 18,
@@ -812,14 +1376,39 @@
         email: "queliaribeiro.qr@gmail.com",
         telefone: "919 203 684",
         morada: "Aguada de Baixo",
-        perfil: "Utilizador",
-        permissoes: "Agenda (ver)",
+        perfil: "Apenas Consulta",
         estado: "Ativo",
-        foto: ""
+        permissoes_modulos: {
+          ...PRESETS_PERMISSOES.consulta.gerar(),
+          tesouraria: {
+            aceder: true,
+            nivel: 'ver',
+            submenus: { caixa: {ver: true, alterar: false}, recibos: {ver: true, alterar: false}, fornecedores: {ver: true, alterar: false}, pos: {ver: true, alterar: false} }
+          }
+        }
       }
     ];
 
-    let membros = JSON.parse(localStorage.getItem(MEMBROS_STORAGE_KEY)) || OFFICIAL_MEMBROS;
+    // Carregamento & Migração Segura do Armazenamento Local
+    let membros = JSON.parse(localStorage.getItem(MEMBROS_STORAGE_KEY));
+    if (!membros || !Array.isArray(membros) || membros.length === 0) {
+      membros = OFFICIAL_MEMBROS;
+      localStorage.setItem(MEMBROS_STORAGE_KEY, JSON.stringify(membros));
+    } else {
+      membros.forEach(m => {
+        if (!m.permissoes_modulos) {
+          if (m.cargo && m.cargo.toLowerCase().includes('tesoureir')) {
+            m.permissoes_modulos = PRESETS_PERMISSOES.tesoureiro.gerar();
+          } else if (m.cargo && m.cargo.toLowerCase().includes('presidente') && m.orgao === 'Direção') {
+            m.permissoes_modulos = PRESETS_PERMISSOES.admin.gerar();
+          } else if (m.cargo && m.cargo.toLowerCase().includes('secretár')) {
+            m.permissoes_modulos = PRESETS_PERMISSOES.secretaria.gerar();
+          } else {
+            m.permissoes_modulos = PRESETS_PERMISSOES.consulta.gerar();
+          }
+        }
+      });
+    }
 
     // Configuração de Colunas & Ordenação
     const COLS_MEM_KEY = 'arca_cols_membros_v2';
@@ -947,20 +1536,6 @@
       renderMembros();
     };
 
-    window.handleAvatarError = function(img, initial) {
-      const div = document.createElement('div');
-      div.style.cssText = 'width: 36px; height: 36px; border-radius: 50%; background: rgba(28,109,66,0.12); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); font-size: 0.85rem; flex-shrink: 0;';
-      div.textContent = initial || 'M';
-      img.replaceWith(div);
-    };
-
-    window.handleBigAvatarError = function(img, initial) {
-      const div = document.createElement('div');
-      div.style.cssText = 'width: 72px; height: 72px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: var(--primary); flex-shrink: 0;';
-      div.textContent = initial || 'M';
-      img.replaceWith(div);
-    };
-
     function renderMembros() {
       const tbody = document.getElementById('tbodyMembros');
       if (!tbody) return;
@@ -975,7 +1550,8 @@
           m.orgao.toLowerCase().includes(q) ||
           (m.username && m.username.toLowerCase().includes(q)) ||
           (m.email && m.email.toLowerCase().includes(q)) ||
-          (m.telefone && m.telefone.includes(q));
+          (m.telefone && m.telefone.includes(q)) ||
+          (m.numeroSocio && String(m.numeroSocio).includes(q));
         return matchOrgao && matchQuery;
       });
 
@@ -1034,31 +1610,36 @@
       list.forEach(m => {
         const tr = document.createElement('tr');
         
-        let orgaoPillClass = 'em-dia';
-        let orgaoPillStyle = '';
+        let orgaoPillStyle = 'background: rgba(28, 109, 66, 0.12); color: #1c6d42;';
         if (m.orgao === 'Assembleia Geral') {
           orgaoPillStyle = 'background: #ede9fe; color: #6d28d9;';
         } else if (m.orgao === 'Conselho Fiscal') {
           orgaoPillStyle = 'background: #e0f2fe; color: #0369a1;';
-        } else {
-          orgaoPillStyle = 'background: rgba(28, 109, 66, 0.12); color: #1c6d42;';
         }
 
-        const avatarHtml = m.foto 
-          ? `<img src="${m.foto}" alt="${window.escapeHtml(m.nome)}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-light);" onerror="window.handleAvatarError(this, '${m.nome.charAt(0)}')">`
-          : `<div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(28,109,66,0.12); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); font-size: 0.85rem;">${m.nome.charAt(0)}</div>`;
+        // Estado do Acesso à Tesouraria
+        const temTesouraria = m.permissoes_modulos && m.permissoes_modulos.tesouraria && m.permissoes_modulos.tesouraria.aceder;
+        const nivelTesouraria = temTesouraria ? m.permissoes_modulos.tesouraria.nivel : 'nenhum';
+
+        let badgeTesourariaHtml = '';
+        if (temTesouraria) {
+          if (nivelTesouraria === 'alterar') {
+            badgeTesourariaHtml = `<div style="margin-top: 3px;"><span class="perm-badge-tag tag-full" title="Acesso Total à Tesouraria (Caixa, Recibos, Fornecedores, POS)">💰 Tesouraria: Total</span></div>`;
+          } else {
+            badgeTesourariaHtml = `<div style="margin-top: 3px;"><span class="perm-badge-tag tag-view" title="Acesso de Consulta à Tesouraria">💰 Tesouraria: Consulta</span></div>`;
+          }
+        } else {
+          badgeTesourariaHtml = `<div style="margin-top: 3px;"><span class="perm-badge-tag tag-none" title="Sem Acesso à Tesouraria">🚫 Sem Tesouraria</span></div>`;
+        }
 
         tr.innerHTML = `
           <td data-col="nome">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              ${avatarHtml}
-              <div>
-                <a href="javascript:void(0)" onclick="openFichaMembroModal(${m.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none;">
-                  ${window.escapeHtml(m.nome)}
-                </a>
-                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 1px;">
-                  ${window.escapeHtml(m.morada || 'Aguada de Baixo')}
-                </div>
+            <div>
+              <a href="javascript:void(0)" onclick="openFichaMembroModal(${m.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none; font-size: 0.95rem;">
+                ${window.escapeHtml(m.nome)}
+              </a>
+              <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                ${window.escapeHtml(m.morada || 'Aguada de Baixo')}
               </div>
             </div>
           </td>
@@ -1071,7 +1652,7 @@
             </span>
           </td>
           <td data-col="socio">
-            ${m.numeroSocio ? `<span style="font-weight: 600; color: var(--primary);">Sócio #${m.numeroSocio}</span>` : '<span style="color: var(--text-muted);">—</span>'}
+            ${m.numeroSocio ? `<span style="font-weight: 700; color: var(--primary); font-size: 0.92rem;">${m.numeroSocio}</span>` : '<span style="color: var(--text-muted);">—</span>'}
           </td>
           <td data-col="login">
             <code>${window.escapeHtml(m.username || '—')}</code>
@@ -1084,19 +1665,20 @@
             </div>
           </td>
           <td data-col="permissoes">
-            <span class="status-pill ${m.perfil === 'Administrador' ? 'em-dia' : ''}" style="font-size: 0.75rem;">
+            <span class="status-pill ${m.perfil === 'Administrador Total' ? 'em-dia' : ''}" style="font-size: 0.75rem;">
               ${window.escapeHtml(m.perfil || 'Utilizador')}
             </span>
+            ${badgeTesourariaHtml}
           </td>
           <td data-col="estado">
             <span class="status-pill em-dia" style="font-size: 0.75rem;">${m.estado || 'Ativo'}</span>
           </td>
           <td data-col="acoes" style="text-align: right; white-space: nowrap;">
             <div style="display: inline-flex; gap: 0.35rem; justify-content: flex-end;">
-              <button class="btn btn-outline btn-sm" onclick="openFichaMembroModal(${m.id})" title="Ver Ficha Institucional">
+              <button class="btn btn-outline btn-sm" onclick="openFichaMembroModal(${m.id})" title="Ver Ficha Institucional e Permissões">
                 Ver Ficha
               </button>
-              <button class="btn-action-icon" onclick="openEditarMembroModal(${m.id})" title="Editar Membro">
+              <button class="btn-action-icon" onclick="openEditarMembroModal(${m.id})" title="Editar Membro e Permissões">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -1113,15 +1695,70 @@
       if (window.initTableResizers) window.initTableResizers();
     }
 
-    // Modal: Ver Ficha Completa do Membro
+    // =========================================================================
+    // NAVEGAÇÃO ENTRE ABAS DAS MODAIS
+    // =========================================================================
+    window.switchFichaTab = function(tabName) {
+      const btnDados = document.getElementById('tabBtnFichaDados');
+      const btnPerms = document.getElementById('tabBtnFichaPerms');
+      const contentDados = document.getElementById('tabContentFichaDados');
+      const contentPerms = document.getElementById('tabContentFichaPerms');
+
+      if (tabName === 'dados') {
+        if (btnDados) btnDados.classList.add('active');
+        if (btnPerms) btnPerms.classList.remove('active');
+        if (contentDados) contentDados.classList.add('active');
+        if (contentPerms) contentPerms.classList.remove('active');
+      } else {
+        if (btnDados) btnDados.classList.remove('active');
+        if (btnPerms) btnPerms.classList.add('active');
+        if (contentDados) contentDados.classList.remove('active');
+        if (contentPerms) contentPerms.classList.add('active');
+      }
+    };
+
+    window.switchFormTab = function(tabName) {
+      const btnDados = document.getElementById('tabBtnFormDados');
+      const btnPerms = document.getElementById('tabBtnFormPerms');
+      const contentDados = document.getElementById('tabContentFormDados');
+      const contentPerms = document.getElementById('tabContentFormPerms');
+      const btnNext = document.getElementById('btnNextTabForm');
+
+      if (tabName === 'dados') {
+        if (btnDados) btnDados.classList.add('active');
+        if (btnPerms) btnPerms.classList.remove('active');
+        if (contentDados) contentDados.classList.add('active');
+        if (contentPerms) contentPerms.classList.remove('active');
+        if (btnNext) {
+          btnNext.innerHTML = 'Avançar para Permissões &rarr;';
+          btnNext.onclick = function() { window.switchFormTab('perms'); };
+        }
+      } else {
+        if (btnDados) btnDados.classList.remove('active');
+        if (btnPerms) btnPerms.classList.add('active');
+        if (contentDados) contentDados.classList.remove('active');
+        if (contentPerms) contentPerms.classList.add('active');
+        if (btnNext) {
+          btnNext.innerHTML = '&larr; Voltar aos Dados';
+          btnNext.onclick = function() { window.switchFormTab('dados'); };
+        }
+      }
+    };
+
+    // =========================================================================
+    // MODAL: VISUALIZAR FICHA DO MEMBRO & PERMISSÕES
+    // =========================================================================
     window.openFichaMembroModal = function(id) {
       const m = membros.find(item => item.id === id);
       if (!m) return;
+
+      switchFichaTab('dados'); // Abre sempre na primeira aba
 
       const modal = document.getElementById('modalFichaMembro');
       const nomeEl = document.getElementById('fichaMembroNome');
       const cargoEl = document.getElementById('fichaMembroCargo');
       const contentEl = document.getElementById('fichaMembroContent');
+      const permsContentEl = document.getElementById('fichaMembroPermsContent');
       const btnEditar = document.getElementById('btnEditarMembroFromFicha');
       const btnVerSocio = document.getElementById('btnVerSocioFromFicha');
 
@@ -1132,30 +1769,25 @@
       if (m.orgao === 'Assembleia Geral') orgaoPillStyle = 'background: #ede9fe; color: #6d28d9;';
       if (m.orgao === 'Conselho Fiscal') orgaoPillStyle = 'background: #e0f2fe; color: #0369a1;';
 
-      const avatarBigHtml = m.foto
-        ? `<img src="${m.foto}" alt="${window.escapeHtml(m.nome)}" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);" onerror="window.handleBigAvatarError(this, '${m.nome.charAt(0)}')">`
-        : `<div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: var(--primary);">${m.nome.charAt(0)}</div>`;
-
+      // 1. Preencher Aba 1: Dados Pessoais (SEM BOLINHA E SEM #)
       if (contentEl) {
         contentEl.innerHTML = `
-          <div style="display: flex; gap: 1.25rem; align-items: center; padding: 1.25rem; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 1.25rem;">
-            ${avatarBigHtml}
-            <div>
-              <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-title);">${window.escapeHtml(m.nome)}</div>
-              <div style="margin-top: 0.35rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                <span class="status-pill" style="${orgaoPillStyle}; font-weight: 700; font-size: 0.8rem;">${window.escapeHtml(m.cargo)} &bull; ${window.escapeHtml(m.orgao)}</span>
-                ${m.numeroSocio ? `<span style="font-size: 0.8rem; font-weight: 600; color: var(--primary);">Sócio #${m.numeroSocio}</span>` : ''}
-              </div>
+          <div style="padding: 1.25rem; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+            <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-title);">${window.escapeHtml(m.nome)}</div>
+            <div style="margin-top: 0.5rem; display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+              <span class="status-pill" style="${orgaoPillStyle}; font-weight: 700; font-size: 0.82rem;">${window.escapeHtml(m.cargo)} &bull; ${window.escapeHtml(m.orgao)}</span>
+              ${m.numeroSocio ? `<span style="font-size: 0.82rem; font-weight: 700; color: var(--primary); background: rgba(28,109,66,0.1); padding: 2px 8px; border-radius: 4px;">Sócio ${m.numeroSocio}</span>` : ''}
+              <span class="status-pill em-dia" style="font-size: 0.78rem;">Conta ${m.estado || 'Ativa'}</span>
             </div>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.88rem; margin-bottom: 1rem;">
             <div>
-              <span style="color: var(--text-muted); font-size: 0.78rem;">Utilizador de Acesso:</span><br>
-              <code>${window.escapeHtml(m.username || '—')}</code>
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Nome de Utilizador (Login):</span><br>
+              <code style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">${window.escapeHtml(m.username || '—')}</code>
             </div>
             <div>
-              <span style="color: var(--text-muted); font-size: 0.78rem;">Perfil de Permissões:</span><br>
+              <span style="color: var(--text-muted); font-size: 0.78rem;">Perfil de Acesso Geral:</span><br>
               <strong>${window.escapeHtml(m.perfil || 'Utilizador')}</strong>
             </div>
             <div>
@@ -1170,11 +1802,65 @@
               <span style="color: var(--text-muted); font-size: 0.78rem;">Morada Oficial / Residência:</span><br>
               <strong>${window.escapeHtml(m.morada || 'Aguada de Baixo, Águeda')}</strong>
             </div>
-            <div style="grid-column: 1 / -1; padding: 0.85rem; background: rgba(28,109,66,0.06); border-radius: var(--radius-sm); border: 1px solid rgba(28,109,66,0.18);">
-              <span style="color: var(--primary); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Módulos & Permissões no Portal:</span><br>
-              <span style="font-size: 0.85rem; color: var(--text-title);">${window.escapeHtml(m.permissoes || 'Acesso Padrão aos Módulos da ARCA')}</span>
-            </div>
           </div>
+        `;
+      }
+
+      // 2. Preencher Aba 2: Permissões Granulares nos Menus do Site
+      if (permsContentEl) {
+        const perms = m.permissoes_modulos || {};
+        let permsGridHtml = '';
+
+        MODULOS_SISTEMA.forEach(mod => {
+          const modP = perms[mod.id] || { aceder: false, nivel: 'nenhum', submenus: {} };
+          const hasAccess = !!modP.aceder;
+          const isAlterar = (modP.nivel === 'alterar');
+          const isTesouraria = (mod.id === 'tesouraria');
+
+          let statusTag = '';
+          if (!hasAccess) {
+            statusTag = `<span class="perm-badge-tag tag-none">🚫 Sem Acesso</span>`;
+          } else if (isAlterar) {
+            statusTag = `<span class="perm-badge-tag tag-full">✓ Acesso Total (Ver & Alterar)</span>`;
+          } else {
+            statusTag = `<span class="perm-badge-tag tag-view">👁️ Apenas Consulta</span>`;
+          }
+
+          let submenusTags = '';
+          if (hasAccess && mod.submenus) {
+            submenusTags = mod.submenus.map(s => {
+              const subP = (modP.submenus && modP.submenus[s.id]) || { ver: false, alterar: false };
+              if (!subP.ver) {
+                return `<span style="font-size: 0.75rem; color: #94a3b8; text-decoration: line-through;">${s.nome}</span>`;
+              }
+              if (subP.alterar) {
+                return `<span style="font-size: 0.75rem; font-weight: 600; color: #15803d; background: #dcfce7; padding: 2px 6px; border-radius: 4px;">✓ ${s.nome} (Total)</span>`;
+              }
+              return `<span style="font-size: 0.75rem; font-weight: 600; color: #b45309; background: #fef3c7; padding: 2px 6px; border-radius: 4px;">👁️ ${s.nome} (Ver)</span>`;
+            }).join(' &bull; ');
+          }
+
+          permsGridHtml += `
+            <div style="border: 1px solid ${hasAccess ? (isTesouraria ? '#60a5fa' : '#cbd5e1') : '#e2e8f0'}; border-radius: var(--radius-sm); padding: 0.85rem 1rem; margin-bottom: 0.75rem; background: ${hasAccess ? (isTesouraria ? '#f8faff' : '#ffffff') : '#f8fafc'};">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 1.1rem;">${mod.icone}</span>
+                  <strong style="color: var(--text-title); font-size: 0.95rem;">${mod.nome}</strong>
+                  ${isTesouraria ? '<span style="font-size: 0.7rem; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 1px 6px; border-radius: 4px;">Financeiro</span>' : ''}
+                </div>
+                <div>${statusTag}</div>
+              </div>
+              ${hasAccess && submenusTags ? `<div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-top: 0.35rem;">${submenusTags}</div>` : ''}
+              ${!hasAccess ? `<div style="font-size: 0.78rem; color: #94a3b8; font-style: italic;">O membro não tem autorização para visualizar nem alterar este módulo.</div>` : ''}
+            </div>
+          `;
+        });
+
+        permsContentEl.innerHTML = `
+          <div style="margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+            Permissões ativas nos menus do portal da ARCA para <strong>${window.escapeHtml(m.nome)}</strong>:
+          </div>
+          <div>${permsGridHtml}</div>
         `;
       }
 
@@ -1204,11 +1890,281 @@
       if (modal) modal.classList.remove('active');
     };
 
-    // Modal: Criar / Editar Membro
+    // =========================================================================
+    // MATRIZ DE PERMISSÕES GRANULARES (FORMULÁRIO DE EDIÇÃO)
+    // =========================================================================
+    window.renderModulosPermissoesForm = function(perms) {
+      const container = document.getElementById('containerModulosPermissoesForm');
+      if (!container) return;
+
+      perms = perms || {};
+      let html = '';
+
+      MODULOS_SISTEMA.forEach(mod => {
+        const modP = perms[mod.id] || { aceder: false, nivel: 'nenhum', submenus: {} };
+        const isEnabled = !!modP.aceder;
+        const nivel = modP.nivel || (isEnabled ? 'ver' : 'nenhum');
+        const isTesouraria = (mod.id === 'tesouraria');
+
+        let submenusHtml = '';
+        if (mod.submenus && mod.submenus.length > 0) {
+          submenusHtml = `
+            <div class="perm-submenus-list" id="permSubList_${mod.id}" style="display: ${isEnabled ? 'grid' : 'none'};">
+              ${mod.submenus.map(sub => {
+                const subP = (modP.submenus && modP.submenus[sub.id]) || { ver: isEnabled, alterar: isEnabled && nivel === 'alterar' };
+                const isVerChecked = !!subP.ver;
+                const isAltChecked = !!subP.alterar;
+                return `
+                  <div class="perm-submenu-row ${isVerChecked ? 'active' : ''}" id="permSubRow_${mod.id}_${sub.id}">
+                    <span style="font-weight: 600; color: var(--text-title);">${sub.nome}</span>
+                    <div class="perm-checkbox-group">
+                      <label title="Permitir visualizar este submenu">
+                        <input type="checkbox" id="permSubVer_${mod.id}_${sub.id}" ${isVerChecked ? 'checked' : ''} onchange="setSubmenuPerm('${mod.id}', '${sub.id}', 'ver', this.checked)">
+                        <span style="color: #0369a1;">Ver</span>
+                      </label>
+                      <label title="Permitir alterar, criar ou apagar dados neste submenu">
+                        <input type="checkbox" id="permSubAlt_${mod.id}_${sub.id}" ${isAltChecked ? 'checked' : ''} onchange="setSubmenuPerm('${mod.id}', '${sub.id}', 'alterar', this.checked)">
+                        <span style="color: #15803d;">Alterar</span>
+                      </label>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="perm-module-card ${isEnabled ? 'module-enabled' : 'module-disabled'} ${isTesouraria ? 'module-tesouraria' : ''}" id="permCard_${mod.id}">
+            <div class="perm-module-header">
+              <div class="perm-module-name">
+                <span>${mod.icone}</span>
+                <span>${mod.nome}</span>
+                ${isTesouraria ? '<span style="font-size: 0.72rem; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 2px 8px; border-radius: 4px;">★ Módulo Restrito</span>' : ''}
+              </div>
+              <div class="perm-module-controls">
+                <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; font-weight: 700;">
+                  <input type="checkbox" id="permAcesso_${mod.id}" ${isEnabled ? 'checked' : ''} onchange="toggleModuloPerm('${mod.id}', this.checked)">
+                  <span>Ativar Módulo</span>
+                </label>
+                <div id="permNivelGroup_${mod.id}" style="display: ${isEnabled ? 'inline-flex' : 'none'}; align-items: center; gap: 0.6rem; margin-left: 0.5rem;">
+                  <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <input type="radio" name="permNivel_${mod.id}" value="ver" ${nivel !== 'alterar' ? 'checked' : ''} onchange="setModuloNivel('${mod.id}', 'ver')">
+                    <span>Apenas Ver</span>
+                  </label>
+                  <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <input type="radio" name="permNivel_${mod.id}" value="alterar" ${nivel === 'alterar' ? 'checked' : ''} onchange="setModuloNivel('${mod.id}', 'alterar')">
+                    <span>Ver e Alterar</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            ${submenusHtml}
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    };
+
+    window.toggleModuloPerm = function(modId, enabled) {
+      const card = document.getElementById(`permCard_${modId}`);
+      const nivelGroup = document.getElementById(`permNivelGroup_${modId}`);
+      const subList = document.getElementById(`permSubList_${modId}`);
+      const mod = MODULOS_SISTEMA.find(m => m.id === modId);
+
+      if (enabled) {
+        if (card) {
+          card.classList.remove('module-disabled');
+          card.classList.add('module-enabled');
+        }
+        if (nivelGroup) nivelGroup.style.display = 'inline-flex';
+        if (subList) subList.style.display = 'grid';
+
+        const radioAlt = document.querySelector(`input[name="permNivel_${modId}"][value="alterar"]`);
+        const isAlterar = radioAlt && radioAlt.checked;
+
+        if (mod && mod.submenus) {
+          mod.submenus.forEach(s => {
+            const chkVer = document.getElementById(`permSubVer_${modId}_${s.id}`);
+            const chkAlt = document.getElementById(`permSubAlt_${modId}_${s.id}`);
+            const row = document.getElementById(`permSubRow_${modId}_${s.id}`);
+            if (chkVer) chkVer.checked = true;
+            if (chkAlt) chkAlt.checked = isAlterar;
+            if (row) row.classList.add('active');
+          });
+        }
+      } else {
+        if (card) {
+          card.classList.add('module-disabled');
+          card.classList.remove('module-enabled');
+        }
+        if (nivelGroup) nivelGroup.style.display = 'none';
+        if (subList) subList.style.display = 'none';
+
+        if (mod && mod.submenus) {
+          mod.submenus.forEach(s => {
+            const chkVer = document.getElementById(`permSubVer_${modId}_${s.id}`);
+            const chkAlt = document.getElementById(`permSubAlt_${modId}_${s.id}`);
+            const row = document.getElementById(`permSubRow_${modId}_${s.id}`);
+            if (chkVer) chkVer.checked = false;
+            if (chkAlt) chkAlt.checked = false;
+            if (row) row.classList.remove('active');
+          });
+        }
+      }
+
+      const perfilSelect = document.getElementById('formMembroPerfil');
+      if (perfilSelect) perfilSelect.value = 'Personalizado';
+    };
+
+    window.setModuloNivel = function(modId, nivel) {
+      const mod = MODULOS_SISTEMA.find(m => m.id === modId);
+      if (!mod || !mod.submenus) return;
+
+      const isAlterar = (nivel === 'alterar');
+      mod.submenus.forEach(s => {
+        const chkVer = document.getElementById(`permSubVer_${modId}_${s.id}`);
+        const chkAlt = document.getElementById(`permSubAlt_${modId}_${s.id}`);
+        const row = document.getElementById(`permSubRow_${modId}_${s.id}`);
+        if (chkVer) chkVer.checked = true;
+        if (chkAlt) chkAlt.checked = isAlterar;
+        if (row) row.classList.add('active');
+      });
+
+      const perfilSelect = document.getElementById('formMembroPerfil');
+      if (perfilSelect) perfilSelect.value = 'Personalizado';
+    };
+
+    window.setSubmenuPerm = function(modId, subId, tipo, checked) {
+      const chkVer = document.getElementById(`permSubVer_${modId}_${subId}`);
+      const chkAlt = document.getElementById(`permSubAlt_${modId}_${subId}`);
+      const chkMaster = document.getElementById(`permAcesso_${modId}`);
+      const row = document.getElementById(`permSubRow_${modId}_${subId}`);
+
+      if (tipo === 'alterar' && checked) {
+        if (chkVer) chkVer.checked = true;
+        if (chkMaster && !chkMaster.checked) {
+          chkMaster.checked = true;
+          window.toggleModuloPerm(modId, true);
+        }
+      }
+
+      if (tipo === 'ver' && !checked) {
+        if (chkAlt) chkAlt.checked = false;
+      }
+
+      if (row) {
+        if (chkVer && chkVer.checked) {
+          row.classList.add('active');
+        } else {
+          row.classList.remove('active');
+        }
+      }
+
+      const perfilSelect = document.getElementById('formMembroPerfil');
+      if (perfilSelect) perfilSelect.value = 'Personalizado';
+    };
+
+    window.aplicarPresetNoFormulario = function(presetKey) {
+      const preset = PRESETS_PERMISSOES[presetKey];
+      if (!preset) return;
+
+      const perms = preset.gerar();
+      window.renderModulosPermissoesForm(perms);
+
+      const perfilSelect = document.getElementById('formMembroPerfil');
+      if (perfilSelect) {
+        if (presetKey === 'admin') perfilSelect.value = 'Administrador Total';
+        else if (presetKey === 'tesoureiro') perfilSelect.value = 'Tesoureiro / Finanças';
+        else if (presetKey === 'secretaria') perfilSelect.value = 'Secretária & Atas';
+        else if (presetKey === 'direcao') perfilSelect.value = 'Direção Executiva';
+        else if (presetKey === 'desporto') perfilSelect.value = 'Gestão Desportiva';
+        else if (presetKey === 'consulta') perfilSelect.value = 'Apenas Consulta';
+        else perfilSelect.value = 'Personalizado';
+      }
+
+      document.querySelectorAll('.perm-preset-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.perm-preset-btn')).find(b => b.getAttribute('onclick')?.includes(`'${presetKey}'`));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (window.showToast) window.showToast(`Predefinição "${preset.nome}" aplicada às permissões!`, 'info');
+    };
+
+    window.handlePerfilSelectChange = function(perfil) {
+      if (perfil === 'Administrador Total') window.aplicarPresetNoFormulario('admin');
+      else if (perfil === 'Tesoureiro / Finanças') window.aplicarPresetNoFormulario('tesoureiro');
+      else if (perfil === 'Secretária & Atas') window.aplicarPresetNoFormulario('secretaria');
+      else if (perfil === 'Direção Executiva') window.aplicarPresetNoFormulario('direcao');
+      else if (perfil === 'Gestão Desportiva') window.aplicarPresetNoFormulario('desporto');
+      else if (perfil === 'Apenas Consulta' || perfil === 'Apenas Consulta (Leitura)') window.aplicarPresetNoFormulario('consulta');
+    };
+
+    window.handleFormOrgaoChange = function(orgao) {
+      // Ajuste opcional automático de sugestão conforme o órgão
+    };
+
+    window.extractPermissoesFromForm = function() {
+      const perms = {};
+      MODULOS_SISTEMA.forEach(mod => {
+        const chkMaster = document.getElementById(`permAcesso_${mod.id}`);
+        const isMasterChecked = chkMaster ? chkMaster.checked : false;
+
+        if (!isMasterChecked) {
+          perms[mod.id] = {
+            aceder: false,
+            nivel: 'nenhum',
+            submenus: {}
+          };
+          if (mod.submenus) {
+            mod.submenus.forEach(s => perms[mod.id].submenus[s.id] = { ver: false, alterar: false });
+          }
+        } else {
+          const radioAlt = document.querySelector(`input[name="permNivel_${mod.id}"][value="alterar"]`);
+          const nivel = (radioAlt && radioAlt.checked) ? 'alterar' : 'ver';
+          perms[mod.id] = {
+            aceder: true,
+            nivel: nivel,
+            submenus: {}
+          };
+          if (mod.submenus) {
+            mod.submenus.forEach(s => {
+              const chkVer = document.getElementById(`permSubVer_${mod.id}_${s.id}`);
+              const chkAlt = document.getElementById(`permSubAlt_${mod.id}_${s.id}`);
+              perms[mod.id].submenus[s.id] = {
+                ver: chkVer ? chkVer.checked : false,
+                alterar: chkAlt ? chkAlt.checked : false
+              };
+            });
+          }
+        }
+      });
+      return perms;
+    };
+
+    window.gerarResumoPermissoes = function(perms) {
+      if (!perms) return 'Sem permissões';
+      const modulosAtivos = MODULOS_SISTEMA.filter(m => perms[m.id] && perms[m.id].aceder);
+      if (modulosAtivos.length === MODULOS_SISTEMA.length) {
+        const todosAlterar = modulosAtivos.every(m => perms[m.id].nivel === 'alterar');
+        if (todosAlterar) return 'Administrador (Total)';
+      }
+      if (modulosAtivos.length === 0) return 'Sem acesso';
+      return modulosAtivos.map(m => m.nome.split(' ')[0]).join(', ');
+    };
+
+    // =========================================================================
+    // MODAL: CRIAR / EDITAR MEMBRO E MATRIZ DE PERMISSÕES
+    // =========================================================================
     window.openNovoMembroModal = function() {
+      switchFormTab('dados');
       document.getElementById('formMembroId').value = '';
       document.getElementById('formMembro').reset();
       document.getElementById('modalFormMembroTitle').textContent = 'Adicionar Membro aos Órgãos Sociais';
+
+      // Permissões por omissão para novo membro
+      renderModulosPermissoesForm(PRESETS_PERMISSOES.consulta.gerar());
+
       const modal = document.getElementById('modalFormMembro');
       if (modal) modal.classList.add('active');
     };
@@ -1216,6 +2172,8 @@
     window.openEditarMembroModal = function(id) {
       const m = membros.find(item => item.id === id);
       if (!m) return;
+
+      switchFormTab('dados');
 
       document.getElementById('formMembroId').value = m.id;
       document.getElementById('formMembroNome').value = m.nome;
@@ -1226,10 +2184,15 @@
       document.getElementById('formMembroEmail').value = m.email || '';
       document.getElementById('formMembroTelefone').value = m.telefone || '';
       document.getElementById('formMembroMorada').value = m.morada || '';
-      document.getElementById('formMembroPerfil').value = m.perfil || 'Utilizador';
+      document.getElementById('formMembroPerfil').value = m.perfil || 'Personalizado';
       document.getElementById('formMembroEstado').value = m.estado || 'Ativo';
 
       document.getElementById('modalFormMembroTitle').textContent = `Editar Membro: ${m.nome}`;
+
+      // Renderizar a matriz de permissões deste membro
+      const perms = m.permissoes_modulos || PRESETS_PERMISSOES.consulta.gerar();
+      renderModulosPermissoesForm(perms);
+
       const modal = document.getElementById('modalFormMembro');
       if (modal) modal.classList.add('active');
     };
@@ -1253,8 +2216,12 @@
       const perfil = document.getElementById('formMembroPerfil').value;
       const estado = document.getElementById('formMembroEstado').value;
 
+      // Extrair permissões configuradas na Aba 2
+      const novasPermissoes = extractPermissoesFromForm();
+      const resumoPermissoes = gerarResumoPermissoes(novasPermissoes);
+
       if (idVal) {
-        // Atualizar existente
+        // Atualizar membro existente
         const idx = membros.findIndex(item => item.id === parseInt(idVal));
         if (idx >= 0) {
           membros[idx].nome = nome;
@@ -1267,10 +2234,12 @@
           membros[idx].morada = morada;
           membros[idx].perfil = perfil;
           membros[idx].estado = estado;
+          membros[idx].permissoes_modulos = novasPermissoes;
+          membros[idx].permissoes = resumoPermissoes;
         }
-        showToast(`Membro "${nome}" atualizado com sucesso!`, 'success');
+        showToast(`Membro "${nome}" e respetivas permissões atualizados com sucesso!`, 'success');
       } else {
-        // Criar novo
+        // Criar novo membro
         const newMembro = {
           id: Date.now(),
           nome: nome,
@@ -1282,12 +2251,12 @@
           telefone: telefone,
           morada: morada,
           perfil: perfil,
-          permissoes: 'Acesso personalizado aos módulos',
-          estado: estado,
-          foto: ''
+          permissoes: resumoPermissoes,
+          permissoes_modulos: novasPermissoes,
+          estado: estado
         };
         membros.push(newMembro);
-        showToast(`Novo membro "${nome}" adicionado aos Órgãos Sociais!`, 'success');
+        showToast(`Novo membro "${nome}" adicionado com sucesso!`, 'success');
       }
 
       localStorage.setItem(MEMBROS_STORAGE_KEY, JSON.stringify(membros));
