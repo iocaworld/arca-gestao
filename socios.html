@@ -330,62 +330,41 @@
           </div>
         </div>
 
-        <!-- Indicadores Rápidos -->
-        <div class="metrics-row">
-          <div class="metric-card">
+        <!-- Indicadores Rápidos Conforme Sistema ARCA -->
+        <div class="metrics-row-4">
+          
+          <div class="metric-card accent-green">
             <div class="metric-content">
-              <span class="metric-label">Total Cadastrado</span>
-              <span class="metric-value" id="statTotal">0</span>
-              <span class="metric-badge positive">&check; Ficheiro Geral ARCA</span>
-            </div>
-            <div class="metric-icon-box green-dark">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-              </svg>
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">SÓCIOS ATIVOS</span>
+              <span class="metric-value" id="statAtivos" style="color: var(--text-title); font-size: 2.1rem; margin-top: 0.2rem;">386</span>
+              <span class="metric-badge neutral" id="statAtivosSub" style="font-weight: 500; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem;">de 425 registados</span>
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card accent-green">
             <div class="metric-content">
-              <span class="metric-label">Sócios Ativos</span>
-              <span class="metric-value" id="statAtivos">0</span>
-              <span class="metric-badge neutral">Em atividade</span>
-            </div>
-            <div class="metric-icon-box blue">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="8.5" cy="7" r="4"/>
-              </svg>
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">QUOTAS 2026 PAGAS</span>
+              <span class="metric-value" id="statQuotasPagas" style="color: #16a34a; font-size: 2.1rem; margin-top: 0.2rem;">62</span>
+              <span class="metric-badge positive" id="statQuotasPagasValor" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">372,00 € recebidos</span>
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card accent-orange">
             <div class="metric-content">
-              <span class="metric-label">Cotas em Dia (2026)</span>
-              <span class="metric-value" id="statEmDia">0</span>
-              <span class="metric-badge positive">Regularizadas</span>
-            </div>
-            <div class="metric-icon-box green">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">QUOTAS 2026 POR PAGAR</span>
+              <span class="metric-value" id="statQuotasPorPagar" style="color: #d97706; font-size: 2.1rem; margin-top: 0.2rem;">324</span>
+              <span class="metric-badge warning" id="statQuotasPorPagarSub" style="font-weight: 500; font-size: 0.85rem; margin-top: 0.35rem;">quota anual 6,00 € (1 944,00 €)</span>
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card accent-red">
             <div class="metric-content">
-              <span class="metric-label">Cotas Pendentes / Atraso</span>
-              <span class="metric-value" id="statPendentes">0</span>
-              <span class="metric-badge warning">Por liquidar</span>
-            </div>
-            <div class="metric-icon-box amber">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-              </svg>
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">ATIVOS COM QUOTAS EM ATRASO</span>
+              <span class="metric-value" id="statAtivosEmAtraso" style="color: #dc2626; font-size: 2.1rem; margin-top: 0.2rem;">322</span>
+              <span class="metric-badge" id="statValorEmAtraso" style="color: #dc2626; font-weight: 700; font-size: 0.85rem; margin-top: 0.35rem;">25 782,00 € em dívida</span>
             </div>
           </div>
+
         </div>
 
         <!-- Tabela de Sócios e Controlos -->
@@ -394,37 +373,36 @@
             <h2 id="tableTitleSocios">Listagem de Sócios & Gestão de Cotas</h2>
             
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
-              <div class="quick-search" style="width: 250px;">
+              <div class="quick-search" style="width: 300px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input type="text" id="searchInput" placeholder="Filtrar por nome, nº, NIF, morada...">
+                <input type="text" id="searchInput" placeholder="Pesquisar por nome, nº, NIF, telefone, email ou localidade...">
               </div>
 
               <!-- Filtro de Situação do Associado -->
               <select id="filterMembro" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
+                <option value="Ativo" selected>Ativo</option>
                 <option value="all">Todos os Estados</option>
-                <option value="Ativo" selected>Sócios Ativos</option>
                 <option value="Falecido">Falecidos</option>
-                <option value="Inativo">Inativos / Anulados</option>
-              </select>
-
-              <!-- Filtro de Estado da Cota -->
-              <select id="filterStatus" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
-                <option value="all">Todas as Cotas</option>
-                <option value="Em Dia">Em Dia (2026)</option>
-                <option value="Pendente">Pendente (2025)</option>
-                <option value="Atrasado">Em Atraso (&lt; 2025)</option>
+                <option value="Inativo">Inativos</option>
               </select>
 
               <!-- Filtro de Categoria -->
               <select id="filterCategory" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
-                <option value="all">Todas as Categorias</option>
+                <option value="all">Todas as categorias</option>
                 <option value="Efetivo">Efetivo</option>
                 <option value="Fundador">Fundador</option>
                 <option value="Benemérito">Benemérito</option>
                 <option value="Juvenil">Juvenil</option>
+              </select>
+
+              <!-- Filtro de Estado da Cota -->
+              <select id="filterStatus" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
+                <option value="all">Quotas: todas</option>
+                <option value="Em Dia">Quotas em dia (2026)</option>
+                <option value="Atrasado">Quotas em atraso</option>
               </select>
 
               <!-- Seletor de Ordenação -->
@@ -435,9 +413,8 @@
                 <option value="nome_desc">Nome (Z → A)</option>
                 <option value="divida_desc">Maior Dívida (€)</option>
                 <option value="divida_asc">Menor Dívida (€)</option>
-                <option value="categoria_asc">Categoria (A → Z)</option>
-                <option value="estado_asc">Estado da Cota</option>
-                <option value="estadoMembro_asc">Situação (Ativo/Falecido)</option>
+                <option value="ultimoAno_desc">Último Ano (Mais Recente)</option>
+                <option value="ultimoAno_asc">Último Ano (Mais Antigo)</option>
               </select>
 
               <!-- Seletor de Colunas Personalizado -->
@@ -463,37 +440,33 @@
           </div>
 
           <div class="table-responsive">
-            <table class="modern-table">
+            <table class="modern-table" id="sociosTable">
               <thead>
                 <tr id="sociosTableHeadRow">
-                  <th class="sortable-th" data-col="numero" style="width: 80px;" onclick="sortSociosTable('numero')">
+                  <th class="sortable-th" data-col="numero" style="width: 75px;" onclick="sortSociosTable('numero')">
                     <span>Nº</span><span class="sort-indicator" id="sortInd_numero">▲</span>
                   </th>
-                  <th class="sortable-th" data-col="nome" onclick="sortSociosTable('nome')">
-                    <span>Nome do Sócio</span><span class="sort-indicator" id="sortInd_nome">⇅</span>
+                  <th class="sortable-th" data-col="nome" style="min-width: 250px;" onclick="sortSociosTable('nome')">
+                    <span>Nome</span><span class="sort-indicator" id="sortInd_nome">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="morada" onclick="sortSociosTable('morada')">
-                    <span>Morada</span><span class="sort-indicator" id="sortInd_morada">⇅</span>
+                  <th class="sortable-th" data-col="localidade" style="min-width: 180px;" onclick="sortSociosTable('localidade')">
+                    <span>Localidade</span><span class="sort-indicator" id="sortInd_localidade">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="nif" onclick="sortSociosTable('nif')">
-                    <span>NIF</span><span class="sort-indicator" id="sortInd_nif">⇅</span>
-                  </th>
-                  <th class="sortable-th" data-col="categoria" onclick="sortSociosTable('categoria')">
+                  <th class="sortable-th" data-col="categoria" style="width: 130px;" onclick="sortSociosTable('categoria')">
                     <span>Categoria</span><span class="sort-indicator" id="sortInd_categoria">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="contacto" onclick="sortSociosTable('contacto')">
-                    <span>Contacto</span><span class="sort-indicator" id="sortInd_contacto">⇅</span>
+                  <th class="sortable-th" data-col="estadoMembro" style="width: 110px;" onclick="sortSociosTable('estadoMembro')">
+                    <span>Estado</span><span class="sort-indicator" id="sortInd_estadoMembro">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="divida" onclick="sortSociosTable('divida')">
-                    <span>Dívida / Saldo</span><span class="sort-indicator" id="sortInd_divida">⇅</span>
+                  <th class="sortable-th" data-col="ultimoAno" style="width: 140px;" onclick="sortSociosTable('ultimoAno')">
+                    <span>Último ano pago</span><span class="sort-indicator" id="sortInd_ultimoAno">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="estadoMembro" onclick="sortSociosTable('estadoMembro')">
-                    <span>Situação</span><span class="sort-indicator" id="sortInd_estadoMembro">⇅</span>
+                  <th class="sortable-th" data-col="emAtraso" style="width: 140px;" onclick="sortSociosTable('emAtraso')">
+                    <span>Em atraso</span><span class="sort-indicator" id="sortInd_emAtraso">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="estado" onclick="sortSociosTable('estado')">
-                    <span>Estado Cota</span><span class="sort-indicator" id="sortInd_estado">⇅</span>
+                  <th data-col="acoes" style="text-align: right; width: 120px;">
+                    <span>Ações</span>
                   </th>
-                  <th data-col="acoes" style="text-align: right; width: 180px;">Ações</th>
                 </tr>
               </thead>
               <tbody id="sociosTableBody">
@@ -508,54 +481,136 @@
 
   </div>
 
-  <!-- Drawer Lateral: Ficha Completa do Sócio -->
+  <!-- Drawer Lateral: Ficha do Sócio com Tabs de Dados e Quotas -->
   <div class="drawer-backdrop" id="drawerSocio" onclick="if(event.target === this) closeSocioDrawer()">
     <div class="drawer-panel">
-      <div class="drawer-header">
-        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-title);">Ficha do Associado</h3>
-        <button onclick="closeSocioDrawer()" class="btn-icon-only btn-outline" style="border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
-      </div>
       
-      <div class="drawer-body" id="drawerSocioContent">
-        <!-- Preenchido dinamicamente ao clicar em qualquer sócio -->
+      <div class="drawer-header">
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-title);" id="drawerHeaderTitle">Sócio nº 2</h3>
+        <button onclick="closeSocioDrawer()" class="btn btn-outline btn-sm">Fechar</button>
       </div>
 
-      <div class="drawer-footer">
-        <button class="btn btn-secondary" onclick="closeSocioDrawer()">Fechar</button>
+      <!-- Navegação de Tabs -->
+      <div class="drawer-tabs">
+        <button type="button" class="drawer-tab active" id="tabBtnDados" onclick="switchDrawerTab('dados')">
+          Dados
+        </button>
+        <button type="button" class="drawer-tab" id="tabBtnQuotas" onclick="switchDrawerTab('quotas')">
+          <span>Quotas</span>
+          <span class="tab-badge" id="tabQuotasBadge">0</span>
+        </button>
       </div>
+      
+      <!-- Conteúdo da Tab Selecionada -->
+      <div class="drawer-body" id="drawerSocioContent">
+        <!-- Preenchido dinamicamente via JS -->
+      </div>
+
+      <!-- Rodapé da Tab -->
+      <div class="drawer-footer" id="drawerFooterContent">
+        <!-- Preenchido dinamicamente via JS -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Registar Pagamento de Quotas Selecionadas -->
+  <div class="modal-overlay" id="modalPagamentoQuotas">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <div>
+          <h2>Registar Pagamento de Quotas</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;" id="modalPagamentoSubtitle">
+            Selecione o método de liquidação para as quotas selecionadas.
+          </p>
+        </div>
+        <button class="modal-close" onclick="closePagamentoModal()">&times;</button>
+      </div>
+
+      <form id="formPagamentoQuotas" onsubmit="handleConfirmarPagamento(event)">
+        <input type="hidden" id="pagamentoSocioId">
+
+        <div style="background: rgba(28, 109, 66, 0.08); border: 1px solid rgba(28, 109, 66, 0.2); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.9rem; color: var(--text-title); font-weight: 600;">Anos a Liquidar:</span>
+            <strong id="pagamentoAnosTexto" style="color: var(--primary);">2026</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem;">
+            <span>Valor Total:</span>
+            <strong id="pagamentoValorTotal" style="color: var(--primary); font-size: 1.25rem;">6.00 €</strong>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="pagamentoMetodo">Método de Pagamento *</label>
+          <select id="pagamentoMetodo" class="form-control" required>
+            <option value="Numerário / Dinheiro">Numerário / Dinheiro</option>
+            <option value="MBWay">MBWay</option>
+            <option value="Transferência Bancária">Transferência Bancária</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Encontro de Contas">Encontro de Contas</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="pagamentoData">Data do Pagamento *</label>
+          <input type="date" id="pagamentoData" class="form-control" required>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="pagamentoNotas">Notas / Pauta do Pagamento (Opcional)</label>
+          <input type="text" id="pagamentoNotas" class="form-control" placeholder="Ex.: Liquidado no Jantar de Aniversário...">
+        </div>
+
+        <div style="margin-top: 1.25rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" id="pagamentoEmitirRecibo" checked>
+            <span>Emitir Recibo Oficial automaticamente</span>
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" onclick="closePagamentoModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnConfirmarPagamento">
+            <span>Confirmar Liquidação</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
   <!-- Modal: Novo Sócio -->
   <div class="modal-overlay" id="modalNewSocio">
-    <div class="modal-content" style="max-width: 580px;">
+    <div class="modal-content" style="max-width: 620px;">
       <div class="modal-header">
         <h2 style="font-size: 1.4rem;">Criar Nova Ficha de Associado</h2>
         <button class="modal-close" id="btnCloseNewSocioModal">&times;</button>
       </div>
 
       <form id="formNewSocio">
-        <div class="form-group">
-          <label for="newNome">Nome Completo</label>
-          <input type="text" id="newNome" class="form-control" placeholder="ex: António Manuel da Silva" required>
+        <div style="display: grid; grid-template-columns: 120px 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label for="newNumero">Nº Sócio *</label>
+            <input type="number" id="newNumero" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="newNome">Nome Completo *</label>
+            <input type="text" id="newNome" class="form-control" placeholder="ex: António Manuel da Silva" required>
+          </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
           <div class="form-group">
             <label for="newNif">NIF</label>
-            <input type="text" id="newNif" class="form-control" placeholder="9 dígitos" required maxlength="9">
+            <input type="text" id="newNif" class="form-control" placeholder="9 dígitos">
           </div>
           <div class="form-group">
-            <label for="newCategoria">Categoria</label>
-            <select id="newCategoria" class="form-control">
-              <option value="Efetivo">Efetivo (15.00 €/ano)</option>
-              <option value="Juvenil">Juvenil (7.50 €/ano)</option>
-              <option value="Benemérito">Benemérito (25.00 €/ano)</option>
-            </select>
+            <label for="newNascimento">Data de Nascimento</label>
+            <input type="date" id="newNascimento" class="form-control">
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
           <div class="form-group">
             <label for="newTelefone">Telefone / Telemóvel</label>
             <input type="tel" id="newTelefone" class="form-control" placeholder="912 345 678">
@@ -566,9 +621,45 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="newMorada">Morada Completa</label>
-          <input type="text" id="newMorada" class="form-control" placeholder="Rua / Lugar, Aguada de Baixo">
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="newMorada">Morada</label>
+          <input type="text" id="newMorada" class="form-control" placeholder="Rua / Lugar">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label for="newCodPostal">Código Postal</label>
+            <input type="text" id="newCodPostal" class="form-control" placeholder="3750-033">
+          </div>
+          <div class="form-group">
+            <label for="newLocalidade">Localidade</label>
+            <input type="text" id="newLocalidade" class="form-control" placeholder="Aguada de Baixo">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label for="newCategoria">Categoria *</label>
+            <select id="newCategoria" class="form-control">
+              <option value="Efetivo">Efetivo</option>
+              <option value="Fundador">Fundador</option>
+              <option value="Benemérito">Benemérito</option>
+              <option value="Juvenil">Juvenil</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="newEstadoMembro">Situação</label>
+            <select id="newEstadoMembro" class="form-control">
+              <option value="Ativo">Ativo</option>
+              <option value="Inativo">Inativo</option>
+              <option value="Falecido">Falecido</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="newObservacoes">Observações / Notas</label>
+          <textarea id="newObservacoes" class="form-control" rows="2.5" placeholder="Anotações sobre quotas, donativos ou ocorrências..."></textarea>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.75rem;">
