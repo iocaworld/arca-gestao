@@ -157,7 +157,17 @@
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist open">
-                <li><a href="seccoes.html?sec=futsal_senior" id="sublinkFutsalSenior" class="nav-sublink">Futsal Sénior</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button" id="btnParentFutsal">
+                    <span>Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list" id="listFutsal">
+                    <li><a href="seccoes.html?sec=futsal_masculino" id="nestedFutsalMasc" class="nav-nested-link">Séniores Masculino</a></li>
+                    <li><a href="seccoes.html?sec=futsal_feminino" id="nestedFutsalFem" class="nav-nested-link">Séniores Femininos</a></li>
+                    <li><a href="seccoes.html?sec=futsal_formacao" id="nestedFutsalForm" class="nav-nested-link">Formação</a></li>
+                  </ul>
+                </li>
                 <li><a href="seccoes.html?sec=biciarca_team" id="sublinkBiciarcaTeam" class="nav-sublink">BiciArca Team</a></li>
                 <li><a href="seccoes.html?sec=biciarca_run" id="sublinkBiciarcaRun" class="nav-sublink">BiciArca Run Team</a></li>
                 <li><a href="seccoes.html?sec=zumba" id="sublinkZumba" class="nav-sublink">Zumba</a></li>
@@ -191,7 +201,18 @@
               <ul class="nav-sublist">
                 <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
                 <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
-                <li><a href="eventos.html?ev=peregrinos" class="nav-sublink">Apoio Peregrinos</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Assistência e Apoio</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="eventos.html?ev=peregrinos" class="nav-nested-link">Peregrinos</a></li>
+                    <li><a href="eventos.html?ev=bombeiros" class="nav-nested-link">Bombeiros</a></li>
+                    <li><a href="eventos.html?ev=animais" class="nav-nested-link">Animais</a></li>
+                    <li><a href="eventos.html?ev=angariacoes" class="nav-nested-link">Angariações</a></li>
+                  </ul>
+                </li>
                 <li class="nav-nested-wrapper">
                   <button class="nav-nested-parent" type="button">
                     <span>Torneios</span>
@@ -300,14 +321,14 @@
         <div class="page-title-bar">
           <div>
             <h1 id="pageHeadingTitle">Secções Desportivas & Grupos Culturais</h1>
-            <p id="pageHeadingSubtitle">Gestão e acompanhamento das 9 modalidades ativas, corpos técnicos, horários de treino e inscrições da ARCA.</p>
+            <p id="pageHeadingSubtitle">Gestão e acompanhamento das modalidades ativas, corpos técnicos, escalões de Futsal, horários de treino e inscrições da ARCA.</p>
           </div>
           <div class="stats-badge-group" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
             <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
-              <strong style="color: var(--primary);">9</strong> Secções Ativas
+              <strong style="color: var(--primary);">11</strong> Valências Ativas
             </div>
             <div class="badge-card" style="background: white; border: 1px solid var(--border-light); padding: 0.5rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
-              <strong style="color: var(--primary);">184</strong> Atletas & Praticantes
+              <strong style="color: var(--primary);">245+</strong> Atletas & Praticantes
             </div>
           </div>
         </div>
@@ -315,7 +336,9 @@
         <!-- Filtros Rápidos de Secções -->
         <div class="filter-pills-bar" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.4rem;">
           <a href="seccoes.html" class="btn btn-sm btn-primary" id="pillAll">Todas as Secções</a>
-          <a href="seccoes.html?sec=futsal_senior" class="btn btn-sm btn-outline" id="pillFutsalSenior">Futsal Sénior</a>
+          <a href="seccoes.html?sec=futsal_masculino" class="btn btn-sm btn-outline" id="pillFutsalMasc">Futsal Masc.</a>
+          <a href="seccoes.html?sec=futsal_feminino" class="btn btn-sm btn-outline" id="pillFutsalFem">Futsal Fem.</a>
+          <a href="seccoes.html?sec=futsal_formacao" class="btn btn-sm btn-outline" id="pillFutsalForm">Futsal Formação</a>
           <a href="seccoes.html?sec=biciarca_team" class="btn btn-sm btn-outline" id="pillBiciarcaTeam">BiciArca Team</a>
           <a href="seccoes.html?sec=biciarca_run" class="btn btn-sm btn-outline" id="pillBiciarcaRun">BiciArca Run</a>
           <a href="seccoes.html?sec=zumba" class="btn btn-sm btn-outline" id="pillZumba">Zumba</a>
@@ -326,29 +349,74 @@
           <a href="seccoes.html?sec=bacharca" class="btn btn-sm btn-outline" id="pillBacharca">Bach'Arca</a>
         </div>
 
-        <!-- Grelha de Cartões das 9 Secções -->
+        <!-- Grelha de Cartões das Secções -->
         <div class="sections-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem;">
           
-          <!-- 1. Futsal Sénior -->
-          <div class="card-box section-card" data-sec="futsal_senior" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <!-- 1.1 Futsal Séniores Masculino -->
+          <div class="card-box section-card" data-sec="futsal_masculino" style="display: flex; flex-direction: column; justify-content: space-between;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                <span class="status-pill em-dia">Desporto Federado</span>
+                <span class="status-pill em-dia">Competição AF Aveiro</span>
                 <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">22 Atletas</span>
               </div>
-              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Futsal Sénior</h2>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Futsal - Séniores Masculino</h2>
               <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
-                Equipa principal em competição distrital pela AF Aveiro. Treinos técnicos, táticos e jogos oficiais ao fim de semana.
+                Equipa sénior masculina em competição federada no campeonato distrital da AF Aveiro. Plantel oficial, treinos táticos e jogos aos fins de semana.
               </p>
               <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
-                <div><strong>Responsável:</strong> Jorge Cunha / Coordenação Futsal</div>
+                <div><strong>Treinador / Coordenação:</strong> Jorge Cunha & Equipa Técnica</div>
                 <div><strong>Treinos:</strong> Terças e Quintas &bull; 21h00 - 23h00</div>
                 <div><strong>Local:</strong> Pavilhão Polidesportivo ARCA</div>
               </div>
             </div>
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
-              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir convocatórias e plantel de Futsal...', 'success')">Plantel & Convocatórias</button>
-              <button class="btn btn-outline btn-sm" onclick="showToast('A abrir calendário de jogos de Futsal...', 'success')">Jogos</button>
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir convocatórias do Futsal Masculino...', 'success')">Plantel & Convocatórias</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('A abrir calendário de jogos...', 'success')">Jogos</button>
+            </div>
+          </div>
+
+          <!-- 1.2 Futsal Séniores Femininos -->
+          <div class="card-box section-card" data-sec="futsal_feminino" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Sénior Feminino</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">18 Atletas</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Futsal - Séniores Femininos</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Equipa sénior feminina da ARCA. Participação em torneios regionais, jogos particulares e consolidação do futsal feminino no concelho.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Equipa Técnica:</strong> Gabinete de Futsal Feminino</div>
+                <div><strong>Treinos:</strong> Segundas e Quartas &bull; 20h30 - 22h00</div>
+                <div><strong>Local:</strong> Pavilhão Polidesportivo ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir ficha da equipa Feminina...', 'success')">Ver Equipa</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('A abrir calendário de jogos femininos...', 'success')">Jogos</button>
+            </div>
+          </div>
+
+          <!-- 1.3 Futsal Formação -->
+          <div class="card-box section-card" data-sec="futsal_formacao" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Escolinhas & Jovens</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">45 Jovens</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Futsal - Formação</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Escolinhas de futsal e formação de base: Petizes, Traquinas, Benjamins e Infantis. Desenvolvimento desportivo, companheirismo e valores.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenador Pedagógico:</strong> Escola de Futsal ARCA</div>
+                <div><strong>Treinos:</strong> Quartas (18h30) e Sábados (10h00)</div>
+                <div><strong>Escalões:</strong> Sub-7, Sub-9, Sub-11 e Sub-13</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir lista de turmas da Formação...', 'success')">Escalões & Inscrições</button>
             </div>
           </div>
 
@@ -554,7 +622,10 @@
         });
 
         const secNames = {
-          futsal_senior: 'Futsal Sénior',
+          futsal_masculino: 'Futsal - Séniores Masculino',
+          futsal_feminino: 'Futsal - Séniores Femininos',
+          futsal_formacao: 'Futsal - Formação',
+          futsal_senior: 'Futsal - Séniores Masculino',
           biciarca_team: 'BiciArca Team',
           biciarca_run: 'BiciArca Run Team',
           zumba: 'Zumba',
@@ -568,7 +639,7 @@
         if (secNames[sec]) {
           document.getElementById('breadcrumbCurrent').textContent = secNames[sec];
           document.getElementById('pageHeadingTitle').textContent = secNames[sec];
-          document.getElementById('pageHeadingSubtitle').textContent = 'Ficha detalhada da secção, corpos técnicos, calendário de atividades e atletas inscritos.';
+          document.getElementById('pageHeadingSubtitle').textContent = 'Ficha detalhada da secção, corpos técnicos, calendário de treinos e atletas inscritos.';
         }
 
         // Realçar botão/pill de filtro
@@ -576,7 +647,10 @@
           a.className = 'btn btn-sm btn-outline';
         });
         const pillMap = {
-          futsal_senior: 'pillFutsalSenior',
+          futsal_masculino: 'pillFutsalMasc',
+          futsal_feminino: 'pillFutsalFem',
+          futsal_formacao: 'pillFutsalForm',
+          futsal_senior: 'pillFutsalMasc',
           biciarca_team: 'pillBiciarcaTeam',
           biciarca_run: 'pillBiciarcaRun',
           zumba: 'pillZumba',
@@ -591,15 +665,39 @@
           if (activePill) activePill.className = 'btn btn-sm btn-primary';
         }
 
-        // Realçar link da sidebar
-        document.querySelectorAll('.sidebar-nav .nav-sublink').forEach(link => link.classList.remove('active'));
+        // Realçar link da sidebar (seja sublink ou aninhado)
+        document.querySelectorAll('.sidebar-nav .nav-sublink, .sidebar-nav .nav-nested-link').forEach(link => link.classList.remove('active'));
+        
         const sublinkMap = {
-          futsal_senior: 'sublinkFutsalSenior',
           biciarca_team: 'sublinkBiciarcaTeam',
           biciarca_run: 'sublinkBiciarcaRun',
           zumba: 'sublinkZumba',
           funcional: 'sublinkFuncional',
           pilates: 'sublinkPilates',
+          tea: 'sublinkTea',
+          olhares_disparos: 'sublinkOlharesDisparos',
+          bacharca: 'sublinkBacharca'
+        };
+
+        const nestedSecMap = {
+          futsal_masculino: { linkId: 'nestedFutsalMasc', parentId: 'btnParentFutsal', listId: 'listFutsal' },
+          futsal_feminino: { linkId: 'nestedFutsalFem', parentId: 'btnParentFutsal', listId: 'listFutsal' },
+          futsal_formacao: { linkId: 'nestedFutsalForm', parentId: 'btnParentFutsal', listId: 'listFutsal' },
+          futsal_senior: { linkId: 'nestedFutsalMasc', parentId: 'btnParentFutsal', listId: 'listFutsal' }
+        };
+
+        if (sublinkMap[sec]) {
+          const activeSub = document.getElementById(sublinkMap[sec]);
+          if (activeSub) activeSub.classList.add('active');
+        } else if (nestedSecMap[sec]) {
+          const cfg = nestedSecMap[sec];
+          const activeNest = document.getElementById(cfg.linkId);
+          if (activeNest) activeNest.classList.add('active');
+          const parentBtn = document.getElementById(cfg.parentId);
+          if (parentBtn) parentBtn.classList.add('open');
+          const parentList = document.getElementById(cfg.listId);
+          if (parentList) parentList.classList.add('open');
+        }
           tea: 'sublinkTea',
           olhares_disparos: 'sublinkOlharesDisparos',
           bacharca: 'sublinkBacharca'

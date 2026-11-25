@@ -157,7 +157,17 @@
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist">
-                <li><a href="seccoes.html?sec=futsal_senior" class="nav-sublink">Futsal Sénior</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button">
+                    <span>Futsal</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list">
+                    <li><a href="seccoes.html?sec=futsal_masculino" class="nav-nested-link">Séniores Masculino</a></li>
+                    <li><a href="seccoes.html?sec=futsal_feminino" class="nav-nested-link">Séniores Femininos</a></li>
+                    <li><a href="seccoes.html?sec=futsal_formacao" class="nav-nested-link">Formação</a></li>
+                  </ul>
+                </li>
                 <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
                 <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
                 <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
@@ -191,7 +201,18 @@
               <ul class="nav-sublist open">
                 <li><a href="eventos.html?ev=janeiras" id="sublinkJaneiras" class="nav-sublink">Janeiras</a></li>
                 <li><a href="eventos.html?ev=noite_sopas" id="sublinkNoiteSopas" class="nav-sublink">Noite das Sopas</a></li>
-                <li><a href="eventos.html?ev=peregrinos" id="sublinkPeregrinos" class="nav-sublink">Apoio Peregrinos</a></li>
+                <li class="nav-nested-wrapper">
+                  <button class="nav-nested-parent" type="button" id="btnParentAssistencia">
+                    <span>Assistência e Apoio</span>
+                    <span class="chevron-sm">&#9656;</span>
+                  </button>
+                  <ul class="nav-nested-list" id="listAssistencia">
+                    <li><a href="eventos.html?ev=peregrinos" id="nestedPeregrinos" class="nav-nested-link">Peregrinos</a></li>
+                    <li><a href="eventos.html?ev=bombeiros" id="nestedBombeiros" class="nav-nested-link">Bombeiros</a></li>
+                    <li><a href="eventos.html?ev=animais" id="nestedAnimais" class="nav-nested-link">Animais</a></li>
+                    <li><a href="eventos.html?ev=angariacoes" id="nestedAngariacoes" class="nav-nested-link">Angariações</a></li>
+                  </ul>
+                </li>
                 <li class="nav-nested-wrapper">
                   <button class="nav-nested-parent" type="button" id="btnParentTorneios">
                     <span>Torneios</span>
@@ -314,10 +335,13 @@
 
         <!-- Filtros Rápidos de Eventos -->
         <div class="filter-pills-bar" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.4rem;">
-          <a href="eventos.html" class="btn btn-sm btn-primary" id="pillEvAll">Todos (15)</a>
+          <a href="eventos.html" class="btn btn-sm btn-primary" id="pillEvAll">Todos</a>
           <a href="eventos.html?ev=janeiras" class="btn btn-sm btn-outline" id="pillEvJaneiras">Janeiras</a>
           <a href="eventos.html?ev=noite_sopas" class="btn btn-sm btn-outline" id="pillEvNoiteSopas">Noite das Sopas</a>
-          <a href="eventos.html?ev=peregrinos" class="btn btn-sm btn-outline" id="pillEvPeregrinos">Apoio Peregrinos</a>
+          <a href="eventos.html?ev=peregrinos" class="btn btn-sm btn-outline" id="pillEvPeregrinos">Peregrinos</a>
+          <a href="eventos.html?ev=bombeiros" class="btn btn-sm btn-outline" id="pillEvBombeiros">Bombeiros</a>
+          <a href="eventos.html?ev=animais" class="btn btn-sm btn-outline" id="pillEvAnimais">Animais</a>
+          <a href="eventos.html?ev=angariacoes" class="btn btn-sm btn-outline" id="pillEvAngariacoes">Angariações</a>
           <a href="eventos.html?ev=arca_cup" class="btn btn-sm btn-outline" id="pillEvArcaCup">ARCA Cup</a>
           <a href="eventos.html?ev=futsal_fem" class="btn btn-sm btn-outline" id="pillEvFutsalFem">Futsal Feminino</a>
           <a href="eventos.html?ev=cicloturismo" class="btn btn-sm btn-outline" id="pillEvCicloturismo">Cicloturismo</a>
@@ -381,25 +405,91 @@
             </div>
           </div>
 
-          <!-- 3. Apoio Peregrinos -->
+          <!-- 3.1 Assistência & Apoio: Peregrinos -->
           <div class="card-box event-card" data-ev="peregrinos" style="display: flex; flex-direction: column; justify-content: space-between;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                <span class="status-pill pendente">Solidariedade & Acolhimento</span>
+                <span class="status-pill pendente">Assistência & Apoio</span>
                 <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Maio & Outubro</span>
               </div>
               <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Apoio aos Peregrinos</h2>
               <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
-                Ponto de apoio e descanso aos peregrinos a caminho de Fátima e Santiago. Distribuição de águas, fruta, massagens e apoio de enfermagem.
+                Ponto de acolhimento e descanso aos peregrinos a caminho de Fátima e Santiago. Distribuição de águas, fruta, massagens e apoio de enfermagem.
               </p>
               <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
-                <div><strong>Datas Chave:</strong> 08 a 12 de Maio</div>
+                <div><strong>Datas Chave:</strong> 08 a 12 de Maio e Outubro</div>
                 <div><strong>Posto de Apoio:</strong> Junto à EN1 / Entrada de Aguada de Baixo</div>
                 <div><strong>Equipa Voluntária:</strong> 25 Voluntários em Escalas</div>
               </div>
             </div>
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
               <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir escala de voluntários para apoio aos peregrinos...', 'success')">Escala de Voluntários</button>
+            </div>
+          </div>
+
+          <!-- 3.2 Assistência & Apoio: Bombeiros -->
+          <div class="card-box event-card" data-ev="bombeiros" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Apoio a Corporações</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Permanente</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Apoio aos Bombeiros</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Campanhas solidárias de apoio aos Bombeiros Voluntários de Águeda e corporações vizinhas: recolha de águas, barras energéticas, apoio em teatro de operações e simulacros.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Parceria:</strong> Bombeiros Voluntários de Águeda</div>
+                <div><strong>Ponto de Recolha:</strong> Sede Social da ARCA</div>
+                <div><strong>Ações:</strong> Simulacro de evacuação anual e entrega de mantimentos</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir registo de donativos para bombeiros...', 'success')">Registar Donativos</button>
+            </div>
+          </div>
+
+          <!-- 3.3 Assistência & Apoio: Animais -->
+          <div class="card-box event-card" data-ev="animais" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill em-dia">Causa Animal</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Sensibilização</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Assistência & Proteção Animal</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Iniciativas de bem-estar animal em Aguada de Baixo: recolha de ração e mantas, apoio a colónias de animais errantes, campanhas de esterilização e sensibilização contra o abandono.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenação:</strong> Núcleo de Proteção Animal ARCA</div>
+                <div><strong>Campanhas:</strong> Banco de Ração e Adoção Responsável</div>
+                <div><strong>Local:</strong> Sede Social e Redes Sociais ARCA</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir campanha de recolha de ração...', 'success')">Banco de Ração</button>
+            </div>
+          </div>
+
+          <!-- 3.4 Assistência & Apoio: Angariações -->
+          <div class="card-box event-card" data-ev="angariacoes" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span class="status-pill pendente">Solidariedade Social</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Ação Social</span>
+              </div>
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin-bottom: 0.4rem;">Campanhas de Angariação</h2>
+              <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                Recolha de bens essenciais, cabazes de Natal para famílias carenciadas, agasalhos de inverno, leilões solidários e angariação de fundos para causas de emergência.
+              </p>
+              <div style="background: var(--bg-body); padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1rem;">
+                <div><strong>Coordenação:</strong> Gabinete de Ação Social da ARCA</div>
+                <div><strong>Destinatários:</strong> Famílias em situação vulnerável da terra</div>
+                <div><strong>Transparência:</strong> Relatório público de entregas e donativos</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir campanhas de angariação ativas...', 'success')">Ver Campanhas</button>
             </div>
           </div>
 
@@ -739,7 +829,10 @@
         const evNames = {
           janeiras: 'Cantar das Janeiras',
           noite_sopas: 'Noite das Sopas',
-          peregrinos: 'Apoio aos Peregrinos',
+          peregrinos: 'Assistência e Apoio - Peregrinos',
+          bombeiros: 'Assistência e Apoio - Bombeiros',
+          animais: 'Assistência e Apoio - Proteção Animal',
+          angariacoes: 'Assistência e Apoio - Angariações de Bens',
           arca_cup: 'ARCA Cup (Torneio de Futsal)',
           futsal_fem: 'Torneio de Futsal Feminino',
           cicloturismo: 'Passeio de Cicloturismo',
@@ -770,6 +863,9 @@
           janeiras: 'pillEvJaneiras',
           noite_sopas: 'pillEvNoiteSopas',
           peregrinos: 'pillEvPeregrinos',
+          bombeiros: 'pillEvBombeiros',
+          animais: 'pillEvAnimais',
+          angariacoes: 'pillEvAngariacoes',
           arca_cup: 'pillEvArcaCup',
           futsal_fem: 'pillEvFutsalFem',
           cicloturismo: 'pillEvCicloturismo',
@@ -796,7 +892,6 @@
         const sublinkEvMap = {
           janeiras: 'sublinkJaneiras',
           noite_sopas: 'sublinkNoiteSopas',
-          peregrinos: 'sublinkPeregrinos',
           cicloturismo: 'sublinkCicloturismo',
           dia_freguesia: 'sublinkDiaFreguesia',
           taca_jorginho: 'sublinkTacaJorginho',
@@ -810,6 +905,10 @@
         };
 
         const nestedEvMap = {
+          peregrinos: { linkId: 'nestedPeregrinos', parentId: 'btnParentAssistencia', listId: 'listAssistencia' },
+          bombeiros: { linkId: 'nestedBombeiros', parentId: 'btnParentAssistencia', listId: 'listAssistencia' },
+          animais: { linkId: 'nestedAnimais', parentId: 'btnParentAssistencia', listId: 'listAssistencia' },
+          angariacoes: { linkId: 'nestedAngariacoes', parentId: 'btnParentAssistencia', listId: 'listAssistencia' },
           arca_cup: { linkId: 'nestedArcaCup', parentId: 'btnParentTorneios', listId: 'listTorneios' },
           futsal_fem: { linkId: 'nestedFutsalFem', parentId: 'btnParentTorneios', listId: 'listTorneios' },
           futsal_apresentacao: { linkId: 'nestedFutsalApres', parentId: 'btnParentEpocaFutsal', listId: 'listEpocaFutsal' },
