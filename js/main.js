@@ -235,6 +235,132 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(socios));
     }
 
+    // Configurações de Personalização de Colunas & Ordenação de Sócios
+    const SOCIOS_COLS_KEY = 'arca_socios_cols_v2';
+    const DEFAULT_SOCIOS_COLS = {
+      numero: true,
+      nome: true,
+      morada: false,
+      nif: true,
+      categoria: true,
+      contacto: true,
+      inscricao: false,
+      valorQuota: false,
+      estado: true,
+      acoes: true
+    };
+    let activeSociosCols = JSON.parse(localStorage.getItem(SOCIOS_COLS_KEY)) || { ...DEFAULT_SOCIOS_COLS };
+
+    function saveSociosCols() {
+      localStorage.setItem(SOCIOS_COLS_KEY, JSON.stringify(activeSociosCols));
+    }
+
+    function isColVisible(key) {
+      return activeSociosCols[key] !== false;
+    }
+
+    let currentSortField = 'numero';
+    let currentSortDir = 'asc';
+
+    window.sortSociosTable = function(field) {
+      if (currentSortField === field) {
+        currentSortDir = (currentSortDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        currentSortField = field;
+        currentSortDir = 'asc';
+      }
+      updateSortIndicators();
+      applyFilters();
+    };
+
+    function updateSortIndicators() {
+      const select = document.getElementById('sortSociosSelect');
+      if (select) {
+        select.value = `${currentSortField}_${currentSortDir}`;
+      }
+
+      document.querySelectorAll('#sociosTableHeadRow th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === currentSortField) {
+          th.classList.add('active');
+          if (ind) ind.textContent = currentSortDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function initSociosColPicker() {
+      const pickerList = document.getElementById('colPickerListSocios');
+      const toggleBtn = document.getElementById('btnToggleColPickerSocios');
+      const menu = document.getElementById('colPickerMenuSocios');
+      if (!pickerList) return;
+
+      const labels = {
+        numero: 'Nº Sócio',
+        nome: 'Nome do Sócio',
+        morada: 'Morada / Localidade',
+        nif: 'NIF',
+        categoria: 'Categoria',
+        contacto: 'Contacto (Telef. & Email)',
+        inscricao: 'Data de Admissão',
+        valorQuota: 'Quota Anual (€)',
+        estado: 'Estado da Cota',
+        acoes: 'Ações'
+      };
+
+      pickerList.innerHTML = Object.entries(labels).map(([key, label]) => {
+        const isChecked = isColVisible(key);
+        return `
+          <label class="col-picker-item">
+            <input type="checkbox" data-col="${key}" ${isChecked ? 'checked' : ''} onchange="toggleSocioCol('${key}', this.checked)">
+            <span>${label}</span>
+          </label>
+        `;
+      }).join('');
+
+      if (toggleBtn && menu) {
+        toggleBtn.onclick = (e) => {
+          e.stopPropagation();
+          menu.classList.toggle('show');
+        };
+
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggleBtn) {
+            menu.classList.remove('show');
+          }
+        });
+      }
+
+      applyColumnsVisibility();
+    }
+
+    window.toggleSocioCol = function(key, isVisible) {
+      activeSociosCols[key] = isVisible;
+      saveSociosCols();
+      applyColumnsVisibility();
+      applyFilters();
+    };
+
+    window.resetSociosColumns = function() {
+      activeSociosCols = { ...DEFAULT_SOCIOS_COLS };
+      saveSociosCols();
+      initSociosColPicker();
+      applyColumnsVisibility();
+      applyFilters();
+    };
+
+    function applyColumnsVisibility() {
+      document.querySelectorAll('#sociosTableHeadRow th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        if (col) {
+          th.style.display = isColVisible(col) ? '' : 'none';
+        }
+      });
+    }
+
     // Indicadores do Topo
     function updateStats() {
       const total = socios.length;
@@ -253,14 +379,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (elNovos) elNovos.textContent = novos;
     }
 
-    // Renderizar Tabela
+    // Renderizar Tabela com Colunas Dinâmicas
     function renderTable(data = socios) {
       sociosTableBody.innerHTML = '';
+      applyColumnsVisibility();
 
       if (data.length === 0) {
+        const visibleColsCount = Object.values(activeSociosCols).filter(Boolean).length || 6;
         sociosTableBody.innerHTML = `
           <tr>
-            <td colspan="7" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+            <td colspan="${visibleColsCount}" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
               Nenhum associado encontrado para os filtros selecionados.
             </td>
           </tr>
@@ -278,47 +406,80 @@ document.addEventListener('DOMContentLoaded', () => {
         // Iniciais para avatar
         const initials = s.nome.split(' ').map(n => n[0]).slice(0, 2).join('');
 
-        tr.innerHTML = `
-          <td><strong>#${s.numero}</strong></td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 0.85rem;">
-              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;">
-                ${initials}
+        let html = '';
+
+        if (isColVisible('numero')) {
+          html += `<td><strong>#${s.numero}</strong></td>`;
+        }
+        if (isColVisible('nome')) {
+          html += `
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.85rem;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;">
+                  ${initials}
+                </div>
+                <div>
+                  <a href="javascript:void(0)" onclick="openSocioDrawer(${s.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none;">
+                    ${s.nome}
+                  </a>
+                  ${!isColVisible('morada') ? `<div style="font-size: 0.78rem; color: var(--text-muted);">${s.morada || ''}</div>` : ''}
+                </div>
               </div>
-              <div>
-                <a href="javascript:void(0)" onclick="openSocioDrawer(${s.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none;">
-                  ${s.nome}
-                </a>
-                <div style="font-size: 0.78rem; color: var(--text-muted);">${s.morada}</div>
+            </td>
+          `;
+        }
+        if (isColVisible('morada')) {
+          html += `<td><span style="font-size: 0.85rem; color: var(--text-body);">${s.morada || '-'}</span></td>`;
+        }
+        if (isColVisible('nif')) {
+          html += `<td><code>${s.nif}</code></td>`;
+        }
+        if (isColVisible('categoria')) {
+          html += `<td><span style="font-weight: 600;">${s.categoria}</span></td>`;
+        }
+        if (isColVisible('contacto')) {
+          html += `
+            <td>
+              <div>${s.telefone || '-'}</div>
+              <small style="color: var(--text-muted);">${s.email || '-'}</small>
+            </td>
+          `;
+        }
+        if (isColVisible('inscricao')) {
+          html += `<td><span style="font-size: 0.85rem; color: var(--text-muted);">${s.dataInscricao || '-'}</span></td>`;
+        }
+        if (isColVisible('valorQuota')) {
+          html += `<td><strong>${s.valorQuota ? s.valorQuota.toFixed(2) + ' €' : '15.00 €'}</strong></td>`;
+        }
+        if (isColVisible('estado')) {
+          html += `
+            <td>
+              <span class="status-pill ${statusClass}">${s.estado} (${s.ultimaQuota})</span>
+            </td>
+          `;
+        }
+        if (isColVisible('acoes')) {
+          html += `
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.4rem;">
+                <button class="btn btn-outline btn-sm" onclick="openSocioDrawer(${s.id})" title="Ver Ficha">
+                  Ver Ficha
+                </button>
+                ${s.estado !== 'Em Dia' ? `
+                  <button class="btn btn-primary btn-sm" onclick="liquidarQuota(${s.id})" title="Registar Quota 2026">
+                    Pagar
+                  </button>
+                ` : `
+                  <button class="btn btn-secondary btn-sm" onclick="emitirRecibo(${s.id})" title="Imprimir Recibo">
+                    Recibo
+                  </button>
+                `}
               </div>
-            </div>
-          </td>
-          <td><code>${s.nif}</code></td>
-          <td><span style="font-weight: 600;">${s.categoria}</span></td>
-          <td>
-            <div>${s.telefone || '-'}</div>
-            <small style="color: var(--text-muted);">${s.email || '-'}</small>
-          </td>
-          <td>
-            <span class="status-pill ${statusClass}">${s.estado} (${s.ultimaQuota})</span>
-          </td>
-          <td style="text-align: right;">
-            <div style="display: inline-flex; gap: 0.4rem;">
-              <button class="btn btn-outline btn-sm" onclick="openSocioDrawer(${s.id})" title="Ver Ficha">
-                Ver Ficha
-              </button>
-              ${s.estado !== 'Em Dia' ? `
-                <button class="btn btn-primary btn-sm" onclick="liquidarQuota(${s.id})" title="Registar Quota 2026">
-                  Pagar
-                </button>
-              ` : `
-                <button class="btn btn-secondary btn-sm" onclick="emitirRecibo(${s.id})" title="Imprimir Recibo">
-                  Recibo
-                </button>
-              `}
-            </div>
-          </td>
-        `;
+            </td>
+          `;
+        }
+
+        tr.innerHTML = html;
         sociosTableBody.appendChild(tr);
       });
     }
@@ -489,10 +650,11 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast(`Recibo emitido para ${socio.nome}!`, 'success');
     };
 
-    // Filtros e Pesquisa
+    // Filtros, Pesquisa e Ordenação
     const searchInput = document.getElementById('searchInput');
     const filterStatus = document.getElementById('filterStatus');
     const filterCategory = document.getElementById('filterCategory');
+    const sortSociosSelect = document.getElementById('sortSociosSelect');
 
     function applyFilters() {
       const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
@@ -504,12 +666,46 @@ document.addEventListener('DOMContentLoaded', () => {
           s.nome.toLowerCase().includes(query) ||
           s.numero.toString().includes(query) ||
           s.nif.includes(query) ||
-          (s.morada && s.morada.toLowerCase().includes(query));
+          (s.morada && s.morada.toLowerCase().includes(query)) ||
+          (s.email && s.email.toLowerCase().includes(query)) ||
+          (s.telefone && s.telefone.includes(query));
 
         const matchesStatus = (status === 'all') || (s.estado === status);
         const matchesCat = (cat === 'all') || (s.categoria === cat);
 
         return matchesQuery && matchesStatus && matchesCat;
+      });
+
+      // Ordenação Maior / Menor ou A-Z / Z-A
+      filtered.sort((a, b) => {
+        let valA = a[currentSortField];
+        let valB = b[currentSortField];
+
+        if (currentSortField === 'numero') {
+          return currentSortDir === 'asc' ? (a.numero - b.numero) : (b.numero - a.numero);
+        }
+        if (currentSortField === 'valorQuota') {
+          const vA = a.valorQuota || 15;
+          const vB = b.valorQuota || 15;
+          return currentSortDir === 'asc' ? (vA - vB) : (vB - vA);
+        }
+        if (currentSortField === 'inscricao') {
+          const parseDate = (d) => {
+            if (!d) return 0;
+            const parts = d.split('/');
+            return parts.length === 3 ? new Date(parts[2], parts[1]-1, parts[0]).getTime() : 0;
+          };
+          const tA = parseDate(a.dataInscricao);
+          const tB = parseDate(b.dataInscricao);
+          return currentSortDir === 'asc' ? (tA - tB) : (tB - tA);
+        }
+        if (typeof valA === 'string') {
+          const comp = valA.localeCompare(valB || '', 'pt', { sensitivity: 'base' });
+          return currentSortDir === 'asc' ? comp : -comp;
+        }
+        if (valA < valB) return currentSortDir === 'asc' ? -1 : 1;
+        if (valA > valB) return currentSortDir === 'asc' ? 1 : -1;
+        return 0;
       });
 
       renderTable(filtered);
@@ -518,6 +714,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) searchInput.addEventListener('input', applyFilters);
     if (filterStatus) filterStatus.addEventListener('change', applyFilters);
     if (filterCategory) filterCategory.addEventListener('change', applyFilters);
+
+    if (sortSociosSelect) {
+      sortSociosSelect.addEventListener('change', (e) => {
+        const val = e.target.value;
+        const lastUnderscore = val.lastIndexOf('_');
+        const field = val.slice(0, lastUnderscore);
+        const dir = val.slice(lastUnderscore + 1);
+        currentSortField = field;
+        currentSortDir = dir || 'asc';
+        updateSortIndicators();
+        applyFilters();
+      });
+    }
 
     // Modal: Novo Sócio
     const modalNewSocio = document.getElementById('modalNewSocio');
@@ -594,9 +803,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Inicializar Tabela e Indicadores
+    // Inicializar Tabela, Colunas Personalizadas, Ordenação e Indicadores
+    initSociosColPicker();
+    updateSortIndicators();
     updateStats();
-    renderTable();
+    applyFilters();
   }
 
 });

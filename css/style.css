@@ -1103,6 +1103,133 @@ button, input, select, textarea {
   background: rgba(229, 241, 234, 0.45);
 }
 
+/* Cabeçalhos Ordenáveis */
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.sortable-th:hover {
+  background: rgba(28, 109, 66, 0.12) !important;
+  color: var(--primary) !important;
+}
+
+.sortable-th.active {
+  color: var(--primary) !important;
+  background: rgba(28, 109, 66, 0.08) !important;
+}
+
+.sort-indicator {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  vertical-align: middle;
+}
+
+.sortable-th.active .sort-indicator {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* Menu Dropdown de Seleção de Colunas */
+.col-picker-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.col-picker-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  min-width: 240px;
+  padding: 0.85rem 0.75rem;
+  z-index: 1050;
+  display: none;
+  animation: fadeInDown 0.18s ease forwards;
+}
+
+.col-picker-menu.show {
+  display: block;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.col-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.82rem;
+  color: var(--text-title);
+  font-weight: 700;
+}
+
+.col-picker-header button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+}
+
+.col-picker-header button:hover {
+  text-decoration: underline;
+}
+
+.col-picker-list {
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.col-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-size: 0.85rem;
+  color: var(--text-body);
+  user-select: none;
+}
+
+.col-picker-item:hover {
+  background: var(--bg-hover);
+}
+
+.col-picker-item input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
 /* Badges de Estado */
 .status-pill {
   display: inline-flex;

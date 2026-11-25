@@ -394,8 +394,8 @@
           <div class="card-header-bar">
             <h2 id="tableTitleSocios">Listagem de Sócios & Gestão de Cotas</h2>
             
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-              <div class="quick-search" style="width: 280px;">
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+              <div class="quick-search" style="width: 250px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -416,22 +416,80 @@
                 <option value="Juvenil">Juvenil</option>
                 <option value="Benemérito">Benemérito</option>
               </select>
+
+              <!-- Seletor de Ordenação -->
+              <select id="sortSociosSelect" class="btn btn-secondary btn-sm" style="padding: 0.5rem 0.85rem;">
+                <option value="numero_asc">Nº (Menor → Maior)</option>
+                <option value="numero_desc">Nº (Maior → Menor)</option>
+                <option value="nome_asc">Nome (A → Z)</option>
+                <option value="nome_desc">Nome (Z → A)</option>
+                <option value="categoria_asc">Categoria (A → Z)</option>
+                <option value="estado_asc">Estado da Cota</option>
+                <option value="inscricao_desc">Admissão (Mais Recente)</option>
+                <option value="inscricao_asc">Admissão (Mais Antigo)</option>
+              </select>
+
+              <!-- Seletor de Colunas Personalizado -->
+              <div class="col-picker-dropdown">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerSocios" style="padding: 0.5rem 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                  </svg>
+                  <span>Colunas</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="col-picker-menu" id="colPickerMenuSocios">
+                  <div class="col-picker-header">
+                    <span>Personalizar Colunas</span>
+                    <button type="button" onclick="resetSociosColumns()">Repor</button>
+                  </div>
+                  <div class="col-picker-list" id="colPickerListSocios">
+                    <!-- Checkboxes preenchidas dinamicamente -->
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="table-responsive">
             <table class="modern-table">
               <thead>
-                <tr>
-                  <th style="width: 80px;">Nº</th>
-                  <th>Nome do Sócio</th>
-                  <th>NIF</th>
-                  <th>Categoria</th>
-                  <th>Contacto</th>
-                  <th>Estado da Cota</th>
-                  <th style="text-align: right; width: 220px;">Ações</th>
+                <tr id="sociosTableHeadRow">
+                  <th class="sortable-th" data-col="numero" style="width: 80px;" onclick="sortSociosTable('numero')">
+                    <span>Nº</span><span class="sort-indicator" id="sortInd_numero">▲</span>
+                  </th>
+                  <th class="sortable-th" data-col="nome" onclick="sortSociosTable('nome')">
+                    <span>Nome do Sócio</span><span class="sort-indicator" id="sortInd_nome">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="morada" onclick="sortSociosTable('morada')">
+                    <span>Morada</span><span class="sort-indicator" id="sortInd_morada">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="nif" onclick="sortSociosTable('nif')">
+                    <span>NIF</span><span class="sort-indicator" id="sortInd_nif">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="categoria" onclick="sortSociosTable('categoria')">
+                    <span>Categoria</span><span class="sort-indicator" id="sortInd_categoria">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="contacto" onclick="sortSociosTable('contacto')">
+                    <span>Contacto</span><span class="sort-indicator" id="sortInd_contacto">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="inscricao" onclick="sortSociosTable('inscricao')">
+                    <span>Admissão</span><span class="sort-indicator" id="sortInd_inscricao">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="valorQuota" onclick="sortSociosTable('valorQuota')">
+                    <span>Quota</span><span class="sort-indicator" id="sortInd_valorQuota">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="estado" onclick="sortSociosTable('estado')">
+                    <span>Estado Cota</span><span class="sort-indicator" id="sortInd_estado">⇅</span>
+                  </th>
+                  <th data-col="acoes" style="text-align: right; width: 180px;">Ações</th>
                 </tr>
               </thead>
+              <tbody id="sociosTableBody">
+                <!-- Preenchido via JavaScript -->
+              </tbody>
+            </table>
+          </div>
               <tbody id="sociosTableBody">
                 <!-- Preenchido via JavaScript -->
               </tbody>

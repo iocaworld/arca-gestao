@@ -447,6 +447,38 @@
                 <option value="excel">Excel (XLSX)</option>
               </select>
 
+              <!-- Seletor de Ordenação Rápida -->
+              <select id="sortDocsSelect" class="btn btn-secondary btn-sm" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;" onchange="handleDocSortSelect(this.value)">
+                <option value="ano_desc">Ano (Mais Recentes)</option>
+                <option value="ano_asc">Ano (Mais Antigos)</option>
+                <option value="titulo_asc">Ficheiro (A → Z)</option>
+                <option value="titulo_desc">Ficheiro (Z → A)</option>
+                <option value="tamanho_desc">Tamanho (Maior → Menor)</option>
+                <option value="tamanho_asc">Tamanho (Menor → Maior)</option>
+                <option value="pasta_asc">Pasta (A → Z)</option>
+                <option value="estado_asc">Estado de Validação</option>
+              </select>
+
+              <!-- Seletor de Colunas Personalizado -->
+              <div class="col-picker-dropdown">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerDocs" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                  </svg>
+                  <span>Colunas</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="col-picker-menu" id="colPickerMenuDocs">
+                  <div class="col-picker-header">
+                    <span>Personalizar Colunas</span>
+                    <button type="button" onclick="resetDocsColumns()">Repor</button>
+                  </div>
+                  <div class="col-picker-list" id="colPickerListDocs">
+                    <!-- Gerado dinamicamente -->
+                  </div>
+                </div>
+              </div>
+
               <!-- Botão Rápido de Carregar Nesta Pasta -->
               <button class="btn btn-primary btn-sm" onclick="openUploadModal()">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -463,12 +495,29 @@
           <div class="table-responsive">
             <table class="modern-table">
               <thead>
-                <tr>
-                  <th style="width: 44%;">Ficheiro & Designação Oficial</th>
-                  <th style="width: 18%;">Pasta de Destino</th>
-                  <th style="width: 10%;">Ano / Data</th>
-                  <th style="width: 12%;">Estado</th>
-                  <th style="text-align: right; width: 16%;">Ações de Gestão</th>
+                <tr id="docsTableHeadRow">
+                  <th class="sortable-th" data-col="ficheiro" onclick="sortDocsTable('titulo')">
+                    <span>Ficheiro & Designação Oficial</span><span class="sort-indicator" id="docSortInd_titulo">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="pasta" onclick="sortDocsTable('pasta')">
+                    <span>Pasta de Destino</span><span class="sort-indicator" id="docSortInd_pasta">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="ano" style="width: 110px;" onclick="sortDocsTable('ano')">
+                    <span>Ano / Data</span><span class="sort-indicator" id="docSortInd_ano">▼</span>
+                  </th>
+                  <th class="sortable-th" data-col="tamanho" style="width: 100px;" onclick="sortDocsTable('tamanho')">
+                    <span>Tamanho</span><span class="sort-indicator" id="docSortInd_tamanho">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="orgao" onclick="sortDocsTable('orgao')">
+                    <span>Órgão Emissor</span><span class="sort-indicator" id="docSortInd_orgao">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="data" onclick="sortDocsTable('data')">
+                    <span>Data Entrada</span><span class="sort-indicator" id="docSortInd_data">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="estado" style="width: 110px;" onclick="sortDocsTable('estado')">
+                    <span>Estado</span><span class="sort-indicator" id="docSortInd_estado">⇅</span>
+                  </th>
+                  <th data-col="acoes" style="text-align: right; width: 150px;">Ações</th>
                 </tr>
               </thead>
               <tbody id="docsTableBody">
@@ -829,6 +878,151 @@
     let currentPreviewDocId = null;
     let loadedDocuments = [];
 
+    // Configurações de Personalização de Colunas & Ordenação de Documentos
+    const DOCS_COLS_KEY = 'arca_docs_cols_v2';
+    const DEFAULT_DOCS_COLS = {
+      ficheiro: true,
+      pasta: true,
+      ano: true,
+      tamanho: true,
+      orgao: false,
+      data: false,
+      estado: true,
+      acoes: true
+    };
+    let activeDocsCols = JSON.parse(localStorage.getItem(DOCS_COLS_KEY)) || { ...DEFAULT_DOCS_COLS };
+
+    function saveDocsCols() {
+      localStorage.setItem(DOCS_COLS_KEY, JSON.stringify(activeDocsCols));
+    }
+
+    function isDocColVisible(key) {
+      return activeDocsCols[key] !== false;
+    }
+
+    let docSortField = 'ano';
+    let docSortDir = 'desc';
+
+    function parseFileSizeToBytes(sizeStr) {
+      if (!sizeStr) return 0;
+      const s = sizeStr.toString().trim().toUpperCase();
+      const num = parseFloat(s) || 0;
+      if (s.includes('GB')) return num * 1024 * 1024 * 1024;
+      if (s.includes('MB')) return num * 1024 * 1024;
+      if (s.includes('KB')) return num * 1024;
+      return num;
+    }
+
+    window.sortDocsTable = function(field) {
+      if (docSortField === field) {
+        docSortDir = (docSortDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        docSortField = field;
+        docSortDir = (field === 'ano' || field === 'tamanho' || field === 'data') ? 'desc' : 'asc';
+      }
+      updateDocSortIndicators();
+      renderDocuments();
+    };
+
+    window.handleDocSortSelect = function(val) {
+      if (!val) return;
+      const lastUnderscore = val.lastIndexOf('_');
+      const field = val.slice(0, lastUnderscore);
+      const dir = val.slice(lastUnderscore + 1);
+      docSortField = field;
+      docSortDir = dir || 'asc';
+      updateDocSortIndicators();
+      renderDocuments();
+    };
+
+    function updateDocSortIndicators() {
+      const select = document.getElementById('sortDocsSelect');
+      if (select) {
+        select.value = `${docSortField}_${docSortDir}`;
+      }
+
+      document.querySelectorAll('#docsTableHeadRow th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        let match = (col === docSortField);
+        if (col === 'ficheiro' && docSortField === 'titulo') match = true;
+        if (match) {
+          th.classList.add('active');
+          if (ind) ind.textContent = docSortDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active');
+          if (ind) ind.textContent = '⇅';
+        }
+      });
+    }
+
+    function initDocsColPicker() {
+      const pickerList = document.getElementById('colPickerListDocs');
+      const toggleBtn = document.getElementById('btnToggleColPickerDocs');
+      const menu = document.getElementById('colPickerMenuDocs');
+      if (!pickerList) return;
+
+      const labels = {
+        ficheiro: 'Ficheiro & Designação',
+        pasta: 'Pasta Oficial de Destino',
+        ano: 'Ano / Data de Referência',
+        tamanho: 'Tamanho do Ficheiro',
+        orgao: 'Órgão Emissor / Responsável',
+        data: 'Data de Entrada / Registo',
+        estado: 'Estado / Validação',
+        acoes: 'Ações de Gestão'
+      };
+
+      pickerList.innerHTML = Object.entries(labels).map(([key, label]) => {
+        const isChecked = isDocColVisible(key);
+        return `
+          <label class="col-picker-item">
+            <input type="checkbox" data-col="${key}" ${isChecked ? 'checked' : ''} onchange="toggleDocCol('${key}', this.checked)">
+            <span>${label}</span>
+          </label>
+        `;
+      }).join('');
+
+      if (toggleBtn && menu) {
+        toggleBtn.onclick = (e) => {
+          e.stopPropagation();
+          menu.classList.toggle('show');
+        };
+
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggleBtn) {
+            menu.classList.remove('show');
+          }
+        });
+      }
+
+      applyDocColumnsVisibility();
+    }
+
+    window.toggleDocCol = function(key, isVisible) {
+      activeDocsCols[key] = isVisible;
+      saveDocsCols();
+      applyDocColumnsVisibility();
+      renderDocuments();
+    };
+
+    window.resetDocsColumns = function() {
+      activeDocsCols = { ...DEFAULT_DOCS_COLS };
+      saveDocsCols();
+      initDocsColPicker();
+      applyDocColumnsVisibility();
+      renderDocuments();
+    };
+
+    function applyDocColumnsVisibility() {
+      document.querySelectorAll('#docsTableHeadRow th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        if (col) {
+          th.style.display = isDocColVisible(col) ? '' : 'none';
+        }
+      });
+    }
+
     // Constantes de Base de Dados
     const DB_NAME = 'arca_dms_db_v2';
     const DB_VERSION = 1;
@@ -937,6 +1131,8 @@
 
       setupDragAndDrop();
       setupSidebarSublinks();
+      initDocsColPicker();
+      updateDocSortIndicators();
       await initDocumentStore();
     });
 
@@ -1182,10 +1378,57 @@
       // 6. Construir linhas da tabela
       if (!tbody) return;
 
+      applyDocColumnsVisibility();
+
+      // Ordenar por Maior/Menor ou A-Z/Z-A
+      filtered.sort((a, b) => {
+        if (docSortField === 'ano') {
+          const yA = parseInt(a.year) || 0;
+          const yB = parseInt(b.year) || 0;
+          if (yA !== yB) return docSortDir === 'asc' ? (yA - yB) : (yB - yA);
+          return docSortDir === 'asc' ? (a.year || '').localeCompare(b.year || '') : (b.year || '').localeCompare(a.year || '');
+        }
+        if (docSortField === 'tamanho') {
+          const sA = parseFileSizeToBytes(a.fileSize);
+          const sB = parseFileSizeToBytes(b.fileSize);
+          return docSortDir === 'asc' ? (sA - sB) : (sB - sA);
+        }
+        if (docSortField === 'titulo') {
+          const comp = (a.title || '').localeCompare(b.title || '', 'pt', { sensitivity: 'base' });
+          return docSortDir === 'asc' ? comp : -comp;
+        }
+        if (docSortField === 'pasta') {
+          const nameA = CATEGORIES[normalizeCat(a.category)]?.name || a.category;
+          const nameB = CATEGORIES[normalizeCat(b.category)]?.name || b.category;
+          const comp = nameA.localeCompare(nameB, 'pt', { sensitivity: 'base' });
+          return docSortDir === 'asc' ? comp : -comp;
+        }
+        if (docSortField === 'estado') {
+          const comp = (a.status || '').localeCompare(b.status || '', 'pt', { sensitivity: 'base' });
+          return docSortDir === 'asc' ? comp : -comp;
+        }
+        if (docSortField === 'orgao') {
+          const comp = (a.signatory || '').localeCompare(b.signatory || '', 'pt', { sensitivity: 'base' });
+          return docSortDir === 'asc' ? comp : -comp;
+        }
+        if (docSortField === 'data') {
+          const parseDate = (d) => {
+            if (!d) return 0;
+            const parts = d.split('/');
+            return parts.length === 3 ? new Date(parts[2], parts[1]-1, parts[0]).getTime() : 0;
+          };
+          const tA = parseDate(a.date);
+          const tB = parseDate(b.date);
+          return docSortDir === 'asc' ? (tA - tB) : (tB - tA);
+        }
+        return 0;
+      });
+
       if (filtered.length === 0) {
+        const visibleColsCount = Object.values(activeDocsCols).filter(Boolean).length || 5;
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" style="text-align: center; padding: 3rem 1rem;">
+            <td colspan="${visibleColsCount}" style="text-align: center; padding: 3rem 1rem;">
               <div style="max-width: 380px; margin: 0 auto; color: var(--text-muted);">
                 <div style="width: 56px; height: 56px; margin: 0 auto 1rem; border-radius: 50%; background: rgba(28, 109, 66, 0.08); display: flex; align-items: center; justify-content: center; color: var(--primary);">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1215,34 +1458,59 @@
         if (doc.status === 'Em Análise' || doc.status === 'Rascunho') statusBadgeClass = 'badge-warning';
         if (doc.status === 'Histórico') statusBadgeClass = 'badge-secondary';
 
-        return `
-          <tr class="doc-row" data-category="${catNormalized}">
+        let html = '';
+
+        if (isDocColVisible('ficheiro')) {
+          html += `
             <td>
               <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <span class="doc-format-badge ${formatBadgeClass}">${formatLabel}</span>
                 <div style="min-width: 0;">
-                  <div style="font-weight: 600; color: var(--text-title); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px;" title="${escapeHtml(doc.title)}">
+                  <div style="font-weight: 600; color: var(--text-title); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 340px;" title="${escapeHtml(doc.title)}">
                     ${escapeHtml(doc.title)}
                   </div>
                   <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; margin-top: 0.15rem;">
                     <span>${escapeHtml(doc.fileName || 'documento')}</span>
-                    <span>•</span>
-                    <span>${escapeHtml(doc.fileSize || '1 MB')}</span>
+                    ${!isDocColVisible('tamanho') ? `<span>•</span><span>${escapeHtml(doc.fileSize || '1 MB')}</span>` : ''}
                   </div>
                 </div>
               </div>
             </td>
+          `;
+        }
+
+        if (isDocColVisible('pasta')) {
+          html += `
             <td>
               <span class="badge ${catInfo.badge}" style="cursor: pointer;" onclick="setCategoryFilter('${catNormalized}')" title="Filtrar por esta pasta">
                 ${catInfo.name}
               </span>
             </td>
-            <td>
-              <span style="font-weight: 600; color: var(--text-title); font-size: 0.88rem;">${escapeHtml(doc.year)}</span>
-            </td>
-            <td>
-              <span class="badge ${statusBadgeClass}">${escapeHtml(doc.status || 'Aprovado')}</span>
-            </td>
+          `;
+        }
+
+        if (isDocColVisible('ano')) {
+          html += `<td><span style="font-weight: 600; color: var(--text-title); font-size: 0.88rem;">${escapeHtml(doc.year)}</span></td>`;
+        }
+
+        if (isDocColVisible('tamanho')) {
+          html += `<td><span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">${escapeHtml(doc.fileSize || '-')}</span></td>`;
+        }
+
+        if (isDocColVisible('orgao')) {
+          html += `<td><span style="font-size: 0.85rem; color: var(--text-body);">${escapeHtml(doc.signatory || '-')}</span></td>`;
+        }
+
+        if (isDocColVisible('data')) {
+          html += `<td><span style="font-size: 0.85rem; color: var(--text-muted);">${escapeHtml(doc.date || '-')}</span></td>`;
+        }
+
+        if (isDocColVisible('estado')) {
+          html += `<td><span class="badge ${statusBadgeClass}">${escapeHtml(doc.status || 'Aprovado')}</span></td>`;
+        }
+
+        if (isDocColVisible('acoes')) {
+          html += `
             <td style="text-align: right;">
               <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
                 <!-- Botão Pré-visualizar / Detalhes -->
@@ -1271,8 +1539,10 @@
                 </button>
               </div>
             </td>
-          </tr>
-        `;
+          `;
+        }
+
+        return `<tr class="doc-row" data-category="${catNormalized}">${html}</tr>`;
       }).join('');
     }
 
