@@ -80,6 +80,19 @@ const ARCA_FIREBASE_CONFIG = {
         });
       }
 
+      // Garantir integridade dos dados de Raquel Alexandra Marques da Cunha (Sócia nº 414 e Própria Ficha)
+      const rIdx = cloudUsers.findIndex(c => c.login === 'raquel.cunha');
+      if (rIdx !== -1) {
+        if (cloudUsers[rIdx].numeroSocio !== 414 || cloudUsers[rIdx].permissoes_modulos?.painel || cloudUsers[rIdx].permissoes_modulos?.socios?.mode !== 'own') {
+          cloudUsers[rIdx].numeroSocio = 414;
+          cloudUsers[rIdx].perfil = "Própria Ficha (Sócio)";
+          cloudUsers[rIdx].permissoes_modulos = {
+            socios: { enabled: true, mode: "own", submenus: ["consultar"] }
+          };
+          window.saveArcaUtilizadorToCloud(cloudUsers[rIdx]);
+        }
+      }
+
       // Ordenar por ID crescente
       cloudUsers.sort((a, b) => (a.id || 0) - (b.id || 0));
 
@@ -150,6 +163,19 @@ const ARCA_FIREBASE_CONFIG = {
           };
           cloudUsers.unshift(adminSeed);
           window.saveArcaUtilizadorToCloud(adminSeed);
+        }
+
+        // Garantir integridade dos dados de Raquel Alexandra Marques da Cunha (Sócia nº 414 e Própria Ficha)
+        const rIdx = cloudUsers.findIndex(c => c.login === 'raquel.cunha');
+        if (rIdx !== -1) {
+          if (cloudUsers[rIdx].numeroSocio !== 414 || cloudUsers[rIdx].permissoes_modulos?.painel || cloudUsers[rIdx].permissoes_modulos?.socios?.mode !== 'own') {
+            cloudUsers[rIdx].numeroSocio = 414;
+            cloudUsers[rIdx].perfil = "Própria Ficha (Sócio)";
+            cloudUsers[rIdx].permissoes_modulos = {
+              socios: { enabled: true, mode: "own", submenus: ["consultar"] }
+            };
+            window.saveArcaUtilizadorToCloud(cloudUsers[rIdx]);
+          }
         }
 
         cloudUsers.sort((a, b) => (a.id || 0) - (b.id || 0));

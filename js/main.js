@@ -848,11 +848,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (adminSeed) parsed.unshift(adminSeed);
           }
 
-          // Garantir número de sócio correto para Raquel Alexandra Marques da Cunha (Sócia nº 414)
+          // Garantir número de sócio e permissões estritas para Raquel Alexandra Marques da Cunha (Sócia nº 414)
           const raquelIdx = parsed.findIndex(p => p.login === 'raquel.cunha');
-          if (raquelIdx !== -1 && parsed[raquelIdx].numeroSocio !== 414) {
-            parsed[raquelIdx].numeroSocio = 414;
-            if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+          if (raquelIdx !== -1) {
+            let changed = false;
+            if (parsed[raquelIdx].numeroSocio !== 414) {
+              parsed[raquelIdx].numeroSocio = 414;
+              changed = true;
+            }
+            if (!parsed[raquelIdx].permissoes_modulos || parsed[raquelIdx].permissoes_modulos.painel || parsed[raquelIdx].permissoes_modulos.socios?.mode !== 'own') {
+              parsed[raquelIdx].perfil = "Própria Ficha (Sócio)";
+              parsed[raquelIdx].permissoes_modulos = {
+                socios: { enabled: true, mode: "own", submenus: ["consultar"] }
+              };
+              changed = true;
+            }
+            if (changed && typeof window.saveArcaUtilizadorToCloud === 'function') {
               window.saveArcaUtilizadorToCloud(parsed[raquelIdx]);
             }
           }
@@ -1084,6 +1095,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (u.login === 'raquel.cunha' || (u.nome && u.nome.toLowerCase().includes('raquel alexandra'))) {
           u.numeroSocio = 414;
+          u.perfil = "Própria Ficha (Sócio)";
+          u.permissoes_modulos = {
+            socios: { enabled: true, mode: "own", submenus: ["consultar"] }
+          };
           localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
         }
         if (u.foto && (u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users') || u.foto.includes('xmlns="http://www.w3.org/2000/svg"') || (u.id === 1 && !u.foto.startsWith('data:image/')))) {
@@ -1749,8 +1764,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const quotasPagasValor = emDia * 6;
 
     // Atualizar badge em todas as páginas (sidebar)
+    const cUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+    const sPerm = (cUser && cUser.permissoes_modulos && cUser.permissoes_modulos.socios) || {};
+    const isOwnBadge = cUser && (cUser.perfil === 'Própria Ficha (Sócio)' || (sPerm.enabled && sPerm.mode === 'own'));
+
     document.querySelectorAll('.nav-item-badge').forEach(b => {
-      b.textContent = ativos;
+      b.textContent = isOwnBadge ? '1' : ativos;
     });
 
     // Atualizar indicadores no painel.html (Visão Geral)
