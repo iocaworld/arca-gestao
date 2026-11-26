@@ -534,7 +534,11 @@
           </div>
         </div>
 
-        <div class="topbar-right">
+        <div class="topbar-right" style="display: flex; gap: 0.5rem; align-items: center;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="recarregarUtilizadoresNuvem(this)" title="Recarregar dados da nuvem" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            <span>🔄</span>
+            <span>Atualizar</span>
+          </button>
           <button class="btn btn-primary btn-sm" onclick="openNovoUtilizadorModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -1097,11 +1101,11 @@
   </div>
 
   <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
-  <script src="js/socios-data.js?v=20261126_v10"></script>
+  <script src="js/socios-data.js?v=20261126_v11"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v10"></script>
-  <script src="js/main.js?v=20261126_v10"></script>
+  <script src="js/firebase-sync.js?v=20261126_v11"></script>
+  <script src="js/main.js?v=20261126_v11"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -2653,6 +2657,31 @@
       }
     };
 
+    window.recarregarUtilizadoresNuvem = async function(btn) {
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ A carregar...</span>';
+      }
+      if (typeof window.syncArcaUtilizadoresFromCloud === 'function') {
+        const cloudUsers = await window.syncArcaUtilizadoresFromCloud();
+        if (cloudUsers && cloudUsers.length > 0) {
+          let deletedIds = [];
+          try {
+            deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+          } catch (e) {}
+
+          utilizadores = cloudUsers.filter(u => !deletedIds.includes(Number(u.id)));
+          updateUtilizadoresStats();
+          renderUtilizadores();
+          if (window.showToast) window.showToast('Dados sincronizados com a nuvem com sucesso!', 'success');
+        }
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🔄</span> <span>Atualizar</span>';
+      }
+    };
+
     // =========================================================================
     // Arrancar a Página
     // =========================================================================
@@ -2664,9 +2693,9 @@
       updateUtilizadoresStats();
       renderUtilizadores();
 
-      // Sincronização em Tempo Real com Firestore
-      if (typeof window.listenArcaUtilizadoresRealtime === 'function') {
-        window.listenArcaUtilizadoresRealtime((cloudUsers) => {
+      // Leitura pontual normal ao carregar a página (getDocs)
+      if (typeof window.syncArcaUtilizadoresFromCloud === 'function') {
+        window.syncArcaUtilizadoresFromCloud((cloudUsers) => {
           if (cloudUsers && cloudUsers.length > 0) {
             let deletedIds = [];
             try {
@@ -2677,6 +2706,14 @@
             updateUtilizadoresStats();
             renderUtilizadores();
           }
+        });
+      }
+
+      // Tempo Real ESTRITAMENTE para alerta de novos pedidos pendentes (0 a poucos docs)
+      if (typeof window.listenPedidosPendentesRealtime === 'function') {
+        window.listenPedidosPendentesRealtime((pendentes) => {
+          const elP = document.getElementById('statPendentes');
+          if (elP) elP.textContent = pendentes.length;
         });
       }
 

@@ -497,7 +497,11 @@
           </div>
         </div>
 
-        <div class="topbar-right">
+        <div class="topbar-right" style="display: flex; gap: 0.5rem; align-items: center;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="recarregarMembrosNuvem(this)" title="Recarregar dados da nuvem" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            <span>🔄</span>
+            <span>Atualizar</span>
+          </button>
           <button class="btn btn-primary btn-sm" onclick="openNovoMembroModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -895,11 +899,11 @@
   </div>
 
   <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
-  <script src="js/socios-data.js?v=20261126_v10"></script>
+  <script src="js/socios-data.js?v=20261126_v11"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v10"></script>
-  <script src="js/main.js?v=20261126_v10"></script>
+  <script src="js/firebase-sync.js?v=20261126_v11"></script>
+  <script src="js/main.js?v=20261126_v11"></script>
   <script>
     // =========================================================================
     // ESTRUTURA DOS MÓDULOS E MENUS DA PLATAFORMA A.R.C.A.
@@ -2623,6 +2627,24 @@
       if (elCf) elCf.textContent = membros.filter(m => m.orgao && m.orgao.includes('Conselho')).length;
     }
 
+    window.recarregarMembrosNuvem = async function(btn) {
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ A carregar...</span>';
+      }
+      if (typeof window.syncArcaUtilizadoresFromCloud === 'function') {
+        await window.syncArcaUtilizadoresFromCloud();
+        membros = getMembrosFromCentralUtilizadores();
+        updateMembrosStats();
+        renderMembros();
+        if (window.showToast) window.showToast('Membros dos órgãos sociais atualizados com sucesso!', 'success');
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🔄</span> <span>Atualizar</span>';
+      }
+    };
+
     // Inicialização da Página
     document.addEventListener('DOMContentLoaded', () => {
       initColPickerMembros();
@@ -2630,9 +2652,9 @@
       updateMembrosStats();
       renderMembros();
 
-      // Subscrição em Tempo Real à Base Central de Utilizadores (Firestore)
-      if (typeof window.listenArcaUtilizadoresRealtime === 'function') {
-        window.listenArcaUtilizadoresRealtime(() => {
+      // Leitura pontual normal ao carregar a página (getDocs)
+      if (typeof window.syncArcaUtilizadoresFromCloud === 'function') {
+        window.syncArcaUtilizadoresFromCloud(() => {
           membros = getMembrosFromCentralUtilizadores();
           updateMembrosStats();
           renderMembros();

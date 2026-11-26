@@ -103,81 +103,38 @@ const ARCA_FIREBASE_CONFIG = {
     }
   };
 
-  // Subscrição em Tempo Real (onSnapshot)
-  window.listenArcaUtilizadoresRealtime = function(callback) {
+  // =========================================================================
+  // Subscrição em Tempo Real (onSnapshot) - Estritamente para Alertas Pendentes
+  // =========================================================================
+  // Listener restrito apenas para novos pedidos de registo que aguardam aprovação (0 a poucos documentos)
+  window.listenPedidosPendentesRealtime = function(callback) {
     const firestore = initFirebase();
     if (!firestore) return null;
 
     try {
-      return firestore.collection('utilizadores').onSnapshot((snapshot) => {
-        const cloudUsers = [];
-        let deletedIds = [];
-        try {
-          deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-        } catch (e) {}
-
+      return firestore.collection('utilizadores').where('estado', '==', 'Pendente').onSnapshot((snapshot) => {
+        const pendentes = [];
         snapshot.forEach(doc => {
           const u = doc.data();
-          if (u && u.id) {
-            // Se o utilizador foi eliminado pelo administrador, ignorar
-            if (deletedIds.includes(Number(u.id))) return;
-            cloudUsers.push(u);
-          }
+          if (u && u.id) pendentes.push(u);
         });
-
-        // Garantir APENAS que a conta do Administrador Total Jorge (ID 1) está sempre presente
-        const hasAdmin = cloudUsers.some(c => (c.login && c.login.toLowerCase() === 'jorge') || Number(c.id) === 1);
-        if (!hasAdmin) {
-          const adminSeed = {
-            id: 1,
-            nome: "Jorge Manuel da Silva Cunha",
-            login: "jorge",
-            username: "@jorge",
-            email: "scunhajorge@gmail.com",
-            telefone: "966 100 115",
-            morada: "Rua Direita, 45 - Aguada de Baixo",
-            numeroSocio: 1,
-            perfil: "Administrador Total",
-            orgao: "Direção",
-            cargo: "Presidente",
-            estado: "Ativo",
-            motivo_suspensao: "",
-            data_registo: "2024-01-10",
-            data_rgpd: "2024-01-10",
-            ultimo_acesso: "Hoje",
-            foto: "",
-            permissoes_modulos: {
-              painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
-              socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "quotas", "pagamentos"] },
-              tesouraria: { enabled: true, mode: "full", submenus: ["resumo", "contas", "movimentos", "recibos"] },
-              direcao: { enabled: true, mode: "full", submenus: ["membros", "atas", "comunicados"] },
-              desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
-              documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "gerir"] },
-              administracao: { enabled: true, mode: "full", submenus: ["utilizadores", "configuracoes", "seguranca"] }
-            }
-          };
-          cloudUsers.unshift(adminSeed);
-          window.saveArcaUtilizadorToCloud(adminSeed);
-        }
-
-        // Garantir número de sócio correto para Raquel Alexandra Marques da Cunha (Sócia nº 414)
-        const rIdx = cloudUsers.findIndex(c => c.login === 'raquel.cunha');
-        if (rIdx !== -1 && (!cloudUsers[rIdx].numeroSocio || cloudUsers[rIdx].numeroSocio === 305)) {
-          cloudUsers[rIdx].numeroSocio = 414;
-        }
-
-        cloudUsers.sort((a, b) => (a.id || 0) - (b.id || 0));
-        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(cloudUsers));
         if (typeof callback === 'function') {
-          callback(cloudUsers);
+          callback(pendentes);
         }
       }, (err) => {
-        console.warn('[ARCA Firebase] Erro no listener em tempo real:', err.message);
+        console.warn('[ARCA Firebase] Erro ao escutar pedidos pendentes:', err.message);
       });
     } catch (err) {
-      console.warn('[ARCA Firebase] Falha ao iniciar listener:', err);
+      console.warn('[ARCA Firebase] Falha ao iniciar listener restrito:', err);
       return null;
     }
+  };
+
+  // Compatibilidade: substitui o onSnapshot da lista completa por leitura normal sob demanda
+  window.listenArcaUtilizadoresRealtime = function(callback) {
+    // Em vez de manter um listener aberto na coleção inteira, efetua uma leitura única normal (getDocs)
+    window.syncArcaUtilizadoresFromCloud(callback);
+    return () => {}; // No-op unsubscribe
   };
 
   // Guardar ou Atualizar Utilizador na Nuvem (Gravação Completa)
