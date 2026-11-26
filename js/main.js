@@ -845,20 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // Validação da Palavra-Passe
-    // Aceita a password configurada na conta, ou como salvaguarda inicial 'arca2026', '123456', ou o próprio login
-    const matchPassword = found.password 
-      ? (found.password === cleanPass || cleanPass === 'arca2026' || cleanPass === '123456' || cleanPass === found.login)
-      : (cleanPass === 'arca2026' || cleanPass === '123456' || cleanPass === found.login);
-
-    if (!matchPassword) {
-      return { 
-        ok: false, 
-        msg: '<strong>Palavra-passe incorreta:</strong> A palavra-passe indicada não está certa. Tente novamente.' 
-      };
-    }
-
-    // Verificação do Estado da Conta
+    // 1. Verificação do Estado da Conta (Pendente, Suspenso, Anulado)
     if (found.estado === 'Pendente') {
       return { 
         ok: false, 
@@ -878,6 +865,19 @@ document.addEventListener('DOMContentLoaded', () => {
       return { 
         ok: false, 
         msg: '<strong>Conta Anulada:</strong> Esta conta de acesso foi revogada pela Direção. Caso pretenda reativar o acesso, submeta um novo pedido de registo.' 
+      };
+    }
+
+    // 2. Validação da Palavra-Passe
+    // Aceita a password configurada na conta, ou como salvaguarda inicial 'arca2026', '123456', ou o próprio login
+    const matchPassword = found.password 
+      ? (found.password === cleanPass || cleanPass === 'arca2026' || cleanPass === '123456' || cleanPass === found.login)
+      : (cleanPass === 'arca2026' || cleanPass === '123456' || cleanPass === found.login);
+
+    if (!matchPassword) {
+      return { 
+        ok: false, 
+        msg: '<strong>Palavra-passe incorreta:</strong> A palavra-passe indicada não está certa. Tente novamente.' 
       };
     }
 
@@ -1000,15 +1000,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Auth Guard Global: Protege páginas restritas da plataforma
   (function initArcaAuthGuard() {
-    const rawPath = window.location.pathname.toLowerCase();
-    const pageName = rawPath.substring(rawPath.lastIndexOf('/') + 1) || 'index.html';
-    const publicPages = ['index.html', 'login.html', 'registo.html', ''];
+    const rawPath = window.location.pathname.toLowerCase().replace(/\/$/, '');
+    const segments = rawPath.split('/').filter(Boolean);
+    const pageName = segments.length ? segments[segments.length - 1] : '';
+
+    const publicPages = ['', 'index', 'index.html', 'login', 'login.html', 'registo', 'registo.html'];
     const isPublic = publicPages.includes(pageName);
 
     if (!isPublic) {
       const currentUser = window.getArcaCurrentUser();
       if (!currentUser || currentUser.estado !== 'Ativo') {
-        window.location.replace('index.html');
+        window.location.replace('/');
       }
     }
   })();
