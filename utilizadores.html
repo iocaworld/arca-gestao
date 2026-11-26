@@ -1043,6 +1043,10 @@
     </div>
   </div>
 
+  <!-- Firebase SDK e Sincronização em Tempo Real -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-sync.js?v=20261126_1"></script>
   <script src="js/main.js?v=20261126_auth"></script>
   <script>
     // =========================================================================
@@ -1416,6 +1420,11 @@
       localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
       updateUtilizadoresStats();
       renderUtilizadores();
+
+      // Sincronizar com a Nuvem Firebase em tempo real
+      if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+        utilizadores.forEach(u => window.saveArcaUtilizadorToCloud(u));
+      }
     }
 
     // =========================================================================
@@ -2403,6 +2412,17 @@
       updateUserSortIndicators();
       updateUtilizadoresStats();
       renderUtilizadores();
+
+      // Sincronização em Tempo Real com Firestore
+      if (typeof window.listenArcaUtilizadoresRealtime === 'function') {
+        window.listenArcaUtilizadoresRealtime((cloudUsers) => {
+          if (cloudUsers && cloudUsers.length > 0) {
+            utilizadores = cloudUsers;
+            updateUtilizadoresStats();
+            renderUtilizadores();
+          }
+        });
+      }
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {

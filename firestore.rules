@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Coleção de Utilizadores & Permissões da ARCA
+    match /utilizadores/{userId} {
+      allow read, create: if true;
+      allow update, delete: if true;
+    }
+
+    // Regra geral
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
