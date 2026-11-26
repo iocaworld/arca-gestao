@@ -874,6 +874,32 @@
               </div>
             </div>
 
+            <!-- Bloco de Destaque: Ligação a Sócio da ARCA & Preenchimento Automático -->
+            <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-md); padding: 0.95rem 1.15rem; margin-bottom: 1.25rem; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.06);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.45rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.45rem;">
+                  <span style="font-size: 1.25rem;">📇</span>
+                  <strong style="color: #166534; font-size: 0.95rem;">Associar a Sócio da A.R.C.A. (Importação de Ficha)</strong>
+                </div>
+                <span style="font-size: 0.75rem; background: #dcfce7; color: #15803d; font-weight: 800; padding: 2px 8px; border-radius: 9999px; text-transform: uppercase;">
+                  Preenchimento Automático
+                </span>
+              </div>
+              <p style="font-size: 0.82rem; color: #14532d; margin: 0 0 0.65rem 0; line-height: 1.4;">
+                Se o utilizador for sócio da ARCA, introduza o número para importar de imediato o nome, morada e contactos oficiais:
+              </p>
+              <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 180px;">
+                  <input type="number" id="formUserSocioNum" class="form-control" placeholder="N.º de Sócio (Ex: 414)" style="font-weight: 700; color: #166534; background: #ffffff; border: 2px solid #86efac; font-size: 0.95rem;" oninput="detectarSocioUtilizadorAuto(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();executarBuscarSocioUtilizador();}">
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" onclick="executarBuscarSocioUtilizador()" style="padding: 0.55rem 1.1rem; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap;">
+                  <span>🔍</span>
+                  <span>Importar Ficha</span>
+                </button>
+              </div>
+              <div id="formUserSocioFeedback" style="display: none; margin-top: 0.6rem; font-size: 0.84rem; padding: 0.5rem 0.8rem; border-radius: var(--radius-sm); line-height: 1.4;"></div>
+            </div>
+
             <!-- Grelha de Campos Principais -->
             <div class="form-grid-2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
               
@@ -899,13 +925,7 @@
               </div>
 
               <div class="form-group">
-                <label for="formUserSocioNum">Número de Sócio da ARCA (Opcional)</label>
-                <input type="number" id="formUserSocioNum" class="form-control" placeholder="Ex: 314 (Deixe vazio se não for sócio)">
-                <small style="color: var(--text-muted); font-size: 0.75rem;">Se o utilizador for sócio, introduza apenas o número (sem #).</small>
-              </div>
-
-              <div class="form-group">
-                <label for="formUserPerfil">Perfil Institucional / Função</label>
+                <label for="formUserPerfil">Perfil Institucional de Acesso</label>
                 <select id="formUserPerfil" class="form-control" onchange="aplicarPresetPorPerfil(this.value)">
                   <option value="Administrador Total">Administrador Total (Acesso Completo)</option>
                   <option value="Membro da Direção">Membro da Direção Executiva</option>
@@ -914,6 +934,39 @@
                   <option value="Sócio Associado">Sócio Associado</option>
                   <option value="Utilizador Geral">Utilizador Geral / Colaborador</option>
                 </select>
+              </div>
+
+              <div class="form-group">
+                <label for="formUserOrgao">Órgão Social da A.R.C.A.</label>
+                <select id="formUserOrgao" class="form-control" onchange="atualizarOpcoesCargoPorOrgao(this.value)">
+                  <option value="Nenhum">Nenhum (Utilizador Geral / Sócio)</option>
+                  <option value="Direção">Direção Executiva</option>
+                  <option value="Assembleia Geral">Mesa da Assembleia Geral</option>
+                  <option value="Conselho Fiscal">Conselho Fiscal</option>
+                </select>
+                <small style="color: var(--text-muted); font-size: 0.74rem;">Se atribuir um órgão social, surge automaticamente no menu Direção &gt; Membros.</small>
+              </div>
+
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="formUserCargo">Cargo / Função Institucional nos Órgãos Sociais</label>
+                <input type="text" id="formUserCargo" class="form-control" list="listaCargosSugeridos" placeholder="Ex: Presidente, Vice-Presidente, Secretária, Tesoureiro, Vogal">
+                <datalist id="listaCargosSugeridos">
+                  <option value="Presidente">
+                  <option value="Vice-Presidente">
+                  <option value="Tesoureiro">
+                  <option value="Secretária">
+                  <option value="1º Secretário">
+                  <option value="2º Secretário">
+                  <option value="Vogal">
+                  <option value="Presidente da Mesa">
+                  <option value="Secretário da Mesa">
+                  <option value="Vice-Presidente da Mesa">
+                  <option value="Vogal da Mesa">
+                  <option value="Presidente do Conselho">
+                  <option value="Relator">
+                  <option value="Vogal do Conselho">
+                </datalist>
+                <small style="color: var(--text-muted); font-size: 0.74rem;">Cargo exibido no organograma oficial e na ficha institucional do dirigente.</small>
               </div>
 
               <div class="form-group" style="grid-column: 1 / -1;">
@@ -1043,11 +1096,12 @@
     </div>
   </div>
 
-  <!-- Firebase SDK e Sincronização em Tempo Real -->
+  <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
+  <script src="js/socios-data.js?v=20261126_v10"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v9"></script>
-  <script src="js/main.js?v=20261126_v9"></script>
+  <script src="js/firebase-sync.js?v=20261126_v10"></script>
+  <script src="js/main.js?v=20261126_v10"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -1756,6 +1810,9 @@
                   ? '<span style="color: #1c6d42; font-weight: 700;">Própria Ficha (Sócio)</span>' 
                   : window.escapeHtml(u.perfil || 'Utilizador Geral')}
               </strong>
+              ${(u.orgao && u.orgao !== 'Nenhum') 
+                ? `<div style="font-size: 0.74rem; color: #166534; font-weight: 700; margin-top: 3px;">🏛️ ${window.escapeHtml(u.orgao)}${u.cargo ? ' &bull; ' + window.escapeHtml(u.cargo) : ''}</div>` 
+                : ''}
             </td>
 
             <!-- 5. Módulos Autorizados -->
@@ -1931,7 +1988,11 @@
 
       // Cabeçalho
       document.getElementById('fichaUserNome').textContent = u.nome;
-      document.getElementById('fichaUserSub').textContent = `${u.username || '@' + u.login} • ${u.perfil || 'Utilizador Geral'}`;
+      let subTexto = `${u.username || '@' + u.login} • ${u.perfil || 'Utilizador Geral'}`;
+      if (u.orgao && u.orgao !== 'Nenhum') {
+        subTexto += ` • 🏛️ ${u.orgao}${u.cargo ? ' (' + u.cargo + ')' : ''}`;
+      }
+      document.getElementById('fichaUserSub').textContent = subTexto;
 
       // Badge Estado
       const badge = document.getElementById('fichaUserEstadoBadge');
@@ -2083,6 +2144,11 @@
       document.getElementById('formUserTelefone').value = '';
       document.getElementById('formUserSocioNum').value = '';
       document.getElementById('formUserPerfil').value = 'Utilizador Geral';
+      if (document.getElementById('formUserOrgao')) document.getElementById('formUserOrgao').value = 'Nenhum';
+      if (document.getElementById('formUserCargo')) document.getElementById('formUserCargo').value = '';
+      const fb = document.getElementById('formUserSocioFeedback');
+      if (fb) fb.style.display = 'none';
+
       document.getElementById('formUserMorada').value = 'Aguada de Baixo';
       document.getElementById('formUserPassword').value = '';
       document.getElementById('formUserMotivoSuspensao').value = '';
@@ -2111,6 +2177,11 @@
       document.getElementById('formUserTelefone').value = u.telefone || '';
       document.getElementById('formUserSocioNum').value = u.numeroSocio || '';
       document.getElementById('formUserPerfil').value = u.perfil || 'Utilizador Geral';
+      if (document.getElementById('formUserOrgao')) document.getElementById('formUserOrgao').value = u.orgao || 'Nenhum';
+      if (document.getElementById('formUserCargo')) document.getElementById('formUserCargo').value = u.cargo || '';
+      const fb = document.getElementById('formUserSocioFeedback');
+      if (fb) fb.style.display = 'none';
+
       document.getElementById('formUserMorada').value = u.morada || '';
       document.getElementById('formUserPassword').value = '';
       document.getElementById('formUserMotivoSuspensao').value = u.motivo_suspensao || '';
@@ -2298,6 +2369,114 @@
       });
     };
 
+    // =========================================================================
+    // Pesquisa e Auto-Preenchimento por Número de Sócio no Painel de Utilizadores
+    // =========================================================================
+    let debounceUserSocioTimer = null;
+
+    function obterListaSociosGlobal() {
+      if (typeof getGlobalSocios === 'function') {
+        const list = getGlobalSocios();
+        if (list && list.length > 0) return list;
+      }
+      if (typeof ARCA_SOCIOS_BASE !== 'undefined' && Array.isArray(ARCA_SOCIOS_BASE)) {
+        return ARCA_SOCIOS_BASE;
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem('arca_socios_data_v3'));
+        if (Array.isArray(stored)) return stored;
+      } catch (e) {}
+      return [];
+    }
+
+    window.detectarSocioUtilizadorAuto = function(val) {
+      clearTimeout(debounceUserSocioTimer);
+      const str = (val || '').trim();
+      if (!str) {
+        const fb = document.getElementById('formUserSocioFeedback');
+        if (fb) fb.style.display = 'none';
+        return;
+      }
+      debounceUserSocioTimer = setTimeout(() => {
+        executarBuscarSocioUtilizador(true);
+      }, 400);
+    };
+
+    window.executarBuscarSocioUtilizador = function(silencioso = false) {
+      const input = document.getElementById('formUserSocioNum');
+      const fb = document.getElementById('formUserSocioFeedback');
+      if (!input || !fb) return;
+
+      const numVal = parseInt(input.value.trim(), 10);
+      if (isNaN(numVal) || numVal <= 0) {
+        if (!silencioso) {
+          fb.style.display = 'block';
+          fb.style.background = '#fffbeb';
+          fb.style.border = '1px solid #fcd34d';
+          fb.style.color = '#92400e';
+          fb.innerHTML = '⚠️ Introduza um número de sócio válido (ex.: 414).';
+        } else {
+          fb.style.display = 'none';
+        }
+        return;
+      }
+
+      const socios = obterListaSociosGlobal();
+      const socio = socios.find(s => parseInt(s.numero, 10) === numVal);
+
+      if (socio) {
+        const nomeLimpo = socio.nome.replace(/\s*\([^)]*\)/g, '').trim();
+        const elNome = document.getElementById('formUserNome');
+        if (elNome) elNome.value = nomeLimpo;
+
+        const elTel = document.getElementById('formUserTelefone');
+        if (elTel && socio.telefone) elTel.value = socio.telefone;
+
+        const elEmail = document.getElementById('formUserEmail');
+        if (elEmail && socio.email) elEmail.value = socio.email;
+
+        const elMorada = document.getElementById('formUserMorada');
+        if (elMorada && socio.morada) elMorada.value = socio.morada;
+
+        const elLogin = document.getElementById('formUserLogin');
+        if (elLogin && !elLogin.value) {
+          const clean = nomeLimpo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '');
+          const partes = clean.split(/\s+/).filter(Boolean);
+          if (partes.length >= 2) {
+            elLogin.value = `${partes[0]}.${partes[partes.length - 1]}`;
+          } else if (partes.length === 1) {
+            elLogin.value = partes[0];
+          }
+        }
+
+        fb.style.display = 'block';
+        fb.style.background = '#ecfdf5';
+        fb.style.border = '1.5px solid #6ee7b7';
+        fb.style.color = '#065f46';
+        fb.innerHTML = `✅ Ficha do Sócio n.º ${socio.numero} importada com sucesso: <strong>${nomeLimpo}</strong> (${socio.categoria || 'Efetivo'} &bull; ${socio.estadoMembro || 'Ativo'}).`;
+      } else {
+        if (!silencioso) {
+          fb.style.display = 'block';
+          fb.style.background = '#fffbeb';
+          fb.style.border = '1px solid #fcd34d';
+          fb.style.color = '#92400e';
+          fb.innerHTML = `ℹ️ Não foi encontrado nenhum sócio com o número <strong>${numVal}</strong> na listagem geral.`;
+        } else {
+          fb.style.display = 'none';
+        }
+      }
+    };
+
+    window.atualizarOpcoesCargoPorOrgao = function(orgao) {
+      const elPerfil = document.getElementById('formUserPerfil');
+      if (orgao === 'Direção' || orgao === 'Assembleia Geral' || orgao === 'Conselho Fiscal') {
+        if (elPerfil && elPerfil.value === 'Utilizador Geral') {
+          elPerfil.value = 'Membro da Direção';
+          aplicarPresetPorPerfil('Membro da Direção');
+        }
+      }
+    };
+
     window.aplicarPresetPorPerfil = function(perfil) {
       if (perfil.includes('Administrador')) aplicarPresetPermissoes('admin');
       else if (perfil.includes('Direção')) aplicarPresetPermissoes('direcao');
@@ -2319,6 +2498,8 @@
       const telefone = document.getElementById('formUserTelefone').value.trim();
       const socioVal = document.getElementById('formUserSocioNum').value.trim();
       const perfil = document.getElementById('formUserPerfil').value;
+      const orgao = document.getElementById('formUserOrgao')?.value || 'Nenhum';
+      const cargo = (document.getElementById('formUserCargo')?.value || '').trim();
       const morada = document.getElementById('formUserMorada').value.trim();
       const estado = document.getElementById('formUserEstadoValor').value;
       const motivo = document.getElementById('formUserMotivoSuspensao').value.trim();
@@ -2361,6 +2542,8 @@
           utilizadores[idx].telefone = telefone;
           utilizadores[idx].numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
           utilizadores[idx].perfil = perfil;
+          utilizadores[idx].orgao = orgao;
+          utilizadores[idx].cargo = cargo;
           utilizadores[idx].morada = morada;
           utilizadores[idx].estado = estado;
           utilizadores[idx].motivo_suspensao = motivo;
@@ -2381,6 +2564,8 @@
               curr.foto = foto;
               curr.morada = morada;
               curr.numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
+              curr.orgao = orgao;
+              curr.cargo = cargo;
               curr.permissoes_modulos = novasPermissoes;
               window.setArcaCurrentUser(curr);
             }
@@ -2398,6 +2583,8 @@
           telefone,
           numeroSocio: socioVal ? parseInt(socioVal, 10) : null,
           perfil,
+          orgao,
+          cargo,
           morada: morada || 'Aguada de Baixo',
           estado,
           motivo_suspensao: motivo,

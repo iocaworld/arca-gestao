@@ -596,6 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
       numeroSocio: 314,
       perfil: "Administrador Total",
+      orgao: "Direção",
+      cargo: "Presidente",
       estado: "Ativo",
       password: "jorge",
       data_registo: "2024-01-10",
@@ -622,6 +624,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Rua Vale do Lobo, 11 - Landiosa, Aguada de Baixo",
       numeroSocio: 332,
       perfil: "Tesoureiro / Finanças",
+      orgao: "Direção",
+      cargo: "Tesoureiro",
       estado: "Ativo",
       password: "artur",
       data_registo: "2024-01-15",
@@ -646,6 +650,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Aguada de Baixo",
       numeroSocio: 125,
       perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vice-Presidente",
       estado: "Ativo",
       password: "jose",
       data_registo: "2024-01-20",
@@ -669,6 +675,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Aguada de Baixo",
       numeroSocio: 210,
       perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vice-Presidente",
       estado: "Ativo",
       password: "luis",
       data_registo: "2024-01-20",
@@ -690,7 +698,9 @@ document.addEventListener('DOMContentLoaded', () => {
       telefone: "963 112 405",
       morada: "Aguada de Baixo",
       numeroSocio: 414,
-      perfil: "Própria Ficha (Sócio)",
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Secretária",
       estado: "Ativo",
       password: "raquel",
       data_registo: "2024-01-25",
@@ -853,6 +863,22 @@ document.addEventListener('DOMContentLoaded', () => {
           if (raquelIdx !== -1 && (!parsed[raquelIdx].numeroSocio || parsed[raquelIdx].numeroSocio === 305)) {
             parsed[raquelIdx].numeroSocio = 414;
           }
+
+          // Garantir atributos de Órgão Social e Cargo nos utilizadores
+          parsed.forEach(u => {
+            if (!u.orgao) {
+              if (u.perfil === 'Membro da Direção' || u.id === 1) {
+                u.orgao = 'Direção';
+              } else {
+                u.orgao = 'Nenhum';
+              }
+            }
+            if (u.cargo === undefined || u.cargo === null) {
+              if (u.id === 1) u.cargo = 'Presidente';
+              else if (u.perfil && u.perfil.includes('Tesour')) u.cargo = 'Tesoureiro';
+              else u.cargo = '';
+            }
+          });
 
           localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
           return parsed;

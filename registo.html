@@ -203,6 +203,32 @@
         <form id="formRegistoUtilizador" onsubmit="handleSubmeterRegisto(event)">
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
+            <!-- Bloco em Destaque: Verificação de Sócio da ARCA & Preenchimento Automático -->
+            <div style="grid-column: 1 / -1; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-md); padding: 1.15rem 1.25rem; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.08);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 1.35rem;">📇</span>
+                  <strong style="color: #166534; font-size: 1rem;">É Sócio da A.R.C.A.?</strong>
+                </div>
+                <span style="font-size: 0.76rem; background: #dcfce7; color: #15803d; font-weight: 800; padding: 2px 9px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.04em;">
+                  Preenchimento Automático
+                </span>
+              </div>
+              <p style="font-size: 0.86rem; color: #14532d; margin: 0 0 0.85rem 0; line-height: 1.45;">
+                Introduza o seu número de associado para preencher de imediato o seu nome e contactos oficiais:
+              </p>
+              <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px; position: relative;">
+                  <input type="number" id="regSocio" class="form-control" placeholder="Ex: 414 (ou deixe vazio se não for sócio)" style="font-size: 1.05rem; font-weight: 700; color: #166534; background: #ffffff; border: 2px solid #86efac; padding: 0.65rem 0.9rem;" oninput="detectarSocioRegistoAuto(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();executarBuscarSocioRegisto();}">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="executarBuscarSocioRegisto()" style="padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.45rem; white-space: nowrap; box-shadow: 0 2px 6px rgba(28, 109, 66, 0.2);">
+                  <span>🔍</span>
+                  <span>Importar Dados</span>
+                </button>
+              </div>
+              <div id="socioLookupFeedback" style="display: none; margin-top: 0.75rem; font-size: 0.86rem; padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); line-height: 1.45;"></div>
+            </div>
             
             <!-- Nome Completo -->
             <div class="form-group" style="grid-column: 1 / -1;">
@@ -230,19 +256,20 @@
               <input type="tel" id="regTelefone" class="form-control" required placeholder="Ex: 912 345 678" autocomplete="tel">
             </div>
 
-            <!-- Número de Sócio (Opcional) -->
-            <div class="form-group">
-              <label for="regSocio">Número de Sócio da ARCA (Se for associado)</label>
-              <input type="number" id="regSocio" class="form-control" placeholder="Ex: 389 (deixe vazio se não for sócio)">
-              <small style="color: var(--text-muted); font-size: 0.75rem;">Apenas números (sem o símbolo #).</small>
-            </div>
-
             <!-- Motivo / Função na Associação -->
-            <div class="form-group" style="grid-column: 1 / -1;">
+            <div class="form-group">
               <label for="regFuncao">Qual a sua ligação / função na A.R.C.A.? <span style="color: #dc2626;">*</span></label>
               <select id="regFuncao" class="form-control" required>
                 <option value="Sócio Associado">Sócio Associado</option>
                 <option value="Atleta / Praticante Desportivo">Atleta / Praticante Desportivo</option>
+                <option value="Encarregado de Educação">Encarregado de Educação</option>
+                <option value="Treinador / Equipa Técnica">Treinador / Equipa Técnica / Delegado</option>
+                <option value="Membro de Secção">Membro de Secção Cultural ou Desportiva</option>
+                <option value="Membro dos Órgãos Sociais">Membro dos Órgãos Sociais / Direção</option>
+                <option value="Colaborador / Voluntário">Colaborador / Voluntário</option>
+                <option value="Outro">Outro Motivo</option>
+              </select>
+            </div>
                 <option value="Encarregado de Educação">Encarregado de Educação</option>
                 <option value="Treinador / Equipa Técnica">Treinador / Equipa Técnica / Delegado</option>
                 <option value="Membro de Secção">Membro de Secção Cultural ou Desportiva</option>
@@ -334,11 +361,12 @@
 
   </div>
 
-  <!-- Firebase SDK e Sincronização em Tempo Real -->
+  <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
+  <script src="js/socios-data.js?v=20261126_v10"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v9"></script>
-  <script src="js/main.js?v=20261126_v9"></script>
+  <script src="js/firebase-sync.js?v=20261126_v10"></script>
+  <script src="js/main.js?v=20261126_v10"></script>
   <script>
     function toggleRegPassword(id) {
       const el = document.getElementById(id);
@@ -360,6 +388,121 @@
         el.style.color = '#166534';
       }
     }
+
+    // =========================================================================
+    // Pesquisa e Auto-Preenchimento por Número de Sócio da ARCA
+    // =========================================================================
+    let debounceSocioTimer = null;
+
+    function obterListaSociosGeral() {
+      if (typeof getGlobalSocios === 'function') {
+        const list = getGlobalSocios();
+        if (list && list.length > 0) return list;
+      }
+      if (typeof ARCA_SOCIOS_BASE !== 'undefined' && Array.isArray(ARCA_SOCIOS_BASE)) {
+        return ARCA_SOCIOS_BASE;
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem('arca_socios_data_v3'));
+        if (Array.isArray(stored)) return stored;
+      } catch (e) {}
+      return [];
+    }
+
+    window.detectarSocioRegistoAuto = function(val) {
+      clearTimeout(debounceSocioTimer);
+      const str = (val || '').trim();
+      if (!str) {
+        const fb = document.getElementById('socioLookupFeedback');
+        if (fb) fb.style.display = 'none';
+        return;
+      }
+      debounceSocioTimer = setTimeout(() => {
+        executarBuscarSocioRegisto(true);
+      }, 400);
+    };
+
+    window.executarBuscarSocioRegisto = function(silencioso = false) {
+      const input = document.getElementById('regSocio');
+      const fb = document.getElementById('socioLookupFeedback');
+      if (!input || !fb) return;
+
+      const numVal = parseInt(input.value.trim(), 10);
+      if (isNaN(numVal) || numVal <= 0) {
+        if (!silencioso) {
+          fb.style.display = 'block';
+          fb.style.background = '#fffbeb';
+          fb.style.border = '1px solid #fcd34d';
+          fb.style.color = '#92400e';
+          fb.innerHTML = '⚠️ Por favor, introduza um número de sócio válido (ex.: 414). Se não for associado, deixe o campo em branco.';
+        } else {
+          fb.style.display = 'none';
+        }
+        return;
+      }
+
+      const socios = obterListaSociosGeral();
+      const socio = socios.find(s => parseInt(s.numero, 10) === numVal);
+
+      if (socio) {
+        // Preencher Nome Completo (limpando anotações tipo "(Fundador)" do nome)
+        const nomeLimpo = socio.nome.replace(/\s*\([^)]*\)/g, '').trim();
+        const elNome = document.getElementById('regNome');
+        if (elNome) elNome.value = nomeLimpo;
+
+        // Preencher Telefone se houver
+        const elTel = document.getElementById('regTelefone');
+        if (elTel && socio.telefone) {
+          elTel.value = socio.telefone;
+        }
+
+        // Preencher Email se houver
+        const elEmail = document.getElementById('regEmail');
+        if (elEmail && socio.email) {
+          elEmail.value = socio.email;
+        }
+
+        // Gerar sugestão de username limpo (ex: raquel.cunha) se username estiver vazio
+        const elUsername = document.getElementById('regUsername');
+        if (elUsername && !elUsername.value) {
+          const clean = nomeLimpo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '');
+          const partes = clean.split(/\s+/).filter(Boolean);
+          if (partes.length >= 2) {
+            elUsername.value = `${partes[0]}.${partes[partes.length - 1]}`;
+          } else if (partes.length === 1) {
+            elUsername.value = partes[0];
+          }
+        }
+
+        // Ajustar função para "Sócio Associado"
+        const elFuncao = document.getElementById('regFuncao');
+        if (elFuncao) elFuncao.value = 'Sócio Associado';
+
+        fb.style.display = 'block';
+        fb.style.background = '#ecfdf5';
+        fb.style.border = '1.5px solid #6ee7b7';
+        fb.style.color = '#065f46';
+        fb.innerHTML = `
+          <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
+            <span style="font-size: 1.15rem; line-height: 1;">✅</span>
+            <div>
+              <strong>Sócio n.º ${socio.numero} reconhecido: ${nomeLimpo}</strong><br>
+              <span style="font-size: 0.8rem; color: #047857;">Categoria: ${socio.categoria || 'Efetivo'} &bull; Situação: ${socio.estadoMembro || 'Ativo'}. Os seus dados oficiais foram importados! Pode agora completar o que faltar e definir a sua palavra-passe.</span>
+            </div>
+          </div>
+        `;
+      } else {
+        if (!silencioso) {
+          fb.style.display = 'block';
+          fb.style.background = '#fffbeb';
+          fb.style.border = '1px solid #fcd34d';
+          fb.style.color = '#92400e';
+          fb.innerHTML = `ℹ️ Não foi encontrado nenhum sócio com o número <strong>${numVal}</strong>. Se ainda não for sócio ou não souber o número, pode deixar o campo vazio e continuar o registo manual.`;
+        } else {
+          fb.style.display = 'none';
+        }
+      }
+    };
 
     window.handleSubmeterRegisto = function(e) {
       e.preventDefault();

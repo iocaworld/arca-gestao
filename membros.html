@@ -894,8 +894,12 @@
     </div>
   </div>
 
-  <script src="js/socios-data.js"></script>
-  <script src="js/main.js"></script>
+  <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
+  <script src="js/socios-data.js?v=20261126_v10"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-sync.js?v=20261126_v10"></script>
+  <script src="js/main.js?v=20261126_v10"></script>
   <script>
     // =========================================================================
     // ESTRUTURA DOS MÓDULOS E MENUS DA PLATAFORMA A.R.C.A.
@@ -1463,36 +1467,80 @@
       }
     ];
 
-    // Carregamento & Migração Segura do Armazenamento Local
-    let membros = JSON.parse(localStorage.getItem(MEMBROS_STORAGE_KEY));
-    if (!membros || !Array.isArray(membros) || membros.length === 0) {
-      membros = OFFICIAL_MEMBROS;
-      localStorage.setItem(MEMBROS_STORAGE_KEY, JSON.stringify(membros));
-    } else {
-      membros.forEach(m => {
-        if (m.foto && m.foto.includes('gestao.arca-aguadadebaixo.pt/api/users')) {
-          if (m.id === 1) m.foto = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>";
-          else if (m.id === 5) m.foto = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bgA' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230369a1'/><stop offset='100%' stop-color='%23075985'/></linearGradient><linearGradient id='skinA' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23ffedd5'/><stop offset='100%' stop-color='%23fed7aa'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bgA)'/><circle cx='50' cy='40' r='20' fill='url(%23skinA)'/><path d='M30 32c2-10 11-16 20-16s18 6 20 16c-4-3-10-4-20-4s-16 1-20 4z' fill='%2364748b'/><path d='M22 90c0-16 12.5-28 28-28s28 12 28 28' fill='%23334155'/><path d='M44 62l6 10 6-10' fill='%23f8fafc'/></svg>";
-          else m.foto = "";
-        }
-        if (!m.foto) {
-          if (m.id === 1) m.foto = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>";
-          else if (m.id === 5) m.foto = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bgA' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230369a1'/><stop offset='100%' stop-color='%23075985'/></linearGradient><linearGradient id='skinA' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23ffedd5'/><stop offset='100%' stop-color='%23fed7aa'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bgA)'/><circle cx='50' cy='40' r='20' fill='url(%23skinA)'/><path d='M30 32c2-10 11-16 20-16s18 6 20 16c-4-3-10-4-20-4s-16 1-20 4z' fill='%2364748b'/><path d='M22 90c0-16 12.5-28 28-28s28 12 28 28' fill='%23334155'/><path d='M44 62l6 10 6-10' fill='%23f8fafc'/></svg>";
-        }
-        if (!m.permissoes_modulos) {
-          if (m.cargo && m.cargo.toLowerCase().includes('tesoureir')) {
-            m.permissoes_modulos = PRESETS_PERMISSOES.tesoureiro.gerar();
-          } else if (m.cargo && m.cargo.toLowerCase().includes('presidente') && m.orgao === 'Direção') {
-            m.permissoes_modulos = PRESETS_PERMISSOES.admin.gerar();
-          } else if (m.cargo && m.cargo.toLowerCase().includes('secretár')) {
-            m.permissoes_modulos = PRESETS_PERMISSOES.secretaria.gerar();
+    // =========================================================================
+    // Carregamento Centralizado a partir da Base de Dados de Utilizadores
+    // =========================================================================
+    function getMembrosFromCentralUtilizadores() {
+      let users = [];
+      if (typeof window.getArcaUtilizadores === 'function') {
+        users = window.getArcaUtilizadores();
+      } else {
+        try {
+          users = JSON.parse(localStorage.getItem('arca_utilizadores_v2')) || [];
+        } catch (e) { users = []; }
+      }
+
+      // Se ainda não houver dirigentes atribuídos em Utilizadores, semeamos os oficiais da ARCA
+      const dirCount = users.filter(u => u.orgao && u.orgao !== 'Nenhum').length;
+      if (dirCount === 0 && Array.isArray(OFFICIAL_MEMBROS)) {
+        OFFICIAL_MEMBROS.forEach(om => {
+          const exists = users.find(u => (u.id === om.id) || (u.login && om.username && u.login.toLowerCase() === om.username.replace('@','').toLowerCase()) || (u.nome && u.nome === om.nome));
+          if (!exists) {
+            users.push({
+              id: om.id,
+              nome: om.nome,
+              login: (om.username || '').replace('@',''),
+              username: om.username || ('@' + (om.login || '')),
+              email: om.email || '',
+              telefone: om.telefone || '',
+              morada: om.morada || 'Aguada de Baixo',
+              numeroSocio: om.numeroSocio || null,
+              perfil: om.perfil || 'Membro da Direção',
+              orgao: om.orgao || 'Direção',
+              cargo: om.cargo || 'Dirigente',
+              estado: om.estado || 'Ativo',
+              foto: om.foto || '',
+              permissoes_modulos: om.permissoes_modulos || {}
+            });
           } else {
-            m.permissoes_modulos = PRESETS_PERMISSOES.consulta.gerar();
+            if (!exists.orgao || exists.orgao === 'Nenhum') exists.orgao = om.orgao;
+            if (!exists.cargo) exists.cargo = om.cargo;
           }
+        });
+        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(users));
+      }
+
+      // Filtrar estritamente quem pertence a um Órgão Social
+      const filtrados = users.filter(u => {
+        if (!u.orgao || u.orgao === 'Nenhum') {
+          if (u.perfil === 'Membro da Direção' || u.perfil === 'Direção Executiva') {
+            u.orgao = 'Direção';
+            return true;
+          }
+          return false;
         }
+        return true;
       });
-      localStorage.setItem(MEMBROS_STORAGE_KEY, JSON.stringify(membros));
+
+      return filtrados.map(u => ({
+        id: u.id,
+        nome: u.nome,
+        cargo: u.cargo || (u.id === 1 ? 'Presidente' : 'Vogal'),
+        orgao: u.orgao || 'Direção',
+        numeroSocio: u.numeroSocio,
+        username: u.username || ('@' + u.login),
+        login: u.login,
+        email: u.email,
+        telefone: u.telefone,
+        morada: u.morada,
+        perfil: u.perfil,
+        foto: u.foto,
+        estado: u.estado || 'Ativo',
+        permissoes_modulos: u.permissoes_modulos
+      }));
     }
+
+    let membros = getMembrosFromCentralUtilizadores();
 
     // Configuração de Colunas & Ordenação
     const COLS_MEM_KEY = 'arca_cols_membros_v2';
@@ -2392,23 +2440,27 @@
     };
 
     function applyAvatarToMember(membroId, dataUrl) {
-      const idx = membros.findIndex(m => m.id === membroId);
-      if (idx >= 0) {
-        membros[idx].foto = dataUrl;
-        localStorage.setItem(MEMBROS_STORAGE_KEY, JSON.stringify(membros));
-        renderMembros();
+      let allUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+      const uIdx = allUsers.findIndex(u => u.id === membroId);
+      if (uIdx >= 0) {
+        allUsers[uIdx].foto = dataUrl;
+        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(allUsers));
+        if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+          window.saveArcaUtilizadorToCloud(allUsers[uIdx]);
+        }
 
-        // Se este membro for o utilizador com sessão iniciada, sincroniza de imediato
         if (typeof window.getArcaCurrentUser === 'function') {
           const curr = window.getArcaCurrentUser();
-          if (curr && (curr.id === membros[idx].id || curr.login === membros[idx].login || curr.nome === membros[idx].nome)) {
+          if (curr && (curr.id === membroId || curr.login === allUsers[uIdx].login)) {
             curr.foto = dataUrl;
             window.setArcaCurrentUser(curr);
           }
         }
-
-        showToast(`Fotografia de "${membros[idx].nome}" atualizada com sucesso!`, 'success');
       }
+
+      membros = getMembrosFromCentralUtilizadores();
+      renderMembros();
+      showToast('Fotografia do dirigente atualizada com sucesso!', 'success');
     }
 
     // =========================================================================
@@ -2443,7 +2495,7 @@
       document.getElementById('formMembroEmail').value = m.email || '';
       document.getElementById('formMembroTelefone').value = m.telefone || '';
       document.getElementById('formMembroMorada').value = m.morada || '';
-      document.getElementById('formMembroPerfil').value = m.perfil || 'Personalizado';
+      document.getElementById('formMembroPerfil').value = m.perfil || 'Membro da Direção';
       document.getElementById('formMembroEstado').value = m.estado || 'Ativo';
 
       // Carregar fotografia do membro no formulário
@@ -2464,7 +2516,7 @@
       if (modal) modal.classList.remove('active');
     };
 
-    window.handleSalvarMembro = function(e) {
+    window.handleSalvarMembro = async function(e) {
       e.preventDefault();
       const idVal = document.getElementById('formMembroId').value;
       const nome = document.getElementById('formMembroNome').value.trim();
@@ -2481,63 +2533,79 @@
 
       // Extrair permissões configuradas na Aba 2
       const novasPermissoes = extractPermissoesFromForm();
-      const resumoPermissoes = gerarResumoPermissoes(novasPermissoes);
+
+      let allUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+      let savedUser = null;
 
       if (idVal) {
-        // Atualizar membro existente
-        const idx = membros.findIndex(item => item.id === parseInt(idVal));
+        // Atualizar membro existente na base central
+        const uId = parseInt(idVal, 10);
+        const idx = allUsers.findIndex(u => u.id === uId);
         if (idx >= 0) {
-          membros[idx].nome = nome;
-          membros[idx].orgao = orgao;
-          membros[idx].cargo = cargo;
-          membros[idx].numeroSocio = socioNum;
-          membros[idx].username = username;
-          membros[idx].email = email;
-          membros[idx].telefone = telefone;
-          membros[idx].morada = morada;
-          membros[idx].perfil = perfil;
-          membros[idx].estado = estado;
-          membros[idx].foto = foto;
-          membros[idx].permissoes_modulos = novasPermissoes;
-          membros[idx].permissoes = resumoPermissoes;
+          allUsers[idx].nome = nome;
+          allUsers[idx].orgao = orgao;
+          allUsers[idx].cargo = cargo;
+          allUsers[idx].numeroSocio = socioNum;
+          allUsers[idx].username = username;
+          allUsers[idx].login = username.replace(/^@/, '');
+          allUsers[idx].email = email;
+          allUsers[idx].telefone = telefone;
+          allUsers[idx].morada = morada;
+          allUsers[idx].perfil = perfil;
+          allUsers[idx].estado = estado;
+          allUsers[idx].foto = foto;
+          allUsers[idx].permissoes_modulos = novasPermissoes;
+          savedUser = allUsers[idx];
 
-          // Se este membro for o utilizador atualmente logado, sincroniza com a sessão global
           if (typeof window.getArcaCurrentUser === 'function') {
             const curr = window.getArcaCurrentUser();
-            if (curr && (curr.id === membros[idx].id || curr.login === membros[idx].login || curr.nome === membros[idx].nome)) {
+            if (curr && (curr.id === uId || curr.login === allUsers[idx].login)) {
               curr.nome = nome;
               curr.email = email;
               curr.telefone = telefone;
               curr.morada = morada;
               curr.foto = foto;
+              curr.orgao = orgao;
+              curr.cargo = cargo;
+              curr.permissoes_modulos = novasPermissoes;
               window.setArcaCurrentUser(curr);
             }
           }
         }
-        showToast(`Membro "${nome}" e respetivas informações atualizados com sucesso!`, 'success');
+        showToast(`Dirigente "${nome}" atualizado na base central com sucesso!`, 'success');
       } else {
-        // Criar novo membro
-        const newMembro = {
-          id: Date.now(),
-          nome: nome,
-          cargo: cargo,
-          orgao: orgao,
+        // Criar novo membro na base central
+        const maxId = allUsers.reduce((max, u) => Math.max(max, u.id || 0), 0);
+        const cleanLogin = (username || `@${nome.toLowerCase().replace(/[^a-z0-9]/g, '')}`).replace(/^@/, '');
+        savedUser = {
+          id: maxId + 1,
+          nome,
+          login: cleanLogin,
+          username: '@' + cleanLogin,
+          cargo,
+          orgao,
           numeroSocio: socioNum,
-          username: username || `@${nome.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
-          email: email,
-          telefone: telefone,
-          morada: morada,
-          perfil: perfil,
-          foto: foto,
-          permissoes: resumoPermissoes,
-          permissoes_modulos: novasPermissoes,
-          estado: estado
+          email,
+          telefone,
+          morada: morada || 'Aguada de Baixo',
+          perfil: perfil || 'Membro da Direção',
+          foto,
+          estado: estado || 'Ativo',
+          password: 'arca' + new Date().getFullYear(),
+          data_registo: new Date().toISOString().split('T')[0],
+          data_rgpd: new Date().toISOString().split('T')[0],
+          permissoes_modulos: novasPermissoes
         };
-        membros.push(newMembro);
-        showToast(`Novo membro "${nome}" adicionado com sucesso!`, 'success');
+        allUsers.push(savedUser);
+        showToast(`Novo dirigente "${nome}" registado na base de utilizadores com sucesso!`, 'success');
       }
 
-      localStorage.setItem(MEMBROS_STORAGE_KEY, JSON.stringify(membros));
+      localStorage.setItem('arca_utilizadores_v2', JSON.stringify(allUsers));
+      if (savedUser && typeof window.saveArcaUtilizadorToCloud === 'function') {
+        await window.saveArcaUtilizadorToCloud(savedUser);
+      }
+
+      membros = getMembrosFromCentralUtilizadores();
       renderMembros();
       updateMembrosStats();
       closeFormMembroModal();
@@ -2550,9 +2618,9 @@
       const elCf = document.getElementById('statConselhoFiscal');
 
       if (elTotal) elTotal.textContent = membros.length;
-      if (elDir) elDir.textContent = membros.filter(m => m.orgao === 'Direção').length;
-      if (elAg) elAg.textContent = membros.filter(m => m.orgao === 'Assembleia Geral').length;
-      if (elCf) elCf.textContent = membros.filter(m => m.orgao === 'Conselho Fiscal').length;
+      if (elDir) elDir.textContent = membros.filter(m => m.orgao && m.orgao.includes('Direção')).length;
+      if (elAg) elAg.textContent = membros.filter(m => m.orgao && m.orgao.includes('Assembleia')).length;
+      if (elCf) elCf.textContent = membros.filter(m => m.orgao && m.orgao.includes('Conselho')).length;
     }
 
     // Inicialização da Página
@@ -2561,6 +2629,15 @@
       updateMemSortIndicators();
       updateMembrosStats();
       renderMembros();
+
+      // Subscrição em Tempo Real à Base Central de Utilizadores (Firestore)
+      if (typeof window.listenArcaUtilizadoresRealtime === 'function') {
+        window.listenArcaUtilizadoresRealtime(() => {
+          membros = getMembrosFromCentralUtilizadores();
+          updateMembrosStats();
+          renderMembros();
+        });
+      }
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
