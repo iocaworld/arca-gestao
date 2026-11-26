@@ -835,13 +835,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Garantir que Jorge, Raqueli e todas as contas base estão sempre presentes
+          // Garantir que Jorge, Raqueli e todas as contas base estão sempre presentes e atualizadas
           let updated = false;
           SEED_UTILIZADORES.forEach(seed => {
-            const exists = parsed.some(p => (p.login && p.login.toLowerCase() === seed.login.toLowerCase()) || p.id === seed.id);
-            if (!exists) {
+            const idx = parsed.findIndex(p => (p.login && p.login.toLowerCase() === seed.login.toLowerCase()) || p.id === seed.id);
+            if (idx === -1) {
               parsed.push(seed);
               updated = true;
+            } else if (seed.login === 'raqueli' || seed.login === 'jorge') {
+              if (seed.numeroSocio && parsed[idx].numeroSocio !== seed.numeroSocio) {
+                parsed[idx].numeroSocio = seed.numeroSocio;
+                updated = true;
+              }
+              if (seed.permissoes_modulos) {
+                parsed[idx].permissoes_modulos = seed.permissoes_modulos;
+                updated = true;
+              }
+              if (seed.perfil && parsed[idx].perfil !== seed.perfil) {
+                parsed[idx].perfil = seed.perfil;
+                updated = true;
+              }
             }
           });
           if (updated) {
@@ -1057,6 +1070,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem(ARCA_SESSION_KEY);
       if (saved) {
         const u = JSON.parse(saved);
+        // Sincronizar com os dados mais recentes do utilizador na lista
+        const allUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+        const fresh = allUsers.find(x => x.id === u.id || (x.login && x.login.toLowerCase() === (u.login || '').toLowerCase()));
+        if (fresh) {
+          if (fresh.numeroSocio !== undefined) u.numeroSocio = fresh.numeroSocio;
+          if (fresh.permissoes_modulos) u.permissoes_modulos = fresh.permissoes_modulos;
+          if (fresh.perfil) u.perfil = fresh.perfil;
+          if (fresh.estado) u.estado = fresh.estado;
+          localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
+        }
         if (u.foto && (u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users') || u.foto.includes('xmlns="http://www.w3.org/2000/svg"') || (u.id === 1 && !u.foto.startsWith('data:image/')))) {
           u.foto = JORGE_AVATAR_SVG;
           localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
