@@ -848,24 +848,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (adminSeed) parsed.unshift(adminSeed);
           }
 
-          // Garantir número de sócio e permissões estritas para Raquel Alexandra Marques da Cunha (Sócia nº 414)
+          // Garantir número de sócio correto para Raquel Alexandra Marques da Cunha (Sócia nº 414)
           const raquelIdx = parsed.findIndex(p => p.login === 'raquel.cunha');
-          if (raquelIdx !== -1) {
-            let changed = false;
-            if (parsed[raquelIdx].numeroSocio !== 414) {
-              parsed[raquelIdx].numeroSocio = 414;
-              changed = true;
-            }
-            if (!parsed[raquelIdx].permissoes_modulos || parsed[raquelIdx].permissoes_modulos.painel || parsed[raquelIdx].permissoes_modulos.socios?.mode !== 'own') {
-              parsed[raquelIdx].perfil = "Própria Ficha (Sócio)";
-              parsed[raquelIdx].permissoes_modulos = {
-                socios: { enabled: true, mode: "own", submenus: ["consultar"] }
-              };
-              changed = true;
-            }
-            if (changed && typeof window.saveArcaUtilizadorToCloud === 'function') {
-              window.saveArcaUtilizadorToCloud(parsed[raquelIdx]);
-            }
+          if (raquelIdx !== -1 && (!parsed[raquelIdx].numeroSocio || parsed[raquelIdx].numeroSocio === 305)) {
+            parsed[raquelIdx].numeroSocio = 414;
           }
 
           localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
@@ -1001,16 +987,16 @@ document.addEventListener('DOMContentLoaded', () => {
       // Redirecionamento inteligente conforme permissões
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html?v=20261126_v8';
+      let targetUrl = 'painel.html?v=20261126_v9';
 
       if (!isAdmin) {
         if (!perms.painel?.enabled) {
-          if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v8';
-          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v8';
-          else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v8';
-          else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v8';
-          else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v8';
-          else if (perms.administracao?.enabled) targetUrl = 'utilizadores.html?v=20261126_v8';
+          if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v9';
+          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v9';
+          else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v9';
+          else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v9';
+          else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v9';
+          else if (perms.administracao?.enabled) targetUrl = 'utilizadores.html?v=20261126_v9';
         }
       }
 
@@ -1053,15 +1039,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html?v=20261126_v8';
+      let targetUrl = 'painel.html?v=20261126_v9';
 
       if (!isAdmin && !perms.painel?.enabled) {
-        if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v8';
-        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v8';
-        else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v8';
-        else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v8';
-        else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v8';
-        else if (perms.administracao?.enabled) targetUrl = 'utilizadores.html?v=20261126_v8';
+        if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v9';
+        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v9';
+        else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v9';
+        else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v9';
+        else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v9';
+        else if (perms.administracao?.enabled) targetUrl = 'utilizadores.html?v=20261126_v9';
       }
 
       if (alertBox) {
@@ -1093,12 +1079,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (fresh.estado) u.estado = fresh.estado;
           localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
         }
-        if (u.login === 'raquel.cunha' || (u.nome && u.nome.toLowerCase().includes('raquel alexandra'))) {
+        if ((u.login === 'raquel.cunha' || (u.nome && u.nome.toLowerCase().includes('raquel alexandra'))) && (!u.numeroSocio || u.numeroSocio === 305)) {
           u.numeroSocio = 414;
-          u.perfil = "Própria Ficha (Sócio)";
-          u.permissoes_modulos = {
-            socios: { enabled: true, mode: "own", submenus: ["consultar"] }
-          };
           localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
         }
         if (u.foto && (u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users') || u.foto.includes('xmlns="http://www.w3.org/2000/svg"') || (u.id === 1 && !u.foto.startsWith('data:image/')))) {
