@@ -50,16 +50,22 @@ const ARCA_FIREBASE_CONFIG = {
 
     try {
       const snapshot = await firestore.collection('utilizadores').get();
-      if (snapshot.empty) {
-        console.log('[ARCA Firebase] Coleção de utilizadores vazia na nuvem. A semear contas iniciais...');
-        await seedInitialUsersToCloud();
-        return window.getArcaUtilizadores();
-      }
-
-      const cloudUsers = [];
+      let cloudUsers = [];
       snapshot.forEach(doc => {
         cloudUsers.push(doc.data());
       });
+
+      // Garantir que as contas base de gestão (Jorge, Artur, Direção) estão sempre presentes no Firestore
+      const hasJorge = cloudUsers.some(u => (u.login && u.login.toLowerCase() === 'jorge') || u.id === 1);
+      if (!hasJorge || cloudUsers.length < 2) {
+        console.log('[ARCA Firebase] A sincronizar/semear contas oficiais da ARCA na nuvem...');
+        await window.seedInitialUsersToCloud();
+        
+        // Recarregar
+        const refreshedSnap = await firestore.collection('utilizadores').get();
+        cloudUsers = [];
+        refreshedSnap.forEach(doc => cloudUsers.push(doc.data()));
+      }
 
       // Ordenar por ID crescente
       cloudUsers.sort((a, b) => (a.id || 0) - (b.id || 0));
@@ -120,16 +126,20 @@ const ARCA_FIREBASE_CONFIG = {
   };
 
   // Semear utilizadores padrão na nuvem
-  async function seedInitialUsersToCloud() {
+  window.seedInitialUsersToCloud = async function() {
     const firestore = initFirebase();
     if (!firestore) return;
 
-    const seedUsers = window.getArcaUtilizadores();
+    const seedUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+    if (!seedUsers.length) return;
+
     const batch = firestore.batch();
 
     seedUsers.forEach(u => {
-      const docRef = firestore.collection('utilizadores').doc(String(u.id));
-      batch.set(docRef, u, { merge: true });
+      if (u && u.id) {
+        const docRef = firestore.collection('utilizadores').doc(String(u.id));
+        batch.set(docRef, u, { merge: true });
+      }
     });
 
     try {
@@ -138,7 +148,7 @@ const ARCA_FIREBASE_CONFIG = {
     } catch (err) {
       console.warn('[ARCA Firebase] Erro ao semear contas:', err);
     }
-  }
+  };
 
   // Inicialização automática ao carregar
   document.addEventListener('DOMContentLoaded', () => {

@@ -814,7 +814,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem(ARCA_UTILIZADORES_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Garantir que o Jorge e as contas oficiais nunca desaparecem da lista
+          const hasJorge = parsed.some(u => (u.login && u.login.toLowerCase() === 'jorge') || u.id === 1);
+          if (!hasJorge) {
+            const merged = [...SEED_UTILIZADORES, ...parsed.filter(p => !SEED_UTILIZADORES.some(s => s.id === p.id))];
+            localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(merged));
+            return merged;
+          }
+          return parsed;
+        }
       }
     } catch (e) {}
     localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(SEED_UTILIZADORES));
@@ -823,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Função Central de Validação Estrita de Login
   window.validarCredenciaisArca = function(identificador, senha) {
-    const list = window.getArcaUtilizadores();
+    let list = window.getArcaUtilizadores();
     const cleanId = (identificador || '').trim().toLowerCase();
     const cleanPass = (senha || '').trim();
 
@@ -831,12 +840,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return { ok: false, msg: 'Por favor, indique o utilizador e a palavra-passe.' };
     }
 
-    const found = list.find(u => 
+    let found = list.find(u => 
       (u.login && u.login.toLowerCase() === cleanId) ||
       (u.username && u.username.replace('@','').toLowerCase() === cleanId) ||
       (u.email && u.email.toLowerCase() === cleanId) ||
       (u.nome && u.nome.toLowerCase() === cleanId)
     );
+
+    // Salvaguarda imediata para o Administrador Jorge Cunha:
+    if (!found && (cleanId === 'jorge' || cleanId === 'scunhajorge@gmail.com' || cleanId === '@jorge')) {
+      found = SEED_UTILIZADORES[0]; // Jorge Cunha
+      list.unshift(found);
+      localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(list));
+      if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+        window.saveArcaUtilizadorToCloud(found);
+      }
+    }
 
     if (!found) {
       return { 
