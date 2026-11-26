@@ -1046,8 +1046,8 @@
   <!-- Firebase SDK e Sincronização em Tempo Real -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_purge"></script>
-  <script src="js/main.js?v=20261126_auth"></script>
+  <script src="js/firebase-sync.js?v=20261126_perm3"></script>
+  <script src="js/main.js?v=20261126_perm3"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -1360,6 +1360,26 @@
         ultimo_acesso: "01/08/2026",
         foto: "",
         permissoes_modulos: {}
+      },
+      {
+        id: 11,
+        nome: "Raqueli",
+        login: "raqueli",
+        username: "@raqueli",
+        email: "raqueli@arca.pt",
+        telefone: "912 000 000",
+        morada: "Aguada de Baixo",
+        numeroSocio: null,
+        perfil: "Sócio Consulta",
+        estado: "Ativo",
+        password: "raqueli",
+        data_registo: "2026-11-26",
+        data_rgpd: "2026-11-26",
+        ultimo_acesso: "Hoje",
+        foto: "",
+        permissoes_modulos: {
+          socios: { enabled: true, mode: "view", submenus: ["consultar"] }
+        }
       }
     ];
 
@@ -2291,6 +2311,7 @@
       const dataRegisto = document.getElementById('formUserDataRegisto').value;
       const dataRgpd = document.getElementById('formUserDataRgpd').value;
       const foto = document.getElementById('formUserFotoData').value;
+      const passVal = (document.getElementById('formUserPassword')?.value || '').trim();
 
       if (!nome || !login || !email) {
         alert('Por favor, preencha os campos obrigatórios (Nome, Username e E-mail).');
@@ -2332,6 +2353,7 @@
           utilizadores[idx].data_rgpd = dataRgpd;
           utilizadores[idx].foto = foto;
           utilizadores[idx].permissoes_modulos = novasPermissoes;
+          if (passVal) utilizadores[idx].password = passVal;
 
           // Se for o utilizador atual, atualizar sessão
           try {
@@ -2365,6 +2387,7 @@
           data_rgpd: dataRgpd || new Date().toISOString().split('T')[0],
           ultimo_acesso: 'Nunca',
           foto,
+          password: passVal || 'arca2026',
           permissoes_modulos: novasPermissoes
         };
         utilizadores.unshift(novo);
@@ -2420,6 +2443,16 @@
       if (typeof window.listenArcaUtilizadoresRealtime === 'function') {
         window.listenArcaUtilizadoresRealtime((cloudUsers) => {
           if (cloudUsers && cloudUsers.length > 0) {
+            // Garantir que contas base (Jorge, Raqueli, etc.) nunca somem
+            CONTAS_UTILIZADORES_INICIAIS.forEach(seed => {
+              const exists = cloudUsers.some(c => 
+                (c.login && c.login.toLowerCase() === seed.login.toLowerCase()) || 
+                (c.id && seed.id && c.id === seed.id)
+              );
+              if (!exists) {
+                cloudUsers.push(seed);
+              }
+            });
             utilizadores = cloudUsers;
             updateUtilizadoresStats();
             renderUtilizadores();

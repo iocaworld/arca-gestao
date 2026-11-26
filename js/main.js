@@ -806,6 +806,26 @@ document.addEventListener('DOMContentLoaded', () => {
       ultimo_acesso: "01/08/2026",
       foto: "",
       permissoes_modulos: {}
+    },
+    {
+      id: 11,
+      nome: "Raqueli",
+      login: "raqueli",
+      username: "@raqueli",
+      email: "raqueli@arca.pt",
+      telefone: "912 000 000",
+      morada: "Aguada de Baixo",
+      numeroSocio: null,
+      perfil: "Sócio Consulta",
+      estado: "Ativo",
+      password: "raqueli",
+      data_registo: "2026-11-26",
+      data_rgpd: "2026-11-26",
+      ultimo_acesso: "Hoje",
+      foto: "",
+      permissoes_modulos: {
+        socios: { enabled: true, mode: "view", submenus: ["consultar"] }
+      }
     }
   ];
 
@@ -815,12 +835,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Garantir que o Jorge e as contas oficiais nunca desaparecem da lista
-          const hasJorge = parsed.some(u => (u.login && u.login.toLowerCase() === 'jorge') || u.id === 1);
-          if (!hasJorge) {
-            const merged = [...SEED_UTILIZADORES, ...parsed.filter(p => !SEED_UTILIZADORES.some(s => s.id === p.id))];
-            localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(merged));
-            return merged;
+          // Garantir que Jorge, Raqueli e todas as contas base estão sempre presentes
+          let updated = false;
+          SEED_UTILIZADORES.forEach(seed => {
+            const exists = parsed.some(p => (p.login && p.login.toLowerCase() === seed.login.toLowerCase()) || p.id === seed.id);
+            if (!exists) {
+              parsed.push(seed);
+              updated = true;
+            }
+          });
+          if (updated) {
+            localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
           }
           return parsed;
         }
@@ -847,10 +872,17 @@ document.addEventListener('DOMContentLoaded', () => {
       (u.nome && u.nome.toLowerCase() === cleanId)
     );
 
-    // Salvaguarda imediata para o Administrador Jorge Cunha:
+    // Salvaguarda imediata para Jorge Cunha e Raqueli:
     if (!found && (cleanId === 'jorge' || cleanId === 'scunhajorge@gmail.com' || cleanId === '@jorge')) {
-      found = SEED_UTILIZADORES[0]; // Jorge Cunha
+      found = SEED_UTILIZADORES.find(u => u.login === 'jorge');
       list.unshift(found);
+      localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(list));
+      if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+        window.saveArcaUtilizadorToCloud(found);
+      }
+    } else if (!found && (cleanId === 'raqueli' || cleanId === '@raqueli')) {
+      found = SEED_UTILIZADORES.find(u => u.login === 'raqueli');
+      list.push(found);
       localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(list));
       if (typeof window.saveArcaUtilizadorToCloud === 'function') {
         window.saveArcaUtilizadorToCloud(found);
@@ -942,14 +974,29 @@ document.addEventListener('DOMContentLoaded', () => {
         loginBtn.innerHTML = '<span>A validar acesso...</span>';
       }
 
+      // Redirecionamento inteligente conforme permissões
+      const perms = res.user.permissoes_modulos || {};
+      const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
+      let targetUrl = 'painel.html';
+
+      if (!isAdmin) {
+        if (!perms.painel?.enabled) {
+          if (perms.socios?.enabled) targetUrl = 'socios.html';
+          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html';
+          else if (perms.desporto?.enabled) targetUrl = 'desporto.html';
+          else if (perms.documentos?.enabled) targetUrl = 'documentos.html';
+          else if (perms.direcao?.enabled) targetUrl = 'atas.html';
+        }
+      }
+
       if (loginAlert) {
-        loginAlert.textContent = `Acesso autorizado! Bem-vindo(a), ${res.user.nome.split(' ')[0]}. A abrir o painel...`;
+        loginAlert.textContent = `Acesso autorizado! Bem-vindo(a), ${res.user.nome.split(' ')[0]}. A entrar...`;
         loginAlert.className = 'alert-message alert-success';
         loginAlert.style.display = 'block';
       }
 
       setTimeout(() => {
-        window.location.href = 'painel.html';
+        window.location.href = targetUrl;
       }, 700);
     });
   }
@@ -978,13 +1025,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       window.setArcaCurrentUser(res.user);
+
+      const perms = res.user.permissoes_modulos || {};
+      const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
+      let targetUrl = 'painel.html';
+
+      if (!isAdmin && !perms.painel?.enabled) {
+        if (perms.socios?.enabled) targetUrl = 'socios.html';
+        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html';
+        else if (perms.desporto?.enabled) targetUrl = 'desporto.html';
+        else if (perms.documentos?.enabled) targetUrl = 'documentos.html';
+        else if (perms.direcao?.enabled) targetUrl = 'atas.html';
+      }
+
       if (alertBox) {
         alertBox.textContent = `Acesso autorizado! Bem-vindo(a), ${res.user.nome.split(' ')[0]}.`;
         alertBox.className = 'alert alert-success';
         alertBox.style.display = 'block';
       }
       setTimeout(() => {
-        window.location.href = 'painel.html';
+        window.location.href = targetUrl;
       }, 600);
     });
   }
@@ -1014,10 +1074,11 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.removeItem(ARCA_SESSION_KEY);
     }
     window.updateSidebarUserProfile();
+    window.applyArcaPermissions(user);
     window.dispatchEvent(new CustomEvent('arca-user-updated', { detail: user }));
   };
 
-  // Auth Guard Global: Protege páginas restritas da plataforma
+  // Auth Guard Global: Protege páginas restritas e valida permissões de módulo
   (function initArcaAuthGuard() {
     const rawPath = window.location.pathname.toLowerCase().replace(/\/$/, '');
     const segments = rawPath.split('/').filter(Boolean);
@@ -1030,9 +1091,137 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentUser = window.getArcaCurrentUser();
       if (!currentUser || currentUser.estado !== 'Ativo') {
         window.location.replace('/');
+        return;
+      }
+
+      // Validação Estrita de Permissões de Módulo
+      const isAdmin = (currentUser.perfil === 'Administrador Total' || currentUser.login === 'jorge');
+      if (!isAdmin) {
+        const perms = currentUser.permissoes_modulos || {};
+        let isAllowed = true;
+        let blockedModule = '';
+
+        if (pageName.includes('tesouraria') && !perms.tesouraria?.enabled) {
+          isAllowed = false;
+          blockedModule = 'Tesouraria';
+        } else if ((pageName.includes('membros') || pageName.includes('atas')) && !perms.direcao?.enabled) {
+          isAllowed = false;
+          blockedModule = 'Direção';
+        } else if (pageName.includes('utilizadores') && !perms.administracao?.enabled) {
+          isAllowed = false;
+          blockedModule = 'Utilizadores';
+        } else if (pageName.includes('desporto') && !perms.desporto?.enabled) {
+          isAllowed = false;
+          blockedModule = 'Gestão Desportiva';
+        } else if (pageName.includes('documentos') && !perms.documentos?.enabled) {
+          isAllowed = false;
+          blockedModule = 'Documentos';
+        } else if (pageName.includes('socios') && !perms.socios?.enabled) {
+          isAllowed = false;
+          blockedModule = 'Sócios & Cotas';
+        } else if (pageName.includes('painel') && !perms.painel?.enabled) {
+          isAllowed = false;
+          blockedModule = 'Visão Geral';
+        }
+
+        if (!isAllowed) {
+          let dest = 'socios.html';
+          if (perms.socios?.enabled) dest = 'socios.html';
+          else if (perms.tesouraria?.enabled) dest = 'tesouraria.html';
+          else if (perms.desporto?.enabled) dest = 'desporto.html';
+          else if (perms.documentos?.enabled) dest = 'documentos.html';
+          else if (perms.direcao?.enabled) dest = 'atas.html';
+          else if (perms.painel?.enabled) dest = 'painel.html';
+
+          window.location.replace(dest);
+          return;
+        }
       }
     }
   })();
+
+  // Aplicar Filtros de Permissão na Barra Lateral e Interface
+  window.applyArcaPermissions = function(user) {
+    if (!user) user = window.getArcaCurrentUser();
+    if (!user) return;
+
+    const isAdmin = (user.perfil === 'Administrador Total' || user.login === 'jorge');
+    if (isAdmin) return; // Administrador Total vê tudo
+
+    const perms = user.permissoes_modulos || {};
+
+    const hideSidebarSection = (selector) => {
+      document.querySelectorAll(selector).forEach(link => {
+        const item = link.closest('.sidebar-nav > div') || link.closest('ul.nav-list > li') || link.closest('li') || link.closest('div');
+        if (item) item.style.display = 'none';
+      });
+    };
+
+    // 1. Visão Geral (painel.html)
+    if (!perms.painel?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="painel"], .sidebar-nav a[href*="painel"]');
+    }
+
+    // 2. Sócios & Cotas (socios.html)
+    if (!perms.socios?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="socios"], .sidebar-nav a[href*="socios"]');
+    }
+
+    // 3. Tesouraria (tesouraria.html)
+    if (!perms.tesouraria?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="tesouraria"], .sidebar-nav a[href*="tesouraria"]');
+    }
+
+    // 4. Direção (atas.html, membros.html)
+    if (!perms.direcao?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="atas"], .app-sidebar a[href*="membros"], .sidebar-nav a[href*="atas"], .sidebar-nav a[href*="membros"]');
+    }
+
+    // 5. Gestão Desportiva (desporto.html)
+    if (!perms.desporto?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="desporto"], .sidebar-nav a[href*="desporto"]');
+    }
+
+    // 6. Documentação ARCA (documentos.html)
+    if (!perms.documentos?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="documentos"], .sidebar-nav a[href*="documentos"]');
+    }
+
+    // 7. Gestão / Calendário / Eventos (calendario.html, eventos.html)
+    if (!perms.painel?.enabled && !perms.desporto?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="calendario"], .app-sidebar a[href*="eventos"], .sidebar-nav a[href*="calendario"], .sidebar-nav a[href*="eventos"]');
+    }
+
+    // 8. Secções & Grupos (seccoes.html)
+    if (!perms.desporto?.enabled && !perms.painel?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="seccoes"], .sidebar-nav a[href*="seccoes"]');
+    }
+
+    // 9. Painel de Controlo / Utilizadores (utilizadores.html)
+    if (!perms.administracao?.enabled) {
+      hideSidebarSection('.app-sidebar a[href*="utilizadores"], .sidebar-nav a[href*="utilizadores"]');
+    }
+
+    // 10. Bloqueio de Edição em Sócios se o modo for apenas Consulta (view)
+    const rawPath = window.location.pathname.toLowerCase();
+    if (rawPath.includes('socios')) {
+      const sociosPerm = perms.socios || {};
+      const isViewOnly = sociosPerm.mode === 'view' || !(sociosPerm.submenus || []).includes('editar');
+
+      if (isViewOnly) {
+        const btnCriarSocio = document.getElementById('btnOpenNewSocioModal');
+        if (btnCriarSocio) btnCriarSocio.style.display = 'none';
+
+        const styleBlock = document.createElement('style');
+        styleBlock.textContent = `
+          .btn-action-edit, .btn-action-delete, .btn-action-pay, [data-action="edit"], [data-action="delete"] {
+            display: none !important;
+          }
+        `;
+        document.head.appendChild(styleBlock);
+      }
+    }
+  };
 
   // Terminar Sessão (Logout) global
   document.addEventListener('click', (e) => {
@@ -1047,6 +1236,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.updateSidebarUserProfile = function() {
     const user = window.getArcaCurrentUser();
     if (!user) return;
+
+    window.applyArcaPermissions(user);
 
     const headerName = document.getElementById('painelHeaderUserName');
     if (headerName && user.nome) {
@@ -1974,6 +2165,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       ensureSocioQuotas(socio);
 
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const isAdmin = currentUser && (currentUser.perfil === 'Administrador Total' || currentUser.login === 'jorge');
+      const sociosPerm = (currentUser && currentUser.permissoes_modulos && currentUser.permissoes_modulos.socios) || {};
+      const canEdit = isAdmin || (sociosPerm.enabled && sociosPerm.mode === 'full' && (sociosPerm.submenus || []).includes('editar'));
+      const canPay = isAdmin || (sociosPerm.enabled && sociosPerm.mode === 'full' && (sociosPerm.submenus || []).includes('pagamentos'));
+
       if (currentDrawerTab === 'dados') {
         // TAB 1: DADOS CADASTRAIS (EDITÁVEL & CRUD)
         drawerContent.innerHTML = `
@@ -2090,16 +2287,34 @@ document.addEventListener('DOMContentLoaded', () => {
           </form>
         `;
 
-        // Rodapé do Drawer com botões Guardar e Eliminar
+        // Rodapé do Drawer com botões Guardar e Eliminar ou aviso de Apenas Leitura
         if (drawerFooter) {
-          drawerFooter.innerHTML = `
-            <button type="button" class="btn btn-outline" style="color: #dc2626; border-color: #fca5a5;" onclick="deleteSocioFromDrawer(${socio.id})">
-              Eliminar
-            </button>
-            <button type="button" class="btn btn-primary" onclick="saveSocioDataFromDrawer(${socio.id})">
-              Guardar
-            </button>
-          `;
+          if (canEdit) {
+            drawerFooter.innerHTML = `
+              <button type="button" class="btn btn-outline" style="color: #dc2626; border-color: #fca5a5;" onclick="deleteSocioFromDrawer(${socio.id})">
+                Eliminar
+              </button>
+              <button type="button" class="btn btn-primary" onclick="saveSocioDataFromDrawer(${socio.id})">
+                Guardar
+              </button>
+            `;
+          } else {
+            drawerFooter.innerHTML = `
+              <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #64748b; font-size: 0.82rem; font-weight: 600;">Modo Consulta (Apenas Leitura)</span>
+                <button type="button" class="btn btn-secondary" onclick="closeSocioDrawer()">Fechar</button>
+              </div>
+            `;
+          }
+        }
+
+        if (!canEdit) {
+          setTimeout(() => {
+            const form = document.getElementById('formDrawerSocio');
+            if (form) {
+              form.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+            }
+          }, 30);
         }
 
       } else {
@@ -2125,14 +2340,14 @@ document.addEventListener('DOMContentLoaded', () => {
               <tr>
                 <td style="text-align: center;">
                   ${!isPaid ? `
-                    <input type="checkbox" class="quota-pay-check" data-ano="${q.ano}" data-valor="${q.valor || 6}" checked onchange="updateSelectedQuotasSummary()">
+                    <input type="checkbox" class="quota-pay-check" data-ano="${q.ano}" data-valor="${q.valor || 6}" ${canPay ? 'checked' : 'disabled'} onchange="updateSelectedQuotasSummary()">
                   ` : `
                     <span style="color: #16a34a; font-weight: bold;">✓</span>
                   `}
                 </td>
                 <td><strong>${q.ano}</strong></td>
                 <td>
-                  ${!isPaid ? `
+                  ${!isPaid && canPay ? `
                     <input type="number" class="form-control" style="width: 75px; padding: 2px 6px; font-size: 0.85rem;" value="${q.valor || 6}" step="0.5" onchange="updateQuotaValue(${socio.id}, ${q.ano}, this.value)">
                   ` : `
                     <span>${(q.valor || 6).toFixed(2).replace('.', ',')} €</span>
@@ -2155,17 +2370,19 @@ document.addEventListener('DOMContentLoaded', () => {
                           📄 ${escapeHtml(String(recNum))} <span style="font-size: 0.65rem;">↗</span>
                         </button>
                       `;
-                    } else {
+                    } else if (canPay) {
                       return `
                         <button type="button" class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 0.72rem; color: #1c6d42; border-color: #1c6d42; cursor: pointer;" onclick="associarReciboAQuota(${socio.id}, ${q.ano})" title="Associar ou registar número de recibo oficial">
                           + Recibo
                         </button>
                       `;
+                    } else {
+                      return '—';
                     }
                   })() : '—'}
                 </td>
                 <td style="text-align: center;">
-                  ${isPaid ? `
+                  ${canPay ? (isPaid ? `
                     <button type="button" class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 0.75rem; color: #dc2626;" title="Anular pagamento deste ano" onclick="anularPagamentoQuota(${socio.id}, ${q.ano})">
                       ✕
                     </button>
@@ -2173,7 +2390,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="button" class="btn btn-outline btn-sm" style="padding: 2px 6px; font-size: 0.75rem; color: #94a3b8;" title="Remover este ano" onclick="removerAnoQuota(${socio.id}, ${q.ano})">
                       ✕
                     </button>
-                  `}
+                  `) : '<span style="color: #cbd5e1;">—</span>'}
                 </td>
               </tr>
             `;
@@ -2192,9 +2409,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
               </div>
 
-              <button type="button" class="btn btn-primary" onclick="openRegistarPagamentoModal(${socio.id})" style="background: #6c584c; border-color: #6c584c;">
-                Registar pagamento
-              </button>
+              ${canPay ? `
+                <button type="button" class="btn btn-primary" onclick="openRegistarPagamentoModal(${socio.id})" style="background: #6c584c; border-color: #6c584c;">
+                  Registar pagamento
+                </button>
+              ` : `
+                <span style="color: #64748b; font-size: 0.82rem; font-weight: 600; padding: 0.45rem 0.85rem; background: #f1f5f9; border-radius: var(--radius-sm); border: 1px solid #e2e8f0;">Modo Consulta</span>
+              `}
             </div>
 
             <div class="table-responsive" style="border: 1px solid var(--border-light); border-radius: var(--radius-sm);">
@@ -2202,7 +2423,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <thead>
                   <tr>
                     <th style="width: 38px; text-align: center;">
-                      <input type="checkbox" id="checkAllDrawerQuotas" checked onchange="toggleSelectAllDrawerQuotas(this.checked)" title="Selecionar Todos">
+                      <input type="checkbox" id="checkAllDrawerQuotas" ${canPay ? 'checked' : 'disabled'} onchange="toggleSelectAllDrawerQuotas(this.checked)" title="Selecionar Todos">
                     </th>
                     <th style="width: 65px;">Ano</th>
                     <th style="width: 85px;">Valor</th>
@@ -2219,13 +2440,15 @@ document.addEventListener('DOMContentLoaded', () => {
               </table>
             </div>
 
-            <!-- Adicionar Novo Ano Manualmente -->
-            <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 1.25rem;">
-              <input type="number" id="inputNovoAnoQuota" class="form-control" style="width: 110px; padding: 0.45rem 0.65rem;" placeholder="Ano" value="${new Date().getFullYear() + 1}">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="adicionarAnoQuota(${socio.id})">
-                Adicionar quota
-              </button>
-            </div>
+            ${canPay ? `
+              <!-- Adicionar Novo Ano Manualmente -->
+              <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 1.25rem;">
+                <input type="number" id="inputNovoAnoQuota" class="form-control" style="width: 110px; padding: 0.45rem 0.65rem;" placeholder="Ano" value="${new Date().getFullYear() + 1}">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="adicionarAnoQuota(${socio.id})">
+                  Adicionar quota
+                </button>
+              </div>
+            ` : ''}
 
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.25rem; line-height: 1.5;">
               As quotas do ano corrente são criadas automaticamente para sócios ativos (exceto honorários e isentos). Anos anteriores ao histórico importado contam como pagos.

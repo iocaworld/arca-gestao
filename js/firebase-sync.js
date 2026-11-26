@@ -95,6 +95,22 @@ const ARCA_FIREBASE_CONFIG = {
         snapshot.forEach(doc => {
           cloudUsers.push(doc.data());
         });
+
+        // Garantir que as contas base (Jorge, Raqueli, Artur, etc.) nunca desaparecem
+        const seedUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+        seedUsers.forEach(seed => {
+          const exists = cloudUsers.some(c => 
+            (c.login && c.login.toLowerCase() === (seed.login || '').toLowerCase()) || 
+            (c.id && seed.id && c.id === seed.id)
+          );
+          if (!exists) {
+            cloudUsers.push(seed);
+            if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+              window.saveArcaUtilizadorToCloud(seed);
+            }
+          }
+        });
+
         cloudUsers.sort((a, b) => (a.id || 0) - (b.id || 0));
         localStorage.setItem('arca_utilizadores_v2', JSON.stringify(cloudUsers));
         if (typeof callback === 'function') {
@@ -202,8 +218,5 @@ const ARCA_FIREBASE_CONFIG = {
   // Inicialização automática ao carregar
   document.addEventListener('DOMContentLoaded', () => {
     initFirebase();
-    if (typeof window.purgeEmailFromArcaSystem === 'function') {
-      window.purgeEmailFromArcaSystem('jorge.cunha@climar.pt');
-    }
   });
 })();
