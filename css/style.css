@@ -1558,8 +1558,9 @@ button, input, select, textarea {
 }
 
 .modal-overlay.active {
-  visibility: visible;
-  opacity: 1;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .modal-content {
