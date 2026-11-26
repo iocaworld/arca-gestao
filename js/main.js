@@ -1028,6 +1028,11 @@ document.addEventListener('DOMContentLoaded', () => {
   window.updateSidebarUserProfile = function() {
     const user = window.getArcaCurrentUser();
     if (!user) return;
+
+    const headerName = document.getElementById('painelHeaderUserName');
+    if (headerName && user.nome) {
+      headerName.textContent = user.nome;
+    }
     document.querySelectorAll('.sidebar-footer').forEach(footer => {
       const avatarEl = footer.querySelector('.user-avatar');
       const nameEl = footer.querySelector('.user-name');
