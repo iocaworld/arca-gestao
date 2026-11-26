@@ -833,39 +833,38 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const saved = localStorage.getItem(ARCA_UTILIZADORES_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
+        let parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Garantir que Jorge, Raqueli e todas as contas base estão sempre presentes e atualizadas
-          let updated = false;
-          SEED_UTILIZADORES.forEach(seed => {
-            const idx = parsed.findIndex(p => (p.login && p.login.toLowerCase() === seed.login.toLowerCase()) || p.id === seed.id);
-            if (idx === -1) {
-              parsed.push(seed);
-              updated = true;
-            } else if (seed.login === 'raqueli' || seed.login === 'jorge') {
-              if (seed.numeroSocio && parsed[idx].numeroSocio !== seed.numeroSocio) {
-                parsed[idx].numeroSocio = seed.numeroSocio;
-                updated = true;
-              }
-              if (seed.permissoes_modulos) {
-                parsed[idx].permissoes_modulos = seed.permissoes_modulos;
-                updated = true;
-              }
-              if (seed.perfil && parsed[idx].perfil !== seed.perfil) {
-                parsed[idx].perfil = seed.perfil;
-                updated = true;
-              }
-            }
-          });
-          if (updated) {
-            localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
+          // Filtrar utilizadores eliminados permanentemente
+          let deletedIds = [];
+          try {
+            deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+          } catch (e) {}
+          if (deletedIds.length > 0) {
+            parsed = parsed.filter(p => !deletedIds.includes(Number(p.id)));
           }
+
+          // Garantir SEMPRE a presença do Administrador Total Jorge (ID: 1) para proteção contra lockout
+          const adminIdx = parsed.findIndex(p => (p.login && p.login.toLowerCase() === 'jorge') || Number(p.id) === 1);
+          if (adminIdx === -1) {
+            const adminSeed = SEED_UTILIZADORES.find(u => u.login === 'jorge');
+            if (adminSeed) parsed.unshift(adminSeed);
+          }
+
+          localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
           return parsed;
         }
       }
     } catch (e) {}
-    localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(SEED_UTILIZADORES));
-    return SEED_UTILIZADORES;
+
+    // Fallback inicial se não houver dados em localStorage
+    let deletedIds = [];
+    try {
+      deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+    } catch (e) {}
+    const initialList = SEED_UTILIZADORES.filter(u => !deletedIds.includes(Number(u.id)));
+    localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(initialList));
+    return initialList;
   };
 
   // Função Central de Validação Estrita de Login
@@ -885,20 +884,15 @@ document.addEventListener('DOMContentLoaded', () => {
       (u.nome && u.nome.toLowerCase() === cleanId)
     );
 
-    // Salvaguarda imediata para Jorge Cunha e Raqueli:
+    // Salvaguarda imediata para Administrador Total Jorge:
     if (!found && (cleanId === 'jorge' || cleanId === 'scunhajorge@gmail.com' || cleanId === '@jorge')) {
       found = SEED_UTILIZADORES.find(u => u.login === 'jorge');
-      list.unshift(found);
-      localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(list));
-      if (typeof window.saveArcaUtilizadorToCloud === 'function') {
-        window.saveArcaUtilizadorToCloud(found);
-      }
-    } else if (!found && (cleanId === 'raqueli' || cleanId === '@raqueli')) {
-      found = SEED_UTILIZADORES.find(u => u.login === 'raqueli');
-      list.push(found);
-      localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(list));
-      if (typeof window.saveArcaUtilizadorToCloud === 'function') {
-        window.saveArcaUtilizadorToCloud(found);
+      if (found) {
+        list.unshift(found);
+        localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(list));
+        if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+          window.saveArcaUtilizadorToCloud(found);
+        }
       }
     }
 
@@ -990,15 +984,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // Redirecionamento inteligente conforme permissões
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html?v=20261126_v6';
+      let targetUrl = 'painel.html?v=20261126_v7';
 
       if (!isAdmin) {
         if (!perms.painel?.enabled) {
-          if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v6';
-          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v6';
-          else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v6';
-          else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v6';
-          else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v6';
+          if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v7';
+          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v7';
+          else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v7';
+          else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v7';
+          else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v7';
         }
       }
 
@@ -1041,14 +1035,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html?v=20261126_v6';
+      let targetUrl = 'painel.html?v=20261126_v7';
 
       if (!isAdmin && !perms.painel?.enabled) {
-        if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v6';
-        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v6';
-        else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v6';
-        else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v6';
-        else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v6';
+        if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v7';
+        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v7';
+        else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v7';
+        else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v7';
+        else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v7';
       }
 
       if (alertBox) {

@@ -1046,8 +1046,8 @@
   <!-- Firebase SDK e Sincronização em Tempo Real -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v6"></script>
-  <script src="js/main.js?v=20261126_v6"></script>
+  <script src="js/firebase-sync.js?v=20261126_v7"></script>
+  <script src="js/main.js?v=20261126_v7"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -1422,6 +1422,15 @@
         } catch (e) {
           utilizadores = JSON.parse(JSON.stringify(CONTAS_UTILIZADORES_INICIAIS));
         }
+      }
+
+      // Filtrar utilizadores eliminados
+      let deletedIds = [];
+      try {
+        deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+      } catch (e) {}
+      if (deletedIds.length > 0) {
+        utilizadores = utilizadores.filter(u => !deletedIds.includes(Number(u.id)));
       }
 
       // Garantir compatibilidade e fotos limpas
@@ -2342,6 +2351,7 @@
         }
       });
 
+      let savedUser = null;
       if (idVal) {
         // Editar existente
         const id = parseInt(idVal, 10);
@@ -2363,6 +2373,8 @@
           utilizadores[idx].permissoes_modulos = novasPermissoes;
           if (passVal) utilizadores[idx].password = passVal;
 
+          savedUser = utilizadores[idx];
+
           // Se for o utilizador atual, atualizar sessão
           try {
             const curr = window.getArcaCurrentUser();
@@ -2372,6 +2384,7 @@
               curr.foto = foto;
               curr.morada = morada;
               curr.numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
+              curr.permissoes_modulos = novasPermissoes;
               window.setArcaCurrentUser(curr);
             }
           } catch (err) {}
@@ -2399,6 +2412,12 @@
           permissoes_modulos: novasPermissoes
         };
         utilizadores.unshift(novo);
+        savedUser = novo;
+      }
+
+      // Gravação direta na Nuvem (Firestore) antes de fechar o modal
+      if (savedUser && typeof window.saveArcaUtilizadorToCloud === 'function') {
+        await window.saveArcaUtilizadorToCloud(savedUser);
       }
 
       saveUtilizadores();
@@ -2406,13 +2425,27 @@
       if (window.showToast) window.showToast('Conta de utilizador guardada com sucesso!', 'success');
     };
 
-    window.handleEliminarUtilizador = function(userId) {
+    window.handleEliminarUtilizador = async function(userId) {
       const u = utilizadores.find(x => x.id === userId);
       if (!u) return;
+      if (userId === 1 || (u.login && u.login.toLowerCase() === 'jorge')) {
+        alert('A conta de Administrador Total (Jorge) não pode ser eliminada.');
+        return;
+      }
       if (confirm(`Tem a certeza de que pretende eliminar permanentemente a conta de ${u.nome}? Esta ação é irreversível.`)) {
         utilizadores = utilizadores.filter(x => x.id !== userId);
+        
+        // Registar como eliminado para nunca mais ressuscitar
+        try {
+          const deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+          if (!deletedIds.includes(Number(userId))) {
+            deletedIds.push(Number(userId));
+            localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+          }
+        } catch (e) {}
+
         if (typeof window.deleteArcaUtilizadorFromCloud === 'function') {
-          window.deleteArcaUtilizadorFromCloud(userId);
+          await window.deleteArcaUtilizadorFromCloud(userId);
         }
         saveUtilizadores();
         if (window.showToast) window.showToast(`Utilizador ${u.nome} eliminado com sucesso.`, 'success');
@@ -2451,25 +2484,12 @@
       if (typeof window.listenArcaUtilizadoresRealtime === 'function') {
         window.listenArcaUtilizadoresRealtime((cloudUsers) => {
           if (cloudUsers && cloudUsers.length > 0) {
-            // Garantir que contas base (Jorge, Raqueli, etc.) nunca somem e mantêm permissões
-            CONTAS_UTILIZADORES_INICIAIS.forEach(seed => {
-              const idx = cloudUsers.findIndex(c => 
-                (c.login && c.login.toLowerCase() === seed.login.toLowerCase()) || 
-                (c.id && seed.id && c.id === seed.id)
-              );
-              if (idx === -1) {
-                cloudUsers.push(seed);
-              } else if (seed.login === 'raqueli') {
-                if (!cloudUsers[idx].numeroSocio) cloudUsers[idx].numeroSocio = 2;
-                if (!cloudUsers[idx].permissoes_modulos || !cloudUsers[idx].permissoes_modulos.socios || Object.keys(cloudUsers[idx].permissoes_modulos).length === 0) {
-                  cloudUsers[idx].permissoes_modulos = seed.permissoes_modulos;
-                }
-                if (!cloudUsers[idx].perfil || cloudUsers[idx].perfil === 'Utilizador Geral') {
-                  cloudUsers[idx].perfil = 'Própria Ficha (Sócio)';
-                }
-              }
-            });
-            utilizadores = cloudUsers;
+            let deletedIds = [];
+            try {
+              deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+            } catch (e) {}
+
+            utilizadores = cloudUsers.filter(u => !deletedIds.includes(Number(u.id)));
             updateUtilizadoresStats();
             renderUtilizadores();
           }

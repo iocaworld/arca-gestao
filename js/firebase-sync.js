@@ -51,20 +51,33 @@ const ARCA_FIREBASE_CONFIG = {
     try {
       const snapshot = await firestore.collection('utilizadores').get();
       let cloudUsers = [];
+      let deletedIds = [];
+      try {
+        deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+      } catch (e) {}
+
       snapshot.forEach(doc => {
-        cloudUsers.push(doc.data());
+        const u = doc.data();
+        if (u && u.id && !deletedIds.includes(Number(u.id))) {
+          cloudUsers.push(u);
+        }
       });
 
-      // Garantir que as contas base de gestão (Jorge, Artur, Direção) estão sempre presentes no Firestore
-      const hasJorge = cloudUsers.some(u => (u.login && u.login.toLowerCase() === 'jorge') || u.id === 1);
-      if (!hasJorge || cloudUsers.length < 2) {
+      // Se a base de dados na nuvem estiver completamente vazia, semear contas iniciais
+      const hasJorge = cloudUsers.some(u => (u.login && u.login.toLowerCase() === 'jorge') || Number(u.id) === 1);
+      if (!hasJorge && cloudUsers.length === 0) {
         console.log('[ARCA Firebase] A sincronizar/semear contas oficiais da ARCA na nuvem...');
         await window.seedInitialUsersToCloud();
         
         // Recarregar
         const refreshedSnap = await firestore.collection('utilizadores').get();
         cloudUsers = [];
-        refreshedSnap.forEach(doc => cloudUsers.push(doc.data()));
+        refreshedSnap.forEach(doc => {
+          const u = doc.data();
+          if (u && u.id && !deletedIds.includes(Number(u.id))) {
+            cloudUsers.push(u);
+          }
+        });
       }
 
       // Ordenar por ID crescente
@@ -92,32 +105,52 @@ const ARCA_FIREBASE_CONFIG = {
     try {
       return firestore.collection('utilizadores').onSnapshot((snapshot) => {
         const cloudUsers = [];
-        snapshot.forEach(doc => {
-          cloudUsers.push(doc.data());
-        });
+        let deletedIds = [];
+        try {
+          deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+        } catch (e) {}
 
-        // Garantir que as contas base (Jorge, Raqueli, Artur, etc.) nunca desaparecem e mantêm permissões corretas
-        const seedUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
-        seedUsers.forEach(seed => {
-          const idx = cloudUsers.findIndex(c => 
-            (c.login && c.login.toLowerCase() === (seed.login || '').toLowerCase()) || 
-            (c.id && seed.id && c.id === seed.id)
-          );
-          if (idx === -1) {
-            cloudUsers.push(seed);
-            if (typeof window.saveArcaUtilizadorToCloud === 'function') {
-              window.saveArcaUtilizadorToCloud(seed);
-            }
-          } else if (seed.login === 'raqueli') {
-            if (!cloudUsers[idx].numeroSocio) cloudUsers[idx].numeroSocio = 2;
-            if (!cloudUsers[idx].permissoes_modulos || !cloudUsers[idx].permissoes_modulos.socios || Object.keys(cloudUsers[idx].permissoes_modulos).length === 0) {
-              cloudUsers[idx].permissoes_modulos = seed.permissoes_modulos;
-            }
-            if (!cloudUsers[idx].perfil || cloudUsers[idx].perfil === 'Utilizador Geral') {
-              cloudUsers[idx].perfil = 'Própria Ficha (Sócio)';
-            }
+        snapshot.forEach(doc => {
+          const u = doc.data();
+          if (u && u.id) {
+            // Se o utilizador foi eliminado pelo administrador, ignorar
+            if (deletedIds.includes(Number(u.id))) return;
+            cloudUsers.push(u);
           }
         });
+
+        // Garantir APENAS que a conta do Administrador Total Jorge (ID 1) está sempre presente
+        const hasAdmin = cloudUsers.some(c => (c.login && c.login.toLowerCase() === 'jorge') || Number(c.id) === 1);
+        if (!hasAdmin) {
+          const adminSeed = {
+            id: 1,
+            nome: "Jorge Manuel da Silva Cunha",
+            login: "jorge",
+            username: "@jorge",
+            email: "scunhajorge@gmail.com",
+            telefone: "966 100 115",
+            morada: "Rua Direita, 45 - Aguada de Baixo",
+            numeroSocio: 1,
+            perfil: "Administrador Total",
+            estado: "Ativo",
+            motivo_suspensao: "",
+            data_registo: "2024-01-10",
+            data_rgpd: "2024-01-10",
+            ultimo_acesso: "Hoje",
+            foto: "",
+            permissoes_modulos: {
+              painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+              socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "quotas", "pagamentos"] },
+              tesouraria: { enabled: true, mode: "full", submenus: ["resumo", "contas", "movimentos", "recibos"] },
+              direcao: { enabled: true, mode: "full", submenus: ["membros", "atas", "comunicados"] },
+              desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
+              documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "gerir"] },
+              administracao: { enabled: true, mode: "full", submenus: ["utilizadores", "configuracoes", "seguranca"] }
+            }
+          };
+          cloudUsers.unshift(adminSeed);
+          window.saveArcaUtilizadorToCloud(adminSeed);
+        }
 
         cloudUsers.sort((a, b) => (a.id || 0) - (b.id || 0));
         localStorage.setItem('arca_utilizadores_v2', JSON.stringify(cloudUsers));
@@ -133,15 +166,45 @@ const ARCA_FIREBASE_CONFIG = {
     }
   };
 
-  // Guardar ou Atualizar Utilizador na Nuvem
+  // Guardar ou Atualizar Utilizador na Nuvem (Gravação Completa)
   window.saveArcaUtilizadorToCloud = async function(user) {
     const firestore = initFirebase();
     if (!firestore || !user || !user.id) return false;
 
     try {
       const docId = String(user.id);
-      await firestore.collection('utilizadores').doc(docId).set(user, { merge: true });
-      console.log(`[ARCA Firebase] Utilizador ${user.nome} (ID: ${user.id}) gravado na nuvem.`);
+      
+      // Remover do registo de eliminados caso tenha sido recriado
+      try {
+        let deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+        deletedIds = deletedIds.filter(id => id !== Number(user.id));
+        localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+      } catch (e) {}
+
+      // Sanitizar dados para Firestore (sem valores undefined)
+      const cleanUser = {
+        id: Number(user.id),
+        login: String(user.login || '').trim(),
+        username: String(user.username || ('@' + (user.login || ''))).trim(),
+        nome: String(user.nome || '').trim(),
+        email: String(user.email || '').trim(),
+        telefone: String(user.telefone || '').trim(),
+        morada: String(user.morada || 'Aguada de Baixo').trim(),
+        numeroSocio: (user.numeroSocio !== null && user.numeroSocio !== undefined && user.numeroSocio !== '') ? Number(user.numeroSocio) : null,
+        perfil: String(user.perfil || 'Utilizador Geral').trim(),
+        estado: String(user.estado || 'Ativo').trim(),
+        password: String(user.password || 'arca2026').trim(),
+        data_registo: String(user.data_registo || new Date().toISOString().slice(0, 10)),
+        data_rgpd: String(user.data_rgpd || new Date().toISOString().slice(0, 10)),
+        ultimo_acesso: String(user.ultimo_acesso || 'Nunca'),
+        motivo_suspensao: String(user.motivo_suspensao || ''),
+        foto: String(user.foto || ''),
+        permissoes_modulos: user.permissoes_modulos || {}
+      };
+
+      // Substituição completa do documento no Firestore (sem merge) para persistir remoção de módulos desativados
+      await firestore.collection('utilizadores').doc(docId).set(cleanUser);
+      console.log(`[ARCA Firebase] Utilizador ${cleanUser.nome} (ID: ${cleanUser.id}) gravado com sucesso na nuvem.`);
       return true;
     } catch (err) {
       console.warn('[ARCA Firebase] Erro ao gravar utilizador na nuvem:', err);
@@ -149,14 +212,35 @@ const ARCA_FIREBASE_CONFIG = {
     }
   };
 
-  // Eliminar Utilizador na Nuvem
+  // Eliminar Utilizador na Nuvem Definitivamente
   window.deleteArcaUtilizadorFromCloud = async function(userId) {
     const firestore = initFirebase();
     if (!firestore || !userId) return false;
 
     try {
+      const numId = Number(userId);
       const docId = String(userId);
+
+      // 1. Marcar como eliminado localmente para nunca ressuscitar
+      try {
+        const deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+        if (!deletedIds.includes(numId)) {
+          deletedIds.push(numId);
+          localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+        }
+      } catch (e) {}
+
+      // 2. Apagar por ID direto do documento
       await firestore.collection('utilizadores').doc(docId).delete();
+
+      // 3. Salvaguarda: caso o documento tenha sido gravado com outro docId, procurar por campo id
+      const qSnap = await firestore.collection('utilizadores').where('id', '==', numId).get();
+      qSnap.forEach(async (doc) => {
+        if (doc.id !== docId) {
+          await doc.ref.delete();
+        }
+      });
+
       console.log(`[ARCA Firebase] Utilizador ID ${userId} eliminado permanentemente da nuvem.`);
       return true;
     } catch (err) {
