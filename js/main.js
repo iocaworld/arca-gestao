@@ -3655,7 +3655,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (badge) badge.textContent = '1';
       });
     }
-    }
 
     // Inicialização da Tabela, Filtros e Indicadores
     initSociosColPicker();
