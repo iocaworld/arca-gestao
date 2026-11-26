@@ -605,15 +605,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (user) {
         try {
-          const membrosKey = 'arca_membros_orgaos_v4';
-          const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
-          const found = membros.find(m => 
-            (m.username && m.username.replace('@','').toLowerCase() === user.toLowerCase()) || 
-            (m.nome && m.nome.toLowerCase().includes(user.toLowerCase())) ||
-            (m.email && m.email.toLowerCase() === user.toLowerCase())
+          const utilizadoresKey = 'arca_utilizadores_v2';
+          const utilizadores = JSON.parse(localStorage.getItem(utilizadoresKey)) || [];
+          const foundUser = utilizadores.find(u => 
+            (u.username && u.username.replace('@','').toLowerCase() === user.toLowerCase()) || 
+            (u.login && u.login.toLowerCase() === user.toLowerCase()) ||
+            (u.email && u.email.toLowerCase() === user.toLowerCase()) ||
+            (u.nome && u.nome.toLowerCase() === user.toLowerCase())
           );
-          if (found) {
-            window.setArcaCurrentUser(found);
+
+          if (foundUser) {
+            // Verificar Estado da Conta (Ativo, Pendente, Suspenso, Anulado)
+            if (foundUser.estado === 'Pendente') {
+              if (loginAlert) {
+                loginAlert.innerHTML = '<strong>Conta Pendente:</strong> O seu registo aguarda validação e aprovação pela Direção da A.R.C.A.';
+                loginAlert.className = 'alert-message alert-error';
+                loginAlert.style.display = 'block';
+              }
+              return;
+            }
+            if (foundUser.estado === 'Suspenso') {
+              const motivo = foundUser.motivo_suspensao ? `<br><small style="margin-top:4px;display:block;">Motivo: ${foundUser.motivo_suspensao}</small>` : '';
+              if (loginAlert) {
+                loginAlert.innerHTML = `<strong>Acesso Suspenso:</strong> A sua conta encontra-se temporariamente suspensa pela Direção.${motivo}<br><small style="margin-top:2px;display:block;">Contacto: arca.aguadadebaixo@sapo.pt</small>`;
+                loginAlert.className = 'alert-message alert-error';
+                loginAlert.style.display = 'block';
+              }
+              return;
+            }
+            if (foundUser.estado === 'Anulado') {
+              if (loginAlert) {
+                loginAlert.innerHTML = '<strong>Conta Anulada:</strong> Esta conta foi revogada. Caso deseje reativar o acesso, submeta um novo pedido de registo à Direção.';
+                loginAlert.className = 'alert-message alert-error';
+                loginAlert.style.display = 'block';
+              }
+              return;
+            }
+
+            // Conta Ativa!
+            window.setArcaCurrentUser(foundUser);
+          } else {
+            const membrosKey = 'arca_membros_orgaos_v4';
+            const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
+            const found = membros.find(m => 
+              (m.username && m.username.replace('@','').toLowerCase() === user.toLowerCase()) || 
+              (m.nome && m.nome.toLowerCase().includes(user.toLowerCase())) ||
+              (m.email && m.email.toLowerCase() === user.toLowerCase())
+            );
+            if (found) {
+              window.setArcaCurrentUser(found);
+            }
           }
         } catch (err) {}
       }
@@ -641,22 +682,61 @@ document.addEventListener('DOMContentLoaded', () => {
     standardLoginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const emailInput = document.getElementById('email');
+      const alertBox = document.getElementById('alertBox');
       const val = emailInput ? emailInput.value.trim().toLowerCase() : '';
       if (val) {
         try {
-          const membrosKey = 'arca_membros_orgaos_v4';
-          const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
-          const found = membros.find(m => 
-            (m.email && m.email.toLowerCase() === val) || 
-            (m.username && m.username.replace('@','').toLowerCase() === val) ||
-            (m.nome && m.nome.toLowerCase().includes(val))
+          const utilizadoresKey = 'arca_utilizadores_v2';
+          const utilizadores = JSON.parse(localStorage.getItem(utilizadoresKey)) || [];
+          const foundUser = utilizadores.find(u => 
+            (u.email && u.email.toLowerCase() === val) || 
+            (u.username && u.username.replace('@','').toLowerCase() === val) ||
+            (u.login && u.login.toLowerCase() === val) ||
+            (u.nome && u.nome.toLowerCase().includes(val))
           );
-          if (found) {
-            window.setArcaCurrentUser(found);
+
+          if (foundUser) {
+            if (foundUser.estado === 'Pendente') {
+              if (alertBox) {
+                alertBox.innerHTML = '<strong>Conta Pendente:</strong> O seu registo aguarda validação pela Direção da A.R.C.A.';
+                alertBox.className = 'alert alert-danger';
+                alertBox.style.display = 'block';
+              }
+              return;
+            }
+            if (foundUser.estado === 'Suspenso') {
+              const motivo = foundUser.motivo_suspensao ? `<br><small>Motivo: ${foundUser.motivo_suspensao}</small>` : '';
+              if (alertBox) {
+                alertBox.innerHTML = `<strong>Acesso Suspenso:</strong> A sua conta encontra-se temporariamente suspensa pela Direção.${motivo}`;
+                alertBox.className = 'alert alert-danger';
+                alertBox.style.display = 'block';
+              }
+              return;
+            }
+            if (foundUser.estado === 'Anulado') {
+              if (alertBox) {
+                alertBox.innerHTML = '<strong>Conta Anulada:</strong> Esta conta de acesso foi revogada.';
+                alertBox.className = 'alert alert-danger';
+                alertBox.style.display = 'block';
+              }
+              return;
+            }
+
+            window.setArcaCurrentUser(foundUser);
+          } else {
+            const membrosKey = 'arca_membros_orgaos_v4';
+            const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
+            const found = membros.find(m => 
+              (m.email && m.email.toLowerCase() === val) || 
+              (m.username && m.username.replace('@','').toLowerCase() === val) ||
+              (m.nome && m.nome.toLowerCase().includes(val))
+            );
+            if (found) {
+              window.setArcaCurrentUser(found);
+            }
           }
         } catch (err) {}
       }
-      const alertBox = document.getElementById('alertBox');
       if (alertBox) {
         alertBox.textContent = 'Autenticado com sucesso! A entrar...';
         alertBox.className = 'alert alert-success';

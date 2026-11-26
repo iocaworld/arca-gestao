@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A.R.C.A. - Painel de Controlo & Utilizadores | Aguada de Baixo</title>
+  <title>A.R.C.A. - Gestão de Utilizadores & Permissões | Aguada de Baixo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 
   <div class="app-layout">
     
-    <!-- Barra Lateral (Sidebar com Nova Estrutura de Menus) -->
+    <!-- Barra Lateral (Sidebar) -->
     <aside class="app-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -63,15 +63,14 @@
               <ul class="nav-sublist">
                 <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
                 <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=treinos" class="nav-sublink">Treinos</a></li>
                 <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
-                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
-                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
               </ul>
             </li>
           </ul>
         </div>
 
-        <!-- 3. Menu: Sócios -->
+        <!-- 3. Menu: Sócios & Cotas -->
         <div>
           <ul class="nav-list">
             <li>
@@ -83,13 +82,11 @@
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
                 <span>Sócios & Cotas</span>
-                <span class="nav-item-badge">248</span>
               </a>
             </li>
           </ul>
         </div>
 
-        
         <!-- Menu: Tesouraria -->
         <div>
           <ul class="nav-list">
@@ -97,19 +94,18 @@
               <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                    <line x1="2" y1="10" x2="22" y2="10"/>
-                    <circle cx="16" cy="15" r="1"/>
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                   </svg>
                   <span>Tesouraria</span>
                 </span>
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist">
-                <li><a href="tesouraria.html?tab=caixa" class="nav-sublink">Caixa/Movimentos</a></li>
-                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink">Recibos Emitidos</a></li>
-                <li><a href="tesouraria.html?tab=fornecedores" class="nav-sublink">Fornecedores</a></li>
-                <li><a href="tesouraria.html?tab=pos" class="nav-sublink">P.O.S.</a></li>
+                <li><a href="tesouraria.html?sub=caixa" class="nav-sublink">Caixa/Movimentos</a></li>
+                <li><a href="tesouraria.html?sub=recibos" class="nav-sublink">Recibos Emitidos</a></li>
+                <li><a href="tesouraria.html?sub=fornecedores" class="nav-sublink">Fornecedores</a></li>
+                <li><a href="tesouraria.html?sub=pos" class="nav-sublink">P.O.S.</a></li>
               </ul>
             </li>
           </ul>
@@ -122,7 +118,7 @@
               <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
@@ -132,14 +128,16 @@
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist">
-                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
                 <li><a href="membros.html" class="nav-sublink">Membros</a></li>
+                <li><a href="atas.html" class="nav-sublink">Atas</a></li>
+                <li><a href="documentos.html?pasta=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?pasta=tomadas_posse" class="nav-sublink">Tomadas de Posse</a></li>
+                <li><a href="documentos.html?pasta=direcoes_anteriores" class="nav-sublink">Direções Anteriores</a></li>
               </ul>
             </li>
           </ul>
         </div>
 
-        
         <!-- Menu: Gestão Desportiva -->
         <div>
           <ul class="nav-list">
@@ -148,8 +146,10 @@
                 <span class="nav-parent-title">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-                    <path d="M2 12h20"/>
+                    <path d="M4.93 4.93l4.24 4.24"/>
+                    <path d="M14.83 9.17l4.24-4.24"/>
+                    <path d="M14.83 14.83l4.24 4.24"/>
+                    <path d="M4.93 19.07l4.24-4.24"/>
                   </svg>
                   <span>Gestão Desportiva</span>
                 </span>
@@ -174,179 +174,113 @@
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
                   </svg>
                   <span>Documentação ARCA</span>
                 </span>
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist">
-                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
-                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
-                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
-                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
-                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+                <li><a href="documentos.html?pasta=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
+                <li><a href="documentos.html?pasta=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?pasta=atas_assembleias" class="nav-sublink">Atas Assembleias Gerais</a></li>
+                <li><a href="documentos.html?pasta=tomadas_posse" class="nav-sublink">Atas Tomadas de Posse</a></li>
+                <li><a href="documentos.html?pasta=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
               </ul>
             </li>
           </ul>
         </div>
 
-        <!-- 6. Menu: Secções & Grupos -->
+        <!-- 6. Menu: Secções -->
         <div>
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                    <path d="M4 22h16"/>
-                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
-                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
-                  </svg>
-                  <span>Secções & Grupos</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist">
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Futsal</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="seccoes.html?sec=futsal_masculino" class="nav-nested-link">Séniores Masculino</a></li>
-                    <li><a href="seccoes.html?sec=futsal_feminino" class="nav-nested-link">Séniores Femininos</a></li>
-                    <li><a href="seccoes.html?sec=futsal_formacao" class="nav-nested-link">Formação</a></li>
-                  </ul>
-                </li>
-                <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
-                <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
-                <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
-                <li><a href="seccoes.html?sec=funcional" class="nav-sublink">Treino Funcional</a></li>
-                <li><a href="seccoes.html?sec=pilates" class="nav-sublink">Pilates</a></li>
-                <li><a href="seccoes.html?sec=tea" class="nav-sublink">TEA</a></li>
-                <li><a href="seccoes.html?sec=olhares_disparos" class="nav-sublink">Olhares e Disparos</a></li>
-                <li><a href="seccoes.html?sec=bacharca" class="nav-sublink">Bach'Arca</a></li>
-              </ul>
+              <a href="seccoes.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
+                <span>Secções</span>
+              </a>
             </li>
           </ul>
         </div>
 
-        <!-- 7. Menu: Eventos & Organizações -->
+        <!-- 7. Menu: Eventos -->
         <div>
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
-                  </svg>
-                  <span>Eventos & Organizações</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist">
-                <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
-                <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Assistência e Apoio</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=peregrinos" class="nav-nested-link">Peregrinos</a></li>
-                    <li><a href="eventos.html?ev=bombeiros" class="nav-nested-link">Bombeiros</a></li>
-                    <li><a href="eventos.html?ev=animais" class="nav-nested-link">Animais</a></li>
-                    <li><a href="eventos.html?ev=angariacoes" class="nav-nested-link">Angariações</a></li>
-                  </ul>
-                </li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Torneios</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=arca_cup" class="nav-nested-link">ARCA Cup</a></li>
-                    <li><a href="eventos.html?ev=futsal_fem" class="nav-nested-link">Torneio Futsal Feminino</a></li>
-                  </ul>
-                </li>
-                <li><a href="eventos.html?ev=cicloturismo" class="nav-sublink">Cicloturismo</a></li>
-                <li><a href="eventos.html?ev=dia_freguesia" class="nav-sublink">Dia da Freguesia</a></li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Época Futsal</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=futsal_apresentacao" class="nav-nested-link">Apresentação</a></li>
-                    <li><a href="eventos.html?ev=futsal_encerramento" class="nav-nested-link">Encerramento</a></li>
-                  </ul>
-                </li>
-                <li><a href="eventos.html?ev=taca_jorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
-                <li><a href="eventos.html?ev=agitagueda" class="nav-sublink">AgitÁgueda</a></li>
-                <li><a href="eventos.html?ev=andebol" class="nav-sublink">Eventos Andebol ARCA</a></li>
-                <li><a href="eventos.html?ev=jogos_sem_fronteiras" class="nav-sublink">Jogos Sem Fronteiras</a></li>
-                <li><a href="eventos.html?ev=rota_minis" class="nav-sublink">Rota Das Minis</a></li>
-                <li><a href="eventos.html?ev=aniversario_arca" class="nav-sublink">Aniversário ARCA</a></li>
-                <li><a href="eventos.html?ev=jantar_natal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
-                <li><a href="eventos.html?ev=outros" class="nav-sublink">Outros</a></li>
-              </ul>
+              <a href="eventos.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Eventos</span>
+              </a>
             </li>
           </ul>
         </div>
 
-        <!-- 8. Menu: Painel de Controlo (Aberto) -->
+        <!-- 8. Menu: Utilizadores (Ativo) -->
         <div>
           <ul class="nav-list">
             <li>
-              <button class="nav-item-parent open" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                  </svg>
-                  <span>Painel de Controlo</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist open">
-                <li><a href="utilizadores.html" class="nav-sublink active">Utilizadores</a></li>
-              </ul>
+              <a href="utilizadores.html" class="nav-item-link active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Utilizadores</span>
+              </a>
             </li>
           </ul>
         </div>
       </nav>
 
-      <div class="sidebar-footer">
-        <div class="user-avatar">JC</div>
-        <div class="user-details">
-          <div class="user-name">Jorge Cunha</div>
-          <div class="user-role">Direção Geral</div>
+      <!-- Rodapé do Utilizador na Sidebar -->
+      <div class="sidebar-footer" id="sidebarUserFooter" title="Sessão Iniciada • Clique para editar o seu perfil e foto">
+        <div class="user-avatar" id="sidebarUserAvatar">JC</div>
+        <div class="user-details" id="sidebarUserDetails">
+          <div class="user-name" id="sidebarUserName">Jorge Cunha</div>
+          <div class="user-role" id="sidebarUserRole">Presidente</div>
         </div>
-        <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-        </a>
+        <div style="display: flex; align-items: center; gap: 0.2rem;">
+          <button type="button" class="btn-sidebar-profile" id="btnSidebarEditProfile" title="Editar o meu perfil e foto" onclick="openMeuPerfilModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </a>
+        </div>
       </div>
     </aside>
 
     <!-- Área Principal de Conteúdo -->
     <div class="app-main">
       
-      <!-- Topbar -->
+      <!-- Topbar Institucional -->
       <header class="app-topbar">
         <div class="topbar-left">
-          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir Menu">
-            &#9776;
+          <button class="mobile-toggle" id="mobileSidebarToggle" aria-label="Abrir menu lateral">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
           </button>
-          <div class="breadcrumbs">
+          <div class="topbar-breadcrumb">
             <a href="painel.html">ARCA</a>
             <span>&rsaquo;</span>
             <span>Painel de Controlo</span>
@@ -356,7 +290,7 @@
         </div>
 
         <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Convidar novo utilizador em preparação!', 'success')">
+          <button class="btn btn-primary btn-sm" onclick="openNovoUtilizadorModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
@@ -371,56 +305,140 @@
         
         <div class="page-title-bar">
           <div>
-            <h1>Painel de Controlo &bull; Utilizadores</h1>
-            <p>Gestão técnica de contas de acesso à plataforma oficial da ARCA, permissões por módulo e perfis de segurança.</p>
-          </div>
-          <div style="display: flex; gap: 0.5rem;">
-            <a href="membros.html" class="btn btn-secondary btn-sm" style="display: flex; align-items: center; gap: 0.4rem;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-              <span>Ver Órgãos Sociais</span>
-            </a>
-            <button class="btn btn-primary btn-sm" onclick="showToast('Convidar novo utilizador em preparação!', 'success')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              <span>Novo Utilizador</span>
-            </button>
+            <h1>Gestão de Utilizadores & Contas de Acesso</h1>
+            <p>Controlo de credenciais, validação de pedidos de adesão, estados de conta (Ativo, Pendente, Suspenso, Anulado) e atribuição de permissões granulares por módulo.</p>
           </div>
         </div>
 
-        <!-- Tabela de Utilizadores -->
-        <div class="card-box">
-          <div class="card-header-bar" style="flex-wrap: wrap; gap: 1rem;">
-            <div>
-              <h2>Contas Oficiais de Utilizadores da Plataforma</h2>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">18 contas registadas &bull; Sincronizadas com o portal oficial de gestão ARCA</p>
+        <!-- Indicadores Rápidos (KPIs) -->
+        <div class="metrics-row-4">
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">TOTAL UTILIZADORES</span>
+              <span class="metric-value" id="statTotalUtilizadores" style="color: var(--primary); font-size: 2.1rem; margin-top: 0.2rem;">0</span>
+              <span class="metric-badge positive" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">Contas Registadas</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <input type="text" id="filtroUtilizadores" class="form-control" placeholder="Pesquisar utilizador ou nome..." style="max-width: 250px; font-size: 0.85rem;" oninput="filtrarUtilizadores(this.value)">
-              <span class="status-pill em-dia">18 Ativos</span>
+          </div>
+
+          <div class="metric-card accent-green">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">CONTAS ATIVAS</span>
+              <span class="metric-value" id="statAtivos" style="color: #16a34a; font-size: 2.1rem; margin-top: 0.2rem;">0</span>
+              <span class="metric-badge positive" style="font-weight: 500; font-size: 0.85rem; margin-top: 0.35rem;">Acesso Autorizado</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-orange">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">PEDIDOS PENDENTES</span>
+              <span class="metric-value" id="statPendentes" style="color: #d97706; font-size: 2.1rem; margin-top: 0.2rem;">0</span>
+              <span class="metric-badge warning" style="font-weight: 700; font-size: 0.85rem; margin-top: 0.35rem;">Aguardam Validação</span>
+            </div>
+          </div>
+
+          <div class="metric-card accent-red">
+            <div class="metric-content">
+              <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">SUSPENSOS / ANULADOS</span>
+              <span class="metric-value" id="statBloqueados" style="color: #ea580c; font-size: 2.1rem; margin-top: 0.2rem;">0</span>
+              <span class="metric-badge" style="color: #dc2626; font-weight: 700; font-size: 0.85rem; margin-top: 0.35rem;">Acesso Impedido</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input de Ficheiro Oculto para Upload Direto de Avatar na Linha da Tabela -->
+        <input type="file" id="tableAvatarFileInput" accept="image/*" style="display: none;" onchange="handleTableAvatarFileSelected(event)">
+
+        <!-- Tabela Principal de Utilizadores -->
+        <div class="card-box" style="margin-top: 1.5rem;">
+          <div class="card-header-bar">
+            <h2>Contas de Acesso à Plataforma Oficial da ARCA</h2>
+            
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              
+              <!-- Filtro de Estado -->
+              <select id="filterEstado" class="btn btn-secondary btn-sm" onchange="handleEstadoFilter(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                <option value="all">Todos os Estados</option>
+                <option value="Ativo">🟢 Ativos</option>
+                <option value="Pendente">🟡 Pendentes</option>
+                <option value="Suspenso">🟠 Suspensos</option>
+                <option value="Anulado">🔴 Anulados</option>
+              </select>
+
+              <!-- Filtro de Perfil -->
+              <select id="filterPerfil" class="btn btn-secondary btn-sm" onchange="handlePerfilFilter(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                <option value="all">Todos os Perfis</option>
+                <option value="Administrador">Administradores</option>
+                <option value="Direção">Direção</option>
+                <option value="Tesouraria">Tesouraria</option>
+                <option value="Desporto">Gestão Desportiva</option>
+                <option value="Sócio">Sócios</option>
+                <option value="Geral">Geral</option>
+              </select>
+
+              <!-- Pesquisa de Utilizadores -->
+              <input type="text" id="searchUtilizadores" class="form-control" placeholder="Pesquisar por nome, username, email, nº sócio..." oninput="handleUtilizadoresSearch(this.value)" style="width: 260px; font-size: 0.85rem; padding: 0.45rem 0.65rem;">
+
+              <!-- Seletor de Ordenação -->
+              <select id="sortUtilizadoresSelect" class="btn btn-secondary btn-sm" onchange="handleUtilizadoresSortSelect(this.value)" style="padding: 0.45rem 0.65rem; font-size: 0.85rem;">
+                <option value="nome_asc">Nome (A → Z)</option>
+                <option value="nome_desc">Nome (Z → A)</option>
+                <option value="socio_asc">Nº de Sócio (Menor → Maior)</option>
+                <option value="estado_asc">Estado da Conta</option>
+                <option value="recente">Mais Recentes</option>
+              </select>
+
+              <!-- Seletor de Colunas Visíveis -->
+              <div class="col-picker-dropdown">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerUtilizadores" style="padding: 0.45rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                  </svg>
+                  <span>Colunas</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="col-picker-menu" id="menuColPickerUtilizadores">
+                  <div class="col-picker-header">
+                    <span>Personalizar Colunas</span>
+                    <button type="button" onclick="resetUtilizadoresCols()">Repor</button>
+                  </div>
+                  <div class="col-picker-list" id="listColPickerUtilizadores"></div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-sm" onclick="openNovoUtilizadorModal()">+ Novo Utilizador</button>
             </div>
           </div>
 
           <div class="table-responsive">
-            <table class="modern-table" id="tabelaUtilizadores">
+            <table class="modern-table" id="tableUtilizadores">
               <thead>
-                <tr>
-                  <th style="width: 200px;">Utilizador (Login)</th>
-                  <th>Titular & Cargo Oficial</th>
-                  <th>E-mail</th>
-                  <th>Módulos & Permissões</th>
-                  <th style="width: 100px;">Estado</th>
-                  <th style="text-align: right; width: 100px;">Ações</th>
+                <tr id="headRowUtilizadores">
+                  <th class="sortable-th" data-col="nome" onclick="sortUtilizadores('nome')">
+                    <span>Utilizador & Nome</span><span class="sort-indicator" id="sortInd_u_nome">▲</span>
+                  </th>
+                  <th class="sortable-th" data-col="socio" style="width: 125px;" onclick="sortUtilizadores('socio')">
+                    <span>Nº Sócio</span><span class="sort-indicator" id="sortInd_u_socio">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="contacto" onclick="sortUtilizadores('contacto')">
+                    <span>Contacto / E-mail</span><span class="sort-indicator" id="sortInd_u_contacto">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="perfil" style="width: 160px;" onclick="sortUtilizadores('perfil')">
+                    <span>Perfil de Acesso</span><span class="sort-indicator" id="sortInd_u_perfil">⇅</span>
+                  </th>
+                  <th data-col="permissoes" style="min-width: 220px;">
+                    <span>Módulos Autorizados</span>
+                  </th>
+                  <th class="sortable-th" data-col="estado" style="width: 130px;" onclick="sortUtilizadores('estado')">
+                    <span>Estado</span><span class="sort-indicator" id="sortInd_u_estado">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="acesso" style="width: 130px;" onclick="sortUtilizadores('acesso')">
+                    <span>Último Acesso</span><span class="sort-indicator" id="sortInd_u_acesso">⇅</span>
+                  </th>
+                  <th data-col="acoes" style="text-align: right; width: 140px;">Ações</th>
                 </tr>
               </thead>
               <tbody id="tbodyUtilizadores">
-                <!-- Preenchido via script -->
+                <!-- Inserido dinamicamente via JS -->
               </tbody>
             </table>
           </div>
@@ -431,297 +449,1711 @@
 
   </div>
 
-  <script src="js/socios-data.js"></script>
+  <!-- MODAL: FICHA COMPLETA DO UTILIZADOR -->
+  <div class="modal-overlay" id="modalFichaUtilizador" style="display: none;">
+    <div class="modal-container" style="max-width: 780px;">
+      
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
+          <div id="fichaUserAvatarBox" style="width: 72px; height: 72px; border-radius: 50%; overflow: hidden; border: 2.5px solid var(--primary); flex-shrink: 0; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center;">
+            <!-- Avatar injetado via JS -->
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+              <h2 id="fichaUserNome" style="margin: 0; font-size: 1.35rem; color: var(--text-title);">Nome do Utilizador</h2>
+              <span id="fichaUserEstadoBadge" class="status-pill ativo">Ativo</span>
+              <span id="fichaUserSocioBadge" class="badge-socio-tag">Sócio 314</span>
+            </div>
+            <p id="fichaUserSub" style="font-size: 0.88rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+              @username &bull; Cargo / Perfil
+            </p>
+          </div>
+        </div>
+        <button class="modal-close-btn" type="button" onclick="closeFichaUtilizadorModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.25rem 1.5rem; max-height: calc(85vh - 140px); overflow-y: auto;">
+        
+        <!-- Alerta de Suspensão ou Pendente se aplicável -->
+        <div id="fichaUserAlertBox" style="display: none; margin-bottom: 1.25rem; padding: 0.85rem 1rem; border-radius: var(--radius-md); font-size: 0.88rem;"></div>
+
+        <!-- Secção 1: Identificação & Contactos -->
+        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text-title); margin: 0 0 0.85rem 0; display: flex; align-items: center; gap: 0.4rem;">
+            <span>👤</span> Identificação & Dados de Contacto
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.85rem; font-size: 0.88rem;">
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Nome de Utilizador (Login):</span>
+              <div id="fichaUserLogin" style="font-weight: 700; color: var(--text-title); margin-top: 2px;">—</div>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">E-mail:</span>
+              <div id="fichaUserEmail" style="font-weight: 600; color: var(--text-title); margin-top: 2px;">—</div>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Telefone / Telemóvel:</span>
+              <div id="fichaUserTelefone" style="font-weight: 600; color: var(--text-title); margin-top: 2px;">—</div>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Número de Sócio da ARCA:</span>
+              <div id="fichaUserSocioNum" style="font-weight: 700; color: var(--primary); margin-top: 2px;">—</div>
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Morada / Localidade:</span>
+              <div id="fichaUserMorada" style="font-weight: 500; color: var(--text-title); margin-top: 2px;">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secção 2: Estado da Conta & Segurança Jurídica -->
+        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text-title); margin: 0 0 0.85rem 0; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🛡️</span> Estado da Conta, Segurança & RGPD
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.85rem; font-size: 0.88rem;">
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Estado Atual da Conta:</span>
+              <div id="fichaUserEstadoTexto" style="font-weight: 700; margin-top: 2px;">—</div>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Data de Registo:</span>
+              <div id="fichaUserDataRegisto" style="font-weight: 600; color: var(--text-title); margin-top: 2px;">—</div>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Último Acesso Registado:</span>
+              <div id="fichaUserUltimoAcesso" style="font-weight: 600; color: var(--text-title); margin-top: 2px;">—</div>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Proteção de Dados (RGPD):</span>
+              <div id="fichaUserRgpd" style="font-weight: 600; color: #16a34a; margin-top: 2px;">Consentimento Registado</div>
+            </div>
+            <div id="fichaUserMotivoBox" style="grid-column: 1 / -1; display: none;">
+              <span style="color: #ea580c; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Motivo da Suspensão / Notas Internas:</span>
+              <div id="fichaUserMotivo" style="background: #fff7ed; border: 1px solid #fed7aa; padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); margin-top: 3px; color: #9a3412;">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secção 3: Permissões de Módulos -->
+        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.1rem 1.25rem;">
+          <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text-title); margin: 0 0 0.85rem 0; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🔑</span> Permissões de Acesso aos Módulos
+          </h3>
+          <div id="fichaUserModulosGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.65rem;">
+            <!-- Módulos injetados via JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" id="btnFichaAlternarEstado" class="btn btn-secondary btn-sm" onclick="handleFichaToggleEstado()">
+          Alternar Estado
+        </button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" id="btnFichaEditar" class="btn btn-primary btn-sm" onclick="handleFichaAbrirEdicao()">
+            ✏️ Editar Utilizador
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeFichaUtilizadorModal()">
+            Fechar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- MODAL: CRIAR OU EDITAR UTILIZADOR -->
+  <div class="modal-overlay" id="modalFormUtilizador" style="display: none;">
+    <div class="modal-container" style="max-width: 820px;">
+      
+      <div class="modal-header">
+        <h2 id="modalFormUtilizadorTitle" style="margin: 0; font-size: 1.25rem; color: var(--text-title);">
+          Novo Utilizador da Plataforma
+        </h2>
+        <button class="modal-close-btn" type="button" onclick="closeFormUtilizadorModal()">&times;</button>
+      </div>
+
+      <!-- Abas do Formulário -->
+      <div class="member-modal-tabs">
+        <button type="button" class="member-modal-tab active" data-tab="tabFormUserDados" onclick="switchUserFormTab('tabFormUserDados')">
+          <span>👤</span> 1. Dados Pessoais & Acesso
+        </button>
+        <button type="button" class="member-modal-tab" data-tab="tabFormUserEstado" onclick="switchUserFormTab('tabFormUserEstado')">
+          <span>🛡️</span> 2. Estado da Conta & Segurança
+        </button>
+        <button type="button" class="member-modal-tab" data-tab="tabFormUserPermissoes" onclick="switchUserFormTab('tabFormUserPermissoes')">
+          <span>🔑</span> 3. Permissões de Módulos
+        </button>
+      </div>
+
+      <form id="formUtilizador" onsubmit="handleSalvarUtilizador(event)">
+        <input type="hidden" id="formUserId" value="">
+        <input type="hidden" id="formUserFotoData" value="">
+        <input type="hidden" id="formUserEstadoValor" value="Ativo">
+
+        <div class="modal-body" style="padding: 1.25rem 1.5rem; max-height: calc(85vh - 190px); overflow-y: auto;">
+          
+          <!-- ================= ABA 1: DADOS PESSOAIS & ACESSO ================= -->
+          <div class="member-tab-content active" id="tabFormUserDados">
+            
+            <!-- Zona de Fotografia / Avatar Drag & Drop -->
+            <div class="avatar-upload-zone" id="userFormAvatarDropZone" 
+                 ondragover="handleUserFormAvatarDragOver(event)" 
+                 ondragleave="handleUserFormAvatarDragLeave(event)" 
+                 ondrop="handleUserFormAvatarDrop(event)"
+                 style="margin-bottom: 1.25rem;">
+              
+              <div class="avatar-preview-wrapper" onclick="document.getElementById('inputUserFormFoto').click()" title="Clique para escolher foto ou arraste uma imagem para aqui">
+                <img id="userFormFotoPreview" src="" class="avatar-preview-img" style="display: none;" alt="" onerror="this.style.display='none'; document.getElementById('userFormFotoPlaceholder').style.display='flex';">
+                <div id="userFormFotoPlaceholder" class="avatar-placeholder-large">👤</div>
+                <div class="avatar-edit-badge" title="Alterar fotografia">📷</div>
+              </div>
+
+              <div class="avatar-upload-info" style="flex: 1;">
+                <strong style="color: var(--text-title); font-size: 0.95rem;">Fotografia / Imagem do Utilizador</strong>
+                <p style="margin: 0.2rem 0 0.5rem 0; font-size: 0.8rem; color: var(--text-muted);">
+                  Arraste uma fotografia diretamente para esta caixa ou clique para selecionar do seu computador.
+                </p>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <button type="button" class="btn btn-secondary btn-xs" onclick="document.getElementById('inputUserFormFoto').click()">
+                    Escolher Ficheiro
+                  </button>
+                  <button type="button" id="btnRemoverFotoUserForm" class="btn btn-secondary btn-xs" style="display: none; color: #dc2626;" onclick="removerFotoUserForm()">
+                    Remover Foto
+                  </button>
+                </div>
+                <input type="file" id="inputUserFormFoto" accept="image/*" style="display: none;" onchange="handleUserFormFotoFileSelect(event)">
+              </div>
+            </div>
+
+            <!-- Grelha de Campos Principais -->
+            <div class="form-grid-2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+              
+              <div class="form-group">
+                <label for="formUserNome">Nome Completo <span style="color: #dc2626;">*</span></label>
+                <input type="text" id="formUserNome" class="form-control" required placeholder="Ex: Jorge Manuel da Silva Cunha">
+              </div>
+
+              <div class="form-group">
+                <label for="formUserLogin">Nome de Utilizador / Login (@username) <span style="color: #dc2626;">*</span></label>
+                <input type="text" id="formUserLogin" class="form-control" required placeholder="Ex: jorge ou jorge.cunha">
+                <small style="color: var(--text-muted); font-size: 0.75rem;">Sem espaços. Utilizado para iniciar sessão no site.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="formUserEmail">Endereço de E-mail <span style="color: #dc2626;">*</span></label>
+                <input type="email" id="formUserEmail" class="form-control" required placeholder="Ex: utilizador@gmail.com">
+              </div>
+
+              <div class="form-group">
+                <label for="formUserTelefone">Telefone / Telemóvel</label>
+                <input type="text" id="formUserTelefone" class="form-control" placeholder="Ex: 912 345 678">
+              </div>
+
+              <div class="form-group">
+                <label for="formUserSocioNum">Número de Sócio da ARCA (Opcional)</label>
+                <input type="number" id="formUserSocioNum" class="form-control" placeholder="Ex: 314 (Deixe vazio se não for sócio)">
+                <small style="color: var(--text-muted); font-size: 0.75rem;">Se o utilizador for sócio, introduza apenas o número (sem #).</small>
+              </div>
+
+              <div class="form-group">
+                <label for="formUserPerfil">Perfil Institucional / Função</label>
+                <select id="formUserPerfil" class="form-control" onchange="aplicarPresetPorPerfil(this.value)">
+                  <option value="Administrador Total">Administrador Total (Acesso Completo)</option>
+                  <option value="Membro da Direção">Membro da Direção Executiva</option>
+                  <option value="Tesoureiro / Finanças">Tesouraria & Finanças</option>
+                  <option value="Gestão Desportiva">Gestão Desportiva (Diretor/Delegado)</option>
+                  <option value="Sócio Associado">Sócio Associado</option>
+                  <option value="Utilizador Geral">Utilizador Geral / Colaborador</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="formUserMorada">Morada / Localidade</label>
+                <input type="text" id="formUserMorada" class="form-control" placeholder="Ex: Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo">
+              </div>
+
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="formUserPassword">Palavra-passe de Acesso</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="password" id="formUserPassword" class="form-control" placeholder="Deixe em branco para manter a atual ou crie nova senha">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="togglePasswordVisibility('formUserPassword')">👁️</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="gerarSenhaAleatoria('formUserPassword')">Gerar Senha</button>
+                </div>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">O utilizador poderá alterar a senha a qualquer momento na sua área de perfil.</small>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ================= ABA 2: ESTADO DA CONTA & SEGURANÇA ================= -->
+          <div class="member-tab-content" id="tabFormUserEstado">
+            
+            <label style="font-weight: 700; color: var(--text-title); display: block; margin-bottom: 0.6rem;">
+              Selecione o Estado Oficial da Conta:
+            </label>
+
+            <!-- 4 Cartões Interativos de Estado -->
+            <div class="account-status-cards">
+              
+              <!-- Ativo -->
+              <div class="account-status-card active-ativo" id="cardEstadoAtivo" onclick="setUserFormEstado('Ativo')">
+                <div class="account-status-icon" style="background: #dcfce7; color: #16a34a;">🟢</div>
+                <div>
+                  <div class="account-status-title">Ativo</div>
+                  <div class="account-status-desc">Conta aprovada e ativa. O utilizador pode entrar no site e utilizar os módulos autorizados.</div>
+                </div>
+              </div>
+
+              <!-- Pendente -->
+              <div class="account-status-card" id="cardEstadoPendente" onclick="setUserFormEstado('Pendente')">
+                <div class="account-status-icon" style="background: #fef3c7; color: #d97706;">🟡</div>
+                <div>
+                  <div class="account-status-title">Pendente</div>
+                  <div class="account-status-desc">Pedido de adesão a aguardar validação da Direção. O login está bloqueado com aviso explicativo.</div>
+                </div>
+              </div>
+
+              <!-- Suspenso -->
+              <div class="account-status-card" id="cardEstadoSuspenso" onclick="setUserFormEstado('Suspenso')">
+                <div class="account-status-icon" style="background: #ffedd5; color: #ea580c;">🟠</div>
+                <div>
+                  <div class="account-status-title">Suspenso</div>
+                  <div class="account-status-desc">Acesso temporariamente bloqueado pela Direção (ex: averiguação de irregularidade). Login impedido.</div>
+                </div>
+              </div>
+
+              <!-- Anulado -->
+              <div class="account-status-card" id="cardEstadoAnulado" onclick="setUserFormEstado('Anulado')">
+                <div class="account-status-icon" style="background: #f1f5f9; color: #64748b;">🔴</div>
+                <div>
+                  <div class="account-status-title">Anulado</div>
+                  <div class="account-status-desc">Conta cancelada ou revogada. O utilizador terá de submeter novo pedido formal se quiser aceder.</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Motivo de Suspensão / Observações Internas da Direção -->
+            <div class="form-group" style="margin-top: 1rem;">
+              <label for="formUserMotivoSuspensao">
+                Motivo da Suspensão / Notas Internas da Direção (Confidencial)
+              </label>
+              <textarea id="formUserMotivoSuspensao" class="form-control" rows="3" placeholder="Indique a razão da suspensão da conta ou anotações confidenciais sobre este utilizador..."></textarea>
+              <small style="color: var(--text-muted); font-size: 0.75rem;">Visível para a Direção. Se a conta for suspensa, este motivo poderá ser apresentado no aviso de login.</small>
+            </div>
+
+            <!-- Dados Legais e de Conformidade -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; background: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+              <div class="form-group" style="margin: 0;">
+                <label for="formUserDataRegisto" style="font-size: 0.82rem;">Data de Registo / Entrada:</label>
+                <input type="date" id="formUserDataRegisto" class="form-control" style="font-size: 0.85rem;">
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label for="formUserDataRgpd" style="font-size: 0.82rem;">Consentimento RGPD (Proteção de Dados):</label>
+                <input type="date" id="formUserDataRgpd" class="form-control" style="font-size: 0.85rem;">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================= ABA 3: PERMISSÕES DE MÓDULOS ================= -->
+          <div class="member-tab-content" id="tabFormUserPermissoes">
+            
+            <!-- Barra de Presets Rápidos -->
+            <div class="perm-preset-box">
+              <div class="perm-preset-title">
+                <span>Presets de Permissões Rápidas:</span>
+                <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: var(--text-muted);">Clique para aplicar modelo padrão</span>
+              </div>
+              <div class="perm-preset-buttons">
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetPermissoes('admin')">⭐ Administrador Total</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetPermissoes('direcao')">🏛️ Direção Executiva</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetPermissoes('tesouraria')">💶 Tesouraria & Finanças</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetPermissoes('desporto')">⚽ Gestão Desportiva</button>
+                <button type="button" class="perm-preset-btn" onclick="aplicarPresetPermissoes('socio')">📇 Sócio / Consulta</button>
+                <button type="button" class="perm-preset-btn" style="color: #dc2626;" onclick="aplicarPresetPermissoes('limpar')">❌ Limpar Tudo</button>
+              </div>
+            </div>
+
+            <!-- Matriz Granular de Módulos -->
+            <div id="userPermissoesModulosContainer">
+              <!-- Gerado via JavaScript: Cartões de Módulos com switches e submenus -->
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.6rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeFormUtilizadorModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Utilizador</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
   <script src="js/main.js"></script>
   <script>
-    const CONTAS_UTILIZADORES = [
+    // =========================================================================
+    // Base de Dados de Utilizadores & Permissões da ARCA
+    // =========================================================================
+    const UTILIZADORES_STORAGE_KEY = 'arca_utilizadores_v2';
+
+    const JORGE_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>";
+    const ARTUR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bgA' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230369a1'/><stop offset='100%' stop-color='%23075985'/></linearGradient><linearGradient id='skinA' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23ffedd5'/><stop offset='100%' stop-color='%23fed7aa'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bgA)'/><circle cx='50' cy='40' r='20' fill='url(%23skinA)'/><path d='M30 32c2-10 11-16 20-16s18 6 20 16c-4-3-10-4-20-4s-16 1-20 4z' fill='%2364748b'/><path d='M22 90c0-16 12.5-28 28-28s28 12 28 28' fill='%23334155'/><path d='M44 62l6 10 6-10' fill='%23f8fafc'/></svg>";
+
+    // Definição dos Módulos do Sistema para Permissões
+    const MODULOS_SISTEMA = [
       {
-        login: "jorge",
-        nome: "Jorge Manuel da Silva Cunha",
-        cargo: "Presidente da Direção",
-        orgao: "Direção",
-        email: "scunhajorge@gmail.com",
-        permissoes: "Administrador · acesso total",
-        perfil: "Administrador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/5304d380-65df-4c43-9006-2292c2fc4800/photo?v=1793641149133",
-        estado: "Ativo"
+        id: "painel",
+        nome: "Visão Geral / Painel de Controlo",
+        icone: "📊",
+        descricao: "Acesso ao painel principal e indicadores gerais da associação",
+        submenus: [
+          { id: "indicadores", nome: "Visualizar Indicadores Globais" },
+          { id: "avisos", nome: "Mural de Avisos & Notificações" }
+        ]
       },
       {
-        login: "jose.reis",
-        nome: "José Manuel Carreira dos Reis",
-        cargo: "Vice-Presidente",
-        orgao: "Direção",
-        email: "zreis93@gmail.com",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/37697823-46b7-4253-bfd3-dc404c36e043/photo?v=1793706476392",
-        estado: "Ativo"
+        id: "socios",
+        nome: "Sócios & Cotas",
+        icone: "📇",
+        descricao: "Base de associados, histórico de cotas, impressão e liquidação",
+        submenus: [
+          { id: "consultar", nome: "Consultar Lista e Ficha de Sócios" },
+          { id: "editar", nome: "Criar e Editar Fichas de Sócios" },
+          { id: "pagamentos", nome: "Registar Pagamentos de Cotas Anuais" },
+          { id: "exportar", nome: "Exportar Listagens de Sócios" }
+        ]
       },
       {
-        login: "luis.santos",
-        nome: "Luis Carlos Antunes dos Santos",
-        cargo: "Vice-Presidente",
-        orgao: "Direção",
-        email: "luis.santos43@gmail.com",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/8af9e138-f56b-4b5f-90f2-b8a4c488d2fb/photo?v=1793818250454",
-        estado: "Ativo"
+        id: "tesouraria",
+        nome: "Tesouraria & Finanças",
+        icone: "💶",
+        descricao: "Movimentos de caixa, recibos emitidos, fornecedores e POS",
+        submenus: [
+          { id: "caixa", nome: "Caixa & Movimentos Bancários" },
+          { id: "recibos", nome: "Recibos Emitidos (Consultar e Fazer Download)" },
+          { id: "fornecedores", nome: "Gestão de Fornecedores" },
+          { id: "pos", nome: "P.O.S. (Ponto de Venda Bar/Eventos)" }
+        ]
       },
       {
-        login: "raquel.cunha",
-        nome: "Raquel Alexandra Marques da Cunha",
-        cargo: "Secretária",
-        orgao: "Direção",
-        email: "raquelamc22@gmail.com",
-        permissoes: "Documentos, Agenda, Calendário geral, Sócios, Atas (alterar)",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/ea9ac505-8508-4502-88ef-7f8e11c0805a/photo?v=1793816777187",
-        estado: "Ativo"
+        id: "direcao",
+        nome: "Direção & Órgãos Sociais",
+        icone: "🏛️",
+        descricao: "Membros, atas de reuniões, exercício de mandatos e tomadas de posse",
+        submenus: [
+          { id: "membros", nome: "Consultar Membros dos Órgãos Sociais" },
+          { id: "membros_gestao", nome: "Editar Membros & Atribuir Funções" },
+          { id: "atas", nome: "Atas de Reuniões da Direção" },
+          { id: "exercicio", nome: "Exercício & Contas de Gerência" }
+        ]
       },
       {
-        login: "artur.cardoso",
-        nome: "Artur Jorge Ferreira Cardoso",
-        cargo: "Tesoureiro",
-        orgao: "Direção",
-        email: "alfamobile@gmail.com",
-        permissoes: "Agenda, Calendário geral, Acessos por país, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/19f5964a-8118-49a3-9e88-084ce2283994/photo?v=1793805612409",
-        estado: "Ativo"
+        id: "desporto",
+        nome: "Gestão Desportiva",
+        icone: "⚽",
+        descricao: "Secções desportivas, fichas de atletas, fisioterapia e apólices",
+        submenus: [
+          { id: "diretor", nome: "Diretor Desportivo" },
+          { id: "delegado", nome: "Delegados de Jogo" },
+          { id: "fisio", nome: "Fisio & Clínica Desportiva" },
+          { id: "seguros", nome: "Seguros & Sinistros de Atletas" }
+        ]
       },
       {
-        login: "agostinho.martins",
-        nome: "Agostinho Rui Ferreira Martins",
-        cargo: "Vogal",
-        orgao: "Direção",
-        email: "—",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/0aa8b4a4-c628-4b4d-9b1f-99943cfc8130/photo?v=1793816737213",
-        estado: "Ativo"
+        id: "documentos",
+        nome: "Documentação Oficial & Arquivo",
+        icone: "📁",
+        descricao: "Plano de atividades, orçamentos provisionais e repositório digital",
+        submenus: [
+          { id: "consultar", nome: "Consultar e Descarregar Documentos" },
+          { id: "upload", nome: "Fazer Upload e Catalogar Novos Ficheiros" },
+          { id: "eliminar", nome: "Editar Ficha de Arquivo e Eliminar" }
+        ]
       },
       {
-        login: "ana.marques",
-        nome: "Ana Catarina Rua Marques",
-        cargo: "Vogal",
-        orgao: "Direção",
-        email: "ana_rua@outlook.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/7908c27d-34f7-4ef5-9f9e-fe6aadd6177c/photo?v=1793816749143",
-        estado: "Ativo"
-      },
-      {
-        login: "danilo.saraiva",
-        nome: "Danilo Alexandre Estima Saraiva",
-        cargo: "Vogal",
-        orgao: "Direção",
-        email: "d.alex.saraiva@gmail.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/ba3816d7-84bc-44fa-a3e9-a0f1ea09bf4c/photo?v=1793816766487",
-        estado: "Ativo"
-      },
-      {
-        login: "gabriel.carlos",
-        nome: "Gabriel Antunes das Neves Carlos",
-        cargo: "Vogal",
-        orgao: "Direção",
-        email: "gabriel1113nunes@gmail.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/3d740c8f-3dae-49d9-bb58-3932e6fc8e03/photo?v=1793816790890",
-        estado: "Ativo"
-      },
-      {
-        login: "rui.abrantes",
-        nome: "Rui Miguel Baptista Abrantes",
-        cargo: "Vogal",
-        orgao: "Direção",
-        email: "rui.baptista.abrantes@gmail.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/c2bc802f-2d33-4f93-b26a-ce065e9c05e1/photo?v=1793816801944",
-        estado: "Ativo"
-      },
-      {
-        login: "sergio.novo",
-        nome: "Sérgio Tiago Rodrigues Novo",
-        cargo: "Vogal",
-        orgao: "Direção",
-        email: "sr.gionovo@gmail.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/4eb101b0-ec18-42f0-9113-5cc1e1ec676a/photo?v=1793816828945",
-        estado: "Ativo"
-      },
-      {
-        login: "veronica.abrantes",
-        nome: "Verónica Baptista Abrantes",
-        cargo: "Vogal",
-        orgao: "Direção",
-        email: "kika_abrantes@hotmail.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/da2c2194-2795-46eb-843c-6ca64d2d46e2/photo?v=1793816840744",
-        estado: "Ativo"
-      },
-      {
-        login: "eduardo.milton",
-        nome: "Eduardo Milton Tavares da Silva",
-        cargo: "Presidente",
-        orgao: "Assembleia Geral",
-        email: "miltonsilva@sapo.pt",
-        permissoes: "Agenda, Calendário geral, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/5d8b7b75-e8b9-43c2-a9b0-13f8d2279c0a/photo?v=1793818274483",
-        estado: "Ativo"
-      },
-      {
-        login: "soraia.martins",
-        nome: "Soraia Filipa da Silva Martins",
-        cargo: "Secretária",
-        orgao: "Assembleia Geral",
-        email: "—",
-        permissoes: "Agenda, Calendário geral, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/b5cb407d-959c-4613-afc2-03d9804b4dfd/photo?v=1793818287796",
-        estado: "Ativo"
-      },
-      {
-        login: "cristiana.marques",
-        nome: "Cristiana Simões Marques",
-        cargo: "Vogal",
-        orgao: "Assembleia Geral",
-        email: "—",
-        permissoes: "Agenda, Calendário geral, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/700a40a8-fc40-4131-bfa6-17b5f2a1ecf1/photo?v=1793818298782",
-        estado: "Ativo"
-      },
-      {
-        login: "rui.cardoso",
-        nome: "Rui Manuel da Silva Cardoso",
-        cargo: "Presidente",
-        orgao: "Conselho Fiscal",
-        email: "—",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/91e4a3b8-6f3b-4860-9ba2-c2e7b7f16bc4/photo?v=1793818314111",
-        estado: "Ativo"
-      },
-      {
-        login: "natalia.rodrigues",
-        nome: "Natália Cláudia Simões Rodrigues",
-        cargo: "Vogal",
-        orgao: "Conselho Fiscal",
-        email: "natalia.sr1974@gmail.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/c19d45ee-5c40-42ec-a068-d0f507ee64ae/photo?v=1793818329617",
-        estado: "Ativo"
-      },
-      {
-        login: "quelia.ribeiro",
-        nome: "Quélia Rodrigues Ribeiro",
-        cargo: "Vogal",
-        orgao: "Conselho Fiscal",
-        email: "queliaribeiro.qr@gmail.com",
-        permissoes: "Agenda, Calendário geral, Sócios, Atas",
-        perfil: "Utilizador",
-        foto: "https://gestao.arca-aguadadebaixo.pt/api/users/d2361df4-ec2e-4b21-8178-c0b7fb5bbd9b/photo?v=1793818342407",
-        estado: "Ativo"
+        id: "administracao",
+        nome: "Painel de Controlo & Utilizadores",
+        icone: "⚙️",
+        descricao: "Administração de contas, segurança, permissões e registos",
+        submenus: [
+          { id: "utilizadores_ver", nome: "Consultar Contas de Utilizador" },
+          { id: "utilizadores_gerir", nome: "Criar, Ativar, Suspender e Gerir Permissões" }
+        ]
       }
     ];
 
-    function handleAvatarError(img, initial) {
-      const div = document.createElement('div');
-      div.style.cssText = 'width: 34px; height: 34px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: var(--primary); flex-shrink: 0;';
-      div.textContent = initial || 'U';
-      img.replaceWith(div);
+    // Contas Iniciais Padronizadas
+    const CONTAS_UTILIZADORES_INICIAIS = [
+      {
+        id: 1,
+        nome: "Jorge Manuel da Silva Cunha",
+        login: "jorge",
+        username: "@jorge",
+        email: "scunhajorge@gmail.com",
+        telefone: "966 100 115",
+        morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
+        numeroSocio: 314,
+        perfil: "Administrador Total",
+        estado: "Ativo",
+        motivo_suspensao: "",
+        data_registo: "2024-01-10",
+        data_rgpd: "2024-01-10",
+        ultimo_acesso: "Hoje, 09:40",
+        foto: JORGE_SVG,
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
+          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos", "exportar"] },
+          tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+          direcao: { enabled: true, mode: "full", submenus: ["membros", "membros_gestao", "atas", "exercicio"] },
+          desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
+          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "eliminar"] },
+          administracao: { enabled: true, mode: "full", submenus: ["utilizadores_ver", "utilizadores_gerir"] }
+        }
+      },
+      {
+        id: 2,
+        nome: "Artur Jorge Ferreira Cardoso",
+        login: "artur.cardoso",
+        username: "@artur.cardoso",
+        email: "alfamobile@gmail.com",
+        telefone: "911 970 345",
+        morada: "Rua Vale do Lobo, 11 - Landiosa, Aguada de Baixo",
+        numeroSocio: 332,
+        perfil: "Tesoureiro / Finanças",
+        estado: "Ativo",
+        motivo_suspensao: "",
+        data_registo: "2024-01-15",
+        data_rgpd: "2024-01-15",
+        ultimo_acesso: "Ontem, 18:22",
+        foto: ARTUR_SVG,
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
+          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos"] },
+          tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+          direcao: { enabled: true, mode: "view", submenus: ["membros", "atas"] },
+          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload"] }
+        }
+      },
+      {
+        id: 3,
+        nome: "José Manuel Carreira dos Reis",
+        login: "jose.reis",
+        username: "@jose.reis",
+        email: "zreis93@gmail.com",
+        telefone: "919 443 210",
+        morada: "Aguada de Baixo",
+        numeroSocio: 125,
+        perfil: "Membro da Direção",
+        estado: "Ativo",
+        motivo_suspensao: "",
+        data_registo: "2024-01-20",
+        data_rgpd: "2024-01-20",
+        ultimo_acesso: "24/11/2026",
+        foto: "",
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+          socios: { enabled: true, mode: "view", submenus: ["consultar"] },
+          direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
+          documentos: { enabled: true, mode: "view", submenus: ["consultar"] }
+        }
+      },
+      {
+        id: 4,
+        nome: "Luis Carlos Antunes dos Santos",
+        login: "luis.santos",
+        username: "@luis.santos",
+        email: "luis.santos43@gmail.com",
+        telefone: "914 882 190",
+        morada: "Aguada de Baixo",
+        numeroSocio: 210,
+        perfil: "Membro da Direção",
+        estado: "Ativo",
+        motivo_suspensao: "",
+        data_registo: "2024-01-20",
+        data_rgpd: "2024-01-20",
+        ultimo_acesso: "23/11/2026",
+        foto: "",
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+          socios: { enabled: true, mode: "view", submenus: ["consultar"] },
+          direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] }
+        }
+      },
+      {
+        id: 5,
+        nome: "Raquel Alexandra Marques da Cunha",
+        login: "raquel.cunha",
+        username: "@raquel.cunha",
+        email: "raquelamc22@gmail.com",
+        telefone: "963 112 405",
+        morada: "Aguada de Baixo",
+        numeroSocio: 305,
+        perfil: "Membro da Direção",
+        estado: "Ativo",
+        motivo_suspensao: "",
+        data_registo: "2024-01-25",
+        data_rgpd: "2024-01-25",
+        ultimo_acesso: "25/11/2026",
+        foto: "",
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar"] },
+          direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
+          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload"] }
+        }
+      },
+      {
+        id: 6,
+        nome: "Danilo Alexandre Estima Saraiva",
+        login: "danilo.saraiva",
+        username: "@danilo.saraiva",
+        email: "d.alex.saraiva@gmail.com",
+        telefone: "917 220 541",
+        morada: "Landiosa, Aguada de Baixo",
+        numeroSocio: 189,
+        perfil: "Gestão Desportiva",
+        estado: "Ativo",
+        motivo_suspensao: "",
+        data_registo: "2024-02-01",
+        data_rgpd: "2024-02-01",
+        ultimo_acesso: "21/11/2026",
+        foto: "",
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+          desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio"] }
+        }
+      },
+      {
+        id: 7,
+        nome: "Mário Rui Ferreira",
+        login: "mario.ferreira",
+        username: "@mario.ferreira",
+        email: "mario.rui.f@sapo.pt",
+        telefone: "916 443 890",
+        morada: "Aguadela, Aguada de Baixo",
+        numeroSocio: 389,
+        perfil: "Gestão Desportiva",
+        estado: "Pendente",
+        motivo_suspensao: "",
+        data_registo: "2026-11-25",
+        data_rgpd: "2026-11-25",
+        ultimo_acesso: "Nunca",
+        foto: "",
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+          desporto: { enabled: true, mode: "full", submenus: ["delegado", "seguros"] }
+        }
+      },
+      {
+        id: 8,
+        nome: "Carla Sofia Santos",
+        login: "carla.santos",
+        username: "@carla.santos",
+        email: "carla.santos.arca@gmail.com",
+        telefone: "934 551 229",
+        morada: "Póvoa, Aguada de Baixo",
+        numeroSocio: null,
+        perfil: "Utilizador Geral",
+        estado: "Pendente",
+        motivo_suspensao: "",
+        data_registo: "2026-11-26",
+        data_rgpd: "2026-11-26",
+        ultimo_acesso: "Nunca",
+        foto: "",
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+          documentos: { enabled: true, mode: "view", submenus: ["consultar"] }
+        }
+      },
+      {
+        id: 9,
+        nome: "Pedro Miguel Tavares",
+        login: "pedro.tavares",
+        username: "@pedro.tavares",
+        email: "ptavares_88@hotmail.com",
+        telefone: "965 210 987",
+        morada: "Cruzeiro, Aguada de Baixo",
+        numeroSocio: 115,
+        perfil: "Sócio Associado",
+        estado: "Suspenso",
+        motivo_suspensao: "Averiguação de acessos irregulares e incumprimento do regulamento interno.",
+        data_registo: "2024-03-12",
+        data_rgpd: "2024-03-12",
+        ultimo_acesso: "15/10/2026",
+        foto: "",
+        permissoes_modulos: {
+          painel: { enabled: true, mode: "view", submenus: ["indicadores"] }
+        }
+      },
+      {
+        id: 10,
+        nome: "Rui Manuel Pinho",
+        login: "rui.pinho",
+        username: "@rui.pinho",
+        email: "rui_pinho_arca@gmail.com",
+        telefone: "918 332 109",
+        morada: "Aguada de Baixo",
+        numeroSocio: 67,
+        perfil: "Utilizador Geral",
+        estado: "Anulado",
+        motivo_suspensao: "Conta anulada a pedido do próprio associado.",
+        data_registo: "2024-02-14",
+        data_rgpd: "2024-02-14",
+        ultimo_acesso: "01/08/2026",
+        foto: "",
+        permissoes_modulos: {}
+      }
+    ];
+
+    let utilizadores = [];
+    let currentTableAvatarUploadUserId = null;
+    let currentUserFichaId = null;
+
+    // Estado da Ordenação
+    let sortUserField = 'nome';
+    let sortUserDir = 'asc';
+
+    // Estado das Colunas
+    const STORAGE_KEY_COLS_USER = 'arca_cols_utilizadores_v1';
+    let colsUser = {
+      nome: true,
+      socio: true,
+      contacto: true,
+      perfil: true,
+      permissoes: true,
+      estado: true,
+      acesso: true,
+      acoes: true
+    };
+
+    // =========================================================================
+    // Inicialização da Aplicação
+    // =========================================================================
+    function loadUtilizadores() {
+      try {
+        const saved = localStorage.getItem(UTILIZADORES_STORAGE_KEY);
+        if (saved) {
+          utilizadores = JSON.parse(saved);
+        } else {
+          utilizadores = JSON.parse(JSON.stringify(CONTAS_UTILIZADORES_INICIAIS));
+          localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
+        }
+      } catch (e) {
+        utilizadores = JSON.parse(JSON.stringify(CONTAS_UTILIZADORES_INICIAIS));
+      }
+
+      // Garantir compatibilidade e fotos limpas
+      utilizadores.forEach(u => {
+        if (!u.estado) u.estado = 'Ativo';
+        if (!u.permissoes_modulos) u.permissoes_modulos = {};
+        if (u.foto && u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users')) {
+          if (u.id === 1) u.foto = JORGE_SVG;
+          else if (u.id === 2) u.foto = ARTUR_SVG;
+          else u.foto = "";
+        }
+      });
     }
 
-    function renderTabelaUtilizadores(lista) {
+    function saveUtilizadores() {
+      localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
+      updateUtilizadoresStats();
+      renderUtilizadores();
+    }
+
+    // =========================================================================
+    // Colunas & Personalização
+    // =========================================================================
+    function loadColsUser() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_COLS_USER);
+        if (saved) colsUser = Object.assign(colsUser, JSON.parse(saved));
+      } catch (e) {}
+    }
+
+    function saveColsUser() {
+      localStorage.setItem(STORAGE_KEY_COLS_USER, JSON.stringify(colsUser));
+      applyColsUtilizadores();
+    }
+
+    function initColPickerUtilizadores() {
+      const list = document.getElementById('listColPickerUtilizadores');
+      const toggle = document.getElementById('btnToggleColPickerUtilizadores');
+      const menu = document.getElementById('menuColPickerUtilizadores');
+      if (!list) return;
+
+      const labels = {
+        nome: 'Utilizador & Nome',
+        socio: 'Nº Sócio',
+        contacto: 'Contacto / E-mail',
+        perfil: 'Perfil de Acesso',
+        permissoes: 'Módulos Autorizados',
+        estado: 'Estado da Conta',
+        acesso: 'Último Acesso',
+        acoes: 'Ações'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => `
+        <label class="col-picker-item">
+          <input type="checkbox" ${colsUser[key] ? 'checked' : ''} onchange="toggleUserCol('${key}', this.checked)">
+          <span>${label}</span>
+        </label>
+      `).join('');
+
+      if (toggle && menu) {
+        toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target) && e.target !== toggle) menu.classList.remove('show');
+        });
+      }
+    }
+
+    window.toggleUserCol = function(colKey, visible) {
+      colsUser[colKey] = visible;
+      saveColsUser();
+    };
+
+    window.resetUtilizadoresCols = function() {
+      colsUser = { nome: true, socio: true, contacto: true, perfil: true, permissoes: true, estado: true, acesso: true, acoes: true };
+      saveColsUser();
+      initColPickerUtilizadores();
+    };
+
+    function applyColsUtilizadores() {
+      const table = document.getElementById('tableUtilizadores');
+      if (!table) return;
+      Object.entries(colsUser).forEach(([colKey, visible]) => {
+        table.querySelectorAll(`[data-col="${colKey}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    // =========================================================================
+    // Ordenação da Tabela
+    // =========================================================================
+    window.sortUtilizadores = function(field) {
+      if (sortUserField === field) {
+        sortUserDir = (sortUserDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortUserField = field;
+        sortUserDir = 'asc';
+      }
+      updateUserSortIndicators();
+      renderUtilizadores();
+    };
+
+    window.handleUtilizadoresSortSelect = function(val) {
+      if (val === 'recente') {
+        sortUserField = 'id';
+        sortUserDir = 'desc';
+      } else {
+        const last = val.lastIndexOf('_');
+        sortUserField = val.slice(0, last);
+        sortUserDir = val.slice(last + 1);
+      }
+      updateUserSortIndicators();
+      renderUtilizadores();
+    };
+
+    function updateUserSortIndicators() {
+      const fields = ['nome', 'socio', 'contacto', 'perfil', 'estado', 'acesso'];
+      fields.forEach(f => {
+        const ind = document.getElementById(`sortInd_u_${f}`);
+        if (!ind) return;
+        if (sortUserField === f) {
+          ind.textContent = (sortUserDir === 'asc') ? '▲' : '▼';
+          ind.style.color = 'var(--primary)';
+        } else {
+          ind.textContent = '⇅';
+          ind.style.color = '#94a3b8';
+        }
+      });
+    }
+
+    // =========================================================================
+    // Filtros e Pesquisa
+    // =========================================================================
+    let currentFilterEstado = 'all';
+    let currentFilterPerfil = 'all';
+    let currentSearchTerm = '';
+
+    window.handleEstadoFilter = function(val) {
+      currentFilterEstado = val;
+      renderUtilizadores();
+    };
+
+    window.handlePerfilFilter = function(val) {
+      currentFilterPerfil = val;
+      renderUtilizadores();
+    };
+
+    window.handleUtilizadoresSearch = function(val) {
+      currentSearchTerm = val.trim().toLowerCase();
+      renderUtilizadores();
+    };
+
+    // =========================================================================
+    // Indicadores Rápidos (KPIs)
+    // =========================================================================
+    function updateUtilizadoresStats() {
+      const total = utilizadores.length;
+      const ativos = utilizadores.filter(u => u.estado === 'Ativo').length;
+      const pendentes = utilizadores.filter(u => u.estado === 'Pendente').length;
+      const bloqueados = utilizadores.filter(u => u.estado === 'Suspenso' || u.estado === 'Anulado').length;
+
+      document.getElementById('statTotalUtilizadores').textContent = total;
+      document.getElementById('statAtivos').textContent = ativos;
+      document.getElementById('statPendentes').textContent = pendentes;
+      document.getElementById('statBloqueados').textContent = bloqueados;
+    }
+
+    // =========================================================================
+    // Renderização da Tabela de Utilizadores
+    // =========================================================================
+    function renderUtilizadores() {
       const tbody = document.getElementById('tbodyUtilizadores');
       if (!tbody) return;
 
-      if (!lista || lista.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Nenhum utilizador encontrado.</td></tr>`;
+      let filtrados = utilizadores.filter(u => {
+        if (currentFilterEstado !== 'all' && u.estado !== currentFilterEstado) return false;
+        if (currentFilterPerfil !== 'all') {
+          if (!u.perfil || !u.perfil.toLowerCase().includes(currentFilterPerfil.toLowerCase())) return false;
+        }
+        if (currentSearchTerm) {
+          const matchNome = (u.nome || '').toLowerCase().includes(currentSearchTerm);
+          const matchLogin = (u.login || '').toLowerCase().includes(currentSearchTerm);
+          const matchEmail = (u.email || '').toLowerCase().includes(currentSearchTerm);
+          const matchSocio = u.numeroSocio ? String(u.numeroSocio).includes(currentSearchTerm) : false;
+          const matchMorada = (u.morada || '').toLowerCase().includes(currentSearchTerm);
+          if (!matchNome && !matchLogin && !matchEmail && !matchSocio && !matchMorada) return false;
+        }
+        return true;
+      });
+
+      // Ordenar
+      filtrados.sort((a, b) => {
+        let valA, valB;
+        if (sortUserField === 'socio') {
+          valA = a.numeroSocio || 999999;
+          valB = b.numeroSocio || 999999;
+          return sortUserDir === 'asc' ? valA - valB : valB - valA;
+        }
+        if (sortUserField === 'acesso') {
+          valA = a.ultimo_acesso || '';
+          valB = b.ultimo_acesso || '';
+        } else if (sortUserField === 'estado') {
+          valA = a.estado || '';
+          valB = b.estado || '';
+        } else if (sortUserField === 'perfil') {
+          valA = a.perfil || '';
+          valB = b.perfil || '';
+        } else if (sortUserField === 'contacto') {
+          valA = a.email || '';
+          valB = b.email || '';
+        } else if (sortUserField === 'id') {
+          valA = a.id || 0;
+          valB = b.id || 0;
+          return sortUserDir === 'asc' ? valA - valB : valB - valA;
+        } else {
+          valA = a.nome || '';
+          valB = b.nome || '';
+        }
+        const cmp = String(valA).localeCompare(String(valB), 'pt');
+        return sortUserDir === 'asc' ? cmp : -cmp;
+      });
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+              <strong>Nenhum utilizador encontrado com os filtros selecionados.</strong>
+            </td>
+          </tr>
+        `;
+        applyColsUtilizadores();
         return;
       }
 
-      tbody.innerHTML = lista.map(u => {
-        const avatarHtml = u.foto 
-          ? `<img src="${u.foto}" alt="${u.nome}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary);" onerror="handleAvatarError(this, '${u.nome.charAt(0)}')">`
-          : `<div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(28,109,66,0.15); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: var(--primary);">${u.nome.charAt(0)}</div>`;
+      tbody.innerHTML = filtrados.map(u => {
+        // Badges de Módulos compactos
+        const modulosAtivos = [];
+        if (u.permissoes_modulos) {
+          if (u.permissoes_modulos.socios?.enabled) modulosAtivos.push('<span class="perm-badge-tag tag-full" title="Sócios & Cotas">Sócios</span>');
+          if (u.permissoes_modulos.tesouraria?.enabled) modulosAtivos.push('<span class="perm-badge-tag tag-full" style="background:#eff6ff;color:#2563eb;" title="Tesouraria">Tesouraria</span>');
+          if (u.permissoes_modulos.direcao?.enabled) modulosAtivos.push('<span class="perm-badge-tag tag-full" style="background:#f3e8ff;color:#7e22ce;" title="Direção">Direção</span>');
+          if (u.permissoes_modulos.desporto?.enabled) modulosAtivos.push('<span class="perm-badge-tag tag-full" style="background:#fef3c7;color:#b45309;" title="Gestão Desportiva">Desporto</span>');
+          if (u.permissoes_modulos.documentos?.enabled) modulosAtivos.push('<span class="perm-badge-tag tag-full" style="background:#ecfdf5;color:#059669;" title="Documentos">Docs</span>');
+          if (u.permissoes_modulos.administracao?.enabled) modulosAtivos.push('<span class="perm-badge-tag tag-full" style="background:#fee2e2;color:#dc2626;" title="Administração">Admin</span>');
+        }
+        const modulosHtml = modulosAtivos.length > 0 ? modulosAtivos.join(' ') : '<span style="color: #94a3b8; font-size: 0.78rem;">Sem módulos ativos</span>';
 
-        let orgaoBadge = '';
-        if (u.orgao === 'Direção') {
-          orgaoBadge = `<span style="font-size: 0.72rem; padding: 0.15rem 0.4rem; border-radius: 4px; background: rgba(28,109,66,0.1); color: var(--primary); font-weight: 600;">Direção</span>`;
-        } else if (u.orgao === 'Assembleia Geral') {
-          orgaoBadge = `<span style="font-size: 0.72rem; padding: 0.15rem 0.4rem; border-radius: 4px; background: #ede9fe; color: #6d28d9; font-weight: 600;">Assembleia Geral</span>`;
-        } else {
-          orgaoBadge = `<span style="font-size: 0.72rem; padding: 0.15rem 0.4rem; border-radius: 4px; background: #e0f2fe; color: #0369a1; font-weight: 600;">Conselho Fiscal</span>`;
+        // Badge de Estado
+        let estadoBadge = '';
+        if (u.estado === 'Ativo') {
+          estadoBadge = `<span class="status-pill ativo">Ativo</span>`;
+        } else if (u.estado === 'Pendente') {
+          estadoBadge = `<span class="status-pill pendente" title="Aguardando validação">Pendente</span>`;
+        } else if (u.estado === 'Suspenso') {
+          estadoBadge = `<span class="status-pill suspenso" title="${window.escapeHtml(u.motivo_suspensao || 'Suspenso por irregularidade')}">Suspenso</span>`;
+        } else if (u.estado === 'Anulado') {
+          estadoBadge = `<span class="status-pill anulado">Anulado</span>`;
         }
 
-        const isAdmin = u.perfil === 'Administrador';
+        // Badge de Sócio (SEM # à frente)
+        const socioBadge = u.numeroSocio 
+          ? `<span class="badge-socio-tag">Sócio ${u.numeroSocio}</span>` 
+          : `<span class="badge-nao-socio">— Não Sócio</span>`;
 
         return `
-          <tr>
-            <td>
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
-                ${avatarHtml}
+          <tr data-user-id="${u.id}">
+            <!-- 1. Nome & Avatar -->
+            <td data-col="nome">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="member-avatar-box" id="tableAvatarBox_${u.id}" 
+                     title="Arraste uma fotografia para aqui ou clique para alterar a foto"
+                     ondragover="handleTableAvatarDragOver(event, ${u.id})"
+                     ondragleave="handleTableAvatarDragLeave(event, ${u.id})"
+                     ondrop="handleTableAvatarDrop(event, ${u.id})"
+                     onclick="triggerTableAvatarUpload(${u.id})">
+                  ${u.foto 
+                    ? `<img src="${u.foto}" alt="" class="member-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                       <div class="member-avatar-placeholder" style="display: none;">👤</div>`
+                    : `<div class="member-avatar-placeholder">👤</div>`}
+                  <div class="member-avatar-overlay" title="Alterar fotografia">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                  </div>
+                </div>
                 <div>
-                  <code style="font-weight: 700; color: var(--primary); font-size: 0.88rem;">@${u.login}</code>
-                  ${isAdmin ? '<div style="font-size: 0.7rem; color: #b45309; font-weight: 700;">★ Admin</div>' : ''}
+                  <a href="javascript:void(0)" onclick="openFichaUtilizadorModal(${u.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none; font-size: 0.95rem;">
+                    ${window.escapeHtml(u.nome)}
+                  </a>
+                  <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                    <span style="font-family: monospace; font-weight: 600; color: var(--primary);">${window.escapeHtml(u.username || '@' + u.login)}</span>
+                    ${u.morada ? ` &bull; ${window.escapeHtml(u.morada)}` : ''}
+                  </div>
                 </div>
               </div>
             </td>
-            <td>
-              <strong style="color: var(--text-title);">${u.nome}</strong>
-              <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; margin-top: 0.15rem;">
-                <span>${u.cargo}</span> &bull; ${orgaoBadge}
+
+            <!-- 2. Nº Sócio -->
+            <td data-col="socio">
+              ${socioBadge}
+            </td>
+
+            <!-- 3. Contactos -->
+            <td data-col="contacto">
+              <div style="font-size: 0.84rem;">
+                <a href="mailto:${window.escapeHtml(u.email)}" style="color: var(--text-title); text-decoration: none; font-weight: 500;">
+                  ${window.escapeHtml(u.email)}
+                </a>
+                <div style="color: var(--text-muted); font-size: 0.76rem; margin-top: 2px;">
+                  ${window.escapeHtml(u.telefone || '—')}
+                </div>
               </div>
             </td>
-            <td>
-              ${u.email !== '—' ? `<a href="mailto:${u.email}" style="color: var(--text-body); text-decoration: none; font-size: 0.85rem;">${u.email}</a>` : '<span style="color: var(--text-muted); font-size: 0.85rem;">—</span>'}
+
+            <!-- 4. Perfil -->
+            <td data-col="perfil">
+              <strong style="color: var(--text-title); font-size: 0.85rem;">
+                ${window.escapeHtml(u.perfil || 'Utilizador Geral')}
+              </strong>
             </td>
-            <td>
-              <span style="font-size: 0.8rem; line-height: 1.35; display: inline-block; color: ${isAdmin ? 'var(--primary)' : 'var(--text-body)'}; font-weight: ${isAdmin ? '700' : '500'};">
-                ${u.permissoes}
-              </span>
+
+            <!-- 5. Módulos Autorizados -->
+            <td data-col="permissoes">
+              <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                ${modulosHtml}
+              </div>
             </td>
-            <td>
-              <span class="status-pill em-dia">${u.estado}</span>
+
+            <!-- 6. Estado -->
+            <td data-col="estado">
+              ${estadoBadge}
             </td>
-            <td style="text-align: right;">
-              <a href="membros.html" class="btn btn-outline btn-sm" title="Ver no módulo Membros">Ver Ficha</a>
+
+            <!-- 7. Último Acesso -->
+            <td data-col="acesso">
+              <div style="font-size: 0.82rem; color: var(--text-muted);">
+                ${window.escapeHtml(u.ultimo_acesso || 'Nunca')}
+              </div>
+            </td>
+
+            <!-- 8. Ações -->
+            <td data-col="acoes" style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.35rem; align-items: center;">
+                <button type="button" class="btn btn-secondary btn-xs" title="Ver Ficha Detalhada" onclick="openFichaUtilizadorModal(${u.id})">
+                  👁️
+                </button>
+                <button type="button" class="btn btn-secondary btn-xs" title="Editar Dados & Permissões" onclick="openEditarUtilizadorModal(${u.id})">
+                  ✏️
+                </button>
+                <button type="button" class="btn btn-secondary btn-xs" title="Alternar Estado (Ativar/Suspender)" onclick="quickToggleStatus(${u.id})">
+                  🔄
+                </button>
+                <button type="button" class="btn btn-secondary btn-xs" title="Eliminar Utilizador" style="color: #dc2626;" onclick="handleEliminarUtilizador(${u.id})">
+                  🗑️
+                </button>
+              </div>
             </td>
           </tr>
         `;
       }).join('');
+
+      applyColsUtilizadores();
+      if (window.initTableResizers) window.initTableResizers();
     }
 
-    function filtrarUtilizadores(query) {
-      const q = (query || '').toLowerCase().trim();
-      if (!q) {
-        renderTabelaUtilizadores(CONTAS_UTILIZADORES);
+    // =========================================================================
+    // Drag & Drop de Avatar na Linha da Tabela
+    // =========================================================================
+    window.triggerTableAvatarUpload = function(userId) {
+      currentTableAvatarUploadUserId = userId;
+      const input = document.getElementById('tableAvatarFileInput');
+      if (input) input.click();
+    };
+
+    window.handleTableAvatarFileSelected = function(e) {
+      if (!currentTableAvatarUploadUserId || !e.target.files || !e.target.files[0]) return;
+      const file = e.target.files[0];
+      const userId = currentTableAvatarUploadUserId;
+      currentTableAvatarUploadUserId = null;
+
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        applyAvatarToUser(userId, re.target.result);
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.handleTableAvatarDragOver = function(e, userId) {
+      e.preventDefault();
+      const box = document.getElementById(`tableAvatarBox_${userId}`);
+      if (box) box.classList.add('drag-over');
+    };
+
+    window.handleTableAvatarDragLeave = function(e, userId) {
+      e.preventDefault();
+      const box = document.getElementById(`tableAvatarBox_${userId}`);
+      if (box) box.classList.remove('drag-over');
+    };
+
+    window.handleTableAvatarDrop = function(e, userId) {
+      e.preventDefault();
+      const box = document.getElementById(`tableAvatarBox_${userId}`);
+      if (box) box.classList.remove('drag-over');
+      if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files[0]) return;
+      const file = e.dataTransfer.files[0];
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor, largue um ficheiro de imagem válido (JPG, PNG, WebP, SVG).');
         return;
       }
-      const filtrados = CONTAS_UTILIZADORES.filter(u => 
-        u.nome.toLowerCase().includes(q) ||
-        u.login.toLowerCase().includes(q) ||
-        u.cargo.toLowerCase().includes(q) ||
-        u.orgao.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.permissoes.toLowerCase().includes(q)
-      );
-      renderTabelaUtilizadores(filtrados);
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        applyAvatarToUser(userId, re.target.result);
+      };
+      reader.readAsDataURL(file);
+    };
+
+    function applyAvatarToUser(userId, dataUrl) {
+      const idx = utilizadores.findIndex(u => u.id === userId);
+      if (idx >= 0) {
+        utilizadores[idx].foto = dataUrl;
+        saveUtilizadores();
+
+        // Se for o utilizador atualmente logado, sincronizar sessão
+        try {
+          const curr = window.getArcaCurrentUser();
+          if (curr && (curr.id === utilizadores[idx].id || curr.login === utilizadores[idx].login || curr.nome === utilizadores[idx].nome)) {
+            curr.foto = dataUrl;
+            window.setArcaCurrentUser(curr);
+          }
+        } catch (e) {}
+
+        if (window.showToast) window.showToast(`Fotografia de ${utilizadores[idx].nome} atualizada com sucesso!`, 'success');
+      }
     }
 
+    // =========================================================================
+    // Ação Rápida de Alternar Estado (Ativo <-> Suspenso / Pendente)
+    // =========================================================================
+    window.quickToggleStatus = function(userId) {
+      const u = utilizadores.find(x => x.id === userId);
+      if (!u) return;
+
+      if (u.estado === 'Pendente') {
+        if (confirm(`Pretende APROVAR e ATIVAR a conta de ${u.nome}? O utilizador passará a poder entrar no site.`)) {
+          u.estado = 'Ativo';
+          saveUtilizadores();
+          if (window.showToast) window.showToast(`Conta de ${u.nome} ativada com sucesso!`, 'success');
+        }
+      } else if (u.estado === 'Ativo') {
+        const motivo = prompt(`Suspender temporariamente a conta de ${u.nome}?\nIndique o motivo da suspensão:`, 'Averiguação interna da Direção');
+        if (motivo !== null) {
+          u.estado = 'Suspenso';
+          u.motivo_suspensao = motivo.trim() || 'Suspenso temporariamente pela Direção';
+          saveUtilizadores();
+          if (window.showToast) window.showToast(`Conta de ${u.nome} foi suspensa.`, 'warning');
+        }
+      } else if (u.estado === 'Suspenso') {
+        if (confirm(`Pretende REATIVAR o acesso de ${u.nome}?`)) {
+          u.estado = 'Ativo';
+          u.motivo_suspensao = '';
+          saveUtilizadores();
+          if (window.showToast) window.showToast(`Conta de ${u.nome} reativada com sucesso!`, 'success');
+        }
+      } else if (u.estado === 'Anulado') {
+        if (confirm(`Esta conta encontra-se ANULADA. Pretende reativar a conta de ${u.nome}?`)) {
+          u.estado = 'Ativo';
+          u.motivo_suspensao = '';
+          saveUtilizadores();
+          if (window.showToast) window.showToast(`Conta de ${u.nome} reativada!`, 'success');
+        }
+      }
+    };
+
+    // =========================================================================
+    // Ficha Detalhada do Utilizador (Modal)
+    // =========================================================================
+    window.openFichaUtilizadorModal = function(userId) {
+      const u = utilizadores.find(x => x.id === userId);
+      if (!u) return;
+      currentUserFichaId = userId;
+
+      // Avatar
+      const avatarBox = document.getElementById('fichaUserAvatarBox');
+      if (u.foto) {
+        avatarBox.innerHTML = `
+          <img src="${u.foto}" alt="" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div style="width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 1.8rem; background: #f1f5f9; color: #94a3b8;">👤</div>
+        `;
+      } else {
+        avatarBox.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: #f1f5f9; color: #94a3b8;">👤</div>`;
+      }
+
+      // Cabeçalho
+      document.getElementById('fichaUserNome').textContent = u.nome;
+      document.getElementById('fichaUserSub').textContent = `${u.username || '@' + u.login} • ${u.perfil || 'Utilizador Geral'}`;
+
+      // Badge Estado
+      const badge = document.getElementById('fichaUserEstadoBadge');
+      badge.className = `status-pill ${u.estado.toLowerCase()}`;
+      badge.textContent = u.estado;
+
+      // Badge Sócio (SEM #)
+      const socioBadge = document.getElementById('fichaUserSocioBadge');
+      if (u.numeroSocio) {
+        socioBadge.className = 'badge-socio-tag';
+        socioBadge.textContent = `Sócio ${u.numeroSocio}`;
+        socioBadge.style.display = 'inline-flex';
+      } else {
+        socioBadge.className = 'badge-nao-socio';
+        socioBadge.textContent = 'Não Sócio';
+        socioBadge.style.display = 'inline-flex';
+      }
+
+      // Alerta de Estado
+      const alertBox = document.getElementById('fichaUserAlertBox');
+      if (u.estado === 'Pendente') {
+        alertBox.style.display = 'block';
+        alertBox.style.background = '#fffbeb';
+        alertBox.style.border = '1px solid #fde68a';
+        alertBox.style.color = '#92400e';
+        alertBox.innerHTML = '<strong>⏳ Pedido Pendente de Aprovação:</strong> Este utilizador solicitou adesão e aguarda validação pela Direção. O seu acesso ao site encontra-se bloqueado até aprovação.';
+      } else if (u.estado === 'Suspenso') {
+        alertBox.style.display = 'block';
+        alertBox.style.background = '#fff7ed';
+        alertBox.style.border = '1px solid #fed7aa';
+        alertBox.style.color = '#9a3412';
+        alertBox.innerHTML = `<strong>⛔ Conta Suspensa Temporariamente:</strong> O acesso deste utilizador ao site está suspenso.<br><small style="margin-top: 4px; display: block;"><strong>Motivo registado:</strong> ${window.escapeHtml(u.motivo_suspensao || 'Irregularidade em averiguação.')}</small>`;
+      } else if (u.estado === 'Anulado') {
+        alertBox.style.display = 'block';
+        alertBox.style.background = '#f8fafc';
+        alertBox.style.border = '1px solid #cbd5e1';
+        alertBox.style.color = '#475569';
+        alertBox.innerHTML = '<strong>❌ Conta Anulada:</strong> Esta conta de acesso foi revogada. O utilizador terá de submeter novo pedido caso queira aceder.';
+      } else {
+        alertBox.style.display = 'none';
+      }
+
+      // Dados de Identificação
+      document.getElementById('fichaUserLogin').textContent = u.username || '@' + u.login;
+      document.getElementById('fichaUserEmail').textContent = u.email || '—';
+      document.getElementById('fichaUserTelefone').textContent = u.telefone || '—';
+      document.getElementById('fichaUserSocioNum').textContent = u.numeroSocio ? `Nº ${u.numeroSocio}` : 'Não associado';
+      document.getElementById('fichaUserMorada').textContent = u.morada || 'Aguada de Baixo';
+
+      // Dados Legais & Segurança
+      document.getElementById('fichaUserEstadoTexto').textContent = `${u.estado} (${u.estado === 'Ativo' ? 'Acesso Permitido' : 'Login Bloqueado'})`;
+      document.getElementById('fichaUserDataRegisto').textContent = u.data_registo || '10/01/2024';
+      document.getElementById('fichaUserUltimoAcesso').textContent = u.ultimo_acesso || 'Nunca';
+      
+      const motivoBox = document.getElementById('fichaUserMotivoBox');
+      if (u.motivo_suspensao) {
+        motivoBox.style.display = 'block';
+        document.getElementById('fichaUserMotivo').textContent = u.motivo_suspensao;
+      } else {
+        motivoBox.style.display = 'none';
+      }
+
+      // Grelha de Módulos Autorizados
+      const grid = document.getElementById('fichaUserModulosGrid');
+      grid.innerHTML = MODULOS_SISTEMA.map(m => {
+        const perm = u.permissoes_modulos?.[m.id];
+        const isEnabled = perm && perm.enabled;
+        const modeBadge = isEnabled 
+          ? (perm.mode === 'full' ? '<span class="perm-badge-tag tag-full">Total</span>' : '<span class="perm-badge-tag tag-view">Consulta</span>') 
+          : '<span class="perm-badge-tag tag-none">Sem Acesso</span>';
+        
+        return `
+          <div style="border: 1px solid ${isEnabled ? '#cbd5e1' : '#f1f5f9'}; background: ${isEnabled ? '#ffffff' : '#f8fafc'}; border-radius: var(--radius-sm); padding: 0.6rem 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: ${isEnabled ? '700' : '500'}; color: ${isEnabled ? 'var(--text-title)' : '#94a3b8'};">
+              <span>${m.icone}</span>
+              <span>${m.nome.split('/')[0]}</span>
+            </div>
+            ${modeBadge}
+          </div>
+        `;
+      }).join('');
+
+      // Botão de Alternar Estado na Ficha
+      const btnToggle = document.getElementById('btnFichaAlternarEstado');
+      if (u.estado === 'Ativo') {
+        btnToggle.textContent = '🟠 Suspender Conta';
+        btnToggle.style.color = '#c2410c';
+      } else if (u.estado === 'Pendente') {
+        btnToggle.textContent = '🟢 Aprovar & Ativar';
+        btnToggle.style.color = '#15803d';
+      } else {
+        btnToggle.textContent = '🟢 Reativar Conta';
+        btnToggle.style.color = '#15803d';
+      }
+
+      document.getElementById('modalFichaUtilizador').style.display = 'flex';
+    };
+
+    window.closeFichaUtilizadorModal = function() {
+      document.getElementById('modalFichaUtilizador').style.display = 'none';
+      currentUserFichaId = null;
+    };
+
+    window.handleFichaToggleEstado = function() {
+      if (!currentUserFichaId) return;
+      closeFichaUtilizadorModal();
+      quickToggleStatus(currentUserFichaId);
+    };
+
+    window.handleFichaAbrirEdicao = function() {
+      if (!currentUserFichaId) return;
+      const id = currentUserFichaId;
+      closeFichaUtilizadorModal();
+      openEditarUtilizadorModal(id);
+    };
+
+    // =========================================================================
+    // Formulário de Criação e Edição de Utilizadores
+    // =========================================================================
+    window.switchUserFormTab = function(tabId) {
+      document.querySelectorAll('#modalFormUtilizador .member-modal-tab').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-tab') === tabId);
+      });
+      document.querySelectorAll('#modalFormUtilizador .member-tab-content').forEach(c => {
+        c.classList.toggle('active', c.id === tabId);
+      });
+    };
+
+    window.setUserFormEstado = function(estado) {
+      document.getElementById('formUserEstadoValor').value = estado;
+      ['Ativo', 'Pendente', 'Suspenso', 'Anulado'].forEach(e => {
+        const card = document.getElementById(`cardEstado${e}`);
+        if (card) {
+          card.className = `account-status-card ${e === estado ? 'active-' + e.toLowerCase() : ''}`;
+        }
+      });
+    };
+
+    window.openNovoUtilizadorModal = function() {
+      document.getElementById('modalFormUtilizadorTitle').textContent = 'Novo Utilizador da Plataforma';
+      document.getElementById('formUserId').value = '';
+      document.getElementById('formUserNome').value = '';
+      document.getElementById('formUserLogin').value = '';
+      document.getElementById('formUserEmail').value = '';
+      document.getElementById('formUserTelefone').value = '';
+      document.getElementById('formUserSocioNum').value = '';
+      document.getElementById('formUserPerfil').value = 'Utilizador Geral';
+      document.getElementById('formUserMorada').value = 'Aguada de Baixo';
+      document.getElementById('formUserPassword').value = '';
+      document.getElementById('formUserMotivoSuspensao').value = '';
+      
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('formUserDataRegisto').value = hoje;
+      document.getElementById('formUserDataRgpd').value = hoje;
+
+      setUserFormEstado('Ativo');
+      setFormUserFoto('');
+      renderFormUserPermissoesModulos({});
+      switchUserFormTab('tabFormUserDados');
+      document.getElementById('modalFormUtilizador').style.display = 'flex';
+    };
+
+    window.openEditarUtilizadorModal = function(userId) {
+      const u = utilizadores.find(x => x.id === userId);
+      if (!u) return;
+
+      document.getElementById('modalFormUtilizadorTitle').textContent = `Editar Utilizador: ${u.nome}`;
+      document.getElementById('formUserId').value = u.id;
+      document.getElementById('formUserNome').value = u.nome || '';
+      document.getElementById('formUserLogin').value = u.login || '';
+      document.getElementById('formUserEmail').value = u.email || '';
+      document.getElementById('formUserTelefone').value = u.telefone || '';
+      document.getElementById('formUserSocioNum').value = u.numeroSocio || '';
+      document.getElementById('formUserPerfil').value = u.perfil || 'Utilizador Geral';
+      document.getElementById('formUserMorada').value = u.morada || '';
+      document.getElementById('formUserPassword').value = '';
+      document.getElementById('formUserMotivoSuspensao').value = u.motivo_suspensao || '';
+      document.getElementById('formUserDataRegisto').value = u.data_registo || '2024-01-10';
+      document.getElementById('formUserDataRgpd').value = u.data_rgpd || '2024-01-10';
+
+      setUserFormEstado(u.estado || 'Ativo');
+      setFormUserFoto(u.foto || '');
+      renderFormUserPermissoesModulos(u.permissoes_modulos || {});
+      switchUserFormTab('tabFormUserDados');
+      document.getElementById('modalFormUtilizador').style.display = 'flex';
+    };
+
+    window.closeFormUtilizadorModal = function() {
+      document.getElementById('modalFormUtilizador').style.display = 'none';
+    };
+
+    // Gestão de Fotografia no Formulário
+    window.setFormUserFoto = function(dataUrl) {
+      const preview = document.getElementById('userFormFotoPreview');
+      const placeholder = document.getElementById('userFormFotoPlaceholder');
+      const hidden = document.getElementById('formUserFotoData');
+      const btnRemover = document.getElementById('btnRemoverFotoUserForm');
+
+      if (hidden) hidden.value = dataUrl || '';
+      if (dataUrl) {
+        if (preview) { preview.src = dataUrl; preview.style.display = 'block'; }
+        if (placeholder) placeholder.style.display = 'none';
+        if (btnRemover) btnRemover.style.display = 'inline-flex';
+      } else {
+        if (preview) { preview.src = ''; preview.style.display = 'none'; }
+        if (placeholder) placeholder.style.display = 'flex';
+        if (btnRemover) btnRemover.style.display = 'none';
+      }
+    };
+
+    window.removerFotoUserForm = function() {
+      setFormUserFoto('');
+      const input = document.getElementById('inputUserFormFoto');
+      if (input) input.value = '';
+    };
+
+    window.handleUserFormFotoFileSelect = function(e) {
+      if (!e.target.files || !e.target.files[0]) return;
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (re) => setFormUserFoto(re.target.result);
+      reader.readAsDataURL(file);
+    };
+
+    window.handleUserFormAvatarDragOver = function(e) {
+      e.preventDefault();
+      document.getElementById('userFormAvatarDropZone')?.classList.add('drag-over');
+    };
+
+    window.handleUserFormAvatarDragLeave = function(e) {
+      e.preventDefault();
+      document.getElementById('userFormAvatarDropZone')?.classList.remove('drag-over');
+    };
+
+    window.handleUserFormAvatarDrop = function(e) {
+      e.preventDefault();
+      document.getElementById('userFormAvatarDropZone')?.classList.remove('drag-over');
+      if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files[0]) return;
+      const file = e.dataTransfer.files[0];
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor largue um ficheiro de imagem válido.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (re) => setFormUserFoto(re.target.result);
+      reader.readAsDataURL(file);
+    };
+
+    // =========================================================================
+    // Matriz Granular de Permissões de Módulos
+    // =========================================================================
+    function renderFormUserPermissoesModulos(permissoesAtuais) {
+      const container = document.getElementById('userPermissoesModulosContainer');
+      if (!container) return;
+
+      container.innerHTML = MODULOS_SISTEMA.map(m => {
+        const p = permissoesAtuais[m.id] || { enabled: false, mode: 'view', submenus: [] };
+        const isEnabled = !!p.enabled;
+        const mode = p.mode || 'view';
+        const submenusAtivos = p.submenus || [];
+
+        return `
+          <div class="perm-module-card ${isEnabled ? 'module-enabled' : 'module-disabled'}" id="userModCard_${m.id}">
+            <div class="perm-module-header">
+              <div class="perm-module-name">
+                <input type="checkbox" id="userModChk_${m.id}" ${isEnabled ? 'checked' : ''} onchange="toggleUserModule('${m.id}', this.checked)" style="width: 17px; height: 17px; cursor: pointer;">
+                <label for="userModChk_${m.id}" style="cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                  <span>${m.icone}</span>
+                  <span>${m.nome}</span>
+                </label>
+              </div>
+              <div class="perm-module-controls">
+                <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; cursor: pointer;">
+                  <input type="radio" name="userModMode_${m.id}" value="view" ${mode === 'view' ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''} onchange="setUserModuleMode('${m.id}', 'view')">
+                  <span>Apenas Leitura / Consulta</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; cursor: pointer;">
+                  <input type="radio" name="userModMode_${m.id}" value="full" ${mode === 'full' ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''} onchange="setUserModuleMode('${m.id}', 'full')">
+                  <span>Gestão Total / Alterar</span>
+                </label>
+              </div>
+            </div>
+            <div class="perm-submenus-list" id="userModSubList_${m.id}" style="${isEnabled ? '' : 'opacity: 0.4; pointer-events: none;'}">
+              ${m.submenus.map(sub => `
+                <div class="perm-submenu-row ${submenusAtivos.includes(sub.id) ? 'active' : ''}">
+                  <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.82rem; width: 100%;">
+                    <input type="checkbox" id="userModSub_${m.id}_${sub.id}" ${submenusAtivos.includes(sub.id) ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''}>
+                    <span>${sub.nome}</span>
+                  </label>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.toggleUserModule = function(modId, enabled) {
+      const card = document.getElementById(`userModCard_${modId}`);
+      const subList = document.getElementById(`userModSubList_${modId}`);
+      if (card) {
+        card.classList.toggle('module-enabled', enabled);
+        card.classList.toggle('module-disabled', !enabled);
+      }
+      if (subList) {
+        subList.style.opacity = enabled ? '1' : '0.4';
+        subList.style.pointerEvents = enabled ? 'auto' : 'none';
+        subList.querySelectorAll('input[type="checkbox"]').forEach(c => {
+          c.disabled = !enabled;
+          if (enabled && !c.checked) c.checked = true;
+        });
+      }
+      document.querySelectorAll(`input[name="userModMode_${modId}"]`).forEach(r => {
+        r.disabled = !enabled;
+      });
+    };
+
+    window.setUserModuleMode = function(modId, mode) {
+      const subList = document.getElementById(`userModSubList_${modId}`);
+      if (subList && mode === 'full') {
+        subList.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = true);
+      }
+    };
+
+    window.aplicarPresetPermissoes = function(tipo) {
+      MODULOS_SISTEMA.forEach(m => {
+        let enable = false;
+        let mode = 'view';
+        if (tipo === 'admin') {
+          enable = true; mode = 'full';
+        } else if (tipo === 'direcao') {
+          if (['painel', 'socios', 'direcao', 'documentos'].includes(m.id)) { enable = true; mode = 'full'; }
+        } else if (tipo === 'tesouraria') {
+          if (['painel', 'socios', 'tesouraria'].includes(m.id)) { enable = true; mode = 'full'; }
+          if (m.id === 'documentos') { enable = true; mode = 'view'; }
+        } else if (tipo === 'desporto') {
+          if (['painel', 'desporto'].includes(m.id)) { enable = true; mode = 'full'; }
+        } else if (tipo === 'socio') {
+          if (['painel'].includes(m.id)) { enable = true; mode = 'view'; }
+        } else if (tipo === 'limpar') {
+          enable = false;
+        }
+
+        const chk = document.getElementById(`userModChk_${m.id}`);
+        if (chk) {
+          chk.checked = enable;
+          toggleUserModule(m.id, enable);
+        }
+        const radio = document.querySelector(`input[name="userModMode_${m.id}"][value="${mode}"]`);
+        if (radio) radio.checked = true;
+      });
+    };
+
+    window.aplicarPresetPorPerfil = function(perfil) {
+      if (perfil.includes('Administrador')) aplicarPresetPermissoes('admin');
+      else if (perfil.includes('Direção')) aplicarPresetPermissoes('direcao');
+      else if (perfil.includes('Tesoureiro') || perfil.includes('Finanças')) aplicarPresetPermissoes('tesouraria');
+      else if (perfil.includes('Desportiva')) aplicarPresetPermissoes('desporto');
+      else if (perfil.includes('Sócio')) aplicarPresetPermissoes('socio');
+    };
+
+    // =========================================================================
+    // Salvar Utilizador (Criação / Edição)
+    // =========================================================================
+    window.handleSalvarUtilizador = function(e) {
+      e.preventDefault();
+
+      const idVal = document.getElementById('formUserId').value;
+      const nome = document.getElementById('formUserNome').value.trim();
+      const login = document.getElementById('formUserLogin').value.trim().replace(/^@/, '');
+      const email = document.getElementById('formUserEmail').value.trim();
+      const telefone = document.getElementById('formUserTelefone').value.trim();
+      const socioVal = document.getElementById('formUserSocioNum').value.trim();
+      const perfil = document.getElementById('formUserPerfil').value;
+      const morada = document.getElementById('formUserMorada').value.trim();
+      const estado = document.getElementById('formUserEstadoValor').value;
+      const motivo = document.getElementById('formUserMotivoSuspensao').value.trim();
+      const dataRegisto = document.getElementById('formUserDataRegisto').value;
+      const dataRgpd = document.getElementById('formUserDataRgpd').value;
+      const foto = document.getElementById('formUserFotoData').value;
+
+      if (!nome || !login || !email) {
+        alert('Por favor, preencha os campos obrigatórios (Nome, Username e E-mail).');
+        return;
+      }
+
+      // Recolher Permissões Granulares
+      const novasPermissoes = {};
+      MODULOS_SISTEMA.forEach(m => {
+        const chk = document.getElementById(`userModChk_${m.id}`);
+        if (chk && chk.checked) {
+          const modeRadio = document.querySelector(`input[name="userModMode_${m.id}"]:checked`);
+          const mode = modeRadio ? modeRadio.value : 'view';
+          const submenus = [];
+          m.submenus.forEach(sub => {
+            const subChk = document.getElementById(`userModSub_${m.id}_${sub.id}`);
+            if (subChk && subChk.checked) submenus.push(sub.id);
+          });
+          novasPermissoes[m.id] = { enabled: true, mode, submenus };
+        }
+      });
+
+      if (idVal) {
+        // Editar existente
+        const id = parseInt(idVal, 10);
+        const idx = utilizadores.findIndex(u => u.id === id);
+        if (idx >= 0) {
+          utilizadores[idx].nome = nome;
+          utilizadores[idx].login = login;
+          utilizadores[idx].username = '@' + login;
+          utilizadores[idx].email = email;
+          utilizadores[idx].telefone = telefone;
+          utilizadores[idx].numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
+          utilizadores[idx].perfil = perfil;
+          utilizadores[idx].morada = morada;
+          utilizadores[idx].estado = estado;
+          utilizadores[idx].motivo_suspensao = motivo;
+          utilizadores[idx].data_registo = dataRegisto;
+          utilizadores[idx].data_rgpd = dataRgpd;
+          utilizadores[idx].foto = foto;
+          utilizadores[idx].permissoes_modulos = novasPermissoes;
+
+          // Se for o utilizador atual, atualizar sessão
+          try {
+            const curr = window.getArcaCurrentUser();
+            if (curr && (curr.id === id || curr.login === login)) {
+              curr.nome = nome;
+              curr.email = email;
+              curr.foto = foto;
+              curr.morada = morada;
+              curr.numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
+              window.setArcaCurrentUser(curr);
+            }
+          } catch (err) {}
+        }
+      } else {
+        // Criar novo
+        const maxId = utilizadores.reduce((max, u) => Math.max(max, u.id || 0), 0);
+        const novo = {
+          id: maxId + 1,
+          nome,
+          login,
+          username: '@' + login,
+          email,
+          telefone,
+          numeroSocio: socioVal ? parseInt(socioVal, 10) : null,
+          perfil,
+          morada: morada || 'Aguada de Baixo',
+          estado,
+          motivo_suspensao: motivo,
+          data_registo: dataRegisto || new Date().toISOString().split('T')[0],
+          data_rgpd: dataRgpd || new Date().toISOString().split('T')[0],
+          ultimo_acesso: 'Nunca',
+          foto,
+          permissoes_modulos: novasPermissoes
+        };
+        utilizadores.unshift(novo);
+      }
+
+      saveUtilizadores();
+      closeFormUtilizadorModal();
+      if (window.showToast) window.showToast('Conta de utilizador guardada com sucesso!', 'success');
+    };
+
+    window.handleEliminarUtilizador = function(userId) {
+      const u = utilizadores.find(x => x.id === userId);
+      if (!u) return;
+      if (confirm(`Tem a certeza de que pretende eliminar permanentemente a conta de ${u.nome}? Esta ação é irreversível.`)) {
+        utilizadores = utilizadores.filter(x => x.id !== userId);
+        saveUtilizadores();
+        if (window.showToast) window.showToast(`Utilizador ${u.nome} eliminado com sucesso.`, 'success');
+      }
+    };
+
+    // Funções Auxiliares de Senha
+    window.togglePasswordVisibility = function(inputId) {
+      const el = document.getElementById(inputId);
+      if (el) el.type = (el.type === 'password') ? 'text' : 'password';
+    };
+
+    window.gerarSenhaAleatoria = function(inputId) {
+      const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$%';
+      let pass = '';
+      for (let i = 0; i < 12; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      const el = document.getElementById(inputId);
+      if (el) {
+        el.type = 'text';
+        el.value = pass;
+      }
+    };
+
+    // =========================================================================
+    // Arrancar a Página
+    // =========================================================================
     document.addEventListener('DOMContentLoaded', () => {
-      renderTabelaUtilizadores(CONTAS_UTILIZADORES);
+      loadUtilizadores();
+      loadColsUser();
+      initColPickerUtilizadores();
+      updateUserSortIndicators();
+      updateUtilizadoresStats();
+      renderUtilizadores();
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeFichaUtilizadorModal();
+          closeFormUtilizadorModal();
+        }
+      });
     });
   </script>
 </body>
