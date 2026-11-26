@@ -689,8 +689,8 @@ document.addEventListener('DOMContentLoaded', () => {
       email: "raquelamc22@gmail.com",
       telefone: "963 112 405",
       morada: "Aguada de Baixo",
-      numeroSocio: 305,
-      perfil: "Membro da Direção",
+      numeroSocio: 414,
+      perfil: "Própria Ficha (Sócio)",
       estado: "Ativo",
       password: "raquel",
       data_registo: "2024-01-25",
@@ -698,10 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ultimo_acesso: "25/11/2026",
       foto: "",
       permissoes_modulos: {
-        painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
-        socios: { enabled: true, mode: "full", submenus: ["consultar", "editar"] },
-        direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
-        documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload"] }
+        socios: { enabled: true, mode: "own", submenus: ["consultar"] }
       }
     },
     {
@@ -984,15 +981,16 @@ document.addEventListener('DOMContentLoaded', () => {
       // Redirecionamento inteligente conforme permissões
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html?v=20261126_v7';
+      let targetUrl = 'painel.html?v=20261126_v8';
 
       if (!isAdmin) {
         if (!perms.painel?.enabled) {
-          if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v7';
-          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v7';
-          else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v7';
-          else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v7';
-          else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v7';
+          if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v8';
+          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v8';
+          else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v8';
+          else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v8';
+          else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v8';
+          else if (perms.administracao?.enabled) targetUrl = 'utilizadores.html?v=20261126_v8';
         }
       }
 
@@ -1035,14 +1033,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html?v=20261126_v7';
+      let targetUrl = 'painel.html?v=20261126_v8';
 
       if (!isAdmin && !perms.painel?.enabled) {
-        if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v7';
-        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v7';
-        else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v7';
-        else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v7';
-        else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v7';
+        if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v8';
+        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v8';
+        else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v8';
+        else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v8';
+        else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v8';
+        else if (perms.administracao?.enabled) targetUrl = 'utilizadores.html?v=20261126_v8';
       }
 
       if (alertBox) {
@@ -1142,13 +1141,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!isAllowed) {
-          let dest = 'socios.html';
+          let dest = null;
           if (perms.socios?.enabled) dest = 'socios.html';
+          else if (perms.painel?.enabled) dest = 'painel.html';
           else if (perms.tesouraria?.enabled) dest = 'tesouraria.html';
           else if (perms.desporto?.enabled) dest = 'desporto.html';
           else if (perms.documentos?.enabled) dest = 'documentos.html';
           else if (perms.direcao?.enabled) dest = 'atas.html';
-          else if (perms.painel?.enabled) dest = 'painel.html';
+          else if (perms.administracao?.enabled) dest = 'utilizadores.html';
+
+          if (!dest) {
+            // Conta sem qualquer módulo permitido ativo
+            alert('A sua conta não tem permissões ativas para aceder aos módulos da plataforma. Contacte a Direção da A.R.C.A.');
+            window.location.replace('/');
+            return;
+          }
+
+          const cleanDest = dest.replace(/\.html$/, '').toLowerCase();
+          const cleanCurrent = pageName.replace(/\.html$/, '').toLowerCase();
+          if (cleanDest === cleanCurrent) {
+            // Já se encontra na página de destino, não re-redirecionar para evitar loop infinito
+            return;
+          }
 
           window.location.replace(dest);
           return;
@@ -1756,9 +1770,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const isTesouraria = currentUser && (currentUser.perfil === 'Tesoureiro' || currentUser.perfil === 'Tesouraria');
     const sociosPerm = (currentUser && currentUser.permissoes_modulos && currentUser.permissoes_modulos.socios) || {};
     
-    // Se não for gestor administrativo (ex: associado comum), tem acesso apenas à sua própria ficha
-    const isManager = isAdmin || isDirecao || isTesouraria || (sociosPerm.enabled && sociosPerm.mode === 'full');
-    const isOwnOnly = !isManager;
+    // Se o utilizador tiver a permissão restrita a 'own' (Própria Ficha) ou perfil de associado/consulta,
+    // restringe estritamente a visualização à sua própria ficha e cotas, mesmo que faça parte da Direção.
+    const isOwnOnly = !isAdmin && (
+      (sociosPerm.enabled && sociosPerm.mode === 'own') ||
+      currentUser?.perfil === 'Própria Ficha (Sócio)' ||
+      currentUser?.perfil === 'Sócio Consulta' ||
+      (!isDirecao && !isTesouraria && sociosPerm.mode !== 'full')
+    );
+    const isManager = !isOwnOnly;
 
     function findCurrentUserSocio() {
       if (!currentUser) return null;
@@ -3596,6 +3616,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(link);
         showToast('Lista oficial de sócios exportada com sucesso!', 'success');
       });
+    }
+
+    // Se for modo 'own' (Própria Ficha), esconder botões de exportação e criação de novos sócios
+    if (isOwnOnly) {
+      const btnExportCsv = document.getElementById('btnExportCsv');
+      if (btnExportCsv) btnExportCsv.style.display = 'none';
+      const btnNewSocio = document.getElementById('btnOpenNewSocioModal');
+      if (btnNewSocio) btnNewSocio.style.display = 'none';
+      const colPicker = document.getElementById('btnToggleColPickerSocios');
+      if (colPicker) colPicker.style.display = 'none';
+      const searchBox = document.getElementById('searchSocios');
+      if (searchBox) searchBox.placeholder = 'A sua ficha de associado...';
     }
 
     // Inicialização da Tabela, Filtros e Indicadores

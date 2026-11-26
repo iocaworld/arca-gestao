@@ -1046,8 +1046,8 @@
   <!-- Firebase SDK e Sincronização em Tempo Real -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v7"></script>
-  <script src="js/main.js?v=20261126_v7"></script>
+  <script src="js/firebase-sync.js?v=20261126_v8"></script>
+  <script src="js/main.js?v=20261126_v8"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -1245,8 +1245,8 @@
         email: "raquelamc22@gmail.com",
         telefone: "963 112 405",
         morada: "Aguada de Baixo",
-        numeroSocio: 305,
-        perfil: "Membro da Direção",
+        numeroSocio: 414,
+        perfil: "Própria Ficha (Sócio)",
         estado: "Ativo",
         motivo_suspensao: "",
         data_registo: "2024-01-25",
@@ -1254,10 +1254,7 @@
         ultimo_acesso: "25/11/2026",
         foto: "",
         permissoes_modulos: {
-          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
-          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar"] },
-          direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
-          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload"] }
+          socios: { enabled: true, mode: "own", submenus: ["consultar"] }
         }
       },
       {
