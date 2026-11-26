@@ -1484,34 +1484,44 @@
         } catch (e) { users = []; }
       }
 
-      // Se ainda não houver dirigentes atribuídos em Utilizadores, semeamos os oficiais da ARCA
-      const dirCount = users.filter(u => u.orgao && u.orgao !== 'Nenhum').length;
-      if (dirCount === 0 && Array.isArray(OFFICIAL_MEMBROS)) {
+      // Sincronizar todos os membros oficiais da ARCA (Direção, Assembleia Geral e Conselho Fiscal)
+      let needsSave = false;
+      if (Array.isArray(OFFICIAL_MEMBROS)) {
         OFFICIAL_MEMBROS.forEach(om => {
-          const exists = users.find(u => (u.id === om.id) || (u.login && om.username && u.login.toLowerCase() === om.username.replace('@','').toLowerCase()) || (u.nome && u.nome === om.nome));
-          if (!exists) {
+          const uIdx = users.findIndex(u => (u.id === om.id) || (u.login && om.username && u.login.toLowerCase() === om.username.replace('@','').toLowerCase()) || (u.nome && u.nome.toLowerCase() === om.nome.toLowerCase()));
+          if (uIdx === -1) {
             users.push({
               id: om.id,
               nome: om.nome,
-              login: (om.username || '').replace('@',''),
-              username: om.username || ('@' + (om.login || '')),
+              login: (om.username || `@membro${om.id}`).replace('@',''),
+              username: om.username || ('@membro' + om.id),
               email: om.email || '',
               telefone: om.telefone || '',
               morada: om.morada || 'Aguada de Baixo',
               numeroSocio: om.numeroSocio || null,
-              perfil: om.perfil || 'Membro da Direção',
+              perfil: om.perfil || 'Membro dos Órgãos Sociais',
               orgao: om.orgao || 'Direção',
               cargo: om.cargo || 'Dirigente',
               estado: om.estado || 'Ativo',
               foto: om.foto || '',
               permissoes_modulos: om.permissoes_modulos || {}
             });
+            needsSave = true;
           } else {
-            if (!exists.orgao || exists.orgao === 'Nenhum') exists.orgao = om.orgao;
-            if (!exists.cargo) exists.cargo = om.cargo;
+            // Se o utilizador existe e não tem orgao definido, define com base no membro oficial
+            if (!users[uIdx].orgao || users[uIdx].orgao === 'Nenhum') {
+              users[uIdx].orgao = om.orgao;
+              needsSave = true;
+            }
+            if (!users[uIdx].cargo && om.cargo) {
+              users[uIdx].cargo = om.cargo;
+              needsSave = true;
+            }
           }
         });
-        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(users));
+        if (needsSave) {
+          localStorage.setItem('arca_utilizadores_v2', JSON.stringify(users));
+        }
       }
 
       // Filtrar estritamente quem pertence a um Órgão Social
