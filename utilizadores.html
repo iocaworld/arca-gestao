@@ -1369,7 +1369,7 @@
         email: "raqueli@arca.pt",
         telefone: "912 000 000",
         morada: "Aguada de Baixo",
-        numeroSocio: null,
+        numeroSocio: 2,
         perfil: "Sócio Consulta",
         estado: "Ativo",
         password: "raqueli",
@@ -1378,7 +1378,7 @@
         ultimo_acesso: "Hoje",
         foto: "",
         permissoes_modulos: {
-          socios: { enabled: true, mode: "view", submenus: ["consultar"] }
+          socios: { enabled: true, mode: "own", submenus: ["consultar"] }
         }
       }
     ];
@@ -2203,9 +2203,15 @@
                 </label>
               </div>
               <div class="perm-module-controls">
+                ${m.id === 'socios' ? `
+                <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; cursor: pointer;" title="O utilizador vê unicamente a sua própria ficha e valor em dívida">
+                  <input type="radio" name="userModMode_${m.id}" value="own" ${mode === 'own' ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''} onchange="setUserModuleMode('${m.id}', 'own')">
+                  <span>Própria Ficha (Sócio)</span>
+                </label>
+                ` : ''}
                 <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; cursor: pointer;">
                   <input type="radio" name="userModMode_${m.id}" value="view" ${mode === 'view' ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''} onchange="setUserModuleMode('${m.id}', 'view')">
-                  <span>Apenas Leitura / Consulta</span>
+                  <span>${m.id === 'socios' ? 'Consultar Todos' : 'Apenas Leitura / Consulta'}</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; cursor: pointer;">
                   <input type="radio" name="userModMode_${m.id}" value="full" ${mode === 'full' ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''} onchange="setUserModuleMode('${m.id}', 'full')">
@@ -2269,7 +2275,7 @@
         } else if (tipo === 'desporto') {
           if (['painel', 'desporto'].includes(m.id)) { enable = true; mode = 'full'; }
         } else if (tipo === 'socio') {
-          if (['painel'].includes(m.id)) { enable = true; mode = 'view'; }
+          if (m.id === 'socios') { enable = true; mode = 'own'; }
         } else if (tipo === 'limpar') {
           enable = false;
         }

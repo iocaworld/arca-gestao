@@ -764,7 +764,111 @@
     </div>
   </div>
 
+  <!-- Modal: Contactar Administrador para Pagar Cotas -->
+  <div class="modal-overlay" id="modalContactoAdminPagamento" onclick="if(event.target === this) closeModalContactoAdminPagamento()">
+    <div class="modal-content" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin: 0;">
+            💳 Contactar Administrador para Pagar Cotas
+          </h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+            Envie uma solicitação direta à Direção da A.R.C.A. para liquidar as suas cotas.
+          </p>
+        </div>
+        <button class="modal-close" type="button" onclick="closeModalContactoAdminPagamento()">&times;</button>
+      </div>
+
+      <!-- Formulário de Envio -->
+      <div id="modalContactoAdminFormView">
+        <form id="formContactoAdminPagamento" onsubmit="handleSubmeterPedidoPagamento(event)">
+          <input type="hidden" id="pedidoPagamentoSocioId">
+
+          <!-- Resumo da Dívida e Dados do Sócio -->
+          <div style="background: rgba(28, 109, 66, 0.08); border: 1px solid rgba(28, 109, 66, 0.25); border-radius: var(--radius-md); padding: 1.1rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.45rem; font-size: 0.9rem;">
+              <span style="color: var(--text-muted); font-weight: 500;">Associado:</span>
+              <strong id="pedidoSocioNome" style="color: var(--text-title);">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.45rem; font-size: 0.9rem;">
+              <span style="color: var(--text-muted); font-weight: 500;">Número de Sócio:</span>
+              <strong id="pedidoSocioNumero" style="color: var(--text-title);">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.45rem; font-size: 0.9rem;">
+              <span style="color: var(--text-muted); font-weight: 500;">Anos por Regularizar:</span>
+              <strong id="pedidoSocioAnos" style="color: #dc2626;">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(28, 109, 66, 0.3); padding-top: 0.6rem; margin-top: 0.6rem;">
+              <span style="font-size: 1rem; font-weight: 700; color: var(--text-title);">Total a Liquidar:</span>
+              <strong id="pedidoSocioValorTotal" style="color: var(--primary); font-size: 1.35rem; font-weight: 800;">0,00 €</strong>
+            </div>
+          </div>
+
+          <!-- Preferência de Pagamento -->
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="pedidoMetodoPref">Como prefere efetuar o pagamento? *</label>
+            <select id="pedidoMetodoPref" class="form-control" required>
+              <option value="MBWay (Envio de contacto/referência)">📱 MBWay (966 100 115)</option>
+              <option value="Transferência Bancária (IBAN da ARCA)">🏦 Transferência Bancária (IBAN)</option>
+              <option value="Presencial na Secretaria da Sede da ARCA">🏛️ Presencial na Secretaria da ARCA</option>
+              <option value="Outro / A combinar com a Direção">Outro / A combinar com a Direção</option>
+            </select>
+          </div>
+
+          <!-- Contactos para Resposta -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="pedidoEmail">E-mail de Contacto *</label>
+              <input type="email" id="pedidoEmail" class="form-control" required placeholder="o.seu.email@exemplo.pt">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pedidoTelefone">Telemóvel *</label>
+              <input type="tel" id="pedidoTelefone" class="form-control" required placeholder="912 345 678">
+            </div>
+          </div>
+
+          <!-- Observações Opcionais -->
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="pedidoObservacoes">Mensagem ou Nota Adicional (Opcional)</label>
+            <textarea id="pedidoObservacoes" class="form-control" rows="2" placeholder="Ex: Posso enviar comprovativo por WhatsApp ou pagar no próximo sábado na sede..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModalContactoAdminPagamento()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmeterPedidoPagamento" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+              <span>✉️</span>
+              <span>Enviar Pedido à Direção</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Estado de Sucesso pós-envio -->
+      <div id="modalContactoAdminSucessoView" style="display: none; text-align: center; padding: 1.5rem 0.5rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 0.75rem; line-height: 1;">✉️</div>
+        <h3 style="color: #16a34a; font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">
+          Pedido Enviado com Sucesso!
+        </h3>
+        <p style="font-size: 0.95rem; color: var(--text-body); line-height: 1.6; margin-bottom: 1.25rem;">
+          A Direção da <strong>A.R.C.A.</strong> foi notificada do seu pedido de liquidação de cotas.<br>
+          Entraremos em contacto consigo com a maior brevidade possível para concluir a regularização.
+        </p>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 1rem; text-align: left; font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.5rem;">
+          <strong style="color: var(--text-title); display: block; margin-bottom: 0.35rem;">Canais Oficiais da Direção da ARCA:</strong>
+          • <strong>E-mail:</strong> arca.aguadadebaixo@sapo.pt<br>
+          • <strong>MBWay Direção:</strong> 966 100 115 (indicar sempre Nº de Sócio nas notas)<br>
+          • <strong>Presencial:</strong> Sede Social da A.R.C.A. (Aguada de Baixo)
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="closeModalContactoAdminPagamento()" style="width: 100%;">
+          Concluir e Voltar à Ficha
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/socios-data.js"></script>
-  <script src="js/main.js?v=20261126_perm3"></script>
+  <script src="js/main.js?v=20261126_perm4"></script>
 </body>
 </html>

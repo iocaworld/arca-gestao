@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
       email: "raqueli@arca.pt",
       telefone: "912 000 000",
       morada: "Aguada de Baixo",
-      numeroSocio: null,
+      numeroSocio: 2,
       perfil: "Sócio Consulta",
       estado: "Ativo",
       password: "raqueli",
@@ -824,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ultimo_acesso: "Hoje",
       foto: "",
       permissoes_modulos: {
-        socios: { enabled: true, mode: "view", submenus: ["consultar"] }
+        socios: { enabled: true, mode: "own", submenus: ["consultar"] }
       }
     }
   ];
@@ -1733,6 +1733,41 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sociosTableBody) {
     let socios = getGlobalSocios();
 
+    const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+    const isAdmin = currentUser && (currentUser.perfil === 'Administrador Total' || currentUser.login === 'jorge');
+    const isDirecao = currentUser && (currentUser.perfil === 'Membro da Direção' || currentUser.perfil === 'Direção');
+    const isTesouraria = currentUser && (currentUser.perfil === 'Tesoureiro' || currentUser.perfil === 'Tesouraria');
+    const sociosPerm = (currentUser && currentUser.permissoes_modulos && currentUser.permissoes_modulos.socios) || {};
+    
+    // Se não for gestor administrativo (ex: associado comum), tem acesso apenas à sua própria ficha
+    const isManager = isAdmin || isDirecao || isTesouraria || (sociosPerm.enabled && sociosPerm.mode === 'full');
+    const isOwnOnly = !isManager;
+
+    function findCurrentUserSocio() {
+      if (!currentUser) return null;
+      if (currentUser.numeroSocio) {
+        const found = socios.find(s => Number(s.numero) === Number(currentUser.numeroSocio) || Number(s.id) === Number(currentUser.numeroSocio));
+        if (found) return found;
+      }
+      if (currentUser.email) {
+        const cleanEmail = currentUser.email.trim().toLowerCase();
+        const found = socios.find(s => s.email && s.email.trim().toLowerCase() === cleanEmail);
+        if (found) return found;
+      }
+      if (currentUser.nome) {
+        const cleanNome = currentUser.nome.trim().toLowerCase();
+        const found = socios.find(s => s.nome && s.nome.trim().toLowerCase() === cleanNome);
+        if (found) return found;
+        const parts = cleanNome.split(' ').filter(Boolean);
+        if (parts.length >= 2) {
+          const firstLast = `${parts[0]} ${parts[parts.length - 1]}`;
+          const byFirstLast = socios.find(s => s.nome && s.nome.trim().toLowerCase().includes(firstLast));
+          if (byFirstLast) return byFirstLast;
+        }
+      }
+      return null;
+    }
+
     function saveSocios() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(socios));
       window.updateGlobalMetrics();
@@ -1872,6 +1907,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Indicadores do Topo Conforme Sistema ARCA
     function updateStats() {
+      if (isOwnOnly) {
+        const userSocio = findCurrentUserSocio();
+        const metricsRow = document.querySelector('.metrics-row-4');
+        if (metricsRow) {
+          if (userSocio) {
+            const anosEmAtraso = userSocio.divida > 0 ? Math.round(userSocio.divida / 6) : 0;
+            metricsRow.innerHTML = `
+              <div class="metric-card accent-green">
+                <div class="metric-content">
+                  <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">O MEU NÚMERO DE SÓCIO</span>
+                  <span class="metric-value" style="color: var(--text-title); font-size: 2.1rem; margin-top: 0.2rem;">Nº ${userSocio.numero}</span>
+                  <span class="metric-badge neutral" style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem;">Categoria: ${escapeHtml(userSocio.categoria || 'Efetivo')}</span>
+                </div>
+              </div>
+
+              <div class="metric-card ${userSocio.divida > 0 ? 'accent-orange' : 'accent-green'}">
+                <div class="metric-content">
+                  <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">ESTADO DAS MINHAS QUOTAS</span>
+                  <span class="metric-value" style="color: ${userSocio.divida > 0 ? '#d97706' : '#16a34a'}; font-size: 2.1rem; margin-top: 0.2rem;">${userSocio.divida > 0 ? 'Em Atraso' : 'Em Dia'}</span>
+                  <span class="metric-badge ${userSocio.divida > 0 ? 'warning' : 'positive'}" style="font-weight: 600; font-size: 0.85rem; margin-top: 0.35rem;">Último ano pago: ${userSocio.ultimaQuota || 'Sem registo'}</span>
+                </div>
+              </div>
+
+              <div class="metric-card ${userSocio.divida > 0 ? 'accent-red' : 'accent-green'}">
+                <div class="metric-content">
+                  <span class="metric-label" style="text-transform: uppercase; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em;">VALOR EM DÍVIDA</span>
+                  <span class="metric-value" style="color: ${userSocio.divida > 0 ? '#dc2626' : '#16a34a'}; font-size: 2.1rem; margin-top: 0.2rem;">${userSocio.divida > 0 ? userSocio.divida.toFixed(2).replace('.', ',') + ' €' : '0,00 €'}</span>
+                  <span class="metric-badge" style="color: ${userSocio.divida > 0 ? '#dc2626' : '#16a34a'}; font-weight: 700; font-size: 0.85rem; margin-top: 0.35rem;">${userSocio.divida > 0 ? `${anosEmAtraso} ano(s) por regularizar` : 'Quotas 100% regularizadas'}</span>
+                </div>
+              </div>
+
+              <div class="metric-card accent-green" style="display: flex; flex-direction: column; justify-content: center; align-items: stretch; background: rgba(28, 109, 66, 0.05); border: 1.5px solid rgba(28, 109, 66, 0.25);">
+                <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em; margin-bottom: 0.4rem;">PAGAMENTO DE COTAS</div>
+                <p style="font-size: 0.82rem; color: var(--text-body); margin: 0 0 0.6rem 0; line-height: 1.4;">
+                  ${userSocio.divida > 0 ? 'Pretende regularizar as suas cotas em atraso?' : 'Deseja contactar a Direção sobre as suas cotas?'}
+                </p>
+                <button type="button" class="btn btn-primary btn-sm" style="font-weight: 700; background: #1c6d42; border-color: #1c6d42; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.45rem 0.6rem;" onclick="abrirModalContactoAdminPagamento(${userSocio.id})">
+                  <span>✉️</span>
+                  <span>Contactar administrador para pagar</span>
+                </button>
+              </div>
+            `;
+          } else {
+            metricsRow.innerHTML = `
+              <div class="metric-card accent-orange" style="grid-column: 1 / -1; padding: 1.5rem;">
+                <div style="font-weight: 800; color: #d97706; font-size: 1.1rem; margin-bottom: 0.5rem;">Aguardando Associação do Número de Sócio</div>
+                <p style="color: var(--text-body); font-size: 0.9rem; line-height: 1.5; margin: 0 0 1rem 0;">
+                  A sua conta de utilizador ainda não tem um Número de Sócio associado. Por favor solicite a associação do seu número à Direção.
+                </p>
+                <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalContactoAdminPagamento()" style="background: #1c6d42; border-color: #1c6d42;">
+                  ✉️ Solicitar Associação de Número de Sócio à Direção
+                </button>
+              </div>
+            `;
+          }
+        }
+
+        // Títulos e Filtros para Sócio Individual
+        const pageTitle = document.querySelector('.page-title-bar h1');
+        const pageDesc = document.querySelector('.page-title-bar p');
+        if (pageTitle) pageTitle.textContent = 'A Minha Ficha de Sócio & Quotas';
+        if (pageDesc) pageDesc.textContent = 'Área pessoal do associado: consulte a sua ficha cadastral, quotas liquidadas e solicite o pagamento diretamente à Direção da ARCA.';
+
+        const tableTitle = document.getElementById('tableTitleSocios');
+        if (tableTitle) tableTitle.textContent = userSocio ? `A Minha Ficha de Associado (Nº ${userSocio.numero} — ${userSocio.nome})` : 'A Minha Ficha de Associado';
+
+        const filterBar = document.querySelector('.card-header-bar > div');
+        if (filterBar) filterBar.style.display = 'none';
+
+        const btnExportCsv = document.getElementById('btnExportCsv');
+        if (btnExportCsv) btnExportCsv.style.display = 'none';
+
+        const btnOpenNewSocioModal = document.getElementById('btnOpenNewSocioModal');
+        if (btnOpenNewSocioModal) btnOpenNewSocioModal.style.display = 'none';
+
+        return;
+      }
+
       const total = socios.length;
       const ativos = socios.filter(s => s.estadoMembro === 'Ativo').length;
       const quotasPagas = socios.filter(s => s.estadoMembro === 'Ativo' && s.estado === 'Em Dia').length;
@@ -2072,8 +2185,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // 8. Ações
         if (isColVisible('acoes')) {
           html += `
-            <td style="text-align: right;">
-              <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openSocioDrawer(${s.id})" title="Ver e Editar Ficha Completa">
+            <td style="text-align: right; white-space: nowrap;">
+              ${(isOwnOnly && s.divida > 0) ? `
+                <button class="btn btn-primary btn-sm" style="background: #1c6d42; border-color: #1c6d42; margin-right: 0.4rem;" onclick="event.stopPropagation(); abrirModalContactoAdminPagamento(${s.id})" title="Contactar administrador para pagar cotas">
+                  ✉️ Pagar Cotas
+                </button>
+              ` : ''}
+              <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openSocioDrawer(${s.id})" title="Ver Ficha Completa">
                 Ver Ficha
               </button>
             </td>
@@ -2414,7 +2532,10 @@ document.addEventListener('DOMContentLoaded', () => {
                   Registar pagamento
                 </button>
               ` : `
-                <span style="color: #64748b; font-size: 0.82rem; font-weight: 600; padding: 0.45rem 0.85rem; background: #f1f5f9; border-radius: var(--radius-sm); border: 1px solid #e2e8f0;">Modo Consulta</span>
+                <button type="button" class="btn btn-primary" onclick="abrirModalContactoAdminPagamento(${socio.id})" style="background: #1c6d42; border-color: #1c6d42; font-weight: 700; display: inline-flex; align-items: center; gap: 0.45rem;">
+                  <span>✉️</span>
+                  <span>Contactar um administrador para pagar</span>
+                </button>
               `}
             </div>
 
@@ -2457,9 +2578,20 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         if (drawerFooter) {
-          drawerFooter.innerHTML = `
-            <button type="button" class="btn btn-outline btn-sm" onclick="closeSocioDrawer()">Fechar</button>
-          `;
+          if (!canPay) {
+            drawerFooter.innerHTML = `
+              <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalContactoAdminPagamento(${socio.id})" style="background: #1c6d42; border-color: #1c6d42; font-weight: 700;">
+                  ✉️ Contactar Administrador para Pagar
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="closeSocioDrawer()">Fechar</button>
+              </div>
+            `;
+          } else {
+            drawerFooter.innerHTML = `
+              <button type="button" class="btn btn-outline btn-sm" onclick="closeSocioDrawer()">Fechar</button>
+            `;
+          }
         }
       }
     }
@@ -3095,6 +3227,135 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // =========================================================================
+    // 4.3.1. Contactar Administrador para Pagar Cotas (Solicitação por E-mail)
+    // =========================================================================
+    window.abrirModalContactoAdminPagamento = function(socioId) {
+      const modal = document.getElementById('modalContactoAdminPagamento');
+      if (!modal) return;
+
+      const formView = document.getElementById('modalContactoAdminFormView');
+      const sucessoView = document.getElementById('modalContactoAdminSucessoView');
+      if (formView) formView.style.display = 'block';
+      if (sucessoView) sucessoView.style.display = 'none';
+
+      let socio = null;
+      if (socioId) {
+        socio = socios.find(s => s.id === socioId || Number(s.numero) === Number(socioId));
+      }
+      if (!socio && isOwnOnly) {
+        socio = findCurrentUserSocio();
+      }
+
+      const inputId = document.getElementById('pedidoPagamentoSocioId');
+      const elNome = document.getElementById('pedidoSocioNome');
+      const elNumero = document.getElementById('pedidoSocioNumero');
+      const elAnos = document.getElementById('pedidoSocioAnos');
+      const elValor = document.getElementById('pedidoSocioValorTotal');
+      const inputEmail = document.getElementById('pedidoEmail');
+      const inputTel = document.getElementById('pedidoTelefone');
+
+      if (socio) {
+        if (inputId) inputId.value = socio.id;
+        if (elNome) elNome.textContent = socio.nome;
+        if (elNumero) elNumero.textContent = `Nº ${socio.numero}`;
+
+        const unpaidQuotas = (socio.quotas || []).filter(q => !q.pago);
+        const anosTexto = unpaidQuotas.length > 0 
+          ? unpaidQuotas.map(q => q.ano).join(', ') 
+          : (socio.divida > 0 ? `${Math.round(socio.divida / 6)} ano(s) em atraso` : 'Ano corrente (2026)');
+        if (elAnos) elAnos.textContent = anosTexto;
+
+        const totalDivida = socio.divida > 0 
+          ? socio.divida 
+          : (unpaidQuotas.length > 0 ? unpaidQuotas.reduce((sum, q) => sum + (q.valor || 6), 0) : 6.00);
+        if (elValor) elValor.textContent = `${totalDivida.toFixed(2).replace('.', ',')} €`;
+
+        if (inputEmail && !inputEmail.value) inputEmail.value = socio.email || (currentUser ? currentUser.email : '');
+        if (inputTel && !inputTel.value) inputTel.value = socio.telefone || (currentUser ? currentUser.telefone : '');
+      } else {
+        if (inputId) inputId.value = '';
+        if (elNome) elNome.textContent = currentUser ? currentUser.nome : 'Associado';
+        if (elNumero) elNumero.textContent = (currentUser && currentUser.numeroSocio) ? `Nº ${currentUser.numeroSocio}` : 'A atribuir / Por associar';
+        if (elAnos) elAnos.textContent = 'Quotas em atraso';
+        if (elValor) elValor.textContent = '6,00 €';
+        if (inputEmail && !inputEmail.value) inputEmail.value = currentUser ? (currentUser.email || '') : '';
+        if (inputTel && !inputTel.value) inputTel.value = currentUser ? (currentUser.telefone || '') : '';
+      }
+
+      modal.classList.add('active');
+    };
+
+    window.closeModalContactoAdminPagamento = function() {
+      const modal = document.getElementById('modalContactoAdminPagamento');
+      if (modal) modal.classList.remove('active');
+    };
+
+    window.handleSubmeterPedidoPagamento = async function(event) {
+      if (event && event.preventDefault) event.preventDefault();
+
+      const btnSubmit = document.getElementById('btnSubmeterPedidoPagamento');
+      const socioId = document.getElementById('pedidoPagamentoSocioId') ? document.getElementById('pedidoPagamentoSocioId').value : '';
+      const socio = socios.find(s => String(s.id) === String(socioId)) || findCurrentUserSocio();
+
+      const nomeSocio = document.getElementById('pedidoSocioNome') ? document.getElementById('pedidoSocioNome').textContent : (currentUser ? currentUser.nome : 'Associado');
+      const numSocio = document.getElementById('pedidoSocioNumero') ? document.getElementById('pedidoSocioNumero').textContent : (currentUser && currentUser.numeroSocio ? currentUser.numeroSocio : '—');
+      const anosSocio = document.getElementById('pedidoSocioAnos') ? document.getElementById('pedidoSocioAnos').textContent : '—';
+      const valorTotal = document.getElementById('pedidoSocioValorTotal') ? document.getElementById('pedidoSocioValorTotal').textContent : '6,00 €';
+      const metodoPref = document.getElementById('pedidoMetodoPref') ? document.getElementById('pedidoMetodoPref').value : 'MBWay';
+      const emailContacto = document.getElementById('pedidoEmail') ? document.getElementById('pedidoEmail').value.trim() : '';
+      const telContacto = document.getElementById('pedidoTelefone') ? document.getElementById('pedidoTelefone').value.trim() : '';
+      const notas = document.getElementById('pedidoNotas') ? document.getElementById('pedidoNotas').value.trim() : '';
+
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<span>⏳</span><span>A enviar pedido...</span>';
+      }
+
+      // Preparar payload para FormSubmit
+      // Token verificado e ativo: e3981b43b2aa88b76aa6ddd0bd2f0821 (arca.aguadadebaixo@sapo.pt)
+      const payload = {
+        _subject: `[ARCA Gestão] Pedido de Pagamento de Cotas — ${nomeSocio} (${numSocio})`,
+        _template: "table",
+        _captcha: "false",
+        "Tipo de Pedido": "Regularização / Pagamento de Cotas de Sócio",
+        "Nome do Associado": nomeSocio,
+        "Número de Sócio": numSocio,
+        "Anos / Quotas a Regularizar": anosSocio,
+        "Valor Total Previsto": valorTotal,
+        "Método de Pagamento Preferido": metodoPref,
+        "E-mail de Contacto": emailContacto,
+        "Telemóvel": telContacto,
+        "Notas do Associado": notas || "Nenhuma nota adicional.",
+        "Data do Pedido": new Date().toLocaleString('pt-PT')
+      };
+
+      try {
+        await fetch('https://formsubmit.co/ajax/e3981b43b2aa88b76aa6ddd0bd2f0821', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn('Envio via FormSubmit AJAX:', err);
+      }
+
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<span>✉️</span><span>Enviar Pedido à Direção</span>';
+      }
+
+      const formView = document.getElementById('modalContactoAdminFormView');
+      const sucessoView = document.getElementById('modalContactoAdminSucessoView');
+      if (formView) formView.style.display = 'none';
+      if (sucessoView) sucessoView.style.display = 'block';
+
+      showToast('Pedido de pagamento enviado com sucesso à Direção!', 'success');
+    };
+
+    // =========================================================================
     // 4.4. Filtros, Pesquisa e Ordenação da Tabela de Sócios
     // =========================================================================
     const searchInput = document.getElementById('searchInput');
@@ -3104,6 +3365,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sortSociosSelect = document.getElementById('sortSociosSelect');
 
     function applyFilters() {
+      if (isOwnOnly) {
+        const userSocio = findCurrentUserSocio();
+        renderTable(userSocio ? [userSocio] : []);
+        return;
+      }
+
       const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
       const membro = filterMembro ? filterMembro.value : 'Ativo';
       const status = filterStatus ? filterStatus.value : 'all';
