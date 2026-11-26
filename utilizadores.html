@@ -1046,7 +1046,7 @@
   <!-- Firebase SDK e Sincronização em Tempo Real -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_1"></script>
+  <script src="js/firebase-sync.js?v=20261126_purge"></script>
   <script src="js/main.js?v=20261126_auth"></script>
   <script>
     // =========================================================================
@@ -2380,6 +2380,9 @@
       if (!u) return;
       if (confirm(`Tem a certeza de que pretende eliminar permanentemente a conta de ${u.nome}? Esta ação é irreversível.`)) {
         utilizadores = utilizadores.filter(x => x.id !== userId);
+        if (typeof window.deleteArcaUtilizadorFromCloud === 'function') {
+          window.deleteArcaUtilizadorFromCloud(userId);
+        }
         saveUtilizadores();
         if (window.showToast) window.showToast(`Utilizador ${u.nome} eliminado com sucesso.`, 'success');
       }

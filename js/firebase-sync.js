@@ -125,6 +125,55 @@ const ARCA_FIREBASE_CONFIG = {
     }
   };
 
+  // Eliminar Utilizador na Nuvem
+  window.deleteArcaUtilizadorFromCloud = async function(userId) {
+    const firestore = initFirebase();
+    if (!firestore || !userId) return false;
+
+    try {
+      const docId = String(userId);
+      await firestore.collection('utilizadores').doc(docId).delete();
+      console.log(`[ARCA Firebase] Utilizador ID ${userId} eliminado permanentemente da nuvem.`);
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao eliminar utilizador da nuvem:', err);
+      return false;
+    }
+  };
+
+  // Remover e-mail específico de todo o sistema (Nuvem e Local)
+  window.purgeEmailFromArcaSystem = async function(targetEmail) {
+    if (!targetEmail) return;
+    const cleanTarget = targetEmail.trim().toLowerCase();
+
+    // 1. Limpar do localStorage
+    try {
+      const local = JSON.parse(localStorage.getItem('arca_utilizadores_v2')) || [];
+      const filtered = local.filter(u => !(u.email && u.email.trim().toLowerCase() === cleanTarget));
+      if (filtered.length !== local.length) {
+        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(filtered));
+        console.log(`[ARCA Firebase] E-mail ${cleanTarget} removido do cache local.`);
+      }
+    } catch (e) {}
+
+    // 2. Limpar do Cloud Firestore
+    const firestore = initFirebase();
+    if (firestore) {
+      try {
+        const snap = await firestore.collection('utilizadores').get();
+        snap.forEach(async (doc) => {
+          const data = doc.data();
+          if (data && data.email && data.email.trim().toLowerCase() === cleanTarget) {
+            console.log(`[ARCA Firebase] A apagar conta com e-mail ${cleanTarget} da nuvem (Doc ID: ${doc.id})`);
+            await firestore.collection('utilizadores').doc(doc.id).delete();
+          }
+        });
+      } catch (err) {
+        console.warn('[ARCA Firebase] Erro ao purgar e-mail do Firestore:', err);
+      }
+    }
+  };
+
   // Semear utilizadores padrão na nuvem
   window.seedInitialUsersToCloud = async function() {
     const firestore = initFirebase();
@@ -153,5 +202,8 @@ const ARCA_FIREBASE_CONFIG = {
   // Inicialização automática ao carregar
   document.addEventListener('DOMContentLoaded', () => {
     initFirebase();
+    if (typeof window.purgeEmailFromArcaSystem === 'function') {
+      window.purgeEmailFromArcaSystem('jorge.cunha@climar.pt');
+    }
   });
 })();
