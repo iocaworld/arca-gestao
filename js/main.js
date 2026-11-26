@@ -848,6 +848,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (adminSeed) parsed.unshift(adminSeed);
           }
 
+          // Garantir número de sócio correto para Raquel Alexandra Marques da Cunha (Sócia nº 414)
+          const raquelIdx = parsed.findIndex(p => p.login === 'raquel.cunha');
+          if (raquelIdx !== -1 && parsed[raquelIdx].numeroSocio !== 414) {
+            parsed[raquelIdx].numeroSocio = 414;
+            if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+              window.saveArcaUtilizadorToCloud(parsed[raquelIdx]);
+            }
+          }
+
           localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
           return parsed;
         }
@@ -1071,6 +1080,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (fresh.permissoes_modulos) u.permissoes_modulos = fresh.permissoes_modulos;
           if (fresh.perfil) u.perfil = fresh.perfil;
           if (fresh.estado) u.estado = fresh.estado;
+          localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
+        }
+        if (u.login === 'raquel.cunha' || (u.nome && u.nome.toLowerCase().includes('raquel alexandra'))) {
+          u.numeroSocio = 414;
           localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
         }
         if (u.foto && (u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users') || u.foto.includes('xmlns="http://www.w3.org/2000/svg"') || (u.id === 1 && !u.foto.startsWith('data:image/')))) {
@@ -1782,6 +1795,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function findCurrentUserSocio() {
       if (!currentUser) return null;
+
+      // Salvaguarda direta para Raquel Alexandra Marques da Cunha (Sócia nº 414)
+      if (currentUser.login === 'raquel.cunha' || (currentUser.nome && currentUser.nome.toLowerCase().includes('raquel alexandra'))) {
+        const foundRaquel = socios.find(s => Number(s.numero) === 414 || Number(s.id) === 414);
+        if (foundRaquel) return foundRaquel;
+      }
+
       if (currentUser.numeroSocio) {
         const found = socios.find(s => Number(s.numero) === Number(currentUser.numeroSocio) || Number(s.id) === Number(currentUser.numeroSocio));
         if (found) return found;
@@ -3618,7 +3638,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Se for modo 'own' (Própria Ficha), esconder botões de exportação e criação de novos sócios
+    // Se for modo 'own' (Própria Ficha), esconder botões de exportação e criação de novos sócios e ajustar badge
     if (isOwnOnly) {
       const btnExportCsv = document.getElementById('btnExportCsv');
       if (btnExportCsv) btnExportCsv.style.display = 'none';
@@ -3628,6 +3648,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (colPicker) colPicker.style.display = 'none';
       const searchBox = document.getElementById('searchSocios');
       if (searchBox) searchBox.placeholder = 'A sua ficha de associado...';
+
+      // Atualizar badge da barra lateral de 386 para 1
+      document.querySelectorAll('.app-sidebar a[href*="socios"], .sidebar-nav a[href*="socios"]').forEach(link => {
+        const badge = link.querySelector('.badge, .nav-badge, span[style*="font-size"]');
+        if (badge) badge.textContent = '1';
+      });
+    }
     }
 
     // Inicialização da Tabela, Filtros e Indicadores
