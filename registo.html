@@ -485,11 +485,25 @@
         notificacoes.push(payloadEmail);
         localStorage.setItem('arca_pedidos_email_pendentes', JSON.stringify(notificacoes));
 
-        // Envio assíncrono para endpoint de email (Formspree institucional)
-        fetch('https://formspree.io/f/xbjnqwez', {
+        // Envio assíncrono para o email da ARCA (arca.aguadadebaixo@sapo.pt) via FormSubmit
+        const formSubmitPayload = {
+          _subject: `Novo Pedido de Registo na ARCA: ${nome} (@${username})`,
+          Nome_Completo: nome,
+          Nome_Utilizador: '@' + username,
+          Email_Contacto: email,
+          Telemovel: telefone,
+          Numero_Socio: socioVal || 'Não associado',
+          Funcao_Pretendida: funcao,
+          Data_Registo: new Date().toLocaleString('pt-PT'),
+          Gestao_Painel: 'https://arca-gestao.web.app/utilizadores',
+          _template: 'table',
+          _captcha: 'false'
+        };
+
+        fetch('https://formsubmit.co/ajax/arca.aguadadebaixo@sapo.pt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(payloadEmail)
+          body: JSON.stringify(formSubmitPayload)
         }).catch(() => {});
       } catch (err) {}
 
