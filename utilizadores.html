@@ -2312,8 +2312,8 @@
     // =========================================================================
     // Salvar Utilizador (Criação / Edição)
     // =========================================================================
-    window.handleSalvarUtilizador = function(e) {
-      e.preventDefault();
+    window.handleSalvarUtilizador = async function(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
       const idVal = document.getElementById('formUserId').value;
       const nome = document.getElementById('formUserNome').value.trim();
