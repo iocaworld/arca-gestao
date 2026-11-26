@@ -334,7 +334,7 @@
 
   </div>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=20261126_auth"></script>
   <script>
     function toggleRegPassword(id) {
       const el = document.getElementById(id);
@@ -394,10 +394,14 @@
       // Carregar lista existente de utilizadores
       const STORAGE_KEY = 'arca_utilizadores_v2';
       let utilizadores = [];
-      try {
-        utilizadores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      } catch (err) {
-        utilizadores = [];
+      if (typeof window.getArcaUtilizadores === 'function') {
+        utilizadores = window.getArcaUtilizadores();
+      } else {
+        try {
+          utilizadores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        } catch (err) {
+          utilizadores = [];
+        }
       }
 
       // Verificar se o username ou email já existem

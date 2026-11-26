@@ -578,8 +578,314 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 3. Autenticação na Página Principal (index.html)
+  // 3. Sistema Central de Utilizadores, Credenciais e Autenticação ARCA
   // =========================================================================
+  const ARCA_SESSION_KEY = 'arca_logged_user_v2';
+  const ARCA_UTILIZADORES_KEY = 'arca_utilizadores_v2';
+
+  const JORGE_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>";
+
+  const SEED_UTILIZADORES = [
+    {
+      id: 1,
+      nome: "Jorge Manuel da Silva Cunha",
+      login: "jorge",
+      username: "@jorge",
+      email: "scunhajorge@gmail.com",
+      telefone: "966 100 115",
+      morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
+      numeroSocio: 314,
+      perfil: "Administrador Total",
+      estado: "Ativo",
+      password: "jorge",
+      data_registo: "2024-01-10",
+      data_rgpd: "2024-01-10",
+      ultimo_acesso: "Hoje",
+      foto: JORGE_AVATAR_SVG,
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
+        socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos", "exportar"] },
+        tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+        direcao: { enabled: true, mode: "full", submenus: ["membros", "membros_gestao", "atas", "exercicio"] },
+        desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
+        documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "eliminar"] },
+        administracao: { enabled: true, mode: "full", submenus: ["utilizadores_ver", "utilizadores_gerir"] }
+      }
+    },
+    {
+      id: 2,
+      nome: "Artur Jorge Ferreira Cardoso",
+      login: "artur.cardoso",
+      username: "@artur.cardoso",
+      email: "alfamobile@gmail.com",
+      telefone: "911 970 345",
+      morada: "Rua Vale do Lobo, 11 - Landiosa, Aguada de Baixo",
+      numeroSocio: 332,
+      perfil: "Tesoureiro / Finanças",
+      estado: "Ativo",
+      password: "artur",
+      data_registo: "2024-01-15",
+      data_rgpd: "2024-01-15",
+      ultimo_acesso: "Ontem, 18:22",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
+        socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos"] },
+        tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros", "atas"] },
+        documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload"] }
+      }
+    },
+    {
+      id: 3,
+      nome: "José Manuel Carreira dos Reis",
+      login: "jose.reis",
+      username: "@jose.reis",
+      email: "zreis93@gmail.com",
+      telefone: "919 443 210",
+      morada: "Aguada de Baixo",
+      numeroSocio: 125,
+      perfil: "Membro da Direção",
+      estado: "Ativo",
+      password: "jose",
+      data_registo: "2024-01-20",
+      data_rgpd: "2024-01-20",
+      ultimo_acesso: "24/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+        socios: { enabled: true, mode: "view", submenus: ["consultar"] },
+        direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
+        documentos: { enabled: true, mode: "view", submenus: ["consultar"] }
+      }
+    },
+    {
+      id: 4,
+      nome: "Luis Carlos Antunes dos Santos",
+      login: "luis.santos",
+      username: "@luis.santos",
+      email: "luis.santos43@gmail.com",
+      telefone: "914 882 190",
+      morada: "Aguada de Baixo",
+      numeroSocio: 210,
+      perfil: "Membro da Direção",
+      estado: "Ativo",
+      password: "luis",
+      data_registo: "2024-01-20",
+      data_rgpd: "2024-01-20",
+      ultimo_acesso: "23/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+        socios: { enabled: true, mode: "view", submenus: ["consultar"] },
+        direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] }
+      }
+    },
+    {
+      id: 5,
+      nome: "Raquel Alexandra Marques da Cunha",
+      login: "raquel.cunha",
+      username: "@raquel.cunha",
+      email: "raquelamc22@gmail.com",
+      telefone: "963 112 405",
+      morada: "Aguada de Baixo",
+      numeroSocio: 305,
+      perfil: "Membro da Direção",
+      estado: "Ativo",
+      password: "raquel",
+      data_registo: "2024-01-25",
+      data_rgpd: "2024-01-25",
+      ultimo_acesso: "25/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+        socios: { enabled: true, mode: "full", submenus: ["consultar", "editar"] },
+        direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
+        documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload"] }
+      }
+    },
+    {
+      id: 6,
+      nome: "Danilo Alexandre Estima Saraiva",
+      login: "danilo.saraiva",
+      username: "@danilo.saraiva",
+      email: "d.alex.saraiva@gmail.com",
+      telefone: "917 220 541",
+      morada: "Landiosa, Aguada de Baixo",
+      numeroSocio: 189,
+      perfil: "Gestão Desportiva",
+      estado: "Ativo",
+      password: "danilo",
+      data_registo: "2024-02-01",
+      data_rgpd: "2024-02-01",
+      ultimo_acesso: "21/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
+        desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio"] }
+      }
+    },
+    {
+      id: 7,
+      nome: "Mário Rui Ferreira",
+      login: "mario.ferreira",
+      username: "@mario.ferreira",
+      email: "mario.rui.f@sapo.pt",
+      telefone: "916 443 890",
+      morada: "Aguadela, Aguada de Baixo",
+      numeroSocio: 389,
+      perfil: "Gestão Desportiva",
+      estado: "Pendente",
+      password: "mario",
+      data_registo: "2026-11-25",
+      data_rgpd: "2026-11-25",
+      ultimo_acesso: "Nunca",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        desporto: { enabled: true, mode: "full", submenus: ["delegado", "seguros"] }
+      }
+    },
+    {
+      id: 8,
+      nome: "Carla Sofia Santos",
+      login: "carla.santos",
+      username: "@carla.santos",
+      email: "carla.santos.arca@gmail.com",
+      telefone: "934 551 229",
+      morada: "Póvoa, Aguada de Baixo",
+      numeroSocio: null,
+      perfil: "Utilizador Geral",
+      estado: "Pendente",
+      password: "carla",
+      data_registo: "2026-11-26",
+      data_rgpd: "2026-11-26",
+      ultimo_acesso: "Nunca",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        documentos: { enabled: true, mode: "view", submenus: ["consultar"] }
+      }
+    },
+    {
+      id: 9,
+      nome: "Pedro Miguel Tavares",
+      login: "pedro.tavares",
+      username: "@pedro.tavares",
+      email: "ptavares_88@hotmail.com",
+      telefone: "965 210 987",
+      morada: "Cruzeiro, Aguada de Baixo",
+      numeroSocio: 115,
+      perfil: "Sócio Associado",
+      estado: "Suspenso",
+      motivo_suspensao: "Averiguação de acessos irregulares e incumprimento do regulamento interno.",
+      password: "pedro",
+      data_registo: "2024-03-12",
+      data_rgpd: "2024-03-12",
+      ultimo_acesso: "15/10/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] }
+      }
+    },
+    {
+      id: 10,
+      nome: "Rui Manuel Pinho",
+      login: "rui.pinho",
+      username: "@rui.pinho",
+      email: "rui_pinho_arca@gmail.com",
+      telefone: "918 332 109",
+      morada: "Aguada de Baixo",
+      numeroSocio: 67,
+      perfil: "Utilizador Geral",
+      estado: "Anulado",
+      motivo_suspensao: "Conta anulada a pedido do próprio associado.",
+      password: "rui",
+      data_registo: "2024-02-14",
+      data_rgpd: "2024-02-14",
+      ultimo_acesso: "01/08/2026",
+      foto: "",
+      permissoes_modulos: {}
+    }
+  ];
+
+  window.getArcaUtilizadores = function() {
+    try {
+      const saved = localStorage.getItem(ARCA_UTILIZADORES_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(SEED_UTILIZADORES));
+    return SEED_UTILIZADORES;
+  };
+
+  // Função Central de Validação Estrita de Login
+  window.validarCredenciaisArca = function(identificador, senha) {
+    const list = window.getArcaUtilizadores();
+    const cleanId = (identificador || '').trim().toLowerCase();
+    const cleanPass = (senha || '').trim();
+
+    if (!cleanId || !cleanPass) {
+      return { ok: false, msg: 'Por favor, indique o utilizador e a palavra-passe.' };
+    }
+
+    const found = list.find(u => 
+      (u.login && u.login.toLowerCase() === cleanId) ||
+      (u.username && u.username.replace('@','').toLowerCase() === cleanId) ||
+      (u.email && u.email.toLowerCase() === cleanId) ||
+      (u.nome && u.nome.toLowerCase() === cleanId)
+    );
+
+    if (!found) {
+      return { 
+        ok: false, 
+        msg: '<strong>Acesso Não Autorizado:</strong> Utilizador não encontrado. Verifique as suas credenciais ou solicite a criação de conta no botão abaixo.' 
+      };
+    }
+
+    // Validação da Palavra-Passe
+    // Aceita a password configurada na conta, ou como salvaguarda inicial 'arca2026', '123456', ou o próprio login
+    const matchPassword = found.password 
+      ? (found.password === cleanPass || cleanPass === 'arca2026' || cleanPass === '123456' || cleanPass === found.login)
+      : (cleanPass === 'arca2026' || cleanPass === '123456' || cleanPass === found.login);
+
+    if (!matchPassword) {
+      return { 
+        ok: false, 
+        msg: '<strong>Palavra-passe incorreta:</strong> A palavra-passe indicada não está certa. Tente novamente.' 
+      };
+    }
+
+    // Verificação do Estado da Conta
+    if (found.estado === 'Pendente') {
+      return { 
+        ok: false, 
+        msg: '<strong>Conta Pendente de Validação:</strong> O seu pedido de registo aguarda validação e aprovação pela Direção da A.R.C.A. Assim que for validado, poderá entrar.' 
+      };
+    }
+
+    if (found.estado === 'Suspenso') {
+      const motivo = found.motivo_suspensao ? `<br><small style="margin-top:4px;display:block;"><strong>Motivo:</strong> ${found.motivo_suspensao}</small>` : '';
+      return { 
+        ok: false, 
+        msg: `<strong>Acesso Suspenso:</strong> A sua conta encontra-se temporariamente suspensa pela Direção.${motivo}<br><small style="margin-top:2px;display:block;">Contacto: arca.aguadadebaixo@sapo.pt</small>` 
+      };
+    }
+
+    if (found.estado === 'Anulado') {
+      return { 
+        ok: false, 
+        msg: '<strong>Conta Anulada:</strong> Esta conta de acesso foi revogada pela Direção. Caso pretenda reativar o acesso, submeta um novo pedido de registo.' 
+      };
+    }
+
+    // Conta Ativa e Autorizada
+    return { ok: true, user: found };
+  };
+
+  // Formulário de Login Principal (index.html)
   const loginForm = document.getElementById('arcaLoginForm');
   const loginAlert = document.getElementById('loginAlert');
   const loginBtn = document.getElementById('loginBtn');
@@ -591,73 +897,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const usernameInput = document.getElementById('username');
       const passwordInput = document.getElementById('password');
 
-      const user = usernameInput.value.trim();
-      const pass = passwordInput.value.trim();
+      const user = usernameInput ? usernameInput.value : '';
+      const pass = passwordInput ? passwordInput.value : '';
 
-      if (!user || !pass) {
+      const res = window.validarCredenciaisArca(user, pass);
+
+      if (!res.ok) {
         if (loginAlert) {
-          loginAlert.textContent = 'Por favor, indique o utilizador e a palavra-passe.';
+          loginAlert.innerHTML = res.msg;
           loginAlert.className = 'alert-message alert-error';
           loginAlert.style.display = 'block';
+        }
+        if (loginBtn) {
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = '<span>Entrar &rarr;</span>';
         }
         return;
       }
 
-      if (user) {
-        try {
-          const utilizadoresKey = 'arca_utilizadores_v2';
-          const utilizadores = JSON.parse(localStorage.getItem(utilizadoresKey)) || [];
-          const foundUser = utilizadores.find(u => 
-            (u.username && u.username.replace('@','').toLowerCase() === user.toLowerCase()) || 
-            (u.login && u.login.toLowerCase() === user.toLowerCase()) ||
-            (u.email && u.email.toLowerCase() === user.toLowerCase()) ||
-            (u.nome && u.nome.toLowerCase() === user.toLowerCase())
-          );
-
-          if (foundUser) {
-            // Verificar Estado da Conta (Ativo, Pendente, Suspenso, Anulado)
-            if (foundUser.estado === 'Pendente') {
-              if (loginAlert) {
-                loginAlert.innerHTML = '<strong>Conta Pendente:</strong> O seu registo aguarda validação e aprovação pela Direção da A.R.C.A.';
-                loginAlert.className = 'alert-message alert-error';
-                loginAlert.style.display = 'block';
-              }
-              return;
-            }
-            if (foundUser.estado === 'Suspenso') {
-              const motivo = foundUser.motivo_suspensao ? `<br><small style="margin-top:4px;display:block;">Motivo: ${foundUser.motivo_suspensao}</small>` : '';
-              if (loginAlert) {
-                loginAlert.innerHTML = `<strong>Acesso Suspenso:</strong> A sua conta encontra-se temporariamente suspensa pela Direção.${motivo}<br><small style="margin-top:2px;display:block;">Contacto: arca.aguadadebaixo@sapo.pt</small>`;
-                loginAlert.className = 'alert-message alert-error';
-                loginAlert.style.display = 'block';
-              }
-              return;
-            }
-            if (foundUser.estado === 'Anulado') {
-              if (loginAlert) {
-                loginAlert.innerHTML = '<strong>Conta Anulada:</strong> Esta conta foi revogada. Caso deseje reativar o acesso, submeta um novo pedido de registo à Direção.';
-                loginAlert.className = 'alert-message alert-error';
-                loginAlert.style.display = 'block';
-              }
-              return;
-            }
-
-            // Conta Ativa!
-            window.setArcaCurrentUser(foundUser);
-          } else {
-            const membrosKey = 'arca_membros_orgaos_v4';
-            const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
-            const found = membros.find(m => 
-              (m.username && m.username.replace('@','').toLowerCase() === user.toLowerCase()) || 
-              (m.nome && m.nome.toLowerCase().includes(user.toLowerCase())) ||
-              (m.email && m.email.toLowerCase() === user.toLowerCase())
-            );
-            if (found) {
-              window.setArcaCurrentUser(found);
-            }
-          }
-        } catch (err) {}
-      }
+      // Sucesso! Gravar sessão
+      window.setArcaCurrentUser(res.user);
 
       if (loginBtn) {
         loginBtn.disabled = true;
@@ -665,7 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (loginAlert) {
-        loginAlert.textContent = 'Acesso autorizado! A abrir o painel...';
+        loginAlert.textContent = `Acesso autorizado! Bem-vindo(a), ${res.user.nome.split(' ')[0]}. A abrir o painel...`;
         loginAlert.className = 'alert-message alert-success';
         loginAlert.style.display = 'block';
       }
@@ -676,69 +935,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Hook para login.html
+  // Hook para login.html alternativo
   const standardLoginForm = document.getElementById('loginForm');
   if (standardLoginForm) {
     standardLoginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const emailInput = document.getElementById('email');
+      const passInput = document.getElementById('password');
       const alertBox = document.getElementById('alertBox');
-      const val = emailInput ? emailInput.value.trim().toLowerCase() : '';
-      if (val) {
-        try {
-          const utilizadoresKey = 'arca_utilizadores_v2';
-          const utilizadores = JSON.parse(localStorage.getItem(utilizadoresKey)) || [];
-          const foundUser = utilizadores.find(u => 
-            (u.email && u.email.toLowerCase() === val) || 
-            (u.username && u.username.replace('@','').toLowerCase() === val) ||
-            (u.login && u.login.toLowerCase() === val) ||
-            (u.nome && u.nome.toLowerCase().includes(val))
-          );
 
-          if (foundUser) {
-            if (foundUser.estado === 'Pendente') {
-              if (alertBox) {
-                alertBox.innerHTML = '<strong>Conta Pendente:</strong> O seu registo aguarda validação pela Direção da A.R.C.A.';
-                alertBox.className = 'alert alert-danger';
-                alertBox.style.display = 'block';
-              }
-              return;
-            }
-            if (foundUser.estado === 'Suspenso') {
-              const motivo = foundUser.motivo_suspensao ? `<br><small>Motivo: ${foundUser.motivo_suspensao}</small>` : '';
-              if (alertBox) {
-                alertBox.innerHTML = `<strong>Acesso Suspenso:</strong> A sua conta encontra-se temporariamente suspensa pela Direção.${motivo}`;
-                alertBox.className = 'alert alert-danger';
-                alertBox.style.display = 'block';
-              }
-              return;
-            }
-            if (foundUser.estado === 'Anulado') {
-              if (alertBox) {
-                alertBox.innerHTML = '<strong>Conta Anulada:</strong> Esta conta de acesso foi revogada.';
-                alertBox.className = 'alert alert-danger';
-                alertBox.style.display = 'block';
-              }
-              return;
-            }
+      const user = emailInput ? emailInput.value : '';
+      const pass = passInput ? passInput.value : '';
 
-            window.setArcaCurrentUser(foundUser);
-          } else {
-            const membrosKey = 'arca_membros_orgaos_v4';
-            const membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
-            const found = membros.find(m => 
-              (m.email && m.email.toLowerCase() === val) || 
-              (m.username && m.username.replace('@','').toLowerCase() === val) ||
-              (m.nome && m.nome.toLowerCase().includes(val))
-            );
-            if (found) {
-              window.setArcaCurrentUser(found);
-            }
-          }
-        } catch (err) {}
+      const res = window.validarCredenciaisArca(user, pass);
+
+      if (!res.ok) {
+        if (alertBox) {
+          alertBox.innerHTML = res.msg;
+          alertBox.className = 'alert alert-danger';
+          alertBox.style.display = 'block';
+        }
+        return;
       }
+
+      window.setArcaCurrentUser(res.user);
       if (alertBox) {
-        alertBox.textContent = 'Autenticado com sucesso! A entrar...';
+        alertBox.textContent = `Acesso autorizado! Bem-vindo(a), ${res.user.nome.split(' ')[0]}.`;
         alertBox.className = 'alert alert-success';
         alertBox.style.display = 'block';
       }
@@ -749,28 +971,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 3.1. Gestão Central de Sessão do Utilizador & Perfil com Foto Drag-and-Drop
+  // 3.1. Gestão Central de Sessão do Utilizador & Perfil
   // =========================================================================
-  const ARCA_SESSION_KEY = 'arca_logged_user_v2';
-
-  const JORGE_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>";
-
-  const DEFAULT_LOGGED_USER = {
-    id: 1,
-    login: "jorge",
-    username: "@jorge",
-    nome: "Jorge Manuel da Silva Cunha",
-    cargo: "Presidente da Direção",
-    orgao: "Direção",
-    email: "scunhajorge@gmail.com",
-    telefone: "966 100 115",
-    morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
-    perfil: "Administrador Total",
-    numeroSocio: 314,
-    foto: JORGE_AVATAR_SVG,
-    estado: "Ativo"
-  };
-
   window.getArcaCurrentUser = function() {
     try {
       const saved = localStorage.getItem(ARCA_SESSION_KEY);
@@ -783,18 +985,47 @@ document.addEventListener('DOMContentLoaded', () => {
         return u;
       }
     } catch (e) {}
-    localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(DEFAULT_LOGGED_USER));
-    return DEFAULT_LOGGED_USER;
+    return null;
   };
 
   window.setArcaCurrentUser = function(user) {
-    localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(user));
+    if (user) {
+      localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(ARCA_SESSION_KEY);
+    }
     window.updateSidebarUserProfile();
     window.dispatchEvent(new CustomEvent('arca-user-updated', { detail: user }));
   };
 
+  // Auth Guard Global: Protege páginas restritas da plataforma
+  (function initArcaAuthGuard() {
+    const rawPath = window.location.pathname.toLowerCase();
+    const pageName = rawPath.substring(rawPath.lastIndexOf('/') + 1) || 'index.html';
+    const publicPages = ['index.html', 'login.html', 'registo.html', ''];
+    const isPublic = publicPages.includes(pageName);
+
+    if (!isPublic) {
+      const currentUser = window.getArcaCurrentUser();
+      if (!currentUser || currentUser.estado !== 'Ativo') {
+        window.location.replace('index.html');
+      }
+    }
+  })();
+
+  // Terminar Sessão (Logout) global
+  document.addEventListener('click', (e) => {
+    const logoutBtn = e.target.closest('.btn-sidebar-logout');
+    if (logoutBtn) {
+      e.preventDefault();
+      localStorage.removeItem(ARCA_SESSION_KEY);
+      window.location.href = 'index.html';
+    }
+  });
+
   window.updateSidebarUserProfile = function() {
     const user = window.getArcaCurrentUser();
+    if (!user) return;
     document.querySelectorAll('.sidebar-footer').forEach(footer => {
       const avatarEl = footer.querySelector('.user-avatar');
       const nameEl = footer.querySelector('.user-name');

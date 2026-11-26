@@ -1043,7 +1043,7 @@
     </div>
   </div>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=20261126_auth"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -1384,16 +1384,20 @@
     // Inicialização da Aplicação
     // =========================================================================
     function loadUtilizadores() {
-      try {
-        const saved = localStorage.getItem(UTILIZADORES_STORAGE_KEY);
-        if (saved) {
-          utilizadores = JSON.parse(saved);
-        } else {
+      if (typeof window.getArcaUtilizadores === 'function') {
+        utilizadores = window.getArcaUtilizadores();
+      } else {
+        try {
+          const saved = localStorage.getItem(UTILIZADORES_STORAGE_KEY);
+          if (saved) {
+            utilizadores = JSON.parse(saved);
+          } else {
+            utilizadores = JSON.parse(JSON.stringify(CONTAS_UTILIZADORES_INICIAIS));
+            localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
+          }
+        } catch (e) {
           utilizadores = JSON.parse(JSON.stringify(CONTAS_UTILIZADORES_INICIAIS));
-          localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
         }
-      } catch (e) {
-        utilizadores = JSON.parse(JSON.stringify(CONTAS_UTILIZADORES_INICIAIS));
       }
 
       // Garantir compatibilidade e fotos limpas
