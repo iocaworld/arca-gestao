@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.R.C.A. - Solicitar Registo de Utilizador | Aguada de Baixo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Estilos Específicos da Página de Registo */
+    .registo-layout {
+      min-height: 100vh;
+      display: flex;
+      background: #f8fafc;
+    }
+    .registo-brand-side {
+      width: 42%;
+      background: linear-gradient(145deg, #0f3f26 0%, #1c6d42 50%, #2e8b57 100%);
+      color: #ffffff;
+      padding: 3.5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .registo-brand-side::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
+    .registo-brand-side::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      pointer-events: none;
+    }
+    .registo-form-side {
+      width: 58%;
+      padding: 3rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      background: #ffffff;
+    }
+    .registo-card {
+      width: 100%;
+      max-width: 580px;
+    }
+    .feature-point {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1.1rem 1.25rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(4px);
+    }
+    .feature-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .feature-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+    .feature-desc {
+      font-size: 0.84rem;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.4;
+    }
+
+    /* Responsivo para Tablets e Smartphones */
+    @media (max-width: 960px) {
+      .registo-layout {
+        flex-direction: column;
+      }
+      .registo-brand-side {
+        width: 100%;
+        padding: 2.5rem 1.5rem;
+      }
+      .registo-form-side {
+        width: 100%;
+        padding: 2.5rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="registo-layout">
+    
+    <!-- Painel Lateral Institucional -->
+    <aside class="registo-brand-side">
+      <div>
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem;">
+          <div style="width: 54px; height: 54px; border-radius: 14px; background: #ffffff; padding: 4px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.2);">
+            <img src="assets/arca-logo.png" alt="Logótipo ARCA" style="width: 100%; height: 100%; object-fit: contain;">
+          </div>
+          <div>
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;">A.R.C.A.</h2>
+            <span style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); font-weight: 500;">Associação Recreativa e Cultural de Aguada de Baixo</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <span style="display: inline-block; padding: 0.25rem 0.8rem; background: rgba(255, 255, 255, 0.15); border-radius: 9999px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+            PORTAL OFICIAL DE GESTÃO
+          </span>
+          <h1 style="font-size: 2.1rem; font-weight: 800; line-height: 1.2; margin: 0 0 1rem 0;">
+            Junta-te ao espaço digital da nossa associação.
+          </h1>
+          <p style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.85); line-height: 1.5; margin: 0;">
+            Acesso reservado aos sócios, dirigentes, colaboradores e atletas da A.R.C.A. Solicite o seu registo para participar na vida ativa da associação.
+          </p>
+        </div>
+
+        <!-- Pontos Chave de Segurança e Confiança -->
+        <div style="margin-top: 2rem;">
+          <div class="feature-point">
+            <div class="feature-icon-box">🛡️</div>
+            <div>
+              <div class="feature-title">Acesso Seguro & Validado</div>
+              <div class="feature-desc">Todos os pedidos são analisados e aprovados pela Direção da A.R.C.A., garantindo total controlo e privacidade.</div>
+            </div>
+          </div>
+
+          <div class="feature-point">
+            <div class="feature-icon-box">📇</div>
+            <div>
+              <div class="feature-title">Ligação à Ficha de Sócio</div>
+              <div class="feature-desc">Se já for associado, indique o seu número de sócio para associar o seu histórico e pagamento de cotas.</div>
+            </div>
+          </div>
+
+          <div class="feature-point">
+            <div class="feature-icon-box">📩</div>
+            <div>
+              <div class="feature-title">Notificação Automática</div>
+              <div class="feature-desc">Assim que a conta for validada pela Direção, receberá a confirmação para começar a utilizar o portal.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; pt-4; border-top: 1px solid rgba(255, 255, 255, 0.15); font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
+        Contacto da Direção: <a href="mailto:arca.aguadadebaixo@sapo.pt" style="color: #ffffff; text-decoration: underline; font-weight: 600;">arca.aguadadebaixo@sapo.pt</a>
+      </div>
+    </aside>
+
+    <!-- Formulário de Registo -->
+    <main class="registo-form-side">
+      <div class="registo-card">
+        
+        <!-- Botão Voltar -->
+        <div style="margin-bottom: 1.5rem;">
+          <a href="index.html" style="display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+            <span>&larr;</span> Voltar à Página de Entrada
+          </a>
+        </div>
+
+        <!-- Cabeçalho do Formulário -->
+        <div id="registoHeader">
+          <span style="font-size: 0.8rem; font-weight: 800; color: var(--primary); letter-spacing: 0.05em; text-transform: uppercase;">
+            NOVA CONTA NA PLATAFORMA
+          </span>
+          <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-title); margin: 0.35rem 0 0.5rem 0; letter-spacing: -0.02em;">
+            Solicitar Registo de Utilizador
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0 0 1.5rem 0; line-height: 1.45;">
+            Preencha os seus dados para submeter o pedido de adesão. A Direção da A.R.C.A. irá validar a sua conta para posterior acesso.
+          </p>
+        </div>
+
+        <!-- Alerta de Erro -->
+        <div id="registoAlert" style="display: none; padding: 0.85rem 1.1rem; border-radius: var(--radius-md); font-size: 0.88rem; margin-bottom: 1.25rem;"></div>
+
+        <!-- FORMULÁRIO DE REGISTO -->
+        <form id="formRegistoUtilizador" onsubmit="handleSubmeterRegisto(event)">
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            
+            <!-- Nome Completo -->
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label for="regNome">Nome Completo <span style="color: #dc2626;">*</span></label>
+              <input type="text" id="regNome" class="form-control" required placeholder="Ex: Mário Rui Ferreira" autocomplete="name">
+            </div>
+
+            <!-- Username Desejado -->
+            <div class="form-group">
+              <label for="regUsername">Nome de Utilizador pretendido <span style="color: #dc2626;">*</span></label>
+              <input type="text" id="regUsername" class="form-control" required placeholder="Ex: mario.ferreira" autocomplete="username">
+              <small style="color: var(--text-muted); font-size: 0.75rem;">Sem espaços nem acentos. Ex: joao.silva</small>
+            </div>
+
+            <!-- E-mail -->
+            <div class="form-group">
+              <label for="regEmail">Endereço de E-mail <span style="color: #dc2626;">*</span></label>
+              <input type="email" id="regEmail" class="form-control" required placeholder="Ex: seu.email@gmail.com" autocomplete="email">
+              <small style="color: var(--text-muted); font-size: 0.75rem;">Onde receberá a confirmação de aprovação.</small>
+            </div>
+
+            <!-- Telefone -->
+            <div class="form-group">
+              <label for="regTelefone">Telefone / Telemóvel <span style="color: #dc2626;">*</span></label>
+              <input type="tel" id="regTelefone" class="form-control" required placeholder="Ex: 912 345 678" autocomplete="tel">
+            </div>
+
+            <!-- Número de Sócio (Opcional) -->
+            <div class="form-group">
+              <label for="regSocio">Número de Sócio da ARCA (Se for associado)</label>
+              <input type="number" id="regSocio" class="form-control" placeholder="Ex: 389 (deixe vazio se não for sócio)">
+              <small style="color: var(--text-muted); font-size: 0.75rem;">Apenas números (sem o símbolo #).</small>
+            </div>
+
+            <!-- Motivo / Função na Associação -->
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label for="regFuncao">Qual a sua ligação / função na A.R.C.A.? <span style="color: #dc2626;">*</span></label>
+              <select id="regFuncao" class="form-control" required>
+                <option value="Sócio Associado">Sócio Associado</option>
+                <option value="Atleta / Praticante Desportivo">Atleta / Praticante Desportivo</option>
+                <option value="Encarregado de Educação">Encarregado de Educação</option>
+                <option value="Treinador / Equipa Técnica">Treinador / Equipa Técnica / Delegado</option>
+                <option value="Membro de Secção">Membro de Secção Cultural ou Desportiva</option>
+                <option value="Membro dos Órgãos Sociais">Membro dos Órgãos Sociais / Direção</option>
+                <option value="Colaborador / Voluntário">Colaborador / Voluntário</option>
+                <option value="Outro">Outro Motivo</option>
+              </select>
+            </div>
+
+            <!-- Palavra-passe -->
+            <div class="form-group">
+              <label for="regPassword">Palavra-passe pretendida <span style="color: #dc2626;">*</span></label>
+              <div style="position: relative;">
+                <input type="password" id="regPassword" class="form-control" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password">
+                <button type="button" onclick="toggleRegPassword('regPassword')" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem; color: var(--text-muted);">👁️</button>
+              </div>
+            </div>
+
+            <!-- Confirmação de Palavra-passe -->
+            <div class="form-group">
+              <label for="regPasswordConfirm">Confirmar Palavra-passe <span style="color: #dc2626;">*</span></label>
+              <div style="position: relative;">
+                <input type="password" id="regPasswordConfirm" class="form-control" required placeholder="Repita a palavra-passe" minlength="6" autocomplete="new-password">
+                <button type="button" onclick="toggleRegPassword('regPasswordConfirm')" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem; color: var(--text-muted);">👁️</button>
+              </div>
+            </div>
+
+            <!-- Consentimento Legal RGPD -->
+            <div class="form-group" style="grid-column: 1 / -1; margin-top: 0.5rem; background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+              <label style="display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer; font-size: 0.82rem; color: var(--text-title); line-height: 1.45;">
+                <input type="checkbox" id="regConsentimentoRgpd" required style="width: 18px; height: 18px; margin-top: 2px; accent-color: var(--primary);">
+                <span>
+                  <strong>Autorização de Tratamento de Dados (RGPD):</strong> Autorizo a Associação Recreativa e Cultural de Aguada de Baixo a tratar os dados pessoais fornecidos neste formulário para efeitos de registo na plataforma, verificação de estatuto associativo e envio de comunicações de acesso, em conformidade com o Regulamento Geral sobre a Proteção de Dados.
+                </span>
+              </label>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <button type="submit" class="btn-login" id="btnSubmeter" style="width: 100%;">
+              <span>Submeter Pedido de Registo</span>
+              <span class="arrow">&rarr;</span>
+            </button>
+          </div>
+
+          <div style="margin-top: 1.25rem; text-align: center; font-size: 0.88rem; color: var(--text-muted);">
+            Já tem uma conta ativa? <a href="index.html" style="font-weight: 700; color: var(--primary); text-decoration: none;">Entrar no portal &rarr;</a>
+          </div>
+
+        </form>
+
+        <!-- ECRÃ DE SUCESSO APÓS SUBMISSÃO -->
+        <div id="registoSucessoCard" style="display: none; text-align: center; padding: 2rem 1rem;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: #dcfce7; color: #16a34a; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.15);">
+            ✓
+          </div>
+
+          <span style="display: inline-block; padding: 0.25rem 0.85rem; background: #fef3c7; color: #b45309; border-radius: 9999px; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.75rem;">
+            PEDIDO EM ANÁLISE PELA DIREÇÃO
+          </span>
+
+          <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--text-title); margin: 0 0 1rem 0;">
+            Pedido de Registo Submetido!
+          </h2>
+
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem; text-align: left; font-size: 0.9rem; color: var(--text-title); line-height: 1.6; margin-bottom: 1.75rem;">
+            <p style="margin: 0 0 0.75rem 0;">
+              Obrigado, <strong id="sucessoNome">Utilizador</strong>! O seu pedido de acesso foi registado com sucesso na plataforma da A.R.C.A.
+            </p>
+            <p style="margin: 0 0 0.75rem 0; color: var(--text-muted);">
+              📧 Foi enviada uma notificação com os seus dados para a Direção da associação (<strong>arca.aguadadebaixo@sapo.pt</strong>).
+            </p>
+            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+              Assim que o seu registo for validado e ativado pela Direção, poderá aceder imediatamente ao portal com o nome de utilizador <strong id="sucessoUsername" style="color: var(--primary);">@username</strong> e a palavra-passe que definiu.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 700; padding: 0.75rem 1.5rem;">
+              <span>Voltar à Página de Login</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    function toggleRegPassword(id) {
+      const el = document.getElementById(id);
+      if (el) el.type = (el.type === 'password') ? 'text' : 'password';
+    }
+
+    function showRegAlert(msg, type = 'error') {
+      const el = document.getElementById('registoAlert');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = 'block';
+      if (type === 'error') {
+        el.style.background = '#fee2e2';
+        el.style.border = '1px solid #fca5a5';
+        el.style.color = '#991b1b';
+      } else {
+        el.style.background = '#dcfce7';
+        el.style.border = '1px solid #86efac';
+        el.style.color = '#166534';
+      }
+    }
+
+    window.handleSubmeterRegisto = function(e) {
+      e.preventDefault();
+
+      const nome = document.getElementById('regNome').value.trim();
+      let username = document.getElementById('regUsername').value.trim().toLowerCase().replace(/^@/, '').replace(/\s+/g, '.');
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const telefone = document.getElementById('regTelefone').value.trim();
+      const socioVal = document.getElementById('regSocio').value.trim();
+      const funcao = document.getElementById('regFuncao').value;
+      const pass = document.getElementById('regPassword').value;
+      const passConfirm = document.getElementById('regPasswordConfirm').value;
+      const consentimento = document.getElementById('regConsentimentoRgpd').checked;
+
+      // Validações
+      if (!nome || !username || !email || !telefone || !pass) {
+        showRegAlert('Por favor, preencha todos os campos obrigatórios (*).');
+        return;
+      }
+
+      if (pass !== passConfirm) {
+        showRegAlert('As palavras-passe não coincidem. Por favor confirme a senha.');
+        return;
+      }
+
+      if (pass.length < 6) {
+        showRegAlert('A palavra-passe deve conter pelo menos 6 caracteres.');
+        return;
+      }
+
+      if (!consentimento) {
+        showRegAlert('É necessário autorizar o tratamento de dados (RGPD) para submeter o pedido.');
+        return;
+      }
+
+      // Carregar lista existente de utilizadores
+      const STORAGE_KEY = 'arca_utilizadores_v2';
+      let utilizadores = [];
+      try {
+        utilizadores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (err) {
+        utilizadores = [];
+      }
+
+      // Verificar se o username ou email já existem
+      const jaExisteUsername = utilizadores.some(u => (u.login && u.login.toLowerCase() === username) || (u.username && u.username.replace('@','').toLowerCase() === username));
+      if (jaExisteUsername) {
+        showRegAlert(`O nome de utilizador @${username} já está a ser utilizado. Por favor escolha outro username.`);
+        return;
+      }
+
+      const jaExisteEmail = utilizadores.some(u => u.email && u.email.toLowerCase() === email);
+      if (jaExisteEmail) {
+        showRegAlert(`Já existe uma conta associada ao e-mail ${email}. Se for sua conta, tente recuperar o acesso ou contacte a Direção.`);
+        return;
+      }
+
+      // Desativar botão durante o processamento
+      const btn = document.getElementById('btnSubmeter');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>A submeter pedido...</span>';
+      }
+
+      // Criar o novo utilizador com Estado = PENDENTE
+      const maxId = utilizadores.reduce((max, u) => Math.max(max, u.id || 0), 0);
+      const hoje = new Date().toISOString().split('T')[0];
+
+      const novoUtilizador = {
+        id: maxId + 1,
+        nome: nome,
+        login: username,
+        username: '@' + username,
+        email: email,
+        telefone: telefone,
+        numeroSocio: socioVal ? parseInt(socioVal, 10) : null,
+        perfil: funcao,
+        morada: 'Aguada de Baixo',
+        password: pass,
+        estado: 'Pendente', // FICA PENDENTE ATÉ O JORGE ATIVAR!
+        motivo_suspensao: '',
+        motivo_registo: `Função: ${funcao} | Consentimento RGPD: ${hoje}`,
+        data_registo: hoje,
+        data_rgpd: hoje,
+        ultimo_acesso: 'Nunca',
+        foto: '',
+        permissoes_modulos: {
+          painel: { enabled: true, mode: 'view', submenus: ['indicadores'] }
+        }
+      };
+
+      // Guardar na base de dados local
+      utilizadores.unshift(novoUtilizador);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(utilizadores));
+
+      // Enviar notificação de e-mail para a Direção da ARCA (arca.aguadadebaixo@sapo.pt)
+      try {
+        const payloadEmail = {
+          destinatario: 'arca.aguadadebaixo@sapo.pt',
+          assunto: `Novo Pedido de Acesso ao Site da ARCA: ${nome}`,
+          mensagem: `Foi recebido um novo pedido de registo no portal oficial da ARCA:\n\n` +
+                    `Nome: ${nome}\n` +
+                    `Username: @${username}\n` +
+                    `E-mail: ${email}\n` +
+                    `Telefone: ${telefone}\n` +
+                    `Número de Sócio: ${socioVal || 'Não associado'}\n` +
+                    `Função/Motivo: ${funcao}\n` +
+                    `Data do Pedido: ${new Date().toLocaleString('pt-PT')}\n\n` +
+                    `Para aprovar ou rejeitar, aceda ao painel de Utilizadores: https://arca-gestao.web.app/utilizadores`
+        };
+
+        // Registo da notificação
+        let notificacoes = JSON.parse(localStorage.getItem('arca_pedidos_email_pendentes')) || [];
+        notificacoes.push(payloadEmail);
+        localStorage.setItem('arca_pedidos_email_pendentes', JSON.stringify(notificacoes));
+
+        // Envio assíncrono para endpoint de email (Formspree institucional)
+        fetch('https://formspree.io/f/xbjnqwez', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payloadEmail)
+        }).catch(() => {});
+      } catch (err) {}
+
+      // Apresentar Ecrã de Confirmação de Sucesso
+      setTimeout(() => {
+        document.getElementById('formRegistoUtilizador').style.display = 'none';
+        document.getElementById('registoHeader').style.display = 'none';
+        document.getElementById('registoAlert').style.display = 'none';
+
+        document.getElementById('sucessoNome').textContent = nome;
+        document.getElementById('sucessoUsername').textContent = '@' + username;
+        document.getElementById('registoSucessoCard').style.display = 'block';
+      }, 600);
+    };
+  </script>
+</body>
+</html>
