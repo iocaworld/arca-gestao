@@ -717,10 +717,12 @@ document.addEventListener('DOMContentLoaded', () => {
       login: "danilo.saraiva",
       username: "@danilo.saraiva",
       email: "d.alex.saraiva@gmail.com",
-      telefone: "917 220 541",
-      morada: "Landiosa, Aguada de Baixo",
-      numeroSocio: 189,
-      perfil: "Gestão Desportiva",
+      telefone: "918 159 976",
+      morada: "Rua do Alto da Póvoa, 81 - Aguada de Baixo",
+      numeroSocio: 416,
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vogal",
       estado: "Ativo",
       password: "danilo",
       data_registo: "2024-02-01",
@@ -729,11 +731,291 @@ document.addEventListener('DOMContentLoaded', () => {
       foto: "",
       permissoes_modulos: {
         painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
-        desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio"] }
+        desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
       }
     },
     {
       id: 7,
+      nome: "Agostinho Rui Ferreira Martins",
+      login: "agostinho.martins",
+      username: "@agostinho.martins",
+      email: "agostinho.martins@arca.pt",
+      telefone: "912 944 380",
+      morada: "Aguada de Baixo",
+      numeroSocio: 424,
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vogal",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-02-01",
+      data_rgpd: "2024-02-01",
+      ultimo_acesso: "20/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 8,
+      nome: "Ana Catarina Rua Marques",
+      login: "ana.marques",
+      username: "@ana.marques",
+      email: "ana_rua@outlook.com",
+      telefone: "916 668 023",
+      morada: "Rua da Miragaia, 658, R/C Drt - Aguada de Cima",
+      numeroSocio: 423,
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vogal",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-02-01",
+      data_rgpd: "2024-02-01",
+      ultimo_acesso: "19/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 9,
+      nome: "Gabriel Antunes das Neves Carlos",
+      login: "gabriel.carlos",
+      username: "@gabriel.carlos",
+      email: "gabriel1113nunes@gmail.com",
+      telefone: "915 469 288",
+      morada: "Rua do Sol, 38 - Aguada de Baixo",
+      numeroSocio: 421,
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vogal",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-02-01",
+      data_rgpd: "2024-02-01",
+      ultimo_acesso: "18/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 10,
+      nome: "Rui Miguel Baptista Abrantes",
+      login: "rui.abrantes",
+      username: "@rui.abrantes",
+      email: "rui.baptista.abrantes@gmail.com",
+      telefone: "919 455 702",
+      morada: "Rua da Borralha, 6 - Aguada de Baixo",
+      numeroSocio: 419,
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vogal",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-02-01",
+      data_rgpd: "2024-02-01",
+      ultimo_acesso: "17/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 11,
+      nome: "Sérgio Tiago Rodrigues Novo",
+      login: "sergio.novo",
+      username: "@sergio.novo",
+      email: "sr.gionovo@gmail.com",
+      telefone: "915 132 723",
+      morada: "Rua Póvoa do Nascido - Aguada de Baixo",
+      numeroSocio: 420,
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vogal",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-02-01",
+      data_rgpd: "2024-02-01",
+      ultimo_acesso: "16/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 12,
+      nome: "Verónica Baptista Abrantes",
+      login: "veronica.abrantes",
+      username: "@veronica.abrantes",
+      email: "kika_abrantes@hotmail.com",
+      telefone: "910 828 294",
+      morada: "Rua da Borralha, 6 - Aguada de Baixo",
+      numeroSocio: 422,
+      perfil: "Membro da Direção",
+      orgao: "Direção",
+      cargo: "Vogal",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-02-01",
+      data_rgpd: "2024-02-01",
+      ultimo_acesso: "15/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 13,
+      nome: "Eduardo Milton Tavares da Silva",
+      login: "eduardo.milton",
+      username: "@eduardo.milton",
+      email: "miltonsilva@sapo.pt",
+      telefone: "962 591 611",
+      morada: "Rua Dr. Prior Cura Rachão, 97 - Aguada de Baixo",
+      numeroSocio: 27,
+      perfil: "Membro da Direção",
+      orgao: "Assembleia Geral",
+      cargo: "Presidente da Mesa",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-01-10",
+      data_rgpd: "2024-01-10",
+      ultimo_acesso: "14/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros", "atas"] }
+      }
+    },
+    {
+      id: 14,
+      nome: "Soraia Filipa da Silva Martins",
+      login: "soraia.martins",
+      username: "@soraia.martins",
+      email: "soraia.martins@arca.pt",
+      telefone: "913 000 111",
+      morada: "Aguada de Baixo",
+      numeroSocio: 331,
+      perfil: "Membro da Direção",
+      orgao: "Assembleia Geral",
+      cargo: "Secretária da Mesa",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-01-10",
+      data_rgpd: "2024-01-10",
+      ultimo_acesso: "13/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros", "atas"] }
+      }
+    },
+    {
+      id: 15,
+      nome: "Cristiana Simões Marques",
+      login: "cristiana.marques",
+      username: "@cristiana.marques",
+      email: "cristiana.marques@arca.pt",
+      telefone: "917 337 981",
+      morada: "Aguada de Baixo",
+      numeroSocio: 385,
+      perfil: "Membro da Direção",
+      orgao: "Assembleia Geral",
+      cargo: "Vogal da Mesa",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-01-10",
+      data_rgpd: "2024-01-10",
+      ultimo_acesso: "12/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 16,
+      nome: "Rui Manuel da Silva Cardoso",
+      login: "rui.cardoso",
+      username: "@rui.cardoso",
+      email: "rui.cardoso@arca.pt",
+      telefone: "918 609 599",
+      morada: "Aguada de Baixo",
+      numeroSocio: 265,
+      perfil: "Membro da Direção",
+      orgao: "Conselho Fiscal",
+      cargo: "Presidente do Conselho",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-01-10",
+      data_rgpd: "2024-01-10",
+      ultimo_acesso: "11/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        tesouraria: { enabled: true, mode: "view", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 17,
+      nome: "Natália Cláudia Simões Rodrigues",
+      login: "natalia.rodrigues",
+      username: "@natalia.rodrigues",
+      email: "natalia.sr1974@gmail.com",
+      telefone: "915 179 776",
+      morada: "Aguada de Baixo",
+      numeroSocio: 407,
+      perfil: "Membro da Direção",
+      orgao: "Conselho Fiscal",
+      cargo: "Vogal do Conselho",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-01-10",
+      data_rgpd: "2024-01-10",
+      ultimo_acesso: "10/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        tesouraria: { enabled: true, mode: "view", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 18,
+      nome: "Quélia Rodrigues Ribeiro",
+      login: "quelia.ribeiro",
+      username: "@quelia.ribeiro",
+      email: "queliaribeiro.qr@gmail.com",
+      telefone: "919 203 684",
+      morada: "Aguada de Baixo",
+      numeroSocio: 389,
+      perfil: "Membro da Direção",
+      orgao: "Conselho Fiscal",
+      cargo: "Vogal do Conselho",
+      estado: "Ativo",
+      password: "arca2026",
+      data_registo: "2024-01-10",
+      data_rgpd: "2024-01-10",
+      ultimo_acesso: "09/11/2026",
+      foto: "",
+      permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        tesouraria: { enabled: true, mode: "view", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+        direcao: { enabled: true, mode: "view", submenus: ["membros"] }
+      }
+    },
+    {
+      id: 19,
       nome: "Mário Rui Ferreira",
       login: "mario.ferreira",
       username: "@mario.ferreira",
@@ -742,6 +1024,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Aguadela, Aguada de Baixo",
       numeroSocio: 389,
       perfil: "Gestão Desportiva",
+      orgao: "Nenhum",
+      cargo: "",
       estado: "Pendente",
       password: "mario",
       data_registo: "2026-11-25",
@@ -754,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
     {
-      id: 8,
+      id: 20,
       nome: "Carla Sofia Santos",
       login: "carla.santos",
       username: "@carla.santos",
@@ -763,6 +1047,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Póvoa, Aguada de Baixo",
       numeroSocio: null,
       perfil: "Utilizador Geral",
+      orgao: "Nenhum",
+      cargo: "",
       estado: "Pendente",
       password: "carla",
       data_registo: "2026-11-26",
@@ -775,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
     {
-      id: 9,
+      id: 21,
       nome: "Pedro Miguel Tavares",
       login: "pedro.tavares",
       username: "@pedro.tavares",
@@ -784,6 +1070,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Cruzeiro, Aguada de Baixo",
       numeroSocio: 115,
       perfil: "Sócio Associado",
+      orgao: "Nenhum",
+      cargo: "",
       estado: "Suspenso",
       motivo_suspensao: "Averiguação de acessos irregulares e incumprimento do regulamento interno.",
       password: "pedro",
@@ -796,7 +1084,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
     {
-      id: 10,
+      id: 22,
       nome: "Rui Manuel Pinho",
       login: "rui.pinho",
       username: "@rui.pinho",
@@ -805,6 +1093,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Aguada de Baixo",
       numeroSocio: 67,
       perfil: "Utilizador Geral",
+      orgao: "Nenhum",
+      cargo: "",
       estado: "Anulado",
       motivo_suspensao: "Conta anulada a pedido do próprio associado.",
       password: "rui",
@@ -815,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       permissoes_modulos: {}
     },
     {
-      id: 11,
+      id: 23,
       nome: "Raqueli",
       login: "raqueli",
       username: "@raqueli",
@@ -824,6 +1114,8 @@ document.addEventListener('DOMContentLoaded', () => {
       morada: "Aguada de Baixo",
       numeroSocio: 2,
       perfil: "Sócio Consulta",
+      orgao: "Nenhum",
+      cargo: "",
       estado: "Ativo",
       password: "raqueli",
       data_registo: "2026-11-26",
@@ -864,19 +1156,29 @@ document.addEventListener('DOMContentLoaded', () => {
             parsed[raquelIdx].numeroSocio = 414;
           }
 
-          // Garantir atributos de Órgão Social e Cargo nos utilizadores
-          parsed.forEach(u => {
-            if (!u.orgao) {
-              if (u.perfil === 'Membro da Direção' || u.id === 1) {
-                u.orgao = 'Direção';
-              } else {
-                u.orgao = 'Nenhum';
+          // Assegurar que os membros oficiais do seed que ainda não existem em parsed são integrados
+          SEED_UTILIZADORES.forEach(su => {
+            if (!deletedIds.includes(Number(su.id))) {
+              const exists = parsed.some(p => 
+                Number(p.id) === Number(su.id) || 
+                (p.login && su.login && p.login.toLowerCase() === su.login.toLowerCase()) ||
+                (p.nome && su.nome && p.nome.trim().toLowerCase() === su.nome.trim().toLowerCase())
+              );
+              if (!exists) {
+                parsed.push(JSON.parse(JSON.stringify(su)));
               }
             }
+          });
+
+          // Garantir atributos de Órgão Social e Cargo onde ainda não definidos
+          parsed.forEach(u => {
+            if (u.orgao === undefined || u.orgao === null || u.orgao === '') {
+              const seedMatch = SEED_UTILIZADORES.find(s => s.id === u.id || s.login === u.login);
+              u.orgao = seedMatch ? (seedMatch.orgao || 'Nenhum') : 'Nenhum';
+            }
             if (u.cargo === undefined || u.cargo === null) {
-              if (u.id === 1) u.cargo = 'Presidente';
-              else if (u.perfil && u.perfil.includes('Tesour')) u.cargo = 'Tesoureiro';
-              else u.cargo = '';
+              const seedMatch = SEED_UTILIZADORES.find(s => s.id === u.id || s.login === u.login);
+              u.cargo = seedMatch ? (seedMatch.cargo || '') : '';
             }
           });
 
@@ -894,6 +1196,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialList = SEED_UTILIZADORES.filter(u => !deletedIds.includes(Number(u.id)));
     localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(initialList));
     return initialList;
+  };
+
+  // Expor o seed inicial completo dos utilizadores
+  window.getArcaUtilizadoresSeed = function() {
+    return JSON.parse(JSON.stringify(SEED_UTILIZADORES));
   };
 
   // Função Central de Validação Estrita de Login

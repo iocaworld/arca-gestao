@@ -80,6 +80,40 @@ const ARCA_FIREBASE_CONFIG = {
         });
       }
 
+      // Se houver membros oficiais do seed que ainda não existem na nuvem, adicioná-los e persistir
+      const seedList = (typeof window.getArcaUtilizadoresSeed === 'function') 
+        ? window.getArcaUtilizadoresSeed() 
+        : ((typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : []);
+
+      let missingSeeds = [];
+      seedList.forEach(su => {
+        if (!deletedIds.includes(Number(su.id))) {
+          const exists = cloudUsers.some(cu => 
+            Number(cu.id) === Number(su.id) || 
+            (cu.login && su.login && cu.login.toLowerCase() === su.login.toLowerCase()) ||
+            (cu.nome && su.nome && cu.nome.trim().toLowerCase() === su.nome.trim().toLowerCase())
+          );
+          if (!exists) {
+            missingSeeds.push(su);
+          }
+        }
+      });
+
+      if (missingSeeds.length > 0) {
+        console.log(`[ARCA Firebase] A registar ${missingSeeds.length} membros oficiais em falta no Firestore...`);
+        const batch = firestore.batch();
+        missingSeeds.forEach(su => {
+          const docRef = firestore.collection('utilizadores').doc(String(su.id));
+          batch.set(docRef, su, { merge: true });
+          cloudUsers.push(su);
+        });
+        try {
+          await batch.commit();
+        } catch (errBatch) {
+          console.warn('[ARCA Firebase] Erro ao gravar batch de membros:', errBatch);
+        }
+      }
+
       // Garantir número de sócio correto para Raquel Alexandra Marques da Cunha (Sócia nº 414)
       const rIdx = cloudUsers.findIndex(c => c.login === 'raquel.cunha');
       if (rIdx !== -1 && (!cloudUsers[rIdx].numeroSocio || cloudUsers[rIdx].numeroSocio === 305)) {

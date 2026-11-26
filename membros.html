@@ -779,6 +779,7 @@
                     <option value="Direção">Direção</option>
                     <option value="Assembleia Geral">Assembleia Geral</option>
                     <option value="Conselho Fiscal">Conselho Fiscal</option>
+                    <option value="Nenhum">Nenhum (Remover dos Órgãos Sociais)</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -899,11 +900,11 @@
   </div>
 
   <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
-  <script src="js/socios-data.js?v=20261126_v11"></script>
+  <script src="js/socios-data.js?v=20261126_v12"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v11"></script>
-  <script src="js/main.js?v=20261126_v11"></script>
+  <script src="js/firebase-sync.js?v=20261126_v12"></script>
+  <script src="js/main.js?v=20261126_v12"></script>
   <script>
     // =========================================================================
     // ESTRUTURA DOS MÓDULOS E MENUS DA PLATAFORMA A.R.C.A.
@@ -1168,310 +1169,6 @@
     };
 
     // =========================================================================
-    // BASE DE DADOS DOS 18 MEMBROS COM PERMISSÕES ESTRUTURADAS
-    // =========================================================================
-    const MEMBROS_STORAGE_KEY = 'arca_membros_orgaos_v4';
-
-    const OFFICIAL_MEMBROS = [
-      // 1. DIREÇÃO (12 Membros)
-      {
-        id: 1,
-        nome: "Jorge Manuel da Silva Cunha",
-        cargo: "Presidente",
-        orgao: "Direção",
-        numeroSocio: 314,
-        username: "@jorge",
-        email: "scunhajorge@gmail.com",
-        telefone: "966 100 115",
-        morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
-        perfil: "Administrador Total",
-        foto: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.admin.gerar()
-      },
-      {
-        id: 2,
-        nome: "José Manuel Carreira dos Reis",
-        cargo: "Vice-Presidente",
-        orgao: "Direção",
-        numeroSocio: 413,
-        username: "@jose.reis",
-        email: "zreis93@gmail.com",
-        telefone: "932 997 857",
-        morada: "Aguada de Baixo",
-        perfil: "Direção Executiva",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.direcao.gerar()
-      },
-      {
-        id: 3,
-        nome: "Luis Carlos Antunes dos Santos",
-        cargo: "Vice-Presidente",
-        orgao: "Direção",
-        numeroSocio: 306,
-        username: "@luis.santos",
-        email: "luis.santos43@gmail.com",
-        telefone: "",
-        morada: "Aguada de Baixo",
-        perfil: "Direção Executiva",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.direcao.gerar()
-      },
-      {
-        id: 4,
-        nome: "Raquel Alexandra Marques da Cunha",
-        cargo: "Secretária",
-        orgao: "Direção",
-        numeroSocio: 414,
-        username: "@raquel.cunha",
-        email: "raquelamc22@gmail.com",
-        telefone: "968 010 436",
-        morada: "Rua Prior dr Cura rachão, 36 - Aguada de Baixo",
-        perfil: "Secretária & Atas",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.secretaria.gerar()
-      },
-      {
-        id: 5,
-        nome: "Artur Jorge Ferreira Cardoso",
-        cargo: "Tesoureiro",
-        orgao: "Direção",
-        numeroSocio: 332,
-        username: "@artur.cardoso",
-        email: "alfamobile@gmail.com",
-        telefone: "911 970 345",
-        morada: "Rua Vale do Lobo, 11 - Landiosa, Aguada de Baixo",
-        perfil: "Tesoureiro / Finanças",
-        foto: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bgA' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230369a1'/><stop offset='100%' stop-color='%23075985'/></linearGradient><linearGradient id='skinA' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23ffedd5'/><stop offset='100%' stop-color='%23fed7aa'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bgA)'/><circle cx='50' cy='40' r='20' fill='url(%23skinA)'/><path d='M30 32c2-10 11-16 20-16s18 6 20 16c-4-3-10-4-20-4s-16 1-20 4z' fill='%2364748b'/><path d='M22 90c0-16 12.5-28 28-28s28 12 28 28' fill='%23334155'/><path d='M44 62l6 10 6-10' fill='%23f8fafc'/></svg>",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.tesoureiro.gerar()
-      },
-      {
-        id: 6,
-        nome: "Agostinho Rui Ferreira Martins",
-        cargo: "Vogal",
-        orgao: "Direção",
-        numeroSocio: 424,
-        username: "@agostinho.martins",
-        email: "",
-        telefone: "912 944 380",
-        morada: "Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 7,
-        nome: "Ana Catarina Rua Marques",
-        cargo: "Vogal",
-        orgao: "Direção",
-        numeroSocio: 423,
-        username: "@ana.marques",
-        email: "ana_rua@outlook.com",
-        telefone: "916 668 023",
-        morada: "Rua da Miragaia, 658, R/C Drt - Aguada de Cima",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 8,
-        nome: "Danilo Alexandre Estima Saraiva",
-        cargo: "Vogal",
-        orgao: "Direção",
-        numeroSocio: 416,
-        username: "@danilo.saraiva",
-        email: "d.alex.saraiva@gmail.com",
-        telefone: "918 159 976",
-        morada: "Rua do Alto da Póvoa, 81 - Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 9,
-        nome: "Gabriel Antunes das Neves Carlos",
-        cargo: "Vogal",
-        orgao: "Direção",
-        numeroSocio: 421,
-        username: "@gabriel.carlos",
-        email: "gabriel1113nunes@gmail.com",
-        telefone: "915 469 288",
-        morada: "Rua do Sol, 38 - Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 10,
-        nome: "Rui Miguel Baptista Abrantes",
-        cargo: "Vogal",
-        orgao: "Direção",
-        numeroSocio: 419,
-        username: "@rui.abrantes",
-        email: "rui.baptista.abrantes@gmail.com",
-        telefone: "919 455 702",
-        morada: "Rua da Borralha, 6 - Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 11,
-        nome: "Sérgio Tiago Rodrigues Novo",
-        cargo: "Vogal",
-        orgao: "Direção",
-        numeroSocio: 420,
-        username: "@sergio.novo",
-        email: "sr.gionovo@gmail.com",
-        telefone: "915 132 723",
-        morada: "Rua Póvoa do Nascido - Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 12,
-        nome: "Verónica Baptista Abrantes",
-        cargo: "Vogal",
-        orgao: "Direção",
-        numeroSocio: 422,
-        username: "@veronica.abrantes",
-        email: "kika_abrantes@hotmail.com",
-        telefone: "910 828 294",
-        morada: "Rua da Borralha, 6 - Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-
-      // 2. MESA DA ASSEMBLEIA GERAL (3 Membros)
-      {
-        id: 13,
-        nome: "Eduardo Milton Tavares da Silva",
-        cargo: "Presidente da Mesa",
-        orgao: "Assembleia Geral",
-        numeroSocio: 27,
-        username: "@eduardo.milton",
-        email: "miltonsilva@sapo.pt",
-        telefone: "962 591 611",
-        morada: "Rua Dr. Prior Cura Rachão, 97 - Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 14,
-        nome: "Soraia Filipa da Silva Martins",
-        cargo: "Secretária da Mesa",
-        orgao: "Assembleia Geral",
-        numeroSocio: 331,
-        username: "@soraia.martins",
-        email: "",
-        telefone: "",
-        morada: "Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-      {
-        id: 15,
-        nome: "Cristiana Simões Marques",
-        cargo: "Vogal da Mesa",
-        orgao: "Assembleia Geral",
-        numeroSocio: 385,
-        username: "@cristiana.marques",
-        email: "",
-        telefone: "917 337 981",
-        morada: "Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: PRESETS_PERMISSOES.consulta.gerar()
-      },
-
-      // 3. CONSELHO FISCAL (3 Membros - Auditoria de Contas)
-      {
-        id: 16,
-        nome: "Rui Manuel da Silva Cardoso",
-        cargo: "Presidente do Conselho",
-        orgao: "Conselho Fiscal",
-        numeroSocio: 265,
-        username: "@rui.cardoso",
-        email: "",
-        telefone: "918 609 599",
-        morada: "Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: {
-          ...PRESETS_PERMISSOES.consulta.gerar(),
-          tesouraria: {
-            aceder: true,
-            nivel: 'ver',
-            submenus: { caixa: {ver: true, alterar: false}, recibos: {ver: true, alterar: false}, fornecedores: {ver: true, alterar: false}, pos: {ver: true, alterar: false} }
-          }
-        }
-      },
-      {
-        id: 17,
-        nome: "Natália Cláudia Simões Rodrigues",
-        cargo: "Vogal do Conselho",
-        orgao: "Conselho Fiscal",
-        numeroSocio: 407,
-        username: "@natalia.rodrigues",
-        email: "natalia.sr1974@gmail.com",
-        telefone: "915 179 776",
-        morada: "Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: {
-          ...PRESETS_PERMISSOES.consulta.gerar(),
-          tesouraria: {
-            aceder: true,
-            nivel: 'ver',
-            submenus: { caixa: {ver: true, alterar: false}, recibos: {ver: true, alterar: false}, fornecedores: {ver: true, alterar: false}, pos: {ver: true, alterar: false} }
-          }
-        }
-      },
-      {
-        id: 18,
-        nome: "Quélia Rodrigues Ribeiro",
-        cargo: "Vogal do Conselho",
-        orgao: "Conselho Fiscal",
-        numeroSocio: 389,
-        username: "@quelia.ribeiro",
-        email: "queliaribeiro.qr@gmail.com",
-        telefone: "919 203 684",
-        morada: "Aguada de Baixo",
-        perfil: "Apenas Consulta",
-        foto: "",
-        estado: "Ativo",
-        permissoes_modulos: {
-          ...PRESETS_PERMISSOES.consulta.gerar(),
-          tesouraria: {
-            aceder: true,
-            nivel: 'ver',
-            submenus: { caixa: {ver: true, alterar: false}, recibos: {ver: true, alterar: false}, fornecedores: {ver: true, alterar: false}, pos: {ver: true, alterar: false} }
-          }
-        }
-      }
-    ];
-
-    // =========================================================================
     // Carregamento Centralizado a partir da Base de Dados de Utilizadores
     // =========================================================================
     function getMembrosFromCentralUtilizadores() {
@@ -1484,71 +1181,11 @@
         } catch (e) { users = []; }
       }
 
-      // Sincronizar todos os membros oficiais da ARCA (Direção, Assembleia Geral e Conselho Fiscal)
-      let needsSave = false;
-      if (Array.isArray(OFFICIAL_MEMBROS)) {
-        OFFICIAL_MEMBROS.forEach(om => {
-          // Casar por nome, username ou número de sócio oficial (nunca por ID interno da base de dados)
-          const uIdx = users.findIndex(u => 
-            (u.nome && u.nome.trim().toLowerCase() === om.nome.trim().toLowerCase()) ||
-            (u.numeroSocio && om.numeroSocio && Number(u.numeroSocio) === Number(om.numeroSocio)) ||
-            (u.login && om.username && u.login.toLowerCase() === om.username.replace('@','').toLowerCase())
-          );
-          if (uIdx === -1) {
-            const maxId = users.reduce((max, u) => Math.max(max, u.id || 0), 0);
-            users.push({
-              id: maxId + 1,
-              nome: om.nome,
-              login: (om.username || `@membro${om.id}`).replace('@',''),
-              username: om.username || ('@membro' + om.id),
-              email: om.email || '',
-              telefone: om.telefone || '',
-              morada: om.morada || 'Aguada de Baixo',
-              numeroSocio: om.numeroSocio || null,
-              perfil: om.perfil || 'Membro dos Órgãos Sociais',
-              orgao: om.orgao || 'Direção',
-              cargo: om.cargo || 'Dirigente',
-              estado: om.estado || 'Ativo',
-              foto: om.foto || '',
-              permissoes_modulos: om.permissoes_modulos || {}
-            });
-            needsSave = true;
-          } else {
-            // Se o utilizador existe e não tem orgao definido, define com base no membro oficial
-            if (!users[uIdx].orgao || users[uIdx].orgao === 'Nenhum') {
-              users[uIdx].orgao = om.orgao;
-              needsSave = true;
-            }
-            if (!users[uIdx].cargo && om.cargo) {
-              users[uIdx].cargo = om.cargo;
-              needsSave = true;
-            }
-          }
-        });
-
-        // Garantir que contas de teste gerais (como Raqueli) não são classificadas como membros da Direção
-        const rTestIdx = users.findIndex(u => u.login === 'raqueli' || u.nome === 'Raqueli');
-        if (rTestIdx !== -1 && users[rTestIdx].orgao && users[rTestIdx].orgao !== 'Nenhum') {
-          users[rTestIdx].orgao = 'Nenhum';
-          users[rTestIdx].cargo = '';
-          needsSave = true;
-        }
-
-        if (needsSave) {
-          localStorage.setItem('arca_utilizadores_v2', JSON.stringify(users));
-        }
-      }
-
-      // Filtrar estritamente quem pertence a um Órgão Social
+      // Filtrar estritamente quem pertence a um Órgão Social (Direção, Assembleia Geral ou Conselho Fiscal) e está Ativo
+      // Se orgao for 'Nenhum' ou vazio, NÃO figura na lista de membros dos órgãos sociais
       const filtrados = users.filter(u => {
-        if (!u.orgao || u.orgao === 'Nenhum') {
-          if (u.perfil === 'Membro da Direção' || u.perfil === 'Direção Executiva') {
-            u.orgao = 'Direção';
-            return true;
-          }
-          return false;
-        }
-        return true;
+        if (!u.orgao || u.orgao === 'Nenhum') return false;
+        return u.estado === 'Ativo';
       });
 
       return filtrados.map(u => ({
@@ -1557,15 +1194,15 @@
         cargo: u.cargo || (u.id === 1 ? 'Presidente' : 'Vogal'),
         orgao: u.orgao || 'Direção',
         numeroSocio: u.numeroSocio,
-        username: u.username || ('@' + u.login),
+        username: u.username || ('@' + (u.login || '')),
         login: u.login,
-        email: u.email,
-        telefone: u.telefone,
-        morada: u.morada,
-        perfil: u.perfil,
-        foto: u.foto,
+        email: u.email || '',
+        telefone: u.telefone || '',
+        morada: u.morada || 'Aguada de Baixo',
+        perfil: u.perfil || 'Membro da Direção',
+        foto: u.foto || '',
         estado: u.estado || 'Ativo',
-        permissoes_modulos: u.permissoes_modulos
+        permissoes_modulos: u.permissoes_modulos || {}
       }));
     }
 
@@ -2573,14 +2210,14 @@
         if (idx >= 0) {
           allUsers[idx].nome = nome;
           allUsers[idx].orgao = orgao;
-          allUsers[idx].cargo = cargo;
+          allUsers[idx].cargo = (orgao === 'Nenhum') ? '' : cargo;
           allUsers[idx].numeroSocio = socioNum;
           allUsers[idx].username = username;
           allUsers[idx].login = username.replace(/^@/, '');
           allUsers[idx].email = email;
           allUsers[idx].telefone = telefone;
           allUsers[idx].morada = morada;
-          allUsers[idx].perfil = perfil;
+          allUsers[idx].perfil = (orgao === 'Nenhum') ? (socioNum ? 'Sócio Associado' : 'Utilizador Geral') : perfil;
           allUsers[idx].estado = estado;
           allUsers[idx].foto = foto;
           allUsers[idx].permissoes_modulos = novasPermissoes;

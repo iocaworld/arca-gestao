@@ -748,6 +748,14 @@
               <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Número de Sócio da ARCA:</span>
               <div id="fichaUserSocioNum" style="font-weight: 700; color: var(--primary); margin-top: 2px;">—</div>
             </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Órgão Social da ARCA:</span>
+              <div id="fichaUserOrgaoSocial" style="font-weight: 700; color: #166534; margin-top: 2px;">—</div>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Cargo Institucional:</span>
+              <div id="fichaUserCargo" style="font-weight: 600; color: var(--text-title); margin-top: 2px;">—</div>
+            </div>
             <div style="grid-column: 1 / -1;">
               <span style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Morada / Localidade:</span>
               <div id="fichaUserMorada" style="font-weight: 500; color: var(--text-title); margin-top: 2px;">—</div>
@@ -1101,11 +1109,11 @@
   </div>
 
   <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
-  <script src="js/socios-data.js?v=20261126_v11"></script>
+  <script src="js/socios-data.js?v=20261126_v12"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v11"></script>
-  <script src="js/main.js?v=20261126_v11"></script>
+  <script src="js/firebase-sync.js?v=20261126_v12"></script>
+  <script src="js/main.js?v=20261126_v12"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -1198,245 +1206,10 @@
       }
     ];
 
-    // Contas Iniciais Padronizadas
-    const CONTAS_UTILIZADORES_INICIAIS = [
-      {
-        id: 1,
-        nome: "Jorge Manuel da Silva Cunha",
-        login: "jorge",
-        username: "@jorge",
-        email: "scunhajorge@gmail.com",
-        telefone: "966 100 115",
-        morada: "Rua Nova do Alto da Póvoa, 10 - Aguada de Baixo",
-        numeroSocio: 314,
-        perfil: "Administrador Total",
-        estado: "Ativo",
-        motivo_suspensao: "",
-        data_registo: "2024-01-10",
-        data_rgpd: "2024-01-10",
-        ultimo_acesso: "Hoje, 09:40",
-        foto: JORGE_SVG,
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
-          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos", "exportar"] },
-          tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
-          direcao: { enabled: true, mode: "full", submenus: ["membros", "membros_gestao", "atas", "exercicio"] },
-          desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
-          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "eliminar"] },
-          administracao: { enabled: true, mode: "full", submenus: ["utilizadores_ver", "utilizadores_gerir"] }
-        }
-      },
-      {
-        id: 2,
-        nome: "Artur Jorge Ferreira Cardoso",
-        login: "artur.cardoso",
-        username: "@artur.cardoso",
-        email: "alfamobile@gmail.com",
-        telefone: "911 970 345",
-        morada: "Rua Vale do Lobo, 11 - Landiosa, Aguada de Baixo",
-        numeroSocio: 332,
-        perfil: "Tesoureiro / Finanças",
-        estado: "Ativo",
-        motivo_suspensao: "",
-        data_registo: "2024-01-15",
-        data_rgpd: "2024-01-15",
-        ultimo_acesso: "Ontem, 18:22",
-        foto: ARTUR_SVG,
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
-          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos"] },
-          tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
-          direcao: { enabled: true, mode: "view", submenus: ["membros", "atas"] },
-          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload"] }
-        }
-      },
-      {
-        id: 3,
-        nome: "José Manuel Carreira dos Reis",
-        login: "jose.reis",
-        username: "@jose.reis",
-        email: "zreis93@gmail.com",
-        telefone: "919 443 210",
-        morada: "Aguada de Baixo",
-        numeroSocio: 125,
-        perfil: "Membro da Direção",
-        estado: "Ativo",
-        motivo_suspensao: "",
-        data_registo: "2024-01-20",
-        data_rgpd: "2024-01-20",
-        ultimo_acesso: "24/11/2026",
-        foto: "",
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
-          socios: { enabled: true, mode: "view", submenus: ["consultar"] },
-          direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
-          documentos: { enabled: true, mode: "view", submenus: ["consultar"] }
-        }
-      },
-      {
-        id: 4,
-        nome: "Luis Carlos Antunes dos Santos",
-        login: "luis.santos",
-        username: "@luis.santos",
-        email: "luis.santos43@gmail.com",
-        telefone: "914 882 190",
-        morada: "Aguada de Baixo",
-        numeroSocio: 210,
-        perfil: "Membro da Direção",
-        estado: "Ativo",
-        motivo_suspensao: "",
-        data_registo: "2024-01-20",
-        data_rgpd: "2024-01-20",
-        ultimo_acesso: "23/11/2026",
-        foto: "",
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
-          socios: { enabled: true, mode: "view", submenus: ["consultar"] },
-          direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] }
-        }
-      },
-      {
-        id: 5,
-        nome: "Raquel Alexandra Marques da Cunha",
-        login: "raquel.cunha",
-        username: "@raquel.cunha",
-        email: "raquelamc22@gmail.com",
-        telefone: "963 112 405",
-        morada: "Aguada de Baixo",
-        numeroSocio: 414,
-        perfil: "Própria Ficha (Sócio)",
-        estado: "Ativo",
-        motivo_suspensao: "",
-        data_registo: "2024-01-25",
-        data_rgpd: "2024-01-25",
-        ultimo_acesso: "25/11/2026",
-        foto: "",
-        permissoes_modulos: {
-          socios: { enabled: true, mode: "own", submenus: ["consultar"] }
-        }
-      },
-      {
-        id: 6,
-        nome: "Danilo Alexandre Estima Saraiva",
-        login: "danilo.saraiva",
-        username: "@danilo.saraiva",
-        email: "d.alex.saraiva@gmail.com",
-        telefone: "917 220 541",
-        morada: "Landiosa, Aguada de Baixo",
-        numeroSocio: 189,
-        perfil: "Gestão Desportiva",
-        estado: "Ativo",
-        motivo_suspensao: "",
-        data_registo: "2024-02-01",
-        data_rgpd: "2024-02-01",
-        ultimo_acesso: "21/11/2026",
-        foto: "",
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "full", submenus: ["indicadores"] },
-          desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio"] }
-        }
-      },
-      {
-        id: 7,
-        nome: "Mário Rui Ferreira",
-        login: "mario.ferreira",
-        username: "@mario.ferreira",
-        email: "mario.rui.f@sapo.pt",
-        telefone: "916 443 890",
-        morada: "Aguadela, Aguada de Baixo",
-        numeroSocio: 389,
-        perfil: "Gestão Desportiva",
-        estado: "Pendente",
-        motivo_suspensao: "",
-        data_registo: "2026-11-25",
-        data_rgpd: "2026-11-25",
-        ultimo_acesso: "Nunca",
-        foto: "",
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
-          desporto: { enabled: true, mode: "full", submenus: ["delegado", "seguros"] }
-        }
-      },
-      {
-        id: 8,
-        nome: "Carla Sofia Santos",
-        login: "carla.santos",
-        username: "@carla.santos",
-        email: "carla.santos.arca@gmail.com",
-        telefone: "934 551 229",
-        morada: "Póvoa, Aguada de Baixo",
-        numeroSocio: null,
-        perfil: "Utilizador Geral",
-        estado: "Pendente",
-        motivo_suspensao: "",
-        data_registo: "2026-11-26",
-        data_rgpd: "2026-11-26",
-        ultimo_acesso: "Nunca",
-        foto: "",
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
-          documentos: { enabled: true, mode: "view", submenus: ["consultar"] }
-        }
-      },
-      {
-        id: 9,
-        nome: "Pedro Miguel Tavares",
-        login: "pedro.tavares",
-        username: "@pedro.tavares",
-        email: "ptavares_88@hotmail.com",
-        telefone: "965 210 987",
-        morada: "Cruzeiro, Aguada de Baixo",
-        numeroSocio: 115,
-        perfil: "Sócio Associado",
-        estado: "Suspenso",
-        motivo_suspensao: "Averiguação de acessos irregulares e incumprimento do regulamento interno.",
-        data_registo: "2024-03-12",
-        data_rgpd: "2024-03-12",
-        ultimo_acesso: "15/10/2026",
-        foto: "",
-        permissoes_modulos: {
-          painel: { enabled: true, mode: "view", submenus: ["indicadores"] }
-        }
-      },
-      {
-        id: 10,
-        nome: "Rui Manuel Pinho",
-        login: "rui.pinho",
-        username: "@rui.pinho",
-        email: "rui_pinho_arca@gmail.com",
-        telefone: "918 332 109",
-        morada: "Aguada de Baixo",
-        numeroSocio: 67,
-        perfil: "Utilizador Geral",
-        estado: "Anulado",
-        motivo_suspensao: "Conta anulada a pedido do próprio associado.",
-        data_registo: "2024-02-14",
-        data_rgpd: "2024-02-14",
-        ultimo_acesso: "01/08/2026",
-        foto: "",
-        permissoes_modulos: {}
-      },
-      {
-        id: 11,
-        nome: "Raqueli",
-        login: "raqueli",
-        username: "@raqueli",
-        email: "raqueli@arca.pt",
-        telefone: "912 000 000",
-        morada: "Aguada de Baixo",
-        numeroSocio: 2,
-        perfil: "Sócio Consulta",
-        estado: "Ativo",
-        password: "raqueli",
-        data_registo: "2026-11-26",
-        data_rgpd: "2026-11-26",
-        ultimo_acesso: "Hoje",
-        foto: "",
-        permissoes_modulos: {
-          socios: { enabled: true, mode: "own", submenus: ["consultar"] }
-        }
-      }
-    ];
+    // Contas Iniciais Padronizadas (obtidas do seed central em main.js)
+    const CONTAS_UTILIZADORES_INICIAIS = (typeof window.getArcaUtilizadoresSeed === 'function')
+      ? window.getArcaUtilizadoresSeed()
+      : ((typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : []);
 
     let utilizadores = [];
     let currentTableAvatarUploadUserId = null;
@@ -1504,11 +1277,6 @@
       localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
       updateUtilizadoresStats();
       renderUtilizadores();
-
-      // Sincronizar com a Nuvem Firebase em tempo real
-      if (typeof window.saveArcaUtilizadorToCloud === 'function') {
-        utilizadores.forEach(u => window.saveArcaUtilizadorToCloud(u));
-      }
     }
 
     // =========================================================================
@@ -2044,6 +1812,18 @@
       document.getElementById('fichaUserEmail').textContent = u.email || '—';
       document.getElementById('fichaUserTelefone').textContent = u.telefone || '—';
       document.getElementById('fichaUserSocioNum').textContent = u.numeroSocio ? `Nº ${u.numeroSocio}` : 'Não associado';
+      const elFichaOrgao = document.getElementById('fichaUserOrgaoSocial');
+      if (elFichaOrgao) {
+        if (u.orgao && u.orgao !== 'Nenhum') {
+          elFichaOrgao.innerHTML = `<span style="color: #166534; font-weight: 700;">🏛️ ${window.escapeHtml(u.orgao)}</span>`;
+        } else {
+          elFichaOrgao.innerHTML = `<span style="color: #64748b; font-weight: 600;">Nenhum (Utilizador Geral / Sócio)</span>`;
+        }
+      }
+      const elFichaCargo = document.getElementById('fichaUserCargo');
+      if (elFichaCargo) {
+        elFichaCargo.textContent = u.cargo || '—';
+      }
       document.getElementById('fichaUserMorada').textContent = u.morada || 'Aguada de Baixo';
 
       // Dados Legais & Segurança
@@ -2473,10 +2253,19 @@
 
     window.atualizarOpcoesCargoPorOrgao = function(orgao) {
       const elPerfil = document.getElementById('formUserPerfil');
+      const elCargo = document.getElementById('formUserCargo');
+      const socioNum = document.getElementById('formUserSocioNum')?.value?.trim();
+
       if (orgao === 'Direção' || orgao === 'Assembleia Geral' || orgao === 'Conselho Fiscal') {
-        if (elPerfil && elPerfil.value === 'Utilizador Geral') {
+        if (elPerfil && (elPerfil.value === 'Utilizador Geral' || elPerfil.value === 'Sócio Associado')) {
           elPerfil.value = 'Membro da Direção';
           aplicarPresetPorPerfil('Membro da Direção');
+        }
+      } else if (orgao === 'Nenhum') {
+        if (elCargo) elCargo.value = '';
+        if (elPerfil && elPerfil.value === 'Membro da Direção') {
+          elPerfil.value = socioNum ? 'Sócio Associado' : 'Utilizador Geral';
+          aplicarPresetPorPerfil(elPerfil.value);
         }
       }
     };
