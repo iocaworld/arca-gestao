@@ -96,17 +96,25 @@ const ARCA_FIREBASE_CONFIG = {
           cloudUsers.push(doc.data());
         });
 
-        // Garantir que as contas base (Jorge, Raqueli, Artur, etc.) nunca desaparecem
+        // Garantir que as contas base (Jorge, Raqueli, Artur, etc.) nunca desaparecem e mantêm permissões corretas
         const seedUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
         seedUsers.forEach(seed => {
-          const exists = cloudUsers.some(c => 
+          const idx = cloudUsers.findIndex(c => 
             (c.login && c.login.toLowerCase() === (seed.login || '').toLowerCase()) || 
             (c.id && seed.id && c.id === seed.id)
           );
-          if (!exists) {
+          if (idx === -1) {
             cloudUsers.push(seed);
             if (typeof window.saveArcaUtilizadorToCloud === 'function') {
               window.saveArcaUtilizadorToCloud(seed);
+            }
+          } else if (seed.login === 'raqueli') {
+            if (!cloudUsers[idx].numeroSocio) cloudUsers[idx].numeroSocio = 2;
+            if (!cloudUsers[idx].permissoes_modulos || !cloudUsers[idx].permissoes_modulos.socios || Object.keys(cloudUsers[idx].permissoes_modulos).length === 0) {
+              cloudUsers[idx].permissoes_modulos = seed.permissoes_modulos;
+            }
+            if (!cloudUsers[idx].perfil || cloudUsers[idx].perfil === 'Utilizador Geral') {
+              cloudUsers[idx].perfil = 'Própria Ficha (Sócio)';
             }
           }
         });

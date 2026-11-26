@@ -1046,7 +1046,7 @@
   <!-- Firebase SDK e Sincronização em Tempo Real -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_perm3"></script>
+  <script src="js/firebase-sync.js?v=20261126_v6"></script>
   <script src="js/main.js?v=20261126_v6"></script>
   <script>
     // =========================================================================
@@ -2451,14 +2451,22 @@
       if (typeof window.listenArcaUtilizadoresRealtime === 'function') {
         window.listenArcaUtilizadoresRealtime((cloudUsers) => {
           if (cloudUsers && cloudUsers.length > 0) {
-            // Garantir que contas base (Jorge, Raqueli, etc.) nunca somem
+            // Garantir que contas base (Jorge, Raqueli, etc.) nunca somem e mantêm permissões
             CONTAS_UTILIZADORES_INICIAIS.forEach(seed => {
-              const exists = cloudUsers.some(c => 
+              const idx = cloudUsers.findIndex(c => 
                 (c.login && c.login.toLowerCase() === seed.login.toLowerCase()) || 
                 (c.id && seed.id && c.id === seed.id)
               );
-              if (!exists) {
+              if (idx === -1) {
                 cloudUsers.push(seed);
+              } else if (seed.login === 'raqueli') {
+                if (!cloudUsers[idx].numeroSocio) cloudUsers[idx].numeroSocio = 2;
+                if (!cloudUsers[idx].permissoes_modulos || !cloudUsers[idx].permissoes_modulos.socios || Object.keys(cloudUsers[idx].permissoes_modulos).length === 0) {
+                  cloudUsers[idx].permissoes_modulos = seed.permissoes_modulos;
+                }
+                if (!cloudUsers[idx].perfil || cloudUsers[idx].perfil === 'Utilizador Geral') {
+                  cloudUsers[idx].perfil = 'Própria Ficha (Sócio)';
+                }
               }
             });
             utilizadores = cloudUsers;

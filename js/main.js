@@ -990,15 +990,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // Redirecionamento inteligente conforme permissões
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html';
+      let targetUrl = 'painel.html?v=20261126_v6';
 
       if (!isAdmin) {
         if (!perms.painel?.enabled) {
-          if (perms.socios?.enabled) targetUrl = 'socios.html';
-          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html';
-          else if (perms.desporto?.enabled) targetUrl = 'desporto.html';
-          else if (perms.documentos?.enabled) targetUrl = 'documentos.html';
-          else if (perms.direcao?.enabled) targetUrl = 'atas.html';
+          if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v6';
+          else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v6';
+          else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v6';
+          else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v6';
+          else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v6';
         }
       }
 
@@ -1041,14 +1041,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const perms = res.user.permissoes_modulos || {};
       const isAdmin = (res.user.perfil === 'Administrador Total' || res.user.login === 'jorge');
-      let targetUrl = 'painel.html';
+      let targetUrl = 'painel.html?v=20261126_v6';
 
       if (!isAdmin && !perms.painel?.enabled) {
-        if (perms.socios?.enabled) targetUrl = 'socios.html';
-        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html';
-        else if (perms.desporto?.enabled) targetUrl = 'desporto.html';
-        else if (perms.documentos?.enabled) targetUrl = 'documentos.html';
-        else if (perms.direcao?.enabled) targetUrl = 'atas.html';
+        if (perms.socios?.enabled) targetUrl = 'socios.html?v=20261126_v6';
+        else if (perms.tesouraria?.enabled) targetUrl = 'tesouraria.html?v=20261126_v6';
+        else if (perms.desporto?.enabled) targetUrl = 'desporto.html?v=20261126_v6';
+        else if (perms.documentos?.enabled) targetUrl = 'documentos.html?v=20261126_v6';
+        else if (perms.direcao?.enabled) targetUrl = 'atas.html?v=20261126_v6';
       }
 
       if (alertBox) {
