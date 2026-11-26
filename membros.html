@@ -1488,10 +1488,16 @@
       let needsSave = false;
       if (Array.isArray(OFFICIAL_MEMBROS)) {
         OFFICIAL_MEMBROS.forEach(om => {
-          const uIdx = users.findIndex(u => (u.id === om.id) || (u.login && om.username && u.login.toLowerCase() === om.username.replace('@','').toLowerCase()) || (u.nome && u.nome.toLowerCase() === om.nome.toLowerCase()));
+          // Casar por nome, username ou número de sócio oficial (nunca por ID interno da base de dados)
+          const uIdx = users.findIndex(u => 
+            (u.nome && u.nome.trim().toLowerCase() === om.nome.trim().toLowerCase()) ||
+            (u.numeroSocio && om.numeroSocio && Number(u.numeroSocio) === Number(om.numeroSocio)) ||
+            (u.login && om.username && u.login.toLowerCase() === om.username.replace('@','').toLowerCase())
+          );
           if (uIdx === -1) {
+            const maxId = users.reduce((max, u) => Math.max(max, u.id || 0), 0);
             users.push({
-              id: om.id,
+              id: maxId + 1,
               nome: om.nome,
               login: (om.username || `@membro${om.id}`).replace('@',''),
               username: om.username || ('@membro' + om.id),
@@ -1519,6 +1525,15 @@
             }
           }
         });
+
+        // Garantir que contas de teste gerais (como Raqueli) não são classificadas como membros da Direção
+        const rTestIdx = users.findIndex(u => u.login === 'raqueli' || u.nome === 'Raqueli');
+        if (rTestIdx !== -1 && users[rTestIdx].orgao && users[rTestIdx].orgao !== 'Nenhum') {
+          users[rTestIdx].orgao = 'Nenhum';
+          users[rTestIdx].cargo = '';
+          needsSave = true;
+        }
+
         if (needsSave) {
           localStorage.setItem('arca_utilizadores_v2', JSON.stringify(users));
         }
@@ -2631,10 +2646,23 @@
       const elAg = document.getElementById('statAssembleia');
       const elCf = document.getElementById('statConselhoFiscal');
 
-      if (elTotal) elTotal.textContent = membros.length;
-      if (elDir) elDir.textContent = membros.filter(m => m.orgao && m.orgao.includes('Direção')).length;
-      if (elAg) elAg.textContent = membros.filter(m => m.orgao && m.orgao.includes('Assembleia')).length;
-      if (elCf) elCf.textContent = membros.filter(m => m.orgao && m.orgao.includes('Conselho')).length;
+      const total = membros.length;
+      const countDir = membros.filter(m => m.orgao && m.orgao.includes('Direção')).length;
+      const countAg = membros.filter(m => m.orgao && m.orgao.includes('Assembleia')).length;
+      const countCf = membros.filter(m => m.orgao && m.orgao.includes('Conselho')).length;
+
+      if (elTotal) elTotal.textContent = total;
+      if (elDir) elDir.textContent = countDir;
+      if (elAg) elAg.textContent = countAg;
+      if (elCf) elCf.textContent = countCf;
+
+      const filterEl = document.getElementById('filterOrgao');
+      if (filterEl && filterEl.options && filterEl.options.length >= 4) {
+        filterEl.options[0].textContent = `Todos os Órgãos (${total})`;
+        filterEl.options[1].textContent = `Direção (${countDir})`;
+        filterEl.options[2].textContent = `Assembleia Geral (${countAg})`;
+        filterEl.options[3].textContent = `Conselho Fiscal (${countCf})`;
+      }
     }
 
     window.recarregarMembrosNuvem = async function(btn) {
