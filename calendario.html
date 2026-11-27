@@ -87,24 +87,7 @@
       font-weight: 700;
       transition: all 0.2s ease;
     }
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.65);
-      z-index: 1050;
-      align-items: center;
-      justify-content: center;
-      padding: 1.25rem;
-      backdrop-filter: blur(3px);
-    }
-    .modal-box {
-      background: #ffffff;
-      border-radius: var(--radius-lg);
-      width: 100%;
-      box-shadow: var(--shadow-xl);
-      position: relative;
-    }
+
     @media print {
       body * {
         visibility: hidden;
@@ -760,8 +743,8 @@
   <!-- ======================================================================= -->
   <!-- MODAL: FICHA DETALHADA DO JOGO / EVENTO / REUNIÃO (CONSULTA & IMPRESSÃO) -->
   <!-- ======================================================================= -->
-  <div class="modal-overlay" id="modalAgendaFicha" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 1050; align-items: center; justify-content: center; padding: 1.25rem; backdrop-filter: blur(3px);">
-    <div class="modal-box" style="background: #ffffff; border-radius: var(--radius-lg); width: 100%; max-width: 780px; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-xl); position: relative;">
+  <div class="modal-overlay" id="modalAgendaFicha" onclick="if(event.target === this) fecharModalAgendaFicha()">
+    <div class="modal-content" style="background: #ffffff; border-radius: var(--radius-lg); width: 100%; max-width: 820px; max-height: 94vh; overflow-y: auto; box-shadow: var(--shadow-xl); position: relative; padding: 0;">
       
       <!-- Cabeçalho do Modal -->
       <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
@@ -861,8 +844,8 @@
   <!-- ======================================================================= -->
   <!-- MODAL: FORMULÁRIO DE CRIAÇÃO E EDIÇÃO (NOVO / EDITAR REGISTO)           -->
   <!-- ======================================================================= -->
-  <div class="modal-overlay" id="modalAgendaForm" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 1050; align-items: center; justify-content: center; padding: 1.25rem; backdrop-filter: blur(3px);">
-    <div class="modal-box" style="background: #ffffff; border-radius: var(--radius-lg); width: 100%; max-width: 760px; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-xl); position: relative;">
+  <div class="modal-overlay" id="modalAgendaForm" onclick="if(event.target === this) fecharModalAgendaForm()">
+    <div class="modal-content" style="background: #ffffff; border-radius: var(--radius-lg); width: 100%; max-width: 760px; max-height: 94vh; overflow-y: auto; box-shadow: var(--shadow-xl); position: relative; padding: 1.75rem;">
       
       <!-- Cabeçalho -->
       <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
@@ -1080,6 +1063,15 @@
     // =========================================================================
     // INICIALIZAÇÃO DA PÁGINA
     // =========================================================================
+    // Fechar modais com tecla Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        fecharModalAgendaFicha();
+        fecharModalAgendaForm();
+      }
+    });
+
+    // Inicialização da Página
     document.addEventListener('DOMContentLoaded', () => {
       loadAgendaCols();
       initAgendaColPicker();
@@ -1767,12 +1759,16 @@
       document.getElementById('fichaEmissaoData').textContent = new Date().toLocaleDateString('pt-PT');
 
       const modal = document.getElementById('modalAgendaFicha');
-      if (modal) modal.style.display = 'flex';
+      if (modal) {
+        modal.classList.add('active');
+      }
     };
 
     window.fecharModalAgendaFicha = function() {
       const modal = document.getElementById('modalAgendaFicha');
-      if (modal) modal.style.display = 'none';
+      if (modal) {
+        modal.classList.remove('active');
+      }
       currentFichaItem = null;
     };
 
@@ -1807,7 +1803,9 @@
       document.getElementById('formAgendaEstado').value = 'Confirmado';
 
       const modal = document.getElementById('modalAgendaForm');
-      if (modal) modal.style.display = 'flex';
+      if (modal) {
+        modal.classList.add('active');
+      }
     };
 
     window.abrirEdicaoAgenda = function(id) {
@@ -1835,12 +1833,16 @@
       document.getElementById('formAgendaLogistica').value = item.logistica || '';
 
       const modal = document.getElementById('modalAgendaForm');
-      if (modal) modal.style.display = 'flex';
+      if (modal) {
+        modal.classList.add('active');
+      }
     };
 
     window.fecharModalAgendaForm = function() {
       const modal = document.getElementById('modalAgendaForm');
-      if (modal) modal.style.display = 'none';
+      if (modal) {
+        modal.classList.remove('active');
+      }
     };
 
     window.aoMudarCategoriaForm = function(cat) {
@@ -2203,8 +2205,8 @@
               ${rowsHtml}
             </tbody>
           </table>
-        </body>
-        </html>
+        <' + '/body>
+        <' + '/html>
       `;
 
       const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
@@ -2300,8 +2302,8 @@
           <' + 'script>
             window.onload = function() { window.print(); };
           <' + '/script>
-        </body>
-        </html>
+        <' + '/body>
+        <' + '/html>
       `;
 
       const printWin = window.open('', '_blank');
@@ -2338,8 +2340,8 @@
           <body>
             ${printContents}
             <' + 'script>window.onload = function() { window.print(); };<' + '/script>
-          </body>
-          </html>
+          <' + '/body>
+          <' + '/html>
         `);
         printWin.document.close();
       }
