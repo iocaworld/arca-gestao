@@ -535,67 +535,85 @@ const ARCA_FIREBASE_CONFIG = {
       } catch (e) {}
 
       const seedList = (typeof window.getArcaAgendaSeed === 'function') ? window.getArcaAgendaSeed() : [];
-      const batch = firestore.batch();
-      let batchCount = 0;
 
+      // Verificar se o Firestore ainda tem os jogos de exemplo antigos
+      let needsFullMigration = false;
       snapshot.forEach(doc => {
         const item = doc.data();
-        if (item && item.id) {
-          // Detetar se é um jogo de teste antigo para atualizar com o novo jogo oficial
-          const isOldDummyGame = item.categoria === 'jogos' && item.criadoPor === 'Jorge Manuel da Silva Cunha' && Number(item.id) <= 11;
-          if (isOldDummyGame) {
-            const newSeedMatch = seedList.find(s => Number(s.id) === Number(item.id));
-            if (newSeedMatch) {
-              batch.set(doc.ref, newSeedMatch, { merge: false });
-              cloudItems.push(newSeedMatch);
-              batchCount++;
-              return;
-            }
+        if (item && item.categoria === 'jogos') {
+          // Os jogos oficiais têm criadoPor com 'Importação'
+          if (!item.criadoPor || (!item.criadoPor.includes('Importação') && Number(item.id) <= 11)) {
+            needsFullMigration = true;
           }
-          if (!deletedIds.includes(Number(item.id))) {
-            cloudItems.push(item);
-          }
+        }
+        if (doc.id === '12' && item && item.categoria === 'eventos') {
+          needsFullMigration = true;
         }
       });
 
-      // Se o Firestore não tiver itens ou faltarem itens do novo seed (ex: 36 jogos e novos IDs), sincronizar
-      let missingSeeds = [];
-      seedList.forEach(si => {
-        if (!deletedIds.includes(Number(si.id))) {
-          const exists = cloudItems.some(ci => Number(ci.id) === Number(si.id));
-          if (!exists) {
-            missingSeeds.push(si);
-          }
-        }
-      });
-
-      if (missingSeeds.length > 0) {
-        console.log(`[ARCA Firebase] A sincronizar ${missingSeeds.length} agendamentos oficiais para o Firestore...`);
-        const batch = firestore.batch();
-        missingSeeds.forEach(si => {
-          const docRef = firestore.collection('agenda_gestao').doc(String(si.id));
-          batch.set(docRef, si, { merge: true });
-          cloudItems.push(si);
+      if (needsFullMigration || snapshot.empty) {
+        console.log('[ARCA Firebase] A efetuar migração integral da coleção agenda_gestao para a época oficial 2026/27 (55 registos)...');
+        // Apaga todos os docs antigos da coleção agenda_gestao
+        const deleteBatch = firestore.batch();
+        snapshot.forEach(doc => {
+          deleteBatch.delete(doc.ref);
         });
         try {
-          await batch.commit();
-        } catch (e) {
-          console.warn('[ARCA Firebase] Erro ao gravar batch de agenda:', e);
+          await deleteBatch.commit();
+        } catch(e) {}
+
+        // Grava os 55 registos oficiais do seedList
+        const writeBatch = firestore.batch();
+        seedList.forEach(si => {
+          const docRef = firestore.collection('agenda_gestao').doc(String(si.id));
+          writeBatch.set(docRef, si);
+        });
+        try {
+          await writeBatch.commit();
+        } catch(e) {}
+
+        cloudItems = seedList.filter(si => !deletedIds.includes(Number(si.id)));
+      } else {
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          if (item && item.id && !deletedIds.includes(Number(item.id))) {
+            cloudItems.push(item);
+          }
+        });
+
+        // Garantir que nenhum seed está em falta
+        let missingSeeds = [];
+        seedList.forEach(si => {
+          if (!deletedIds.includes(Number(si.id))) {
+            const exists = cloudItems.some(ci => Number(ci.id) === Number(si.id));
+            if (!exists) {
+              missingSeeds.push(si);
+            }
+          }
+        });
+
+        if (missingSeeds.length > 0) {
+          const batch = firestore.batch();
+          missingSeeds.forEach(si => {
+            const docRef = firestore.collection('agenda_gestao').doc(String(si.id));
+            batch.set(docRef, si, { merge: true });
+            cloudItems.push(si);
+          });
+          try {
+            await batch.commit();
+          } catch(e) {}
         }
       }
 
-      // Ordenar por data decrescente (ou mais próximos)
       cloudItems.sort((a, b) => new Date(b.data + 'T' + (b.horaInicio || '00:00')) - new Date(a.data + 'T' + (a.horaInicio || '00:00')));
-
-      // Guardar na cache local
       localStorage.setItem(ARCA_AGENDA_STORAGE_KEY, JSON.stringify(cloudItems));
-      console.log(`[ARCA Firebase] ${cloudItems.length} agendamentos sincronizados da nuvem.`);
+      try { localStorage.removeItem('arca_gestao_agenda_v1'); } catch(e) {}
 
       if (typeof onUpdated === 'function') {
         onUpdated(cloudItems);
       }
       return cloudItems;
-    } catch (err) {
+    } catch(err) {
       console.warn('[ARCA Firebase] Aviso ao sincronizar agenda da nuvem:', err.message);
       return null;
     }

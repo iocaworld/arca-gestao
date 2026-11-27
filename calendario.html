@@ -2143,35 +2143,85 @@
       processarTextoJogosString(text);
     };
 
+    function smartParseRow(parts) {
+      if (parts.length === 6) {
+        return {
+          'Competição': parts[0],
+          'Fase': parts[1],
+          'Grupo': parts[2],
+          'Jogo': parts[3],
+          'Local de jogo': parts[4],
+          'Data e hora': parts[5]
+        };
+      }
+
+      // Detetar dinamicamente Data e Hora
+      let dataHora = '';
+      let dataHoraIdx = parts.findIndex(p => /\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{1,2}:\d{2}/.test(p));
+      if (dataHoraIdx !== -1) {
+        dataHora = parts[dataHoraIdx];
+      }
+
+      // Detetar Jogo (tem X ou vs)
+      let jogo = '';
+      let jogoIdx = parts.findIndex(p => /\s+[XxvsVS]+\s+/.test(p));
+      if (jogoIdx !== -1) {
+        jogo = parts[jogoIdx];
+      }
+
+      // Detetar Local (palavras-chave de pavilhão/estádio ou recinto)
+      let local = '';
+      let localIdx = parts.findIndex((p, idx) => idx !== dataHoraIdx && idx !== jogoIdx && /pavilh|campo|estádio|gimnod|recinto|sala|sede|arco|ginásio|parque/i.test(p));
+      if (localIdx !== -1) {
+        local = parts[localIdx];
+      }
+
+      // Detetar Competição (parte não usada que tenha texto)
+      let competicao = '';
+      let compIdx = parts.findIndex((p, idx) => idx !== dataHoraIdx && idx !== jogoIdx && idx !== localIdx && p.trim().length > 0);
+      if (compIdx !== -1) {
+        competicao = parts[compIdx];
+      }
+
+      if (!local) {
+        let remainingLocalIdx = parts.findIndex((p, idx) => idx !== dataHoraIdx && idx !== jogoIdx && idx !== compIdx && p.trim().length > 0);
+        if (remainingLocalIdx !== -1) {
+          local = parts[remainingLocalIdx];
+        }
+      }
+
+      return {
+        'Competição': competicao || 'Competição Oficial',
+        'Fase': '',
+        'Grupo': '',
+        'Jogo': jogo || 'ARCA vs Adversário',
+        'Local de jogo': local || 'Pavilhão Oficial',
+        'Data e hora': dataHora || '2026-11-27 18:00'
+      };
+    }
+
     function processarTextoJogosString(text) {
       const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
       const rows = [];
 
       lines.forEach((line) => {
         let parts = [];
-        if (line.includes('\t')) parts = line.split('\t');
-        else if (line.includes(';')) parts = line.split(';');
-        else if (line.includes(',')) parts = line.split(',');
+        if (line.includes('\t')) parts = line.split('\t').map(p => p.trim());
+        else if (line.includes(';')) parts = line.split(';').map(p => p.trim());
+        else if (line.includes(',')) parts = line.split(',').map(p => p.trim());
         else {
           const match = line.match(/(.*?)\s+(?:X|x|vs|VS|-)\s+(.*?)(?:\s+(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}))?(?:\s+(\d{1,2}:\d{2}))?$/);
           if (match) {
-            parts = ['Competição Oficial', '', '', match[1] + ' X ' + match[2], 'Pavilhão Oficial', (match[3] || '2026-11-27') + ' ' + (match[4] || '18:00')];
+            parts = ['Competição Oficial', match[1] + ' X ' + match[2], 'Pavilhão Oficial', (match[3] || '2026-11-27') + ' ' + (match[4] || '18:00')];
           }
         }
 
-        if (parts.length >= 3) {
+        if (parts.length >= 2) {
           // Se primeira linha for cabeçalho, ignorar
           const p0 = parts[0].toLowerCase();
-          if (p0.includes('competi') || p0.includes('jogo') || p0.includes('data')) return;
+          if (p0.includes('competi') && (parts.length > 2 && (parts[1].toLowerCase().includes('fase') || parts[1].toLowerCase().includes('jogo')))) return;
 
-          rows.push({
-            'Competição': parts[0] || 'Competição Oficial',
-            'Fase': parts[1] || '',
-            'Grupo': parts[2] || '',
-            'Jogo': parts[3] || parts[1] || '',
-            'Local de jogo': parts[4] || 'Pavilhão Oficial',
-            'Data e hora': parts[5] || parts[2] || ''
-          });
+          rows.push(smartParseRow(parts));
         }
       });
 
