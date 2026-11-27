@@ -252,6 +252,66 @@
       color: var(--text-muted);
       line-height: 1.35;
     }
+
+    /* Dropdowns de Exportação e Seleção de Colunas */
+    .card-header-bar {
+      overflow: visible !important;
+    }
+    .col-picker-dropdown, .export-dropdown-group {
+      position: relative;
+      display: inline-block;
+    }
+    .export-dropdown-menu, .col-picker-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
+      min-width: 260px;
+      padding: 0.75rem 0.65rem;
+      z-index: 99999 !important;
+      display: none;
+    }
+    .export-dropdown-menu.show, .col-picker-menu.show {
+      display: block !important;
+    }
+    .export-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: none;
+      background: none;
+      border-radius: var(--radius-xs);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--text-title);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .export-menu-item:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+    .utilizadores-selection-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.1rem;
+      margin-top: 1.25rem;
+      box-shadow: 0 2px 4px rgba(30, 64, 175, 0.05);
+      flex-wrap: wrap;
+    }
+    .selected-row {
+      background-color: #f0fdf4 !important;
+    }
   </style>
 </head>
 <body>
@@ -610,8 +670,43 @@
         <!-- Input de Ficheiro Oculto para Upload Direto de Avatar na Linha da Tabela -->
         <input type="file" id="tableAvatarFileInput" accept="image/*" style="display: none;" onchange="handleTableAvatarFileSelected(event)">
 
+        <!-- Barra de Ações de Seleção Múltipla de Utilizadores -->
+        <div id="utilizadoresSelectionBanner" class="utilizadores-selection-banner" style="display: none;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.4rem; font-weight: 800; color: #1e40af; font-size: 0.9rem;">
+              <span>☑️</span>
+              <span id="labelSelectedUtilizadoresCount">0 utilizadores selecionados</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-xs" onclick="selectAllVisibleUtilizadores()" style="background: #ffffff; border-color: #bfdbfe; color: #1e40af;">
+              Selecionar Todos
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" onclick="clearSelectedUtilizadores()" style="background: #ffffff; border-color: #cbd5e1; color: #64748b;">
+              Limpar Seleção
+            </button>
+          </div>
+          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
+            <span style="font-size: 0.78rem; font-weight: 700; color: #1e3a8a; margin-right: 0.2rem;">Exportar Selecionados:</span>
+            <button type="button" class="btn btn-secondary btn-xs" onclick="exportarUtilizadoresCSV(true)" title="Exportar utilizadores selecionados em CSV">
+              📊 CSV
+            </button>
+            <button type="button" class="btn btn-secondary btn-xs" onclick="exportarUtilizadoresExcel(true)" title="Exportar utilizadores selecionados em Excel">
+              📗 Excel
+            </button>
+            <button type="button" class="btn btn-primary btn-xs" onclick="exportarUtilizadoresPDF(true)" title="Exportar utilizadores selecionados em PDF">
+              📄 PDF
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" onclick="imprimirUtilizadores(true)" style="background: #ffffff;" title="Imprimir utilizadores selecionados">
+              🖨️ Imprimir
+            </button>
+            <div style="border-left: 1px solid #bfdbfe; height: 22px; margin: 0 0.35rem;"></div>
+            <button type="button" class="btn btn-xs" onclick="eliminarUtilizadoresSelecionados()" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-weight: 700;" title="Apagar utilizadores selecionados permanentemente">
+              🗑️ Apagar Selecionados
+            </button>
+          </div>
+        </div>
+
         <!-- Tabela Principal de Utilizadores -->
-        <div class="card-box" style="margin-top: 1.5rem;">
+        <div class="card-box" style="margin-top: 1.25rem;">
           <div class="card-header-bar">
             <h2>Contas de Acesso à Plataforma Oficial da ARCA</h2>
             
@@ -667,6 +762,54 @@
                 </div>
               </div>
 
+              <!-- Menu Exportar Utilizadores (CSV, Excel, PDF, Imprimir) -->
+              <div class="export-dropdown-group">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleExportUtilizadores" onclick="toggleUtilizadoresExportMenu(event)" style="padding: 0.45rem 0.85rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  <span>Exportar</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="export-dropdown-menu" id="exportDropdownMenuUtilizadores">
+                  <div class="col-picker-header" style="margin-bottom: 0.4rem;">
+                    <span>Exportar Utilizadores</span>
+                    <span id="exportUtilizadoresTargetLabel" style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">Todos os visíveis</span>
+                  </div>
+                  <button type="button" class="export-menu-item" onclick="exportarUtilizadoresCSV(false)">
+                    <span style="font-size: 1.15rem;">📊</span>
+                    <div>
+                      <div style="font-weight: 700;">Exportar para CSV</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Ficheiro compatível (.csv com ponto e vírgula)</small>
+                    </div>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarUtilizadoresExcel(false)">
+                    <span style="font-size: 1.15rem;">📗</span>
+                    <div>
+                      <div style="font-weight: 700;">Exportar para Excel (.xls)</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Folha de cálculo com grelha formatada</small>
+                    </div>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarUtilizadoresPDF(false)">
+                    <span style="font-size: 1.15rem;">📄</span>
+                    <div>
+                      <div style="font-weight: 700;">Listagem em PDF</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Documento timbrado oficial A4</small>
+                    </div>
+                  </button>
+                  <div style="border-top: 1px solid var(--border-light); margin: 0.35rem 0;"></div>
+                  <button type="button" class="export-menu-item" onclick="imprimirUtilizadores(false)">
+                    <span style="font-size: 1.15rem;">🖨️</span>
+                    <div>
+                      <div style="font-weight: 700;">Imprimir Listagem</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Impressão direta da listagem</small>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               <button class="btn btn-primary btn-sm" onclick="openNovoUtilizadorModal()">+ Novo Utilizador</button>
             </div>
           </div>
@@ -675,6 +818,9 @@
             <table class="modern-table" id="tableUtilizadores">
               <thead>
                 <tr id="headRowUtilizadores">
+                  <th data-col="selecao" style="width: 40px; text-align: center;">
+                    <input type="checkbox" id="checkSelectAllUtilizadores" title="Selecionar todos os utilizadores visíveis" onchange="toggleSelectAllUtilizadores(this.checked)" style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary);">
+                  </th>
                   <th class="sortable-th" data-col="nome" onclick="sortUtilizadores('nome')">
                     <span>Utilizador & Nome</span><span class="sort-indicator" id="sortInd_u_nome">▲</span>
                   </th>
@@ -817,10 +963,15 @@
 
       </div>
 
-      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
-        <button type="button" id="btnFichaAlternarEstado" class="btn btn-secondary btn-sm" onclick="handleFichaToggleEstado()">
-          Alternar Estado
-        </button>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" id="btnFichaAlternarEstado" class="btn btn-secondary btn-sm" onclick="handleFichaToggleEstado()">
+            Alternar Estado
+          </button>
+          <button type="button" id="btnFichaEliminar" class="btn btn-sm" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-weight: 700;" onclick="handleFichaEliminar()" title="Eliminar permanentemente este utilizador">
+            🗑️ Apagar Conta
+          </button>
+        </div>
         <div style="display: flex; gap: 0.5rem;">
           <button type="button" id="btnFichaEditar" class="btn btn-primary btn-sm" onclick="handleFichaAbrirEdicao()">
             ✏️ Editar Utilizador
@@ -1122,11 +1273,11 @@
   </div>
 
   <!-- Base de Dados de Sócios, Firebase SDK e Sincronização em Tempo Real -->
-  <script src="js/socios-data.js?v=20261127_v3"></script>
+  <script src="js/socios-data.js?v=20261127_v4"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261127_v3"></script>
-  <script src="js/main.js?v=20261127_v3"></script>
+  <script src="js/firebase-sync.js?v=20261127_v4"></script>
+  <script src="js/main.js?v=20261127_v4"></script>
   <script>
     // =========================================================================
     // Base de Dados de Utilizadores & Permissões da ARCA
@@ -1232,9 +1383,13 @@
     let sortUserField = 'nome';
     let sortUserDir = 'asc';
 
+    // Estado da Seleção Múltipla
+    const selectedUserIds = new Set();
+
     // Estado das Colunas
     const STORAGE_KEY_COLS_USER = 'arca_cols_utilizadores_v1';
     let colsUser = {
+      selecao: true,
       nome: true,
       socio: true,
       contacto: true,
@@ -1346,6 +1501,7 @@
       if (!list) return;
 
       const labels = {
+        selecao: 'Caixa de Seleção (Exportar / Apagar)',
         nome: 'Utilizador & Nome',
         socio: 'Nº Sócio',
         contacto: 'Contacto / E-mail',
@@ -1377,7 +1533,7 @@
     };
 
     window.resetUtilizadoresCols = function() {
-      colsUser = { nome: true, socio: true, contacto: true, perfil: true, permissoes: true, estado: true, acesso: true, acoes: true };
+      colsUser = { selecao: true, nome: true, socio: true, contacto: true, perfil: true, permissoes: true, estado: true, acesso: true, acoes: true };
       saveColsUser();
       initColPickerUtilizadores();
     };
@@ -1529,7 +1685,7 @@
       if (filtrados.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+            <td colspan="9" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
               <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
               <strong>Nenhum utilizador encontrado com os filtros selecionados.</strong>
             </td>
@@ -1569,8 +1725,17 @@
           ? `<span class="badge-socio-tag">Sócio ${u.numeroSocio}</span>` 
           : `<span class="badge-nao-socio">— Não Sócio</span>`;
 
+        const isSelected = selectedUserIds.has(Number(u.id));
+
         return `
-          <tr data-user-id="${u.id}">
+          <tr data-user-id="${u.id}" class="${isSelected ? 'selected-row' : ''}">
+            <!-- 0. Caixa de Seleção -->
+            <td data-col="selecao" style="width: 40px; text-align: center;" onclick="event.stopPropagation()">
+              <input type="checkbox" class="user-row-check" value="${u.id}" ${isSelected ? 'checked' : ''}
+                     onchange="handleSelectUtilizador(${u.id}, this.checked)"
+                     style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary);">
+            </td>
+
             <!-- 1. Nome & Avatar -->
             <td data-col="nome">
               <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -1673,6 +1838,7 @@
       }).join('');
 
       applyColsUtilizadores();
+      updateUtilizadoresSelectionUI();
       if (window.initTableResizers) window.initTableResizers();
     }
 
@@ -2520,6 +2686,7 @@
         dadosOperacao: { id: u.id, nome: u.nome, login: u.login },
         onConfirm: async () => {
           utilizadores = utilizadores.filter(x => x.id !== userId);
+          selectedUserIds.delete(userId);
           
           // Registar como eliminado para nunca mais ressuscitar
           try {
@@ -2552,9 +2719,561 @@
             });
           }
 
+          updateUtilizadoresSelectionUI();
           renderUtilizadores();
           updateUtilizadoresStats();
           if (window.showToast) window.showToast(`Conta de ${u.nome} eliminada com sucesso. Pode restaurá-la em Relatórios, Logs e Atividades.`, 'info');
+        }
+      });
+    };
+
+    window.handleFichaEliminar = function() {
+      if (!currentUserFichaId) return;
+      closeFichaUtilizadorModal();
+      window.handleEliminarUtilizador(currentUserFichaId);
+    };
+
+    // =========================================================================
+    // SELEÇÃO MÚLTIPLA & EXPORTAÇÃO DE UTILIZADORES (CSV, EXCEL, PDF, IMPRIMIR)
+    // =========================================================================
+    window.handleSelectUtilizador = function(id, isChecked) {
+      const numId = Number(id);
+      if (isChecked) {
+        selectedUserIds.add(numId);
+      } else {
+        selectedUserIds.delete(numId);
+      }
+      const row = document.querySelector(`#tbodyUtilizadores tr[data-user-id="${numId}"]`);
+      if (row) row.classList.toggle('selected-row', isChecked);
+      updateUtilizadoresSelectionUI();
+    };
+
+    window.toggleSelectAllUtilizadores = function(isChecked) {
+      const visibleRows = document.querySelectorAll('#tbodyUtilizadores tr[data-user-id]');
+      visibleRows.forEach(row => {
+        const id = Number(row.getAttribute('data-user-id'));
+        const chk = row.querySelector('.user-row-check');
+        if (isChecked) {
+          selectedUserIds.add(id);
+          row.classList.add('selected-row');
+          if (chk) chk.checked = true;
+        } else {
+          selectedUserIds.delete(id);
+          row.classList.remove('selected-row');
+          if (chk) chk.checked = false;
+        }
+      });
+      updateUtilizadoresSelectionUI();
+    };
+
+    window.selectAllVisibleUtilizadores = function() {
+      window.toggleSelectAllUtilizadores(true);
+    };
+
+    window.clearSelectedUtilizadores = function() {
+      selectedUserIds.clear();
+      document.querySelectorAll('#tbodyUtilizadores tr[data-user-id]').forEach(row => {
+        row.classList.remove('selected-row');
+        const chk = row.querySelector('.user-row-check');
+        if (chk) chk.checked = false;
+      });
+      updateUtilizadoresSelectionUI();
+    };
+
+    function updateUtilizadoresSelectionUI() {
+      const banner = document.getElementById('utilizadoresSelectionBanner');
+      const countLabel = document.getElementById('labelSelectedUtilizadoresCount');
+      const headerCheck = document.getElementById('checkSelectAllUtilizadores');
+      const targetLabel = document.getElementById('exportUtilizadoresTargetLabel');
+
+      const count = selectedUserIds.size;
+      if (countLabel) countLabel.textContent = `${count} utilizador(es) selecionado(s)`;
+      if (banner) banner.style.display = count > 0 ? 'flex' : 'none';
+      if (targetLabel) targetLabel.textContent = count > 0 ? `${count} selecionado(s)` : 'Todos os visíveis';
+
+      // Atualizar checkbox do cabeçalho
+      if (headerCheck) {
+        const visibleRows = document.querySelectorAll('#tbodyUtilizadores tr[data-user-id]');
+        if (visibleRows.length > 0) {
+          const allSelected = Array.from(visibleRows).every(row => {
+            const id = Number(row.getAttribute('data-user-id'));
+            return selectedUserIds.has(id);
+          });
+          headerCheck.checked = allSelected;
+          headerCheck.indeterminate = count > 0 && !allSelected;
+        } else {
+          headerCheck.checked = false;
+          headerCheck.indeterminate = false;
+        }
+      }
+    }
+
+    // Toggle do Menu de Exportação
+    window.toggleUtilizadoresExportMenu = function(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('exportDropdownMenuUtilizadores');
+      const colMenu = document.getElementById('menuColPickerUtilizadores');
+      if (colMenu) colMenu.classList.remove('show');
+      if (menu) menu.classList.toggle('show');
+    };
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('exportDropdownMenuUtilizadores');
+      const btn = document.getElementById('btnToggleExportUtilizadores');
+      if (menu && !menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+        menu.classList.remove('show');
+      }
+    });
+
+    function getUtilizadoresToExport(onlySelected = false) {
+      let baseList = utilizadores.filter(u => {
+        if (currentFilterEstado !== 'all' && u.estado !== currentFilterEstado) return false;
+        if (currentFilterPerfil !== 'all') {
+          if (!u.perfil || !u.perfil.toLowerCase().includes(currentFilterPerfil.toLowerCase())) return false;
+        }
+        if (currentSearchTerm) {
+          const matchNome = (u.nome || '').toLowerCase().includes(currentSearchTerm);
+          const matchLogin = (u.login || '').toLowerCase().includes(currentSearchTerm);
+          const matchEmail = (u.email || '').toLowerCase().includes(currentSearchTerm);
+          const matchSocio = u.numeroSocio ? String(u.numeroSocio).includes(currentSearchTerm) : false;
+          const matchMorada = (u.morada || '').toLowerCase().includes(currentSearchTerm);
+          if (!matchNome && !matchLogin && !matchEmail && !matchSocio && !matchMorada) return false;
+        }
+        return true;
+      });
+
+      if (onlySelected) {
+        baseList = baseList.filter(u => selectedUserIds.has(Number(u.id)));
+      }
+      return baseList;
+    }
+
+    // --- 1. EXPORTAÇÃO CSV ---
+    window.exportarUtilizadoresCSV = function(onlySelected = false) {
+      const list = getUtilizadoresToExport(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum utilizador disponível para exportar.', 'warning');
+        return;
+      }
+
+      const headers = [
+        'ID',
+        'Nome Completo',
+        'Utilizador (Login)',
+        'Nº de Sócio',
+        'Órgão Social',
+        'Cargo',
+        'Perfil de Acesso',
+        'Email',
+        'Telefone',
+        'Morada / Localidade',
+        'Estado da Conta',
+        'Último Acesso'
+      ];
+
+      const rows = list.map(u => [
+        u.id || '',
+        `"${(u.nome || '').replace(/"/g, '""')}"`,
+        `"${(u.login || '').replace(/"/g, '""')}"`,
+        u.numeroSocio || '',
+        `"${(u.orgao || 'Nenhum').replace(/"/g, '""')}"`,
+        `"${(u.cargo || '—').replace(/"/g, '""')}"`,
+        `"${(u.perfil || 'Utilizador Geral').replace(/"/g, '""')}"`,
+        `"${(u.email || '').replace(/"/g, '""')}"`,
+        `"${(u.telefone || '').replace(/"/g, '""')}"`,
+        `"${(u.morada || 'Aguada de Baixo').replace(/"/g, '""')}"`,
+        `"${(u.estado || 'Ativo').replace(/"/g, '""')}"`,
+        `"${(u.ultimo_acesso || 'Nunca').replace(/"/g, '""')}"`
+      ].join(';'));
+
+      const csvContent = '\uFEFF' + headers.join(';') + '\r\n' + rows.join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const hojeStr = new Date().toISOString().split('T')[0];
+      link.href = url;
+      link.setAttribute('download', `utilizadores_arca_${hojeStr}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      const menu = document.getElementById('exportDropdownMenuUtilizadores');
+      if (menu) menu.classList.remove('show');
+      if (window.showToast) window.showToast(`${list.length} utilizador(es) exportado(s) para CSV com sucesso!`, 'success');
+    };
+
+    // --- 2. EXPORTAÇÃO EXCEL (.xls) ---
+    window.exportarUtilizadoresExcel = function(onlySelected = false) {
+      const list = getUtilizadoresToExport(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum utilizador disponível para exportar.', 'warning');
+        return;
+      }
+
+      const rowsHtml = list.map((u, idx) => {
+        const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+        return `
+          <tr style="background-color: ${bg};">
+            <td style="text-align: center; font-weight: bold; padding: 6px 8px; border: 1px solid #cbd5e1;">${u.id}</td>
+            <td style="padding: 6px 8px; font-weight: bold; border: 1px solid #cbd5e1;">${window.escapeHtml(u.nome)}</td>
+            <td style="padding: 6px 8px; font-family: monospace; border: 1px solid #cbd5e1;">@${window.escapeHtml(u.login)}</td>
+            <td style="text-align: center; font-weight: bold; color: #0f3f26; padding: 6px 8px; border: 1px solid #cbd5e1;">${u.numeroSocio || '—'}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${window.escapeHtml(u.orgao || 'Nenhum')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${window.escapeHtml(u.cargo || '—')}</td>
+            <td style="padding: 6px 8px; font-weight: 600; border: 1px solid #cbd5e1;">${window.escapeHtml(u.perfil || 'Utilizador Geral')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${window.escapeHtml(u.email || '—')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${window.escapeHtml(u.telefone || '—')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${window.escapeHtml(u.morada || 'Aguada de Baixo')}</td>
+            <td style="text-align: center; font-weight: bold; color: #16a34a; padding: 6px 8px; border: 1px solid #cbd5e1;">${u.estado || 'Ativo'}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${window.escapeHtml(u.ultimo_acesso || 'Nunca')}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const countAtivos = list.filter(x => x.estado === 'Ativo').length;
+      const countPendentes = list.filter(x => x.estado === 'Pendente').length;
+      const countSuspensos = list.filter(x => x.estado === 'Suspenso').length;
+
+      const excelTemplate = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+          <style>
+            body { font-family: Calibri, Arial, sans-serif; }
+            table { border-collapse: collapse; width: 100%; }
+            th { background-color: #0f3f26; color: #ffffff; font-weight: bold; border: 1px solid #0a2d1b; text-align: left; padding: 8px; }
+            td { vertical-align: middle; }
+          </style>
+        </head>
+        <body>
+          <h2 style="color: #0f3f26; margin-bottom: 4px;">A.R.C.A. - Associação Recreativa e Cultural de Aguada de Baixo</h2>
+          <p style="color: #475569; margin-top: 0; font-size: 14px;"><strong>Registo Oficial de Contas e Utilizadores da Plataforma</strong> · Emitido em: ${new Date().toLocaleDateString('pt-PT')} ${new Date().toLocaleTimeString('pt-PT')}</p>
+          <p style="font-size: 13px;">Total de Contas: <strong>${list.length}</strong> | Ativas: <strong>${countAtivos}</strong> | Pendentes: <strong>${countPendentes}</strong> | Suspensas: <strong>${countSuspensos}</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 50px; text-align: center;">ID</th>
+                <th style="width: 240px;">Nome do Utilizador</th>
+                <th style="width: 140px;">Utilizador (Login)</th>
+                <th style="width: 90px; text-align: center;">Nº Sócio</th>
+                <th style="width: 150px;">Órgão Social</th>
+                <th style="width: 150px;">Cargo</th>
+                <th style="width: 180px;">Perfil de Acesso</th>
+                <th style="width: 180px;">Email</th>
+                <th style="width: 130px;">Telefone</th>
+                <th style="width: 180px;">Morada</th>
+                <th style="width: 90px; text-align: center;">Estado</th>
+                <th style="width: 120px;">Último Acesso</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\uFEFF' + excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const hojeStr = new Date().toISOString().split('T')[0];
+      link.href = url;
+      link.setAttribute('download', `utilizadores_arca_${hojeStr}.xls`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      const menu = document.getElementById('exportDropdownMenuUtilizadores');
+      if (menu) menu.classList.remove('show');
+      if (window.showToast) window.showToast(`${list.length} utilizador(es) exportado(s) para Excel (.xls) com sucesso!`, 'success');
+    };
+
+    // --- 3. EXPORTAÇÃO PDF & IMPRIMIR ---
+    window.imprimirUtilizadores = function(onlySelected = false) {
+      window.exportarUtilizadoresPDF(onlySelected);
+    };
+
+    window.exportarUtilizadoresPDF = function(onlySelected = false) {
+      const list = getUtilizadoresToExport(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum utilizador disponível para emitir documento.', 'warning');
+        return;
+      }
+
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const emitenteNome = currentUser ? `${currentUser.nome || currentUser.login} (${currentUser.perfil || 'Administração'})` : 'Administração da A.R.C.A.';
+      const hojeData = new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const hojeHora = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+      const countAtivos = list.filter(x => x.estado === 'Ativo').length;
+      const countPendentes = list.filter(x => x.estado === 'Pendente').length;
+      const countSuspensos = list.filter(x => x.estado === 'Suspenso').length;
+
+      const rowsHtml = list.map((u, idx) => {
+        const contactos = [u.telefone, u.email].filter(Boolean).join(' · ') || '—';
+        return `
+          <tr>
+            <td style="text-align: center; font-weight: 800;">${u.id}</td>
+            <td style="font-weight: 700;">
+              <div>${window.escapeHtml(u.nome)}</div>
+              <div style="font-size: 7.5pt; color: #64748b; font-weight: normal;">${window.escapeHtml(contactos)}</div>
+            </td>
+            <td style="font-family: monospace; font-size: 8pt; font-weight: 600; color: #0f3f26;">@${window.escapeHtml(u.login)}</td>
+            <td style="text-align: center; font-weight: 800; color: #0f3f26;">${u.numeroSocio ? `Sócio ${u.numeroSocio}` : '—'}</td>
+            <td>
+              <div style="font-weight: 600;">${window.escapeHtml(u.orgao || 'Nenhum')}</div>
+              <div style="font-size: 7.5pt; color: #64748b;">${window.escapeHtml(u.cargo || '—')}</div>
+            </td>
+            <td style="font-size: 8pt; font-weight: 600;">${window.escapeHtml(u.perfil || 'Utilizador')}</td>
+            <td style="text-align: center; font-weight: 700; color: ${u.estado === 'Ativo' ? '#16a34a' : '#d97706'};">${u.estado || 'Ativo'}</td>
+            <td style="font-size: 7.5pt; color: #64748b; text-align: center;">${window.escapeHtml(u.ultimo_acesso || 'Nunca')}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert('Por favor autorize janelas pop-up no seu navegador para visualizar o PDF/Impressão.');
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-PT">
+        <head>
+          <meta charset="UTF-8">
+          <title>A.R.C.A. - Livro Oficial de Utilizadores e Contas</title>
+          <style>
+            @page {
+              size: A4 landscape;
+              margin: 10mm 12mm 10mm 12mm;
+            }
+            body {
+              font-family: 'Segoe UI', Arial, sans-serif;
+              color: #1e293b;
+              margin: 0;
+              padding: 0;
+              font-size: 9pt;
+              line-height: 1.35;
+            }
+            .header-bar {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 2.5px solid #0f3f26;
+              padding-bottom: 8px;
+              margin-bottom: 12px;
+            }
+            .brand-title {
+              font-size: 14pt;
+              font-weight: 800;
+              color: #0f3f26;
+              letter-spacing: 0.5px;
+            }
+            .brand-sub {
+              font-size: 8.5pt;
+              color: #475569;
+              font-weight: 600;
+            }
+            .summary-box {
+              display: flex;
+              gap: 16px;
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 4px;
+              padding: 8px 12px;
+              margin-bottom: 12px;
+            }
+            .summary-item {
+              display: flex;
+              gap: 6px;
+              font-size: 8.5pt;
+            }
+            .summary-item strong {
+              color: #0f3f26;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 4px;
+              font-size: 8.2pt;
+            }
+            th {
+              background: #0f3f26;
+              color: #ffffff;
+              font-weight: 700;
+              text-align: left;
+              padding: 6px 8px;
+              border: 1px solid #0a2d1b;
+              font-size: 8pt;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            td {
+              padding: 6px 8px;
+              border: 1px solid #cbd5e1;
+              vertical-align: middle;
+            }
+            tr:nth-child(even) td {
+              background: #f8fafc;
+            }
+            .footer-info {
+              margin-top: 14px;
+              padding-top: 8px;
+              border-top: 1px solid #e2e8f0;
+              display: flex;
+              justify-content: space-between;
+              font-size: 7.5pt;
+              color: #64748b;
+            }
+            @media print {
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header-bar">
+            <div>
+              <div class="brand-title">A.R.C.A. - Aguada de Baixo</div>
+              <div class="brand-sub">Associação Recreativa e Cultural de Aguada de Baixo &bull; NIF 501 547 240</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 11pt; font-weight: 800; color: #0f3f26;">REGISTO OFICIAL DE UTILIZADORES</div>
+              <div style="font-size: 8pt; color: #64748b;">Emitido em: ${hojeData} às ${hojeHora}</div>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <div class="summary-item"><span>Total Listado:</span> <strong>${list.length} contas</strong></div>
+            <div class="summary-item"><span>Ativos:</span> <strong>${countAtivos}</strong></div>
+            <div class="summary-item"><span>Pendentes:</span> <strong>${countPendentes}</strong></div>
+            <div class="summary-item"><span>Suspensos:</span> <strong>${countSuspensos}</strong></div>
+            <div class="summary-item" style="margin-left: auto;"><span>Emitente:</span> <strong>${window.escapeHtml(emitenteNome)}</strong></div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 35px; text-align: center;">ID</th>
+                <th>Nome Completo & Contacto</th>
+                <th style="width: 110px;">Utilizador</th>
+                <th style="width: 90px; text-align: center;">Sócio</th>
+                <th style="width: 140px;">Órgão / Cargo</th>
+                <th style="width: 130px;">Perfil de Acesso</th>
+                <th style="width: 75px; text-align: center;">Estado</th>
+                <th style="width: 85px; text-align: center;">Último Acesso</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <div class="footer-info">
+            <div>Plataforma de Gestão Oficial da A.R.C.A. &bull; arca-gestao.web.app</div>
+            <div>Documento de circulação interna &bull; Página 1</div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.print();
+              }, 300);
+            };
+          <\/script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+
+      const menu = document.getElementById('exportDropdownMenuUtilizadores');
+      if (menu) menu.classList.remove('show');
+      if (window.showToast) window.showToast(`Documento timbrado A4 gerado para impressão / PDF!`, 'info');
+    };
+
+    // --- 4. ELIMINAÇÃO EM MASSA (APAGAR MAIS DE UM UTILIZADOR) ---
+    window.eliminarUtilizadoresSelecionados = async function() {
+      if (selectedUserIds.size === 0) {
+        if (window.showToast) window.showToast('Nenhum utilizador selecionado para eliminar.', 'warning');
+        return;
+      }
+
+      // Proteger Jorge Cunha (Administrador Total)
+      let idsToDelete = Array.from(selectedUserIds).filter(id => {
+        const u = utilizadores.find(x => x.id === id);
+        if (id === 1 || (u && u.login && u.login.toLowerCase() === 'jorge')) {
+          return false;
+        }
+        return true;
+      });
+
+      if (idsToDelete.length === 0) {
+        alert('A conta de Administrador Total (Jorge) está protegida e não pode ser eliminada.');
+        return;
+      }
+
+      const count = idsToDelete.length;
+      const nomes = idsToDelete.map(id => {
+        const u = utilizadores.find(x => x.id === id);
+        return u ? u.nome : `#${id}`;
+      }).slice(0, 5).join(', ') + (count > 5 ? ` e mais ${count - 5}...` : '');
+
+      await window.executarComConfirmacaoEAutorizacao({
+        operacao: 'ELIMINAR',
+        modulo: 'Utilizadores',
+        titulo: `Confirmar Eliminação em Massa (${count} utilizadores)`,
+        mensagem: `Tem a certeza de que pretende eliminar permanentemente os <strong>${count} utilizadores selecionados</strong> (${nomes})?<br><br><small style="color: #991b1b;">Esta ação revogará todos os acessos das contas selecionadas ao sistema.</small>`,
+        textoConfirmar: `Sim, Eliminar ${count} Contas`,
+        assuntoPedido: `Pedido de autorização para eliminar ${count} contas de utilizadores`,
+        descricaoPedido: `Solicito autorização à Administração para eliminar ${count} contas de utilizador: ${nomes}.`,
+        dadosOperacao: { ids: idsToDelete },
+        onConfirm: async () => {
+          let deletedCount = 0;
+          for (const id of idsToDelete) {
+            const u = utilizadores.find(x => x.id === id);
+            if (u) {
+              utilizadores = utilizadores.filter(x => x.id !== id);
+              try {
+                const deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+                if (!deletedIds.includes(Number(id))) {
+                  deletedIds.push(Number(id));
+                  localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+                }
+              } catch (e) {}
+
+              if (typeof window.deleteArcaUtilizadorFromCloud === 'function') {
+                await window.deleteArcaUtilizadorFromCloud(id);
+              }
+
+              if (typeof window.logArcaAtividade === 'function') {
+                window.logArcaAtividade({
+                  modulo: 'Utilizadores',
+                  acao: 'ELIMINACAO',
+                  tipoBadge: 'Eliminação',
+                  descricao: `Eliminada a conta de utilizador '${u.nome}' (${u.login})`,
+                  detalhes: `Conta apagada em lote pelo Administrador.`,
+                  nivel: 'critico',
+                  revertivel: true,
+                  entidade: 'utilizadores',
+                  entidadeId: id,
+                  dadosAnteriores: u,
+                  dadosNovos: null
+                });
+              }
+              deletedCount++;
+            }
+          }
+
+          selectedUserIds.clear();
+          saveUtilizadores();
+          updateUtilizadoresSelectionUI();
+          renderUtilizadores();
+          updateUtilizadoresStats();
+          if (window.showToast) window.showToast(`${deletedCount} conta(s) de utilizador eliminada(s) com sucesso.`, 'success');
         }
       });
     };
