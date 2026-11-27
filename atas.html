@@ -937,6 +937,7 @@
               </button>
               <ul class="nav-sublist">
                 <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+                <li><a href="pedidos.html" class="nav-sublink">Pedidos e Validações</a></li>
                 <li><a href="logs.html" class="nav-sublink">Relatórios, Logs e Atividades</a></li>
               </ul>
             </li>
@@ -3562,6 +3563,20 @@
     window.handleEliminarAta = async function(ataId) {
       const a = atas.find(x => x.id === ataId);
       if (!a) return;
+
+      // Verificação de exigência de autorização prévia pelo Administrador
+      if (typeof window.verificarExigeAutorizacao === 'function' && window.verificarExigeAutorizacao('atas', 'eliminar')) {
+        alert('A sua conta requer autorização prévia da Administração para eliminar atas. O formulário de envio de pedido ao Administrador será aberto.');
+        if (typeof window.abrirModalEnviarPedidoAdmin === 'function') {
+          window.abrirModalEnviarPedidoAdmin({
+            tipo: 'MANIPULACAO',
+            modulo: 'Atas da Direção',
+            assunto: `Pedido de autorização para eliminar a Ata ${a.referencia || '#' + a.numero}`,
+            descricao: `Solicito autorização à Administração para eliminar a Ata ${a.referencia || '#' + a.numero} referente a '${a.tipo}'.`
+          });
+        }
+        return;
+      }
 
       if (confirm(`Tem a certeza de que pretende eliminar permanentemente a Ata ${a.referencia || '#' + a.numero}? Esta ação não pode ser desfeita.`)) {
         atas = atas.filter(x => x.id !== ataId);

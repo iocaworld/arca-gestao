@@ -519,6 +519,67 @@ const ARCA_FIREBASE_CONFIG = {
     }
   };
 
+  // =========================================================================
+  // SINCRONIZAÇÃO DE PEDIDOS E VALIDAÇÕES DE UTILIZADORES ('pedidos_admin')
+  // =========================================================================
+
+  window.saveArcaPedidoAdminToCloud = async function(pedido) {
+    const firestore = initFirebase();
+    if (!firestore || !pedido || !pedido.id) return false;
+
+    try {
+      const docId = String(pedido.id);
+      await firestore.collection('pedidos_admin').doc(docId).set(pedido, { merge: true });
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao gravar pedido ao administrador na nuvem:', err);
+      return false;
+    }
+  };
+
+  window.syncArcaPedidosAdminFromCloud = async function(onUpdated) {
+    const firestore = initFirebase();
+    if (!firestore) return null;
+
+    try {
+      const snapshot = await firestore.collection('pedidos_admin').orderBy('timestamp', 'desc').limit(150).get();
+      let cloudPedidos = [];
+      snapshot.forEach(doc => {
+        const item = doc.data();
+        if (item && item.id) cloudPedidos.push(item);
+      });
+
+      if (cloudPedidos.length > 0) {
+        const localPedidos = (typeof window.getArcaPedidosAdmin === 'function') ? window.getArcaPedidosAdmin() : [];
+        const map = new Map();
+        localPedidos.forEach(p => map.set(String(p.id), p));
+        cloudPedidos.forEach(p => map.set(String(p.id), p));
+
+        const merged = Array.from(map.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        localStorage.setItem('arca_pedidos_admin_v1', JSON.stringify(merged));
+
+        if (typeof onUpdated === 'function') onUpdated(merged);
+        return merged;
+      }
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao sincronizar pedidos ao administrador da nuvem:', err);
+    }
+    return null;
+  };
+
+  window.updateArcaPedidoAdminStatusInCloud = async function(pedidoId, statusData) {
+    const firestore = initFirebase();
+    if (!firestore || !pedidoId) return false;
+
+    try {
+      await firestore.collection('pedidos_admin').doc(String(pedidoId)).update(statusData);
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao atualizar estado do pedido na nuvem:', err);
+      return false;
+    }
+  };
+
   // Inicialização automática ao carregar
   document.addEventListener('DOMContentLoaded', () => {
     initFirebase();

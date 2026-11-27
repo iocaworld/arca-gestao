@@ -571,6 +571,7 @@
               </button>
               <ul class="nav-sublist">
                 <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+                <li><a href="pedidos.html" class="nav-sublink">Pedidos e Validações</a></li>
                 <li><a href="logs.html" class="nav-sublink">Relatórios, Logs e Atividades</a></li>
               </ul>
             </li>
@@ -2756,6 +2757,10 @@
                     <input type="radio" name="permNivel_${mod.id}" value="alterar" ${nivel === 'alterar' ? 'checked' : ''} onchange="setModuloNivel('${mod.id}', 'alterar')">
                     <span>Ver e Alterar</span>
                   </label>
+                  <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; color: #b45309; font-weight: 600; padding: 2px 6px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 4px; font-size: 0.8rem;" title="Exige autorização prévia da Administração para modificar ou apagar dados">
+                    <input type="checkbox" id="permReqAprov_${mod.id}" ${modP.requer_aprovacao_admin ? 'checked' : ''}>
+                    <span>⚠️ Exige Autorização para Modificar/Apagar</span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -2922,9 +2927,11 @@
         } else {
           const radioAlt = document.querySelector(`input[name="permNivel_${mod.id}"][value="alterar"]`);
           const nivel = (radioAlt && radioAlt.checked) ? 'alterar' : 'ver';
+          const reqAprov = document.getElementById(`permReqAprov_${mod.id}`)?.checked || false;
           perms[mod.id] = {
             aceder: true,
             nivel: nivel,
+            requer_aprovacao_admin: reqAprov,
             submenus: {}
           };
           if (mod.submenus) {

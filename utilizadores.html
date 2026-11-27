@@ -487,6 +487,7 @@
               </button>
               <ul class="nav-sublist" style="display: block;">
                 <li><a href="utilizadores.html" class="nav-sublink active">Utilizadores</a></li>
+                <li><a href="pedidos.html" class="nav-sublink">Pedidos e Validações</a></li>
                 <li><a href="logs.html" class="nav-sublink">Relatórios, Logs e Atividades</a></li>
               </ul>
             </li>
@@ -2087,6 +2088,10 @@
                   <input type="radio" name="userModMode_${m.id}" value="full" ${mode === 'full' ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''} onchange="setUserModuleMode('${m.id}', 'full')">
                   <span>Gestão Total / Alterar</span>
                 </label>
+                <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; cursor: pointer; color: #b45309; font-weight: 600; padding: 0.2rem 0.5rem; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 4px;" title="Se ativo, qualquer modificação ou apagamento efetuado por este utilizador neste módulo requer autorização prévia da Administração">
+                  <input type="checkbox" id="userModReqAprov_${m.id}" ${p.requer_aprovacao_admin ? 'checked' : ''} ${!isEnabled ? 'disabled' : ''}>
+                  <span>⚠️ Exige Autorização para Modificar/Apagar</span>
+                </label>
               </div>
             </div>
             <div class="perm-submenus-list" id="userModSubList_${m.id}" style="${isEnabled ? '' : 'opacity: 0.4; pointer-events: none;'}">
@@ -2122,6 +2127,8 @@
       document.querySelectorAll(`input[name="userModMode_${modId}"]`).forEach(r => {
         r.disabled = !enabled;
       });
+      const reqChk = document.getElementById(`userModReqAprov_${modId}`);
+      if (reqChk) reqChk.disabled = !enabled;
     };
 
     window.setUserModuleMode = function(modId, mode) {
@@ -2325,7 +2332,8 @@
             const subChk = document.getElementById(`userModSub_${m.id}_${sub.id}`);
             if (subChk && subChk.checked) submenus.push(sub.id);
           });
-          novasPermissoes[m.id] = { enabled: true, mode, submenus };
+          const reqAprov = document.getElementById(`userModReqAprov_${m.id}`)?.checked || false;
+          novasPermissoes[m.id] = { enabled: true, mode, submenus, requer_aprovacao_admin: reqAprov };
         }
       });
 
@@ -2416,6 +2424,21 @@
         alert('A conta de Administrador Total (Jorge) não pode ser eliminada.');
         return;
       }
+
+      // Verificação de autorização prévia pelo Administrador
+      if (typeof window.verificarExigeAutorizacao === 'function' && window.verificarExigeAutorizacao('utilizadores', 'eliminar')) {
+        alert('A sua conta requer autorização prévia da Administração para eliminar utilizadores. O formulário de envio de pedido ao Administrador será aberto.');
+        if (typeof window.abrirModalEnviarPedidoAdmin === 'function') {
+          window.abrirModalEnviarPedidoAdmin({
+            tipo: 'MANIPULACAO',
+            modulo: 'Utilizadores',
+            assunto: `Pedido de autorização para eliminar conta de ${u.nome}`,
+            descricao: `Solicito autorização à Administração para eliminar a conta do utilizador '${u.nome}' (${u.login}).`
+          });
+        }
+        return;
+      }
+
       if (confirm(`Tem a certeza de que pretende eliminar permanentemente a conta de ${u.nome}? Esta ação é irreversível.`)) {
         utilizadores = utilizadores.filter(x => x.id !== userId);
         

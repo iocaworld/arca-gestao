@@ -5384,3 +5384,516 @@ window.marcarErroResolvido = function(logId) {
   } catch (e) {}
   return true;
 };
+
+// =============================================================================
+// A.R.C.A. - MOTOR DE PEDIDOS E VALIDAÇÕES DE UTILIZADORES / MEMBROS
+// =============================================================================
+
+const ARCA_PEDIDOS_ADMIN_KEY = 'arca_pedidos_admin_v1';
+
+function getArcaSeedPedidosAdmin() {
+  const now = new Date();
+  const subMin = (min) => new Date(now.getTime() - min * 60000).toISOString();
+  const subHours = (h) => new Date(now.getTime() - h * 3600000).toISOString();
+  const subDays = (d) => new Date(now.getTime() - d * 86400000).toISOString();
+
+  return [
+    {
+      id: "ped_20261127_001",
+      timestamp: subMin(45),
+      dataHoraFmt: "27/11/2026 11:40:15",
+      usuarioId: 2,
+      usuarioNome: "Artur Jorge Ferreira Cardoso",
+      usuarioLogin: "artur",
+      usuarioCargo: "Tesoureiro",
+      usuarioOrgao: "Direção",
+      tipo: "MANIPULACAO",
+      tipoBadge: "Autorização para Eliminar",
+      modulo: "Tesouraria",
+      assunto: "Autorização para eliminar registo de caixa duplicado (#CX-2026/019)",
+      descricao: "Foi detetado um lançamento de despesa em duplicado referente a material desportivo no valor de 45.00 €. Solicito autorização à Administração para eliminar permanentemente o lançamento duplicado.",
+      estado: "PENDENTE",
+      detalhesOperacao: { entidade: "caixa", entidadeId: "CX-2026/019", operacao: "ELIMINAR", valor: "45.00 €" },
+      respostaAdmin: null,
+      validadoPor: null,
+      validadoEm: null
+    },
+    {
+      id: "ped_20261127_002",
+      timestamp: subHours(2),
+      dataHoraFmt: "27/11/2026 10:15:30",
+      usuarioId: 3,
+      usuarioNome: "Raquel Alexandra Marques da Cunha",
+      usuarioLogin: "raquel",
+      usuarioCargo: "Secretária",
+      usuarioOrgao: "Direção",
+      tipo: "ACESSO",
+      tipoBadge: "Acesso a Módulo",
+      modulo: "Documentos",
+      assunto: "Pedido de acesso com permissão de escrita ao arquivo de Documentação ARCA",
+      descricao: "Para efeitos de arquivo e digitalização de atas anteriores da Assembleia Geral e termos de posse, necessito de permissão de escrita/carregamento no módulo de Documentação.",
+      estado: "PENDENTE",
+      detalhesOperacao: { moduloAlvo: "documentos", permissaoDesejada: "full" },
+      respostaAdmin: null,
+      validadoPor: null,
+      validadoEm: null
+    },
+    {
+      id: "ped_20261126_003",
+      timestamp: subDays(1),
+      dataHoraFmt: "26/11/2026 16:20:00",
+      usuarioId: 4,
+      usuarioNome: "Agostinho Rui Ferreira Martins",
+      usuarioLogin: "agostinho",
+      usuarioCargo: "Vogal",
+      usuarioOrgao: "Direção",
+      tipo: "NOVA_FUNCIONALIDADE",
+      tipoBadge: "Nova Funcionalidade",
+      modulo: "Secções & Grupos",
+      assunto: "Criação de nova secção desportiva: Ténis de Mesa da ARCA",
+      descricao: "Existe um grupo de sócios interessados em reativar a prática de ténis de mesa no pavilhão Carlos Almeida. Propõe-se a criação do submenu e respetiva ficha de secção.",
+      estado: "PENDENTE",
+      detalhesOperacao: null,
+      respostaAdmin: null,
+      validadoPor: null,
+      validadoEm: null
+    },
+    {
+      id: "ped_20261125_004",
+      timestamp: subDays(2),
+      dataHoraFmt: "25/11/2026 14:00:00",
+      usuarioId: 5,
+      usuarioNome: "Danilo Alexandre Estima Saraiva",
+      usuarioLogin: "danilo",
+      usuarioCargo: "Vogal",
+      usuarioOrgao: "Direção",
+      tipo: "ACESSO",
+      tipoBadge: "Acesso a Módulo",
+      modulo: "Gestão Desportiva",
+      assunto: "Acesso à gestão de delegados e jogos de Futsal",
+      descricao: "Solicito acesso para poder registar fichas de jogo e convocatórias na secção de futsal.",
+      estado: "APROVADO",
+      detalhesOperacao: { moduloAlvo: "desporto", permissaoDesejada: "full" },
+      respostaAdmin: "Acesso concedido com perfil de Delegado Desportivo para a época 2026.",
+      validadoPor: "Jorge Manuel da Silva Cunha (Presidente)",
+      validadoEm: "25/11/2026 15:30:00"
+    },
+    {
+      id: "ped_20261124_005",
+      timestamp: subDays(3),
+      dataHoraFmt: "24/11/2026 18:45:00",
+      usuarioId: 99,
+      usuarioNome: "Utilizador Convidado de Teste",
+      usuarioLogin: "utilizador_convidado",
+      usuarioCargo: "Convidado",
+      usuarioOrgao: "Nenhum",
+      tipo: "MANIPULACAO",
+      tipoBadge: "Autorização de Edição",
+      modulo: "Sócios",
+      assunto: "Alteração de número de sócio e morada de terceiro",
+      descricao: "Tentativa de alteração de dados de sócio sem comprovativo de autorização.",
+      estado: "REJEITADO",
+      detalhesOperacao: null,
+      respostaAdmin: "Rejeitado. Contas com perfil de Convidado não possuem legitimidade estatutária para alterar dados cadastrais de associados.",
+      validadoPor: "Jorge Manuel da Silva Cunha (Presidente)",
+      validadoEm: "24/11/2026 19:00:00"
+    }
+  ];
+}
+
+window.getArcaPedidosAdmin = function() {
+  try {
+    const raw = localStorage.getItem(ARCA_PEDIDOS_ADMIN_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.warn('[ARCA Pedidos] Erro ao ler pedidos locais:', e);
+  }
+  const seed = getArcaSeedPedidosAdmin();
+  try {
+    localStorage.setItem(ARCA_PEDIDOS_ADMIN_KEY, JSON.stringify(seed));
+  } catch (e) {}
+  return seed;
+};
+
+window.enviarPedidoAdmin = function(params) {
+  if (!params || !params.assunto || !params.descricao) {
+    return { success: false, message: 'Por favor preencha o assunto e a descrição do pedido.' };
+  }
+
+  const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2, '0');
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const y = now.getFullYear();
+  const h = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+
+  let tipoBadge = 'Pedido Geral';
+  if (params.tipo === 'ACESSO') tipoBadge = 'Acesso a Módulo';
+  else if (params.tipo === 'MANIPULACAO') tipoBadge = 'Autorização de Operação';
+  else if (params.tipo === 'NOVA_FUNCIONALIDADE') tipoBadge = 'Nova Funcionalidade';
+
+  const novoPedido = {
+    id: `ped_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+    timestamp: now.toISOString(),
+    dataHoraFmt: `${d}/${m}/${y} ${h}:${min}:${s}`,
+    usuarioId: currentUser ? currentUser.id : null,
+    usuarioNome: currentUser ? (currentUser.nome || currentUser.login) : 'Membro Autenticado',
+    usuarioLogin: currentUser ? currentUser.login : 'utilizador',
+    usuarioCargo: currentUser ? (currentUser.cargo || 'Membro') : 'Membro',
+    usuarioOrgao: currentUser ? (currentUser.orgao || 'Direção') : 'Direção',
+    tipo: params.tipo || 'ACESSO',
+    tipoBadge: tipoBadge,
+    modulo: params.modulo || 'Geral',
+    assunto: params.assunto.trim(),
+    descricao: params.descricao.trim(),
+    estado: 'PENDENTE',
+    detalhesOperacao: params.detalhesOperacao || null,
+    respostaAdmin: null,
+    validadoPor: null,
+    validadoEm: null
+  };
+
+  const pedidos = window.getArcaPedidosAdmin();
+  pedidos.unshift(novoPedido);
+  try {
+    localStorage.setItem(ARCA_PEDIDOS_ADMIN_KEY, JSON.stringify(pedidos));
+  } catch (e) {}
+
+  if (typeof window.saveArcaPedidoAdminToCloud === 'function') {
+    window.saveArcaPedidoAdminToCloud(novoPedido).catch(err => console.warn('Erro sync cloud pedido:', err));
+  }
+
+  // Registar no log de auditoria
+  if (typeof window.logArcaAtividade === 'function') {
+    window.logArcaAtividade({
+      modulo: 'Sistema',
+      acao: 'CRIACAO',
+      tipoBadge: 'Pedido Admin',
+      descricao: `Novo pedido enviado ao Administrador: ${novoPedido.assunto}`,
+      detalhes: `Submetido por ${novoPedido.usuarioNome} (${novoPedido.usuarioCargo}) referente a ${novoPedido.modulo}.`,
+      nivel: 'info',
+      revertivel: false
+    });
+  }
+
+  // Notificar e atualizar contadores
+  window.dispatchEvent(new CustomEvent('arca_pedido_admin_added', { detail: novoPedido }));
+  window.atualizarBadgesPedidosPendentes();
+
+  return { success: true, pedido: novoPedido };
+};
+
+window.aprovarPedidoAdmin = function(pedidoId, respostaAdmin, aplicarPermissao = false) {
+  const pedidos = window.getArcaPedidosAdmin();
+  const ped = pedidos.find(p => String(p.id) === String(pedidoId));
+  if (!ped) return { success: false, message: 'Pedido não encontrado.' };
+
+  const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+  const adminNome = currentUser ? (currentUser.nome || currentUser.login) : 'Jorge Manuel da Silva Cunha (Presidente)';
+
+  ped.estado = 'APROVADO';
+  ped.respostaAdmin = respostaAdmin || 'Pedido aprovado e autorizado pela Administração.';
+  ped.validadoPor = adminNome;
+  ped.validadoEm = new Date().toLocaleString('pt-PT');
+
+  try {
+    localStorage.setItem(ARCA_PEDIDOS_ADMIN_KEY, JSON.stringify(pedidos));
+  } catch (e) {}
+
+  if (typeof window.updateArcaPedidoAdminStatusInCloud === 'function') {
+    window.updateArcaPedidoAdminStatusInCloud(ped.id, {
+      estado: ped.estado,
+      respostaAdmin: ped.respostaAdmin,
+      validadoPor: ped.validadoPor,
+      validadoEm: ped.validadoEm
+    });
+  }
+
+  // Se for pedido de acesso e solicitar aplicação automática de permissão
+  if (aplicarPermissao && ped.tipo === 'ACESSO' && ped.detalhesOperacao?.moduloAlvo && ped.usuarioId) {
+    try {
+      const users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+      const user = users.find(u => Number(u.id) === Number(ped.usuarioId));
+      if (user) {
+        if (!user.permissoes_modulos) user.permissoes_modulos = {};
+        const modKey = ped.detalhesOperacao.moduloAlvo;
+        user.permissoes_modulos[modKey] = {
+          enabled: true,
+          mode: ped.detalhesOperacao.permissaoDesejada || 'full',
+          submenus: []
+        };
+        localStorage.setItem('arca_utilizadores_v1', JSON.stringify(users));
+        if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+          window.saveArcaUtilizadorToCloud(user);
+        }
+      }
+    } catch (e) {
+      console.warn('Erro ao conceder permissão automática:', e);
+    }
+  }
+
+  // Registar no log de auditoria
+  if (typeof window.logArcaAtividade === 'function') {
+    window.logArcaAtividade({
+      modulo: 'Utilizadores',
+      acao: 'MODIFICACAO',
+      tipoBadge: 'Aprovação Pedido',
+      descricao: `Pedido #${ped.id} aprovado por ${adminNome}`,
+      detalhes: `Autorizado o pedido de ${ped.usuarioNome} referente a '${ped.assunto}'. Resposta: ${ped.respostaAdmin}`,
+      nivel: 'aviso',
+      revertivel: false
+    });
+  }
+
+  window.atualizarBadgesPedidosPendentes();
+  return { success: true, pedido: ped };
+};
+
+window.rejeitarPedidoAdmin = function(pedidoId, motivoRejeicao) {
+  const pedidos = window.getArcaPedidosAdmin();
+  const ped = pedidos.find(p => String(p.id) === String(pedidoId));
+  if (!ped) return { success: false, message: 'Pedido não encontrado.' };
+
+  const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+  const adminNome = currentUser ? (currentUser.nome || currentUser.login) : 'Jorge Manuel da Silva Cunha (Presidente)';
+
+  ped.estado = 'REJEITADO';
+  ped.respostaAdmin = motivoRejeicao || 'Pedido recusado pela Administração.';
+  ped.validadoPor = adminNome;
+  ped.validadoEm = new Date().toLocaleString('pt-PT');
+
+  try {
+    localStorage.setItem(ARCA_PEDIDOS_ADMIN_KEY, JSON.stringify(pedidos));
+  } catch (e) {}
+
+  if (typeof window.updateArcaPedidoAdminStatusInCloud === 'function') {
+    window.updateArcaPedidoAdminStatusInCloud(ped.id, {
+      estado: ped.estado,
+      respostaAdmin: ped.respostaAdmin,
+      validadoPor: ped.validadoPor,
+      validadoEm: ped.validadoEm
+    });
+  }
+
+  // Registar no log de auditoria
+  if (typeof window.logArcaAtividade === 'function') {
+    window.logArcaAtividade({
+      modulo: 'Utilizadores',
+      acao: 'MODIFICACAO',
+      tipoBadge: 'Rejeição Pedido',
+      descricao: `Pedido #${ped.id} recusado por ${adminNome}`,
+      detalhes: `Recusado o pedido de ${ped.usuarioNome} referente a '${ped.assunto}'. Motivo: ${ped.respostaAdmin}`,
+      nivel: 'info',
+      revertivel: false
+    });
+  }
+
+  window.atualizarBadgesPedidosPendentes();
+  return { success: true, pedido: ped };
+};
+
+window.verificarExigeAutorizacao = function(moduloNome, operacaoTipo) {
+  const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+  if (!currentUser) return false;
+  // O Administrador Total (Jorge) nunca necessita de autorização
+  if (currentUser.perfil === 'Administrador Total' || currentUser.login === 'jorge' || currentUser.id === 1) {
+    return false;
+  }
+
+  const perms = currentUser.permissoes_modulos || {};
+  const modKey = (moduloNome || '').toLowerCase();
+  
+  // Encontrar o módulo nas permissões
+  let userMod = null;
+  for (const k of Object.keys(perms)) {
+    if (k.toLowerCase() === modKey || modKey.includes(k.toLowerCase()) || k.toLowerCase().includes(modKey)) {
+      userMod = perms[k];
+      break;
+    }
+  }
+
+  if (userMod) {
+    if (userMod.requer_aprovacao_admin || userMod.requer_autorizacao) {
+      return true;
+    }
+  }
+  return false;
+};
+
+window.atualizarBadgesPedidosPendentes = function() {
+  const pedidos = window.getArcaPedidosAdmin();
+  const pendentes = pedidos.filter(p => p.estado === 'PENDENTE').length;
+
+  document.querySelectorAll('.badge-pedidos-pendentes, #badgePedidosPendentes').forEach(el => {
+    el.textContent = pendentes;
+    el.style.display = pendentes > 0 ? 'inline-block' : 'none';
+  });
+};
+
+// =========================================================================
+// MODAL GLOBAL DE ENVIO DE PEDIDOS AO ADMINISTRADOR (INJETADO EM QUALQUER PÁGINA)
+// =========================================================================
+
+window.abrirModalEnviarPedidoAdmin = function(prefill = {}) {
+  let modal = document.getElementById('modalEnviarPedidoAdmin');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modalEnviarPedidoAdmin';
+    modal.className = 'modal-overlay';
+    modal.onclick = function(e) { if (e.target === this) window.fecharModalEnviarPedidoAdmin(); };
+    modal.innerHTML = `
+      <div class="modal-content" style="max-width: 600px; display: flex; flex-direction: column;">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-light); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span style="font-size: 1.3rem;">✉️</span>
+            <div>
+              <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-title);">Enviar Pedido ao Administrador</h2>
+              <p style="margin: 0.2rem 0 0 0; font-size: 0.78rem; color: var(--text-muted);">
+                Solicitação de acessos, autorização de operações sensíveis ou propostas de funcionalidades
+              </p>
+            </div>
+          </div>
+          <button class="modal-close-btn" type="button" onclick="window.fecharModalEnviarPedidoAdmin()">&times;</button>
+        </div>
+
+        <form id="formEnviarPedidoAdmin" onsubmit="window.handleSubmeterPedidoAdmin(event)" style="padding: 1.5rem;">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="inputPedidoTipo" style="font-weight: 700; font-size: 0.84rem;">Tipo de Pedido *</label>
+            <select id="inputPedidoTipo" class="form-control" required onchange="window.handlePedidoTipoChange(this.value)">
+              <option value="ACESSO">🔑 Pedido de Acesso a Funcionalidade / Módulo</option>
+              <option value="MANIPULACAO">⚠️ Pedido de Autorização para Operação (Modificar/Apagar)</option>
+              <option value="NOVA_FUNCIONALIDADE">💡 Proposta de Nova Funcionalidade / Melhoria</option>
+              <option value="OUTRO">📝 Outro Assunto / Pedido de Apoio</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="inputPedidoModulo" style="font-weight: 700; font-size: 0.84rem;">Módulo Relacionado *</label>
+              <select id="inputPedidoModulo" class="form-control" required>
+                <option value="Sócios & Cotas">Sócios & Cotas</option>
+                <option value="Membros">Membros dos Órgãos Sociais</option>
+                <option value="Atas da Direção">Atas da Direção</option>
+                <option value="Tesouraria">Tesouraria</option>
+                <option value="Gestão Desportiva">Gestão Desportiva</option>
+                <option value="Documentação ARCA">Documentação ARCA</option>
+                <option value="Secções & Grupos">Secções & Grupos</option>
+                <option value="Eventos">Eventos</option>
+                <option value="Utilizadores">Utilizadores & Acessos</option>
+                <option value="Geral">Geral / Outro</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="groupPedidoOperacao" style="display: none;">
+              <label class="form-label" for="inputPedidoOperacaoTipo" style="font-weight: 700; font-size: 0.84rem;">Ação a Autorizar</label>
+              <select id="inputPedidoOperacaoTipo" class="form-control">
+                <option value="ELIMINAR">Eliminar / Apagar Registo</option>
+                <option value="MODIFICAR">Modificar Dados Estruturais</option>
+                <option value="ANULAR">Anular / Cancelar Movimento</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="inputPedidoAssunto" style="font-weight: 700; font-size: 0.84rem;">Assunto do Pedido *</label>
+            <input type="text" id="inputPedidoAssunto" class="form-control" required placeholder="ex.: Pedido de acesso total para gerir pagamentos de cotas">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="inputPedidoDescricao" style="font-weight: 700; font-size: 0.84rem;">Mensagem / Justificação Detalhada *</label>
+            <textarea id="inputPedidoDescricao" class="form-control" rows="4" required style="resize: vertical;" placeholder="Indique o motivo e os detalhes do seu pedido para análise da Administração..."></textarea>
+          </div>
+
+          <div class="modal-footer" style="padding: 1rem 0 0 0; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end; gap: 0.6rem;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.fecharModalEnviarPedidoAdmin()">Cancelar</button>
+            <button type="submit" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+              <span>✉️ Submeter Pedido</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  // Preencher campos se existirem
+  const tipoSelect = document.getElementById('inputPedidoTipo');
+  const modSelect = document.getElementById('inputPedidoModulo');
+  const assuntoInput = document.getElementById('inputPedidoAssunto');
+  const descTextarea = document.getElementById('inputPedidoDescricao');
+
+  if (tipoSelect && prefill.tipo) {
+    tipoSelect.value = prefill.tipo;
+    window.handlePedidoTipoChange(prefill.tipo);
+  }
+  if (modSelect && prefill.modulo) modSelect.value = prefill.modulo;
+  if (assuntoInput && prefill.assunto) assuntoInput.value = prefill.assunto;
+  if (descTextarea && prefill.descricao) descTextarea.value = prefill.descricao;
+
+  modal.classList.add('active');
+};
+
+window.fecharModalEnviarPedidoAdmin = function() {
+  const modal = document.getElementById('modalEnviarPedidoAdmin');
+  if (modal) modal.classList.remove('active');
+};
+
+window.handlePedidoTipoChange = function(tipo) {
+  const groupOp = document.getElementById('groupPedidoOperacao');
+  if (groupOp) {
+    groupOp.style.display = (tipo === 'MANIPULACAO') ? 'block' : 'none';
+  }
+};
+
+window.handleSubmeterPedidoAdmin = function(e) {
+  e.preventDefault();
+  const tipo = document.getElementById('inputPedidoTipo')?.value;
+  const modulo = document.getElementById('inputPedidoModulo')?.value;
+  const assunto = document.getElementById('inputPedidoAssunto')?.value;
+  const descricao = document.getElementById('inputPedidoDescricao')?.value;
+  const operacaoTipo = document.getElementById('inputPedidoOperacaoTipo')?.value;
+
+  const res = window.enviarPedidoAdmin({
+    tipo,
+    modulo,
+    assunto,
+    descricao,
+    detalhesOperacao: (tipo === 'MANIPULACAO') ? { operacao: operacaoTipo } : null
+  });
+
+  if (res.success) {
+    window.fecharModalEnviarPedidoAdmin();
+    if (window.showToast) {
+      window.showToast('O seu pedido foi enviado com sucesso ao Administrador!', 'success');
+    } else {
+      alert('O seu pedido foi enviado com sucesso ao Administrador!');
+    }
+  } else {
+    alert(res.message);
+  }
+};
+
+// Inserir botão de pedido no topbar e atualizar badges ao carregar qualquer página
+document.addEventListener('DOMContentLoaded', () => {
+  window.atualizarBadgesPedidosPendentes();
+
+  // Inserir botão "✉️ Pedido ao Admin" na topbar de qualquer página se não existir
+  const topbarRight = document.querySelector('.app-topbar .topbar-right');
+  if (topbarRight && !document.getElementById('btnTopbarPedidoAdmin')) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'btnTopbarPedidoAdmin';
+    btn.className = 'btn btn-outline btn-xs';
+    btn.style.cssText = 'display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; border-color: #166534; color: #166534; padding: 0.35rem 0.65rem; border-radius: 9999px; margin-right: 0.5rem; background: #f0fdf4;';
+    btn.title = 'Enviar pedido ou solicitação de autorização ao Administrador';
+    btn.innerHTML = '<span>✉️ Pedido ao Admin</span>';
+    btn.onclick = () => window.abrirModalEnviarPedidoAdmin();
+    topbarRight.insertBefore(btn, topbarRight.firstChild);
+  }
+});
+
