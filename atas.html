@@ -372,6 +372,7 @@
       background: #fafaf9;
       border-bottom: 1px solid var(--border-light);
       overflow-x: auto;
+      overflow-y: hidden;
     }
     .wizard-step-pill {
       display: inline-flex;
@@ -3179,7 +3180,18 @@
       if (!grid) return;
 
       const users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
-      const dirigentes = users.filter(u => u.orgao && u.orgao !== 'Nenhum' && u.estado === 'Ativo');
+      const dirigentesRaw = users.filter(u => u.orgao && u.orgao !== 'Nenhum' && u.estado === 'Ativo');
+
+      // Desduplicar dirigentes por nome normalizado
+      const dirigentes = [];
+      const seenNames = new Set();
+      for (const d of dirigentesRaw) {
+        const norm = (d.nome || '').trim().toLowerCase();
+        if (!seenNames.has(norm)) {
+          seenNames.add(norm);
+          dirigentes.push(d);
+        }
+      }
 
       // Ordenação estritamente alfabética por nome
       dirigentes.sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt'));
