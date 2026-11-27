@@ -1825,11 +1825,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDiv = document.createElement('div');
     modalDiv.className = 'modal-overlay';
     modalDiv.id = 'modalMeuPerfilGlobal';
-    modalDiv.style.cssText = 'z-index: 99999; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);';
+    modalDiv.style.cssText = 'z-index: 100000 !important; background: rgba(15, 23, 42, 0.72) !important; backdrop-filter: blur(5px) !important;';
     modalDiv.onclick = function(e) { if (e.target === this) window.closeMeuPerfilModal(); };
     modalDiv.innerHTML = `
-      <div class="modal-content" style="max-width: 580px; max-height: 92vh; display: flex; flex-direction: column; background: #ffffff; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1); border-radius: 12px; overflow: hidden;">
-        <div class="modal-header">
+      <div class="modal-content" style="max-width: 580px; max-height: 92vh; display: flex; flex-direction: column; background: #ffffff !important; background-color: #ffffff !important; opacity: 1 !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border-radius: 12px; overflow: hidden; position: relative; z-index: 100001 !important;">
+        <div class="modal-header" style="background: #ffffff !important; padding: 1.25rem 1.5rem 0.75rem 1.5rem; border-bottom: 1px solid var(--border-light);">
           <div>
             <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin: 0;">👤 Os Meus Dados & Fotografia de Perfil</h2>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">
@@ -1839,8 +1839,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <button class="modal-close" onclick="closeMeuPerfilModal()">&times;</button>
         </div>
 
-        <form id="formMeuPerfilGlobal" onsubmit="window.salvarMeuPerfil(event)" style="display: flex; flex-direction: column; overflow: hidden; flex: 1;">
-          <div class="modal-body" style="padding: 1.25rem 1.5rem; overflow-y: auto;">
+        <form id="formMeuPerfilGlobal" onsubmit="window.salvarMeuPerfil(event)" style="display: flex; flex-direction: column; overflow: hidden; flex: 1; background: #ffffff !important;">
+          <div class="modal-body" style="padding: 1.25rem 1.5rem; overflow-y: auto; background: #ffffff !important;">
 
             <!-- Zona de Upload Drag-and-Drop de Avatar -->
             <div class="avatar-upload-zone" id="globalPerfilAvatarDropZone">

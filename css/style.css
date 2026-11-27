@@ -1545,12 +1545,13 @@ button, input, select, textarea {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(20, 35, 25, 0.45);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.72) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 100000 !important;
   padding: 1.5rem;
   visibility: hidden;
   opacity: 0;
@@ -1564,13 +1565,15 @@ button, input, select, textarea {
 }
 
 .modal-content {
-  background: #ffffff;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
   border-radius: var(--radius-lg);
   width: 100%;
   max-width: 560px;
   padding: 2rem;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 10px 20px -5px rgba(0, 0, 0, 0.15) !important;
   position: relative;
+  z-index: 100001 !important;
 }
 
 .modal-header {
