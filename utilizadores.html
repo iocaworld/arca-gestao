@@ -471,17 +471,24 @@
           </ul>
         </div>
 
-        <!-- 8. Menu: Utilizadores (Ativo) -->
+        <!-- 8. Menu: Painel de Controlo (Ativo) -->
         <div>
           <ul class="nav-list">
             <li>
-              <a href="utilizadores.html" class="nav-item-link active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-                <span>Utilizadores</span>
-              </a>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron" style="transform: rotate(90deg);">&#9656;</span>
+              </button>
+              <ul class="nav-sublist" style="display: block;">
+                <li><a href="utilizadores.html" class="nav-sublink active">Utilizadores</a></li>
+                <li><a href="logs.html" class="nav-sublink">Relatórios, Logs e Atividades</a></li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -2425,7 +2432,25 @@
           await window.deleteArcaUtilizadorFromCloud(userId);
         }
         saveUtilizadores();
-        if (window.showToast) window.showToast(`Utilizador ${u.nome} eliminado com sucesso.`, 'success');
+
+        // Registo automático de auditoria com dados para reversão
+        if (typeof window.logArcaAtividade === 'function') {
+          window.logArcaAtividade({
+            modulo: 'Utilizadores',
+            acao: 'ELIMINACAO',
+            tipoBadge: 'Eliminação',
+            descricao: `Eliminada a conta de utilizador '${u.nome}' (${u.login})`,
+            detalhes: `Conta removida pelo Administrador. É possível restaurar o registo no painel de Relatórios e Logs.`,
+            nivel: 'critico',
+            revertivel: true,
+            entidade: 'utilizadores',
+            entidadeId: userId,
+            dadosAnteriores: u,
+            dadosNovos: null
+          });
+        }
+
+        if (window.showToast) window.showToast(`Utilizador ${u.nome} eliminado com sucesso. Pode restaurá-lo em Relatórios, Logs e Atividades.`, 'success');
       }
     };
 

@@ -937,6 +937,7 @@
               </button>
               <ul class="nav-sublist">
                 <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+                <li><a href="logs.html" class="nav-sublink">Relatórios, Logs e Atividades</a></li>
               </ul>
             </li>
           </ul>
@@ -3570,7 +3571,25 @@
         }
 
         saveAtas();
-        if (window.showToast) window.showToast(`Ata eliminada com sucesso.`, 'success');
+
+        // Registo automático de auditoria com dados para reversão
+        if (typeof window.logArcaAtividade === 'function') {
+          window.logArcaAtividade({
+            modulo: 'Atas',
+            acao: 'ELIMINACAO',
+            tipoBadge: 'Eliminação',
+            descricao: `Eliminada a Ata ${a.referencia || '#' + a.numero} (${a.tipo || 'Reunião'})`,
+            detalhes: `Ata apagada do sistema. É possível restaurar o registo integral no painel de Relatórios e Logs.`,
+            nivel: 'critico',
+            revertivel: true,
+            entidade: 'atas',
+            entidadeId: ataId,
+            dadosAnteriores: a,
+            dadosNovos: null
+          });
+        }
+
+        if (window.showToast) window.showToast(`Ata eliminada com sucesso. Pode restaurá-la a qualquer momento em Relatórios, Logs e Atividades.`, 'success');
       }
     };
 

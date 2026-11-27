@@ -4797,3 +4797,590 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+// =============================================================================
+// A.R.C.A. - MOTOR GLOBAL DE AUDITORIA, LOGS E HISTÓRICO DE ATIVIDADES
+// =============================================================================
+
+const ARCA_AUDIT_LOGS_KEY = 'arca_audit_logs_v1';
+
+function getArcaSeedAuditLogs() {
+  const now = new Date();
+  const subMin = (min) => new Date(now.getTime() - min * 60000).toISOString();
+  const subHours = (h) => new Date(now.getTime() - h * 3600000).toISOString();
+  const subDays = (d) => new Date(now.getTime() - d * 86400000).toISOString();
+
+  return [
+    {
+      id: "log_20261127_001",
+      timestamp: subMin(12),
+      dataHoraFmt: "27/11/2026 11:56:36",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Atas",
+      acao: "CRIACAO",
+      tipoBadge: "Criação",
+      descricao: "Criada e registada a Ata 020/1126 - Reunião de Direção",
+      detalhes: "Ata referente à logística e organização dos Jogos de Futsal da ARCA com 10 dirigentes presentes.",
+      nivel: "info",
+      revertivel: true,
+      revertido: false,
+      revertidoEm: null,
+      revertidoPor: null,
+      entidade: "atas",
+      entidadeId: 20,
+      dadosAnteriores: null,
+      dadosNovos: { id: 20, numero: 20, referencia: "020/1126", tipo: "Reunião de Direção", local: "Grupo WhatsApp - Direção ARCA" },
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    },
+    {
+      id: "log_20261127_002",
+      timestamp: subMin(35),
+      dataHoraFmt: "27/11/2026 11:33:10",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Membros",
+      acao: "EXPORTACAO",
+      tipoBadge: "Exportação",
+      descricao: "Exportada a Listagem Oficial de Membros em formato PDF",
+      detalhes: "Exportação dos 21 membros dos órgãos sociais em vigor para arquivo e impressão oficial.",
+      nivel: "info",
+      revertivel: false,
+      revertido: false,
+      entidade: "membros",
+      entidadeId: null,
+      dadosAnteriores: null,
+      dadosNovos: null,
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    },
+    {
+      id: "log_20261127_003",
+      timestamp: subHours(1),
+      dataHoraFmt: "27/11/2026 11:05:42",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Sócios",
+      acao: "MODIFICACAO",
+      tipoBadge: "Modificação",
+      descricao: "Ficha do Sócio #12 (António da Silva) atualizada",
+      detalhes: "Alterado o contacto telefónico de '912345678' para '934567890' e a morada de residência.",
+      nivel: "aviso",
+      revertivel: true,
+      revertido: false,
+      revertidoEm: null,
+      revertidoPor: null,
+      entidade: "socios",
+      entidadeId: 12,
+      dadosAnteriores: {
+        id: 12,
+        nome: "António da Silva",
+        telemovel: "912345678",
+        morada: "Rua Central Velha, 10, Aguada de Baixo"
+      },
+      dadosNovos: {
+        id: 12,
+        nome: "António da Silva",
+        telemovel: "934567890",
+        morada: "Rua dos Emigrantes, 45, Aguada de Baixo"
+      },
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    },
+    {
+      id: "log_20261127_004",
+      timestamp: subHours(2),
+      dataHoraFmt: "27/11/2026 10:02:18",
+      usuarioId: 2,
+      usuarioNome: "Artur Jorge Ferreira Cardoso",
+      usuarioLogin: "artur",
+      usuarioCargo: "Tesoureiro",
+      usuarioPerfil: "Utilizador",
+      modulo: "Sócios",
+      acao: "CRIACAO",
+      tipoBadge: "Pagamento",
+      descricao: "Liquidada a cota de 2026 para a Sócia #414 (Raquel Cunha)",
+      detalhes: "Valor recebido de 12.00 € referente à cota anual de 2026. Emitido recibo #REC-2026/048.",
+      nivel: "info",
+      revertivel: true,
+      revertido: false,
+      entidade: "cotas",
+      entidadeId: 414,
+      dadosAnteriores: { socioId: 414, ano: 2026, pago: false, valor: 12.0 },
+      dadosNovos: { socioId: 414, ano: 2026, pago: true, dataPagamento: "2026-11-27", metodo: "Numerário" },
+      dispositivo: "Dispositivo Móvel • Safari",
+      ip: "192.168.1.45"
+    },
+    {
+      id: "log_20261127_005",
+      timestamp: subHours(3),
+      dataHoraFmt: "27/11/2026 09:12:05",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Utilizadores",
+      acao: "ELIMINACAO",
+      tipoBadge: "Eliminação",
+      descricao: "Eliminada a conta de utilizador teste 'utilizador_convidado'",
+      detalhes: "Utilizador ID #99 removido pelo Administrador. É possível reverter e restaurar o registo integral.",
+      nivel: "critico",
+      revertivel: true,
+      revertido: false,
+      revertidoEm: null,
+      revertidoPor: null,
+      entidade: "utilizadores",
+      entidadeId: 99,
+      dadosAnteriores: {
+        id: 99,
+        nome: "Utilizador Convidado de Teste",
+        login: "utilizador_convidado",
+        email: "convidado.teste@arca-aguada.pt",
+        perfil: "Utilizador",
+        cargo: "Convidado",
+        orgao: "Nenhum",
+        estado: "Inativo",
+        numeroSocio: 499
+      },
+      dadosNovos: null,
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    },
+    {
+      id: "log_20261127_006",
+      timestamp: subHours(4),
+      dataHoraFmt: "27/11/2026 08:30:15",
+      usuarioId: 3,
+      usuarioNome: "Raquel Alexandra Marques da Cunha",
+      usuarioLogin: "raquel",
+      usuarioCargo: "Secretária",
+      usuarioPerfil: "Utilizador",
+      modulo: "Sistema",
+      acao: "ACESSO",
+      tipoBadge: "Sessão",
+      descricao: "Início de sessão bem-sucedido na plataforma",
+      detalhes: "Autenticação via login e password efetuada com sucesso no portal da ARCA.",
+      nivel: "info",
+      revertivel: false,
+      revertido: false,
+      entidade: "sistema",
+      entidadeId: 3,
+      dispositivo: "Dispositivo Móvel • Chrome",
+      ip: "192.168.1.22"
+    },
+    {
+      id: "log_20261126_007",
+      timestamp: subDays(1),
+      dataHoraFmt: "26/11/2026 19:40:00",
+      usuarioId: null,
+      usuarioNome: "Sistema de Segurança",
+      usuarioLogin: "security",
+      usuarioCargo: "Guarda de Acessos",
+      usuarioPerfil: "Sistema",
+      modulo: "Sistema",
+      acao: "ERRO",
+      tipoBadge: "Alerta de Segurança",
+      descricao: "Tentativa de login com credenciais incorretas (login: 'admin')",
+      detalhes: "Tentativa de acesso não autorizado detetada a partir do IP 192.168.1.105. Proteção ativada.",
+      nivel: "erro",
+      revertivel: false,
+      revertido: false,
+      resolvido: false,
+      entidade: "seguranca",
+      entidadeId: null,
+      dispositivo: "Servidor / Web",
+      ip: "192.168.1.105"
+    },
+    {
+      id: "log_20261126_008",
+      timestamp: subDays(1),
+      dataHoraFmt: "26/11/2026 17:15:22",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Utilizadores",
+      acao: "MODIFICACAO",
+      tipoBadge: "Permissões",
+      descricao: "Permissões de Tesouraria e Atas concedidas a Artur Jorge Cardoso",
+      detalhes: "Ativados privilégios granulares de edição e liquidação de cotas.",
+      nivel: "aviso",
+      revertivel: true,
+      revertido: false,
+      entidade: "utilizadores",
+      entidadeId: 2,
+      dadosAnteriores: {
+        id: 2,
+        nome: "Artur Jorge Ferreira Cardoso",
+        permissoes_modulos: { socios: "ler", cotas: "ler", tesouraria: "ler", atas: "ler" }
+      },
+      dadosNovos: {
+        id: 2,
+        nome: "Artur Jorge Ferreira Cardoso",
+        permissoes_modulos: { socios: "total", cotas: "total", tesouraria: "total", atas: "total" }
+      },
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    },
+    {
+      id: "log_20261126_009",
+      timestamp: subDays(1),
+      dataHoraFmt: "26/11/2026 15:45:00",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Atas",
+      acao: "REVERSAO",
+      tipoBadge: "Reversão",
+      descricao: "Revertida alteração na data da Ata 018/1026",
+      detalhes: "Data reposta para '28/10/2026' a partir do registo de auditoria anterior.",
+      nivel: "info",
+      revertivel: false,
+      revertido: true,
+      revertidoEm: subDays(1),
+      revertidoPor: "Jorge Manuel da Silva Cunha",
+      entidade: "atas",
+      entidadeId: 18,
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    },
+    {
+      id: "log_20261125_010",
+      timestamp: subDays(2),
+      dataHoraFmt: "25/11/2026 16:30:10",
+      usuarioId: 2,
+      usuarioNome: "Artur Jorge Ferreira Cardoso",
+      usuarioLogin: "artur",
+      usuarioCargo: "Tesoureiro",
+      usuarioPerfil: "Utilizador",
+      modulo: "Tesouraria",
+      acao: "CRIACAO",
+      tipoBadge: "Recibo",
+      descricao: "Emitido Recibo Oficial de Quota #REC-2026/041",
+      detalhes: "Recibo emitido no valor de 12.00 € com assinatura da Tesouraria.",
+      nivel: "info",
+      revertivel: false,
+      revertido: false,
+      entidade: "recibos",
+      entidadeId: "REC-2026/041",
+      dispositivo: "Desktop • Firefox",
+      ip: "192.168.1.45"
+    },
+    {
+      id: "log_20261125_011",
+      timestamp: subDays(2),
+      dataHoraFmt: "25/11/2026 14:10:00",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Sócios",
+      acao: "EXPORTACAO",
+      tipoBadge: "Exportação",
+      descricao: "Exportada a Listagem Completa de Sócios em Excel (.xls)",
+      detalhes: "Ficheiro gerado com dados cadastrais e situação de quotas para auditoria da Direção.",
+      nivel: "info",
+      revertivel: false,
+      revertido: false,
+      entidade: "socios",
+      entidadeId: null,
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    },
+    {
+      id: "log_20261124_012",
+      timestamp: subDays(3),
+      dataHoraFmt: "24/11/2026 11:20:00",
+      usuarioId: 1,
+      usuarioNome: "Jorge Manuel da Silva Cunha",
+      usuarioLogin: "jorge",
+      usuarioCargo: "Presidente",
+      usuarioPerfil: "Administrador Total",
+      modulo: "Documentos",
+      acao: "CRIACAO",
+      tipoBadge: "Documento",
+      descricao: "Carregado o documento 'Plano de Atividades e Orçamento 2026'",
+      detalhes: "Documento oficial arquivado na secção de Documentação ARCA.",
+      nivel: "info",
+      revertivel: true,
+      revertido: false,
+      entidade: "documentos",
+      entidadeId: "doc_plano_2026",
+      dispositivo: "Desktop • Chrome",
+      ip: "192.168.1.10"
+    }
+  ];
+}
+
+window.getArcaAuditLogs = function() {
+  try {
+    const raw = localStorage.getItem(ARCA_AUDIT_LOGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.warn('[ARCA Logs] Erro ao ler logs locais:', e);
+  }
+  const seed = getArcaSeedAuditLogs();
+  try {
+    localStorage.setItem(ARCA_AUDIT_LOGS_KEY, JSON.stringify(seed));
+  } catch (e) {}
+  return seed;
+};
+
+window.logArcaAtividade = function(params) {
+  if (!params) return null;
+  const user = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2, '0');
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const y = now.getFullYear();
+  const h = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+
+  const logEntry = {
+    id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+    timestamp: now.toISOString(),
+    dataHoraFmt: `${d}/${m}/${y} ${h}:${min}:${s}`,
+    usuarioId: user ? user.id : (params.usuarioId || null),
+    usuarioNome: user ? (user.nome || user.login) : (params.usuarioNome || 'Sistema Automático'),
+    usuarioLogin: user ? user.login : (params.usuarioLogin || 'sistema'),
+    usuarioCargo: user ? (user.cargo || 'Membro') : (params.usuarioCargo || 'Sistema'),
+    usuarioPerfil: user ? user.perfil : (params.usuarioPerfil || 'Utilizador'),
+    modulo: params.modulo || 'Geral',
+    acao: params.acao || 'MODIFICACAO',
+    tipoBadge: params.tipoBadge || params.acao || 'Atividade',
+    descricao: params.descricao || 'Atividade registada no sistema',
+    detalhes: params.detalhes || '',
+    nivel: params.nivel || 'info', // 'info' | 'aviso' | 'critico' | 'erro'
+    revertivel: params.revertivel ?? false,
+    revertido: false,
+    revertidoEm: null,
+    revertidoPor: null,
+    resolvido: params.resolvido ?? false,
+    entidade: params.entidade || null,
+    entidadeId: params.entidadeId || null,
+    dadosAnteriores: params.dadosAnteriores || null,
+    dadosNovos: params.dadosNovos || null,
+    dispositivo: (navigator.userAgent && navigator.userAgent.includes('Mobile')) ? 'Dispositivo Móvel' : 'Desktop',
+    ip: params.ip || '192.168.1.10'
+  };
+
+  const currentLogs = window.getArcaAuditLogs();
+  currentLogs.unshift(logEntry);
+  try {
+    localStorage.setItem(ARCA_AUDIT_LOGS_KEY, JSON.stringify(currentLogs));
+  } catch (e) {}
+
+  if (typeof window.saveArcaLogToCloud === 'function') {
+    window.saveArcaLogToCloud(logEntry).catch(e => console.warn('Erro sync log cloud:', e));
+  }
+
+  // Despachar evento para atualizar interfaces abertas
+  window.dispatchEvent(new CustomEvent('arca_audit_log_added', { detail: logEntry }));
+  return logEntry;
+};
+
+window.reverterLogAtividade = function(logId, nota) {
+  const logs = window.getArcaAuditLogs();
+  const log = logs.find(l => String(l.id) === String(logId));
+  if (!log) {
+    return { success: false, message: 'Registo de log não encontrado.' };
+  }
+  if (!log.revertivel) {
+    return { success: false, message: 'Esta ação não permite reversão automática.' };
+  }
+  if (log.revertido) {
+    return { success: false, message: 'Este evento já foi revertido anteriormente.' };
+  }
+
+  const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+  const adminNome = currentUser ? (currentUser.nome || currentUser.login) : 'Administrador';
+
+  let restaurouComSucesso = false;
+  let detalheRestauro = '';
+
+  // 1. ELIMINAÇÃO: Restaurar registo apagado
+  if (log.acao === 'ELIMINACAO' && log.dadosAnteriores) {
+    if (log.entidade === 'utilizadores') {
+      try {
+        const users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+        const exists = users.some(u => Number(u.id) === Number(log.dadosAnteriores.id));
+        if (!exists) {
+          users.push(log.dadosAnteriores);
+          localStorage.setItem('arca_utilizadores_v1', JSON.stringify(users));
+          const deleted = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+          const idxDel = deleted.indexOf(Number(log.dadosAnteriores.id));
+          if (idxDel >= 0) {
+            deleted.splice(idxDel, 1);
+            localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deleted));
+          }
+          if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+            window.saveArcaUtilizadorToCloud(log.dadosAnteriores);
+          }
+        }
+        restaurouComSucesso = true;
+        detalheRestauro = `Utilizador '${log.dadosAnteriores.nome || log.dadosAnteriores.login}' restaurado com sucesso!`;
+      } catch (e) {
+        return { success: false, message: 'Erro ao restaurar utilizador: ' + e.message };
+      }
+    } else if (log.entidade === 'atas') {
+      try {
+        let atas = [];
+        try { atas = JSON.parse(localStorage.getItem('arca_atas_v1') || '[]'); } catch (e) {}
+        const exists = atas.some(a => Number(a.id) === Number(log.dadosAnteriores.id));
+        if (!exists) {
+          atas.unshift(log.dadosAnteriores);
+          localStorage.setItem('arca_atas_v1', JSON.stringify(atas));
+          const deleted = JSON.parse(localStorage.getItem('arca_deleted_ata_ids') || '[]');
+          const idxDel = deleted.indexOf(Number(log.dadosAnteriores.id));
+          if (idxDel >= 0) {
+            deleted.splice(idxDel, 1);
+            localStorage.setItem('arca_deleted_ata_ids', JSON.stringify(deleted));
+          }
+          if (typeof window.saveArcaAtaToCloud === 'function') {
+            window.saveArcaAtaToCloud(log.dadosAnteriores);
+          }
+        }
+        restaurouComSucesso = true;
+        detalheRestauro = `Ata '${log.dadosAnteriores.referencia || log.dadosAnteriores.numero}' restaurada com sucesso!`;
+      } catch (e) {
+        return { success: false, message: 'Erro ao restaurar ata: ' + e.message };
+      }
+    } else if (log.entidade === 'socios') {
+      try {
+        let socios = (typeof window.getArcaSocios === 'function') ? window.getArcaSocios() : [];
+        const exists = socios.some(s => Number(s.id) === Number(log.dadosAnteriores.id));
+        if (!exists) {
+          socios.unshift(log.dadosAnteriores);
+          localStorage.setItem('arca_socios_v1', JSON.stringify(socios));
+        }
+        restaurouComSucesso = true;
+        detalheRestauro = `Sócio '${log.dadosAnteriores.nome}' (Nº ${log.dadosAnteriores.numeroSocio || log.dadosAnteriores.id}) restaurado com sucesso!`;
+      } catch (e) {
+        return { success: false, message: 'Erro ao restaurar sócio: ' + e.message };
+      }
+    } else {
+      restaurouComSucesso = true;
+      detalheRestauro = `Registo da entidade '${log.entidade}' restaurado com sucesso.`;
+    }
+  }
+
+  // 2. MODIFICAÇÃO: Reverter para os valores anteriores
+  else if (log.acao === 'MODIFICACAO' && log.dadosAnteriores) {
+    if (log.entidade === 'socios') {
+      try {
+        let socios = (typeof window.getArcaSocios === 'function') ? window.getArcaSocios() : [];
+        const target = socios.find(s => Number(s.id) === Number(log.entidadeId));
+        if (target) {
+          Object.assign(target, log.dadosAnteriores);
+          localStorage.setItem('arca_socios_v1', JSON.stringify(socios));
+        }
+        restaurouComSucesso = true;
+        detalheRestauro = `Dados anteriores do Sócio #${log.entidadeId} repostos com sucesso!`;
+      } catch (e) {
+        return { success: false, message: 'Erro ao reverter sócio: ' + e.message };
+      }
+    } else if (log.entidade === 'utilizadores') {
+      try {
+        let users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+        const target = users.find(u => Number(u.id) === Number(log.entidadeId));
+        if (target) {
+          Object.assign(target, log.dadosAnteriores);
+          localStorage.setItem('arca_utilizadores_v1', JSON.stringify(users));
+          if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+            window.saveArcaUtilizadorToCloud(target);
+          }
+        }
+        restaurouComSucesso = true;
+        detalheRestauro = `Valores anteriores do Utilizador #${log.entidadeId} repostos com sucesso!`;
+      } catch (e) {
+        return { success: false, message: 'Erro ao reverter utilizador: ' + e.message };
+      }
+    } else if (log.entidade === 'atas') {
+      try {
+        let atas = JSON.parse(localStorage.getItem('arca_atas_v1') || '[]');
+        const target = atas.find(a => Number(a.id) === Number(log.entidadeId));
+        if (target) {
+          Object.assign(target, log.dadosAnteriores);
+          localStorage.setItem('arca_atas_v1', JSON.stringify(atas));
+          if (typeof window.saveArcaAtaToCloud === 'function') {
+            window.saveArcaAtaToCloud(target);
+          }
+        }
+        restaurouComSucesso = true;
+        detalheRestauro = `Valores anteriores da Ata #${log.entidadeId} repostos com sucesso!`;
+      } catch (e) {
+        return { success: false, message: 'Erro ao reverter ata: ' + e.message };
+      }
+    } else {
+      restaurouComSucesso = true;
+      detalheRestauro = `Reversão dos valores anteriores da entidade '${log.entidade}' concluída.`;
+    }
+  } else {
+    restaurouComSucesso = true;
+    detalheRestauro = `Ação #${log.id} assinalada como revertida.`;
+  }
+
+  // Atualizar o log
+  log.revertido = true;
+  log.revertidoEm = new Date().toISOString();
+  log.revertidoPor = adminNome;
+  log.notaReversao = nota || detalheRestauro;
+
+  try {
+    localStorage.setItem(ARCA_AUDIT_LOGS_KEY, JSON.stringify(logs));
+  } catch (e) {}
+
+  if (typeof window.updateArcaLogRevertidoInCloud === 'function') {
+    window.updateArcaLogRevertidoInCloud(log.id, {
+      revertidoEm: log.revertidoEm,
+      revertidoPor: log.revertidoPor,
+      notaReversao: log.notaReversao
+    });
+  }
+
+  // Gerar novo log da reversão
+  window.logArcaAtividade({
+    modulo: log.modulo,
+    acao: 'REVERSAO',
+    tipoBadge: 'Reversão',
+    descricao: `Reversão executada: ${log.descricao}`,
+    detalhes: detalheRestauro + (nota ? ` (Nota: ${nota})` : ''),
+    nivel: 'info',
+    revertivel: false,
+    entidade: log.entidade,
+    entidadeId: log.entidadeId
+  });
+
+  return { success: true, message: detalheRestauro };
+};
+
+window.marcarErroResolvido = function(logId) {
+  const logs = window.getArcaAuditLogs();
+  const log = logs.find(l => String(l.id) === String(logId));
+  if (!log) return false;
+  log.resolvido = true;
+  log.resolvidoEm = new Date().toISOString();
+  try {
+    localStorage.setItem(ARCA_AUDIT_LOGS_KEY, JSON.stringify(logs));
+  } catch (e) {}
+  return true;
+};

@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.R.C.A. - Relatórios, Logs e Atividades | Painel de Controlo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261127_v2">
+  
+  <style>
+    /* Estilos Específicos do Módulo de Logs e Auditoria */
+    .logs-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .log-stat-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .log-stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .log-stat-info h4 {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .log-stat-info .stat-number {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text-title);
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+
+    /* Badges de Ação */
+    .badge-acao {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .badge-acao-criacao {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .badge-acao-modificacao {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .badge-acao-eliminacao {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .badge-acao-acesso {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+    .badge-acao-exportacao {
+      background: #f3e8ff;
+      color: #7e22ce;
+      border: 1px solid #e9d5ff;
+    }
+    .badge-acao-erro {
+      background: #ffe4e6;
+      color: #be123c;
+      border: 1px solid #fecdd3;
+    }
+    .badge-acao-reversao {
+      background: #ccfbf1;
+      color: #0f766e;
+      border: 1px solid #99f6e4;
+    }
+
+    /* Badges de Módulo */
+    .badge-modulo {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .badge-modulo-socios { background: #dcfce7; color: #166534; }
+    .badge-modulo-membros { background: #ede9fe; color: #5b21b6; }
+    .badge-modulo-atas { background: #e0f2fe; color: #075985; }
+    .badge-modulo-utilizadores { background: #fae8ff; color: #86198f; }
+    .badge-modulo-tesouraria { background: #fef9c3; color: #854d0e; }
+    .badge-modulo-documentos { background: #ffedd5; color: #9a3412; }
+    .badge-modulo-sistema { background: #e2e8f0; color: #334155; }
+
+    /* Barra de Controlos & Filtros */
+    .logs-controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .logs-search-box {
+      flex: 1 1 240px;
+      min-width: 200px;
+      position: relative;
+    }
+    .logs-search-box input {
+      width: 100%;
+      padding: 0.6rem 0.9rem 0.6rem 2.4rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      background: #ffffff;
+    }
+    .logs-search-box svg {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    .logs-filters-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .logs-filter-select {
+      padding: 0.55rem 0.8rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      background: #ffffff;
+      color: var(--text-title);
+      cursor: pointer;
+    }
+
+    /* Alternador de Vista (Tabela / Linha Temporal) */
+    .view-toggle-group {
+      display: flex;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .view-toggle-btn {
+      padding: 0.5rem 0.8rem;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+    .view-toggle-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Export Dropdown */
+    .export-dropdown-group {
+      position: relative;
+      display: inline-block;
+    }
+    .export-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
+      min-width: 250px;
+      padding: 0.75rem 0.65rem;
+      z-index: 99999 !important;
+      display: none;
+    }
+    .export-dropdown-menu.show {
+      display: block !important;
+    }
+    .export-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: none;
+      background: none;
+      border-radius: var(--radius-xs);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--text-title);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .export-menu-item:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+
+    /* Linha Temporal (Timeline) */
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: #e2e8f0;
+    }
+    .timeline-item {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.1rem 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .timeline-item:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -2.35rem;
+      top: 1.25rem;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--primary);
+      z-index: 2;
+    }
+
+    /* Comparador Diff Antes vs Depois */
+    .diff-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      margin-top: 0.75rem;
+    }
+    .diff-table th {
+      background: #f8fafc;
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 2px solid #e2e8f0;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .diff-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    .diff-val-old {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      text-decoration: line-through;
+      display: inline-block;
+    }
+    .diff-val-new {
+      background: #dcfce7;
+      color: #166534;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Barra Lateral (Sidebar com Submenu em Painel de Controlo) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="assets/arca-logo.png" alt="ARCA Logótipo">
+        </div>
+        <div class="sidebar-brand">
+          <h2>A.R.C.A.</h2>
+          <span>Aguada de Baixo</span>
+        </div>
+        <button class="sidebar-close-btn" aria-label="Fechar menu">&times;</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- 1. Menu: Visão Geral -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="painel.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/>
+                  <rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Visão Geral</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 2. Menu: Gestão -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Gestão</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="calendario.html" class="nav-sublink">Calendário</a></li>
+                <li><a href="calendario.html?filtro=jogos" class="nav-sublink">Jogos</a></li>
+                <li><a href="calendario.html?filtro=eventos" class="nav-sublink">Eventos</a></li>
+                <li><a href="calendario.html?filtro=reunioes" class="nav-sublink">Reuniões</a></li>
+                <li><a href="calendario.html?filtro=tarefas" class="nav-sublink">Tarefas e Importantes</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 3. Menu: Sócios -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <a href="socios.html" class="nav-item-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Sócios & Cotas</span>
+                <span class="nav-item-badge">248</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Menu: Tesouraria -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                    <circle cx="16" cy="15" r="1"/>
+                  </svg>
+                  <span>Tesouraria</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="tesouraria.html?tab=caixa" class="nav-sublink">Caixa/Movimentos</a></li>
+                <li><a href="tesouraria.html?tab=recibos" class="nav-sublink">Recibos Emitidos</a></li>
+                <li><a href="tesouraria.html?tab=fornecedores" class="nav-sublink">Fornecedores</a></li>
+                <li><a href="tesouraria.html?tab=pos" class="nav-sublink">P.O.S.</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 4. Menu: Direção -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Direção</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="atas.html" class="nav-sublink">Atas Direção</a></li>
+                <li><a href="membros.html" class="nav-sublink">Membros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Menu: Gestão Desportiva -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                    <path d="M2 12h20"/>
+                  </svg>
+                  <span>Gestão Desportiva</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="desporto.html?cargo=diretor" class="nav-sublink">Diretor Desportivo</a></li>
+                <li><a href="desporto.html?cargo=delegado" class="nav-sublink">Delegado</a></li>
+                <li><a href="desporto.html?cargo=fisio" class="nav-sublink">Fisio & Clinica</a></li>
+                <li><a href="desporto.html?cargo=seguros" class="nav-sublink">Seguros</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 5. Menu: Documentação ARCA -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>Documentação ARCA</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
+                <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
+                <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
+                <li><a href="documentos.html?cat=direcoes_anteriores" class="nav-sublink">Listagem Direções Anteriores</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 6. Menu: Secções & Grupos -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
+                  </svg>
+                  <span>Secções & Grupos</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="seccoes.html?sec=futsal_masculino" class="nav-sublink">Futsal</a></li>
+                <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
+                <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
+                <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
+                <li><a href="seccoes.html?sec=funcional" class="nav-sublink">Treino Funcional</a></li>
+                <li><a href="seccoes.html?sec=pilates" class="nav-sublink">Pilates</a></li>
+                <li><a href="seccoes.html?sec=tea" class="nav-sublink">TEA</a></li>
+                <li><a href="seccoes.html?sec=olhares_disparos" class="nav-sublink">Olhares e Disparos</a></li>
+                <li><a href="seccoes.html?sec=bacharca" class="nav-sublink">Bach'Arca</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 7. Menu: Eventos & Organizações -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
+                  </svg>
+                  <span>Eventos & Organizações</span>
+                </span>
+                <span class="chevron">&#9656;</span>
+              </button>
+              <ul class="nav-sublist">
+                <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
+                <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
+                <li><a href="eventos.html?ev=taca_jorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
+                <li><a href="eventos.html?ev=agitagueda" class="nav-sublink">AgitÁgueda</a></li>
+                <li><a href="eventos.html?ev=aniversario_arca" class="nav-sublink">Aniversário ARCA</a></li>
+                <li><a href="eventos.html?ev=jantar_natal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 8. Menu: Painel de Controlo (COM O NOVO SUBMENU) -->
+        <div>
+          <ul class="nav-list">
+            <li>
+              <button class="nav-item-parent open" type="button">
+                <span class="nav-parent-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                  </svg>
+                  <span>Painel de Controlo</span>
+                </span>
+                <span class="chevron" style="transform: rotate(90deg);">&#9656;</span>
+              </button>
+              <ul class="nav-sublist" style="display: block;">
+                <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
+                <li><a href="logs.html" class="nav-sublink active">Relatórios, Logs e Atividades</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar" id="sidebarUserAvatar">JC</div>
+        <div class="user-details">
+          <div class="user-name" id="sidebarUserName">Jorge Cunha</div>
+          <div class="user-role" id="sidebarUserRole">Presidente &bull; Admin Total</div>
+        </div>
+        <a href="javascript:void(0)" onclick="handleLogout()" class="btn-sidebar-logout" title="Terminar Sessão">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <div class="app-main">
+      
+      <!-- Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" aria-label="Abrir Menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-breadcrumb">
+            <a href="painel.html" style="color: inherit; text-decoration: none;">Painel de Controlo</a>
+            <span class="sep">/</span>
+            <span class="current">Relatórios, Logs e Atividades</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-profile-badge">
+            <div class="avatar-sm" id="topbarUserAvatar">JC</div>
+            <div class="profile-info">
+              <span class="name" id="topbarUserName">Jorge Cunha</span>
+              <span class="badge" id="topbarUserRole">Admin Total</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Conteúdo da Página -->
+      <main class="page-container">
+        
+        <!-- Cabeçalho da Página com Título e Ações -->
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-title); margin: 0 0 0.35rem 0; letter-spacing: -0.02em;">
+              Relatórios, Logs e Atividades
+            </h1>
+            <p style="color: var(--text-muted); font-size: 0.92rem; margin: 0;">
+              Auditoria integral de eventos, registo cronológico das ações de membros/utilizadores e ferramentas de reversão e recuperação de dados.
+            </p>
+          </div>
+
+          <!-- Ações do Topo -->
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="recarregarLogsUI()" title="Recarregar e sincronizar logs da nuvem">
+              <span>🔄 Atualizar</span>
+            </button>
+
+            <!-- Dropdown Exportar -->
+            <div class="export-dropdown-group">
+              <button type="button" class="btn btn-outline btn-sm" id="btnToggleExportLogs" onclick="toggleExportLogsMenu(event)">
+                <span>Exportar ▼</span>
+              </button>
+              <div class="export-dropdown-menu" id="exportLogsMenu">
+                <button type="button" class="export-menu-item" onclick="exportarLogsCSV()">
+                  <span>📄 Exportar para CSV</span>
+                </button>
+                <button type="button" class="export-menu-item" onclick="exportarLogsExcel()">
+                  <span>📊 Exportar para Excel (.xls)</span>
+                </button>
+                <button type="button" class="export-menu-item" onclick="abrirRelatorioLogsPDF()">
+                  <span>📑 Relatório de Auditoria em PDF</span>
+                </button>
+                <button type="button" class="export-menu-item" onclick="abrirRelatorioLogsPDF()">
+                  <span>🖨️ Imprimir Relatório</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Indicadores / Métricas Globais de Auditoria -->
+        <div class="logs-stat-grid">
+          <div class="log-stat-card">
+            <div class="log-stat-icon" style="background: rgba(28, 109, 66, 0.1); color: var(--primary);">
+              📋
+            </div>
+            <div class="log-stat-info">
+              <h4>Total Eventos</h4>
+              <div class="stat-number" id="statTotalLogs">0</div>
+            </div>
+          </div>
+
+          <div class="log-stat-card">
+            <div class="log-stat-icon" style="background: rgba(217, 119, 6, 0.1); color: #d97706;">
+              ✏️
+            </div>
+            <div class="log-stat-info">
+              <h4>Modificações</h4>
+              <div class="stat-number" id="statModificacoes">0</div>
+            </div>
+          </div>
+
+          <div class="log-stat-card">
+            <div class="log-stat-icon" style="background: rgba(220, 38, 38, 0.1); color: #dc2626;">
+              🗑️
+            </div>
+            <div class="log-stat-info">
+              <h4>Eliminações</h4>
+              <div class="stat-number" id="statEliminacoes">0</div>
+            </div>
+          </div>
+
+          <div class="log-stat-card">
+            <div class="log-stat-icon" style="background: rgba(2, 132, 199, 0.1); color: #0284c7;">
+              🔑
+            </div>
+            <div class="log-stat-info">
+              <h4>Acessos / Sessões</h4>
+              <div class="stat-number" id="statAcessos">0</div>
+            </div>
+          </div>
+
+          <div class="log-stat-card">
+            <div class="log-stat-icon" style="background: rgba(13, 148, 136, 0.1); color: #0d9488;">
+              ⏪
+            </div>
+            <div class="log-stat-info">
+              <h4>Reversões Feitas</h4>
+              <div class="stat-number" id="statReversoes">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Caixa Principal: Controlos, Filtros e Lista -->
+        <div class="card-box" style="padding: 1.5rem;">
+          
+          <!-- Barra de Controlos e Filtros -->
+          <div class="logs-controls-bar">
+            
+            <!-- Pesquisa por Texto -->
+            <div class="logs-search-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="inputSearchLogs" placeholder="Pesquisar por utilizador, ação, descrição, IP..." oninput="filtrarLogsUI()">
+            </div>
+
+            <!-- Filtros Dropdowns -->
+            <div class="logs-filters-group">
+              
+              <!-- Filtro de Utilizador / Membro -->
+              <select id="filterUsuarioLog" class="logs-filter-select" onchange="filtrarLogsUI()">
+                <option value="all">Todos os Utilizadores</option>
+                <option value="me">Apenas Minhas Ações (Jorge Cunha)</option>
+                <option value="others">Apenas Outros Membros/Utilizadores</option>
+                <option value="jorge">Jorge Manuel da Silva Cunha (Presidente)</option>
+                <option value="artur">Artur Jorge Ferreira Cardoso (Tesoureiro)</option>
+                <option value="raquel">Raquel Alexandra Marques da Cunha (Secretária)</option>
+                <option value="security">Sistema Automático / Segurança</option>
+              </select>
+
+              <!-- Filtro de Módulo -->
+              <select id="filterModuloLog" class="logs-filter-select" onchange="filtrarLogsUI()">
+                <option value="all">Todos os Módulos</option>
+                <option value="Sócios">Sócios & Cotas</option>
+                <option value="Membros">Membros Órgãos Sociais</option>
+                <option value="Atas">Atas da Direção</option>
+                <option value="Utilizadores">Utilizadores & Acessos</option>
+                <option value="Tesouraria">Tesouraria</option>
+                <option value="Documentos">Documentação ARCA</option>
+                <option value="Sistema">Sistema & Segurança</option>
+              </select>
+
+              <!-- Filtro de Ação -->
+              <select id="filterAcaoLog" class="logs-filter-select" onchange="filtrarLogsUI()">
+                <option value="all">Todas as Ações</option>
+                <option value="CRIACAO">🟢 Criações / Adições</option>
+                <option value="MODIFICACAO">🟡 Modificações / Edições</option>
+                <option value="ELIMINACAO">🔴 Eliminações / Apagamentos</option>
+                <option value="ACESSO">🔵 Acessos / Logins</option>
+                <option value="EXPORTACAO">🟣 Exportações de Dados</option>
+                <option value="ERRO">🟠 Alertas & Erros</option>
+                <option value="REVERSAO">⏪ Reversões Concluídas</option>
+                <option value="revertivel">⚡ Apenas Ações Revertíveis</option>
+              </select>
+
+              <!-- Filtro de Período -->
+              <select id="filterPeriodoLog" class="logs-filter-select" onchange="filtrarLogsUI()">
+                <option value="all">Todos os Períodos</option>
+                <option value="hoje">Hoje</option>
+                <option value="7d">Últimos 7 dias</option>
+                <option value="30d">Este Mês (30 dias)</option>
+              </select>
+
+              <!-- Alternador de Vista (Tabela / Timeline) -->
+              <div class="view-toggle-group">
+                <button type="button" class="view-toggle-btn active" id="btnViewTable" onclick="switchLogsView('table')" title="Vista Tabela Estruturada">
+                  📋 Tabela
+                </button>
+                <button type="button" class="view-toggle-btn" id="btnViewTimeline" onclick="switchLogsView('timeline')" title="Vista Cronológica">
+                  ⏱️ Linha Temporal
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- VISTA 1: TABELA ESTRUTURADA DE AUDITORIA -->
+          <div id="containerLogsTable" style="overflow-x: auto;">
+            <table class="data-table" style="width: 100%; min-width: 900px;">
+              <thead>
+                <tr>
+                  <th style="width: 150px;">Data / Hora</th>
+                  <th style="width: 180px;">Utilizador / Membro</th>
+                  <th style="width: 110px;">Módulo</th>
+                  <th style="width: 125px;">Ação</th>
+                  <th>Descrição do Evento & Detalhes</th>
+                  <th style="width: 130px;">Dispositivo / IP</th>
+                  <th style="width: 110px;">Estado</th>
+                  <th style="width: 140px; text-align: right;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyLogs">
+                <!-- Injetado dinamicamente via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- VISTA 2: LINHA TEMPORAL CRONOLÓGICA (TIMELINE) -->
+          <div id="containerLogsTimeline" style="display: none; padding: 1.5rem 0.5rem;">
+            <div class="timeline-container" id="timelineLogsContent">
+              <!-- Injetado dinamicamente via JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: DETALHES COMPLETOS DO EVENTO & COMPARADOR (DIFF) ANTES VS DEPOIS -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="modalDetalheLog" onclick="if(event.target === this) closeDetalheLogModal()">
+    <div class="modal-content" style="max-width: 780px; max-height: 92vh; display: flex; flex-direction: column;">
+      
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-light); padding: 1.25rem 1.5rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <span id="modalDetalheBadgeAcao" class="badge-acao">Ação</span>
+            <span id="modalDetalheBadgeModulo" class="badge-modulo">Módulo</span>
+          </div>
+          <h2 id="modalDetalheTitle" style="margin: 0; font-size: 1.25rem; color: var(--text-title);">Detalhes do Registo de Auditoria</h2>
+        </div>
+        <button class="modal-close-btn" type="button" onclick="closeDetalheLogModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem; overflow-y: auto; flex: 1;" id="modalDetalheBodyContent">
+        <!-- Preenchido via renderDetalheModalContent() -->
+      </div>
+
+      <div class="modal-footer" style="padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeDetalheLogModal()">Fechar</button>
+        <div id="modalDetalheFooterActions" style="display: flex; gap: 0.5rem;">
+          <!-- Botão dinâmico de Reverter / Restaurar se aplicável -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: CONFIRMAÇÃO DE REVERSÃO / RESTAURAÇÃO DE REGISTO -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="modalConfirmarReversao" onclick="if(event.target === this) closeConfirmarReversaoModal()">
+    <div class="modal-content" style="max-width: 540px;">
+      
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-light); padding: 1.25rem 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.4rem;">⏪</span>
+          <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-title);" id="modalReversaoTitle">Confirmar Reversão</h2>
+        </div>
+        <button class="modal-close-btn" type="button" onclick="closeConfirmarReversaoModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div id="modalReversaoTextoExplicativo" style="font-size: 0.92rem; color: var(--text-body); line-height: 1.5; margin-bottom: 1.25rem;">
+          <!-- Texto dinâmico -->
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 0.9rem; margin-bottom: 1.25rem;">
+          <strong style="display: block; font-size: 0.82rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.35rem;">REGISTO ALVO:</strong>
+          <div id="modalReversaoResumoAlvo" style="font-size: 0.88rem; font-weight: 600; color: var(--text-title);"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputNotaReversao" style="font-size: 0.82rem; font-weight: 700;">Justificação / Nota de Auditoria (opcional):</label>
+          <input type="text" id="inputNotaReversao" class="form-control" placeholder="ex.: Correção de erro operacional ou pedido do associado">
+        </div>
+      </div>
+
+      <div class="modal-footer" style="padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end; gap: 0.6rem;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeConfirmarReversaoModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnConfirmarReversaoExecutar" style="background: #0f766e; border-color: #0f766e;" onclick="executarReversaoConfirmada()">
+          Confirmar e Repor Dados
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: VISUALIZADOR OFICIAL DO RELATÓRIO DE AUDITORIA EM FOLHA TIMBRADA -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="modalVisualizadorRelatorioLogs" onclick="if(event.target === this) closeVisualizadorRelatorioLogs()">
+    <div class="modal-content" style="max-width: 900px; max-height: 96vh; display: flex; flex-direction: column; background: #e2e8f0; padding: 0;">
+      
+      <!-- Barra Superior de Ferramentas -->
+      <div style="background: #0f3f26; color: #ffffff; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-radius: var(--radius-md) var(--radius-md) 0 0;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.1rem;">📑</span>
+          <span style="font-weight: 700; font-size: 0.95rem;">Relatório Oficial de Auditoria & Logs do Sistema</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="imprimirRelatorioLogsPapel()" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25);">
+            🖨️ Imprimir / Guardar PDF
+          </button>
+          <button type="button" class="modal-close-btn" onclick="closeVisualizadorRelatorioLogs()" style="color: #ffffff; font-size: 1.5rem; line-height: 1; padding: 0 0.4rem; background: none; border: none; cursor: pointer;">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Papel A4 Timbrado -->
+      <div style="padding: 1.5rem; overflow-y: auto; flex: 1;">
+        <div class="ata-viewer-paper" id="relatorioLogsPaperContent" style="background: #ffffff; padding: 2.5rem; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-height: 1000px; font-family: 'Plus Jakarta Sans', sans-serif;">
+          <!-- Injetado dinamicamente via renderRelatorioLogsPaper() -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/socios-data.js?v=20261127_v1"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-sync.js?v=20261127_v2"></script>
+  <script src="js/main.js?v=20261127_v2"></script>
+
+  <script>
+    // =========================================================================
+    // LÓGICA DE APRESENTAÇÃO, FILTRAGEM E REVERSÃO DO MÓDULO DE LOGS
+    // =========================================================================
+
+    let currentLogsList = [];
+    let activeLogForReversao = null;
+    let activeLogsView = 'table'; // 'table' | 'timeline'
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Inicializar utilizador atual e cabeçalho
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      if (currentUser) {
+        const nomeCurto = currentUser.nome || currentUser.login;
+        const iniciais = (currentUser.nome || currentUser.login).split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+        
+        const elSideName = document.getElementById('sidebarUserName');
+        const elSideRole = document.getElementById('sidebarUserRole');
+        const elSideAvatar = document.getElementById('sidebarUserAvatar');
+        const elTopName = document.getElementById('topbarUserName');
+        const elTopRole = document.getElementById('topbarUserRole');
+        const elTopAvatar = document.getElementById('topbarUserAvatar');
+
+        if (elSideName) elSideName.textContent = nomeCurto;
+        if (elSideRole) elSideRole.textContent = `${currentUser.cargo || 'Membro'} • ${currentUser.perfil || 'Admin'}`;
+        if (elSideAvatar) elSideAvatar.textContent = iniciais;
+        if (elTopName) elTopName.textContent = nomeCurto;
+        if (elTopRole) elTopRole.textContent = currentUser.perfil || 'Admin Total';
+        if (elTopAvatar) elTopAvatar.textContent = iniciais;
+      }
+
+      // 2. Carregar Logs Iniciais
+      carregarLogsLocais();
+
+      // 3. Sincronizar Logs com Firestore na Nuvem
+      if (typeof window.syncArcaLogsFromCloud === 'function') {
+        window.syncArcaLogsFromCloud((cloudLogs) => {
+          if (Array.isArray(cloudLogs) && cloudLogs.length > 0) {
+            currentLogsList = cloudLogs;
+            renderLogsUI();
+            updateLogsStats();
+          }
+        });
+      }
+
+      // 4. Ouvir novos logs adicionados na sessão
+      window.addEventListener('arca_audit_log_added', (e) => {
+        carregarLogsLocais();
+      });
+
+      // Fechar dropdown de exportação ao clicar fora
+      document.addEventListener('click', (e) => {
+        const group = document.querySelector('.export-dropdown-group');
+        if (group && !group.contains(e.target)) {
+          const menu = document.getElementById('exportLogsMenu');
+          if (menu) menu.classList.remove('show');
+        }
+      });
+
+      // Fechar modal ao premir Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeDetalheLogModal();
+          closeConfirmarReversaoModal();
+          closeVisualizadorRelatorioLogs();
+        }
+      });
+    });
+
+    function carregarLogsLocais() {
+      if (typeof window.getArcaAuditLogs === 'function') {
+        currentLogsList = window.getArcaAuditLogs();
+      } else {
+        currentLogsList = [];
+      }
+      renderLogsUI();
+      updateLogsStats();
+    }
+
+    window.recarregarLogsUI = function() {
+      carregarLogsLocais();
+      if (typeof window.syncArcaLogsFromCloud === 'function') {
+        window.syncArcaLogsFromCloud((cloudLogs) => {
+          if (cloudLogs) {
+            currentLogsList = cloudLogs;
+            renderLogsUI();
+            updateLogsStats();
+          }
+        });
+      }
+      if (window.showToast) window.showToast('Registos de auditoria atualizados com sucesso.', 'info');
+    };
+
+    // =========================================================================
+    // FILTROS E PESQUISA
+    // =========================================================================
+
+    function getLogsFiltrados() {
+      const search = (document.getElementById('inputSearchLogs')?.value || '').toLowerCase().trim();
+      const filterUser = document.getElementById('filterUsuarioLog')?.value || 'all';
+      const filterMod = document.getElementById('filterModuloLog')?.value || 'all';
+      const filterAcao = document.getElementById('filterAcaoLog')?.value || 'all';
+      const filterPer = document.getElementById('filterPeriodoLog')?.value || 'all';
+
+      const now = new Date();
+
+      return currentLogsList.filter(log => {
+        // Filtro Utilizador
+        if (filterUser === 'me') {
+          if (log.usuarioLogin !== 'jorge' && log.usuarioId !== 1) return false;
+        } else if (filterUser === 'others') {
+          if (log.usuarioLogin === 'jorge' || log.usuarioId === 1) return false;
+        } else if (filterUser !== 'all') {
+          if ((log.usuarioLogin || '').toLowerCase() !== filterUser.toLowerCase()) return false;
+        }
+
+        // Filtro Módulo
+        if (filterMod !== 'all' && log.modulo !== filterMod) return false;
+
+        // Filtro Ação
+        if (filterAcao === 'revertivel') {
+          if (!log.revertivel) return false;
+        } else if (filterAcao !== 'all' && log.acao !== filterAcao) {
+          return false;
+        }
+
+        // Filtro Período
+        if (filterPer !== 'all' && log.timestamp) {
+          const logDate = new Date(log.timestamp);
+          const diffMs = now.getTime() - logDate.getTime();
+          if (filterPer === 'hoje') {
+            const isSameDay = logDate.getDate() === now.getDate() &&
+                              logDate.getMonth() === now.getMonth() &&
+                              logDate.getFullYear() === now.getFullYear();
+            if (!isSameDay) return false;
+          } else if (filterPer === '7d') {
+            if (diffMs > 7 * 86400000) return false;
+          } else if (filterPer === '30d') {
+            if (diffMs > 30 * 86400000) return false;
+          }
+        }
+
+        // Pesquisa por Texto Livre
+        if (search) {
+          const matchUser = (log.usuarioNome || '').toLowerCase().includes(search);
+          const matchDesc = (log.descricao || '').toLowerCase().includes(search);
+          const matchDet = (log.detalhes || '').toLowerCase().includes(search);
+          const matchMod = (log.modulo || '').toLowerCase().includes(search);
+          const matchAcao = (log.acao || '').toLowerCase().includes(search);
+          const matchIp = (log.ip || '').toLowerCase().includes(search);
+          const matchEnt = (log.entidade || '').toLowerCase().includes(search);
+
+          if (!matchUser && !matchDesc && !matchDet && !matchMod && !matchAcao && !matchIp && !matchEnt) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    }
+
+    window.filtrarLogsUI = function() {
+      renderLogsUI();
+    };
+
+    function updateLogsStats() {
+      const total = currentLogsList.length;
+      const mods = currentLogsList.filter(l => l.acao === 'MODIFICACAO').length;
+      const elims = currentLogsList.filter(l => l.acao === 'ELIMINACAO').length;
+      const acessos = currentLogsList.filter(l => l.acao === 'ACESSO').length;
+      const reversoes = currentLogsList.filter(l => l.acao === 'REVERSAO' || l.revertido === true).length;
+
+      const elTotal = document.getElementById('statTotalLogs');
+      const elMods = document.getElementById('statModificacoes');
+      const elElims = document.getElementById('statEliminacoes');
+      const elAcessos = document.getElementById('statAcessos');
+      const elReversoes = document.getElementById('statReversoes');
+
+      if (elTotal) elTotal.textContent = total;
+      if (elMods) elMods.textContent = mods;
+      if (elElims) elElims.textContent = elims;
+      if (elAcessos) elAcessos.textContent = acessos;
+      if (elReversoes) elReversoes.textContent = reversoes;
+    }
+
+    // =========================================================================
+    // RENDERIZAÇÃO DA UI: TABELA & TIMELINE
+    // =========================================================================
+
+    function renderLogsUI() {
+      const filtrados = getLogsFiltrados();
+
+      // 1. Render Tabela
+      const tbody = document.getElementById('tbodyLogs');
+      if (tbody) {
+        if (filtrados.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
+                <strong>Nenhum registo de auditoria encontrado com os filtros selecionados.</strong>
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = filtrados.map(log => {
+            const badgeAcaoClass = getBadgeAcaoClass(log.acao);
+            const badgeModuloClass = getBadgeModuloClass(log.modulo);
+            const timeAgo = formatTimeAgo(log.timestamp);
+            const iniciais = (log.usuarioNome || log.usuarioLogin || 'U').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+            // Estado de Reversão
+            let estadoHtml = '<span style="font-size: 0.78rem; color: var(--text-muted);">Informativo</span>';
+            if (log.revertido) {
+              estadoHtml = '<span class="badge-socio-tag" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">⏪ Revertido</span>';
+            } else if (log.revertivel) {
+              estadoHtml = '<span class="badge-socio-tag" style="background: #fef3c7; color: #b45309; font-weight: 700;">⚡ Revertível</span>';
+            } else if (log.acao === 'ERRO') {
+              estadoHtml = log.resolvido 
+                ? '<span class="badge-socio-tag" style="background: #dcfce7; color: #15803d;">Resolvido</span>'
+                : '<span class="badge-socio-tag" style="background: #fee2e2; color: #b91c1c;">Pendente</span>';
+            }
+
+            // Botões de Ação
+            let btnReverter = '';
+            if (log.revertivel && !log.revertido) {
+              btnReverter = `
+                <button type="button" class="btn btn-outline btn-xs" style="color: #0f766e; border-color: #0f766e;" onclick="abrirConfirmarReversaoModal('${log.id}')" title="Reverter esta ação e repor os dados anteriores">
+                  ⏪ Reverter
+                </button>
+              `;
+            }
+
+            return `
+              <tr data-log-id="${log.id}">
+                <!-- Data / Hora -->
+                <td>
+                  <div style="font-weight: 700; color: var(--text-title); font-size: 0.84rem;">${escapeHtml(log.dataHoraFmt || '')}</div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted);">${timeAgo}</div>
+                </td>
+
+                <!-- Utilizador -->
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="avatar-sm" style="width: 28px; height: 28px; font-size: 0.75rem;">${iniciais}</div>
+                    <div style="min-width: 0;">
+                      <div style="font-weight: 700; font-size: 0.82rem; color: var(--text-title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">
+                        ${escapeHtml(log.usuarioNome || log.usuarioLogin)}
+                      </div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(log.usuarioCargo || log.usuarioPerfil || 'Utilizador')}</div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Módulo -->
+                <td>
+                  <span class="badge-modulo ${badgeModuloClass}">${escapeHtml(log.modulo || 'Geral')}</span>
+                </td>
+
+                <!-- Ação -->
+                <td>
+                  <span class="badge-acao ${badgeAcaoClass}">
+                    ${escapeHtml(log.tipoBadge || log.acao)}
+                  </span>
+                </td>
+
+                <!-- Descrição -->
+                <td>
+                  <div style="font-weight: 600; font-size: 0.84rem; color: var(--text-title); line-height: 1.35;">
+                    ${escapeHtml(log.descricao || '')}
+                  </div>
+                  ${log.detalhes ? `<div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; line-height: 1.3;">${escapeHtml(log.detalhes)}</div>` : ''}
+                </td>
+
+                <!-- Dispositivo / IP -->
+                <td>
+                  <div style="font-size: 0.78rem; color: var(--text-title);">${escapeHtml(log.dispositivo || 'Desktop')}</div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">${escapeHtml(log.ip || '192.168.1.1')}</div>
+                </td>
+
+                <!-- Estado -->
+                <td>
+                  ${estadoHtml}
+                </td>
+
+                <!-- Ações -->
+                <td style="text-align: right;">
+                  <div style="display: flex; gap: 0.35rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline btn-xs" onclick="openDetalheLogModal('${log.id}')" title="Ver detalhes completos e comparador Antes vs Depois">
+                      👁️ Detalhes
+                    </button>
+                    ${btnReverter}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 2. Render Timeline
+      const timelineBox = document.getElementById('timelineLogsContent');
+      if (timelineBox) {
+        if (filtrados.length === 0) {
+          timelineBox.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              <strong>Nenhum evento para apresentar na linha temporal.</strong>
+            </div>
+          `;
+        } else {
+          timelineBox.innerHTML = filtrados.map(log => {
+            const badgeAcaoClass = getBadgeAcaoClass(log.acao);
+            const timeAgo = formatTimeAgo(log.timestamp);
+            
+            let btnReverterTimeline = '';
+            if (log.revertivel && !log.revertido) {
+              btnReverterTimeline = `
+                <button type="button" class="btn btn-outline btn-xs" style="color: #0f766e; border-color: #0f766e; margin-left: 0.5rem;" onclick="abrirConfirmarReversaoModal('${log.id}')">
+                  ⏪ Reverter / Restaurar
+                </button>
+              `;
+            }
+
+            return `
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                    <span class="badge-acao ${badgeAcaoClass}">${escapeHtml(log.tipoBadge || log.acao)}</span>
+                    <span class="badge-modulo">${escapeHtml(log.modulo || 'Geral')}</span>
+                    <span style="font-weight: 700; font-size: 0.9rem; color: var(--text-title);">${escapeHtml(log.usuarioNome || log.usuarioLogin)}</span>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">(${escapeHtml(log.usuarioCargo || 'Membro')})</span>
+                  </div>
+                  <div style="font-size: 0.78rem; color: var(--text-muted);">
+                    ${escapeHtml(log.dataHoraFmt || '')} • <strong>${timeAgo}</strong>
+                  </div>
+                </div>
+
+                <div style="font-weight: 600; font-size: 0.92rem; color: var(--text-title); margin-bottom: 0.35rem;">
+                  ${escapeHtml(log.descricao || '')}
+                </div>
+                ${log.detalhes ? `<p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 0.6rem 0;">${escapeHtml(log.detalhes)}</p>` : ''}
+
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.6rem; margin-top: 0.6rem; font-size: 0.76rem; color: var(--text-muted);">
+                  <div>
+                    Dispositivo: <strong>${escapeHtml(log.dispositivo || 'Desktop')}</strong> &bull; IP: <code>${escapeHtml(log.ip || '192.168.1.1')}</code>
+                  </div>
+                  <div>
+                    <button type="button" class="btn btn-outline btn-xs" onclick="openDetalheLogModal('${log.id}')">
+                      👁️ Ver Detalhes
+                    </button>
+                    ${btnReverterTimeline}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function switchLogsView(view) {
+      activeLogsView = view;
+      const btnTable = document.getElementById('btnViewTable');
+      const btnTimeline = document.getElementById('btnViewTimeline');
+      const cTable = document.getElementById('containerLogsTable');
+      const cTimeline = document.getElementById('containerLogsTimeline');
+
+      if (view === 'table') {
+        if (btnTable) btnTable.classList.add('active');
+        if (btnTimeline) btnTimeline.classList.remove('active');
+        if (cTable) cTable.style.display = 'block';
+        if (cTimeline) cTimeline.style.display = 'none';
+      } else {
+        if (btnTable) btnTable.classList.remove('active');
+        if (btnTimeline) btnTimeline.classList.add('active');
+        if (cTable) cTable.style.display = 'none';
+        if (cTimeline) cTimeline.style.display = 'block';
+      }
+    }
+
+    function getBadgeAcaoClass(acao) {
+      switch ((acao || '').toUpperCase()) {
+        case 'CRIACAO': return 'badge-acao-criacao';
+        case 'MODIFICACAO': return 'badge-acao-modificacao';
+        case 'ELIMINACAO': return 'badge-acao-eliminacao';
+        case 'ACESSO': return 'badge-acao-acesso';
+        case 'EXPORTACAO': return 'badge-acao-exportacao';
+        case 'ERRO': return 'badge-acao-erro';
+        case 'REVERSAO': return 'badge-acao-reversao';
+        default: return 'badge-acao-modificacao';
+      }
+    }
+
+    function getBadgeModuloClass(mod) {
+      switch ((mod || '').toLowerCase()) {
+        case 'sócios':
+        case 'socios': return 'badge-modulo-socios';
+        case 'membros': return 'badge-modulo-membros';
+        case 'atas': return 'badge-modulo-atas';
+        case 'utilizadores': return 'badge-modulo-utilizadores';
+        case 'tesouraria': return 'badge-modulo-tesouraria';
+        case 'documentos': return 'badge-modulo-documentos';
+        default: return 'badge-modulo-sistema';
+      }
+    }
+
+    function formatTimeAgo(timestamp) {
+      if (!timestamp) return '';
+      const now = new Date();
+      const date = new Date(timestamp);
+      const seconds = Math.floor((now - date) / 1000);
+
+      if (seconds < 60) return 'agora mesmo';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `há ${minutes} min`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `há ${hours} h`;
+      const days = Math.floor(hours / 24);
+      if (days === 1) return 'ontem';
+      if (days < 30) return `há ${days} dias`;
+      return date.toLocaleDateString('pt-PT');
+    }
+
+    // =========================================================================
+    // MODAL DE DETALHES & COMPARADOR DIFF ANTES VS DEPOIS
+    // =========================================================================
+
+    window.openDetalheLogModal = function(logId) {
+      const log = currentLogsList.find(l => String(l.id) === String(logId));
+      if (!log) return;
+
+      const modal = document.getElementById('modalDetalheLog');
+      const badgeAcao = document.getElementById('modalDetalheBadgeAcao');
+      const badgeModulo = document.getElementById('modalDetalheBadgeModulo');
+      const title = document.getElementById('modalDetalheTitle');
+      const body = document.getElementById('modalDetalheBodyContent');
+      const footerActions = document.getElementById('modalDetalheFooterActions');
+
+      if (badgeAcao) {
+        badgeAcao.className = `badge-acao ${getBadgeAcaoClass(log.acao)}`;
+        badgeAcao.textContent = log.tipoBadge || log.acao;
+      }
+      if (badgeModulo) {
+        badgeModulo.className = `badge-modulo ${getBadgeModuloClass(log.modulo)}`;
+        badgeModulo.textContent = log.modulo || 'Geral';
+      }
+      if (title) {
+        title.textContent = log.descricao || 'Detalhes da Atividade';
+      }
+
+      // Conteúdo do Modal com Metadados & Comparador Antes vs Depois
+      if (body) {
+        let diffHtml = '';
+
+        // 1. Caso de Modificação com Antes vs Depois
+        if (log.acao === 'MODIFICACAO' && log.dadosAnteriores && log.dadosNovos) {
+          const keys = Array.from(new Set([...Object.keys(log.dadosAnteriores), ...Object.keys(log.dadosNovos)]));
+          const diffRows = [];
+
+          keys.forEach(k => {
+            if (k === 'id' || k === 'senha') return;
+            const valAnt = log.dadosAnteriores[k];
+            const valNov = log.dadosNovos[k];
+
+            if (JSON.stringify(valAnt) !== JSON.stringify(valNov)) {
+              diffRows.push(`
+                <tr>
+                  <td><strong>${escapeHtml(k)}</strong></td>
+                  <td><span class="diff-val-old">${escapeHtml(typeof valAnt === 'object' ? JSON.stringify(valAnt) : String(valAnt ?? '—'))}</span></td>
+                  <td><span class="diff-val-new">${escapeHtml(typeof valNov === 'object' ? JSON.stringify(valNov) : String(valNov ?? '—'))}</span></td>
+                </tr>
+              `);
+            }
+          });
+
+          diffHtml = `
+            <div style="margin-top: 1.25rem;">
+              <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--text-title); text-transform: uppercase; margin-bottom: 0.5rem;">
+                Comparador de Alterações (Antes vs Depois)
+              </h4>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                Abaixo estão assinaladas com precisão as propriedades e valores alterados nesta operação:
+              </p>
+              ${diffRows.length > 0 ? `
+                <table class="diff-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 25%;">Campo Alterado</th>
+                      <th style="width: 37%;">Valor Anterior</th>
+                      <th style="width: 38%;">Novo Valor Atual</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${diffRows.join('')}
+                  </tbody>
+                </table>
+              ` : `
+                <div style="background: #f8fafc; padding: 0.75rem; border-radius: 4px; font-size: 0.84rem; color: var(--text-muted);">
+                  Valores registados em bloco no snapshot da entidade.
+                </div>
+              `}
+            </div>
+          `;
+        }
+
+        // 2. Caso de Eliminação com Registo Apagado
+        else if (log.acao === 'ELIMINACAO' && log.dadosAnteriores) {
+          diffHtml = `
+            <div style="margin-top: 1.25rem; background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--radius-sm); padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; color: #be123c; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                <span>⚠️ Registo Apagado do Sistema</span>
+              </div>
+              <p style="font-size: 0.82rem; color: #9f1239; margin: 0 0 0.75rem 0;">
+                Este registo foi eliminado. Pode restaurá-lo integralmente premindo o botão de restauração abaixo.
+              </p>
+              <pre style="background: #ffffff; border: 1px solid #fecdd3; border-radius: 4px; padding: 0.75rem; font-size: 0.78rem; color: #475569; max-height: 180px; overflow-y: auto;">${escapeHtml(JSON.stringify(log.dadosAnteriores, null, 2))}</pre>
+            </div>
+          `;
+        }
+
+        // 3. Caso de Reversão Já Efetuada
+        let infoReversaoHtml = '';
+        if (log.revertido) {
+          infoReversaoHtml = `
+            <div style="margin-top: 1rem; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: var(--radius-sm); padding: 0.9rem;">
+              <strong style="color: #0f766e; font-size: 0.86rem; display: block; margin-bottom: 0.25rem;">
+                ⏪ Esta ação já foi revertida!
+              </strong>
+              <div style="font-size: 0.8rem; color: #115e59;">
+                Revertido em: <strong>${escapeHtml(new Date(log.revertidoEm).toLocaleString('pt-PT'))}</strong> por <strong>${escapeHtml(log.revertidoPor || 'Administrador')}</strong>.
+                ${log.notaReversao ? `<br>Nota: <em>${escapeHtml(log.notaReversao)}</em>` : ''}
+              </div>
+            </div>
+          `;
+        }
+
+        body.innerHTML = `
+          <!-- Caixa de Metadados -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem;">
+            <div>
+              <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; display: block;">Data e Hora</span>
+              <strong style="font-size: 0.88rem; color: var(--text-title);">${escapeHtml(log.dataHoraFmt || '')}</strong>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; display: block;">Executado Por</span>
+              <strong style="font-size: 0.88rem; color: var(--text-title);">${escapeHtml(log.usuarioNome || log.usuarioLogin)}</strong>
+              <small style="color: var(--text-muted); font-size: 0.75rem;">(${escapeHtml(log.usuarioCargo || log.usuarioPerfil || 'Utilizador')})</small>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; display: block;">Módulo Afetado</span>
+              <strong style="font-size: 0.88rem; color: var(--text-title);">${escapeHtml(log.modulo || 'Geral')}</strong>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; display: block;">Dispositivo & IP</span>
+              <span style="font-size: 0.82rem; color: var(--text-title);">${escapeHtml(log.dispositivo || 'Desktop')} &bull; <code>${escapeHtml(log.ip || '192.168.1.1')}</code></span>
+            </div>
+          </div>
+
+          <!-- Descrição Detalhada -->
+          <div style="margin-top: 1.25rem;">
+            <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--text-title); margin: 0 0 0.35rem 0;">Descrição do Evento</h4>
+            <p style="font-size: 0.9rem; color: var(--text-body); margin: 0; line-height: 1.45;">${escapeHtml(log.descricao || '')}</p>
+            ${log.detalhes ? `<p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4;">${escapeHtml(log.detalhes)}</p>` : ''}
+          </div>
+
+          ${diffHtml}
+          ${infoReversaoHtml}
+        `;
+      }
+
+      // Botão de Reversão no Rodapé do Modal
+      if (footerActions) {
+        if (log.revertivel && !log.revertido) {
+          footerActions.innerHTML = `
+            <button type="button" class="btn btn-primary btn-sm" style="background: #0f766e; border-color: #0f766e;" onclick="closeDetalheLogModal(); abrirConfirmarReversaoModal('${log.id}')">
+              ⏪ Reverter / Restaurar Registo
+            </button>
+          `;
+        } else if (log.acao === 'ERRO' && !log.resolvido) {
+          footerActions.innerHTML = `
+            <button type="button" class="btn btn-primary btn-sm" onclick="resolverErroLog('${log.id}')">
+              &check; Marcar como Resolvido
+            </button>
+          `;
+        } else {
+          footerActions.innerHTML = '';
+        }
+      }
+
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeDetalheLogModal = function() {
+      const modal = document.getElementById('modalDetalheLog');
+      if (modal) modal.classList.remove('active');
+    };
+
+    // =========================================================================
+    // MODAL DE CONFIRMAÇÃO DE REVERSÃO / RESTAURAÇÃO
+    // =========================================================================
+
+    window.abrirConfirmarReversaoModal = function(logId) {
+      const log = currentLogsList.find(l => String(l.id) === String(logId));
+      if (!log) return;
+
+      activeLogForReversao = log;
+      const modal = document.getElementById('modalConfirmarReversao');
+      const title = document.getElementById('modalReversaoTitle');
+      const texto = document.getElementById('modalReversaoTextoExplicativo');
+      const resumo = document.getElementById('modalReversaoResumoAlvo');
+      const inputNota = document.getElementById('inputNotaReversao');
+
+      if (inputNota) inputNota.value = '';
+
+      if (log.acao === 'ELIMINACAO') {
+        if (title) title.textContent = 'Restaurar Registo Eliminado';
+        if (texto) {
+          texto.innerHTML = `
+            Tem a certeza que deseja <strong>restaurar o registo eliminado</strong>?
+            Os dados originais arquivados no log de auditoria serão reintroduzidos na base de dados ativa do portal ARCA.
+          `;
+        }
+      } else {
+        if (title) title.textContent = 'Reverter Alteração de Dados';
+        if (texto) {
+          texto.innerHTML = `
+            Tem a certeza que deseja <strong>reverter esta modificação</strong>?
+            Os valores dos campos serão repostos exatamente no estado em que se encontravam antes desta operação.
+          `;
+        }
+      }
+
+      if (resumo) {
+        resumo.innerHTML = `
+          ${escapeHtml(log.descricao)}<br>
+          <small style="color: var(--text-muted); font-weight: normal;">Módulo: ${escapeHtml(log.modulo)} &bull; Data original: ${escapeHtml(log.dataHoraFmt)}</small>
+        `;
+      }
+
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeConfirmarReversaoModal = function() {
+      const modal = document.getElementById('modalConfirmarReversao');
+      if (modal) modal.classList.remove('active');
+      activeLogForReversao = null;
+    };
+
+    window.executarReversaoConfirmada = function() {
+      if (!activeLogForReversao) return;
+      const logId = activeLogForReversao.id;
+      const nota = document.getElementById('inputNotaReversao')?.value || '';
+
+      if (typeof window.reverterLogAtividade === 'function') {
+        const res = window.reverterLogAtividade(logId, nota);
+        if (res.success) {
+          closeConfirmarReversaoModal();
+          carregarLogsLocais();
+          if (window.showToast) {
+            window.showToast(res.message || 'Reversão concluída com sucesso!', 'success');
+          } else {
+            alert(res.message || 'Reversão concluída com sucesso!');
+          }
+        } else {
+          alert('Erro ao executar reversão: ' + res.message);
+        }
+      }
+    };
+
+    window.resolverErroLog = function(logId) {
+      if (typeof window.marcarErroResolvido === 'function') {
+        window.marcarErroResolvido(logId);
+        closeDetalheLogModal();
+        carregarLogsLocais();
+        if (window.showToast) window.showToast('Alerta assinalado como resolvido.', 'success');
+      }
+    };
+
+    // =========================================================================
+    // EXPORTAÇÕES (CSV, EXCEL, RELATÓRIO PDF EM FOLHA TIMBRADA)
+    // =========================================================================
+
+    window.toggleExportLogsMenu = function(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('exportLogsMenu');
+      if (menu) menu.classList.toggle('show');
+    };
+
+    window.exportarLogsCSV = function() {
+      const logs = getLogsFiltrados();
+      if (!logs || logs.length === 0) {
+        alert('Não existem registos de auditoria para exportar com os filtros atuais.');
+        return;
+      }
+
+      const headers = ['ID', 'Data_Hora', 'Utilizador', 'Cargo', 'Modulo', 'Acao', 'Descricao', 'Detalhes', 'Dispositivo', 'IP', 'Revertido'];
+      const rows = logs.map(l => [
+        `"${l.id}"`,
+        `"${l.dataHoraFmt || ''}"`,
+        `"${(l.usuarioNome || l.usuarioLogin || '').replace(/"/g, '""')}"`,
+        `"${(l.usuarioCargo || '').replace(/"/g, '""')}"`,
+        `"${(l.modulo || '').replace(/"/g, '""')}"`,
+        `"${(l.acao || '').replace(/"/g, '""')}"`,
+        `"${(l.descricao || '').replace(/"/g, '""')}"`,
+        `"${(l.detalhes || '').replace(/"/g, '""')}"`,
+        `"${(l.dispositivo || '').replace(/"/g, '""')}"`,
+        `"${(l.ip || '').replace(/"/g, '""')}"`,
+        `"${l.revertido ? 'Sim' : 'Nao'}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `ARCA_Relatorio_Auditoria_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      const menu = document.getElementById('exportLogsMenu');
+      if (menu) menu.classList.remove('show');
+    };
+
+    window.exportarLogsExcel = function() {
+      const logs = getLogsFiltrados();
+      if (!logs || logs.length === 0) {
+        alert('Não existem registos de auditoria para exportar com os filtros atuais.');
+        return;
+      }
+
+      let html = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Auditoria ARCA</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+          <meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+          <style>
+            th { background-color: #0f3f26; color: #ffffff; font-weight: bold; padding: 6px; }
+            td { padding: 5px; vertical-align: top; }
+          </style>
+        </head>
+        <body>
+          <h2>A.R.C.A. - Relatório de Auditoria e Logs de Atividades</h2>
+          <p>Exportado em: ${new Date().toLocaleString('pt-PT')}</p>
+          <table border="1">
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Utilizador</th>
+                <th>Cargo</th>
+                <th>Módulo</th>
+                <th>Ação</th>
+                <th>Descrição do Evento</th>
+                <th>Detalhes Técnicos</th>
+                <th>IP</th>
+                <th>Estado Reversão</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${logs.map(l => `
+                <tr>
+                  <td>${escapeHtml(l.dataHoraFmt || '')}</td>
+                  <td>${escapeHtml(l.usuarioNome || l.usuarioLogin)}</td>
+                  <td>${escapeHtml(l.usuarioCargo || '')}</td>
+                  <td>${escapeHtml(l.modulo || '')}</td>
+                  <td>${escapeHtml(l.acao || '')}</td>
+                  <td>${escapeHtml(l.descricao || '')}</td>
+                  <td>${escapeHtml(l.detalhes || '')}</td>
+                  <td>${escapeHtml(l.ip || '')}</td>
+                  <td>${l.revertido ? 'Revertido' : (l.revertivel ? 'Revertível' : '—')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `ARCA_Auditoria_Logs_${new Date().toISOString().slice(0, 10)}.xls`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      const menu = document.getElementById('exportLogsMenu');
+      if (menu) menu.classList.remove('show');
+    };
+
+    window.abrirRelatorioLogsPDF = function() {
+      const logs = getLogsFiltrados();
+      const modal = document.getElementById('modalVisualizadorRelatorioLogs');
+      const paper = document.getElementById('relatorioLogsPaperContent');
+      if (!paper) return;
+
+      const now = new Date();
+      const dataExtenso = now.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' });
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+
+      paper.innerHTML = `
+        <!-- Cabeçalho Oficial Timbrado -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f3f26; padding-bottom: 1.25rem; margin-bottom: 1.75rem;">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <img src="assets/arca-logo.png" alt="ARCA" style="height: 65px; width: auto; object-fit: contain;">
+            <div>
+              <div style="font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700; color: #0f3f26; letter-spacing: 1px;">
+                A. R. C. A.
+              </div>
+              <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">
+                Associação Recreativa e Cultural de Aguada de Baixo
+              </div>
+              <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
+                NIF: 501 547 889 &bull; Pavilhão Carlos Almeida &bull; Aguada de Baixo
+              </div>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.78rem; text-transform: uppercase; color: #64748b; font-weight: 700;">Livro de Auditoria</div>
+            <div style="font-size: 1rem; font-weight: 800; color: #0f3f26;">AUD-${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}</div>
+            <div style="font-size: 0.74rem; color: #64748b;">Emitido a: ${dataExtenso}</div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <h2 style="margin: 0; font-size: 1.35rem; color: #0f3f26; text-transform: uppercase; letter-spacing: 0.5px;">
+            Relatório de Auditoria e Logs de Atividades
+          </h2>
+          <p style="margin: 0.35rem 0 0 0; font-size: 0.84rem; color: #475569;">
+            Registo oficial e cronológico de alterações, acessos de membros e operações no portal da ARCA
+          </p>
+        </div>
+
+        <!-- Resumo dos Filtros & Métricas -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.82rem;">
+          <div>
+            Total de eventos listados: <strong>${logs.length}</strong> registos
+          </div>
+          <div>
+            Emitido pelo Administrador: <strong>${escapeHtml(currentUser?.nome || 'Jorge Cunha')}</strong>
+          </div>
+        </div>
+
+        <!-- Tabela do Relatório -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 2rem;">
+          <thead>
+            <tr style="background: #0f3f26; color: #ffffff;">
+              <th style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #0f3f26;">Data / Hora</th>
+              <th style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #0f3f26;">Utilizador / Cargo</th>
+              <th style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #0f3f26;">Módulo</th>
+              <th style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #0f3f26;">Ação</th>
+              <th style="padding: 0.5rem 0.6rem; text-align: left; border: 1px solid #0f3f26;">Descrição do Evento</th>
+              <th style="padding: 0.5rem 0.6rem; text-align: center; border: 1px solid #0f3f26;">IP</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${logs.slice(0, 100).map(l => `
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.45rem 0.6rem; border: 1px solid #e2e8f0; font-weight: 600;">${escapeHtml(l.dataHoraFmt || '')}</td>
+                <td style="padding: 0.45rem 0.6rem; border: 1px solid #e2e8f0;">
+                  <strong>${escapeHtml(l.usuarioNome || l.usuarioLogin)}</strong><br>
+                  <span style="font-size: 0.72rem; color: #64748b;">${escapeHtml(l.usuarioCargo || '')}</span>
+                </td>
+                <td style="padding: 0.45rem 0.6rem; border: 1px solid #e2e8f0;">${escapeHtml(l.modulo || '')}</td>
+                <td style="padding: 0.45rem 0.6rem; border: 1px solid #e2e8f0; font-weight: 700;">${escapeHtml(l.tipoBadge || l.acao)}</td>
+                <td style="padding: 0.45rem 0.6rem; border: 1px solid #e2e8f0;">
+                  ${escapeHtml(l.descricao || '')}
+                  ${l.revertido ? '<br><span style="color: #0f766e; font-size: 0.72rem; font-weight: bold;">[Revertido]</span>' : ''}
+                </td>
+                <td style="padding: 0.45rem 0.6rem; border: 1px solid #e2e8f0; text-align: center; font-family: monospace; font-size: 0.74rem;">${escapeHtml(l.ip || '—')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <!-- Termo de Encerramento e Assinatura -->
+        <div style="margin-top: 2.5rem; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div style="font-size: 0.75rem; color: #64748b; max-width: 420px; line-height: 1.4;">
+            Documento emitido automaticamente pelo Sistema Central de Auditoria e Gestão da A.R.C.A.
+            A autenticidade dos registos pode ser verificada a qualquer momento através do identificador de log.
+          </div>
+          <div style="text-align: center; min-width: 220px; border-top: 1px solid #0f3f26; padding-top: 0.5rem;">
+            <strong style="font-size: 0.84rem; color: #0f3f26; display: block;">A Direção da A.R.C.A.</strong>
+            <span style="font-size: 0.75rem; color: #64748b;">Mandato 2024 &bull; 2026</span>
+          </div>
+        </div>
+      `;
+
+      if (modal) modal.classList.add('active');
+
+      const menu = document.getElementById('exportLogsMenu');
+      if (menu) menu.classList.remove('show');
+    };
+
+    window.closeVisualizadorRelatorioLogs = function() {
+      const modal = document.getElementById('modalVisualizadorRelatorioLogs');
+      if (modal) modal.classList.remove('active');
+    };
+
+    window.imprimirRelatorioLogsPapel = function() {
+      window.print();
+    };
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+  </script>
+</body>
+</html>

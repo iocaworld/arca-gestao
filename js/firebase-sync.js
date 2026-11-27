@@ -453,6 +453,72 @@ const ARCA_FIREBASE_CONFIG = {
     }
   };
 
+  // =========================================================================
+  // SINCRONIZAÇÃO DE LOGS, AUDITORIA E ATIVIDADES (COLEÇÃO 'logs_atividades')
+  // =========================================================================
+
+  window.saveArcaLogToCloud = async function(logEntry) {
+    const firestore = initFirebase();
+    if (!firestore || !logEntry || !logEntry.id) return false;
+
+    try {
+      const docId = String(logEntry.id);
+      await firestore.collection('logs_atividades').doc(docId).set(logEntry, { merge: true });
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao gravar log de auditoria na nuvem:', err);
+      return false;
+    }
+  };
+
+  window.syncArcaLogsFromCloud = async function(onUpdated) {
+    const firestore = initFirebase();
+    if (!firestore) return null;
+
+    try {
+      const snapshot = await firestore.collection('logs_atividades').orderBy('timestamp', 'desc').limit(200).get();
+      let cloudLogs = [];
+      snapshot.forEach(doc => {
+        const item = doc.data();
+        if (item && item.id) cloudLogs.push(item);
+      });
+
+      if (cloudLogs.length > 0) {
+        const localLogs = (typeof window.getArcaAuditLogs === 'function') ? window.getArcaAuditLogs() : [];
+        const logsMap = new Map();
+        localLogs.forEach(l => logsMap.set(String(l.id), l));
+        cloudLogs.forEach(l => logsMap.set(String(l.id), l));
+
+        const merged = Array.from(logsMap.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        localStorage.setItem('arca_audit_logs_v1', JSON.stringify(merged));
+
+        if (typeof onUpdated === 'function') onUpdated(merged);
+        return merged;
+      }
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao sincronizar logs de auditoria da nuvem:', err);
+    }
+    return null;
+  };
+
+  window.updateArcaLogRevertidoInCloud = async function(logId, revertidoData) {
+    const firestore = initFirebase();
+    if (!firestore || !logId) return false;
+
+    try {
+      await firestore.collection('logs_atividades').doc(String(logId)).update({
+        revertido: true,
+        revertidoEm: revertidoData?.revertidoEm || new Date().toISOString(),
+        revertidoPor: revertidoData?.revertidoPor || 'Administrador',
+        notaReversao: revertidoData?.notaReversao || 'Reversão concluída'
+      });
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao atualizar estado de reversão do log na nuvem:', err);
+      return false;
+    }
+  };
+
   // Inicialização automática ao carregar
   document.addEventListener('DOMContentLoaded', () => {
     initFirebase();
