@@ -568,23 +568,23 @@
         </div>
 
         <!-- Barra de Ferramentas: Pesquisa, Filtros Rápidos, Colunas e Exportação -->
-        <div class="card-box" style="margin-bottom: 1.25rem; padding: 1.15rem; background: #ffffff;">
-          <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <div class="card-box" style="padding: 1rem 1.25rem; margin-bottom: 1.25rem; overflow: visible !important; background: #ffffff;">
+          <div class="agenda-controls-bar" style="margin-bottom: 0;">
             
-            <!-- Barra de Pesquisa -->
-            <div style="flex: 1; min-width: 260px; max-width: 450px; position: relative;">
-              <input type="text" id="inputSearchAgenda" class="form-control" placeholder="Pesquisar por título, adversário, local, responsável..." style="width: 100%; padding-left: 2.35rem;" oninput="onAgendaSearchInput(this.value)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;">
+            <!-- Campo de Pesquisa -->
+            <div class="agenda-search-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
+              <input type="text" id="inputSearchAgenda" placeholder="Pesquisar por título, adversário, local, responsável..." oninput="onAgendaSearchInput(this.value)">
             </div>
 
-            <!-- Filtros Secundários -->
-            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <!-- Filtros Dropdowns e Ações em Linha -->
+            <div class="agenda-filters-group">
               
               <!-- Filtro de Estado -->
-              <select id="selectFiltroEstado" class="form-control" style="min-width: 150px; height: 38px;" onchange="onFiltroEstadoChange(this.value)">
+              <select id="selectFiltroEstado" class="agenda-filter-select" onchange="onFiltroEstadoChange(this.value)">
                 <option value="all">Todos os Estados</option>
                 <option value="Confirmado">Confirmado</option>
                 <option value="Em Planeamento">Em Planeamento</option>
@@ -595,7 +595,7 @@
               </select>
 
               <!-- Filtro de Âmbito / Recinto -->
-              <select id="selectFiltroAmbito" class="form-control" style="min-width: 140px; height: 38px;" onchange="onFiltroAmbitoChange(this.value)">
+              <select id="selectFiltroAmbito" class="agenda-filter-select" onchange="onFiltroAmbitoChange(this.value)">
                 <option value="all">Todos os Âmbitos</option>
                 <option value="Casa">Casa / Pavilhão</option>
                 <option value="Fora">Fora (Deslocação)</option>
@@ -605,7 +605,7 @@
 
               <!-- Seletor de Colunas (Dropdown) -->
               <div class="col-picker-dropdown" style="position: relative;">
-                <button type="button" class="btn btn-outline btn-sm" id="btnToggleColPicker" onclick="toggleAgendaColPickerMenu(event)" style="height: 38px; display: inline-flex; align-items: center; gap: 0.35rem;" title="Escolher colunas visíveis da tabela">
+                <button type="button" class="btn btn-outline btn-sm" id="btnToggleColPicker" onclick="toggleAgendaColPickerMenu(event)" style="height: 38px; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem;" title="Escolher colunas visíveis da tabela">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/></svg>
                   <span>Colunas</span>
                   <span style="font-size: 0.75rem;">&#9662;</span>
@@ -622,7 +622,7 @@
 
               <!-- Menu Exportar e Imprimir Global -->
               <div class="export-dropdown-group" style="position: relative;">
-                <button type="button" class="btn btn-outline btn-sm" id="btnToggleExportMenu" onclick="toggleAgendaExportMenu(event)" style="height: 38px; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; color: var(--primary);" title="Exportar ou Imprimir listagem">
+                <button type="button" class="btn btn-outline btn-sm" id="btnToggleExportMenu" onclick="toggleAgendaExportMenu(event)" style="height: 38px; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; color: var(--primary); padding: 0.45rem 0.85rem;" title="Exportar ou Imprimir listagem">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                   <span>Exportar / Imprimir</span>
                   <span style="font-size: 0.75rem;">&#9662;</span>
@@ -648,6 +648,7 @@
               </div>
 
             </div>
+
           </div>
         </div>
 
