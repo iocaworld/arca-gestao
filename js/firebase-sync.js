@@ -55,8 +55,9 @@ const ARCA_FIREBASE_CONFIG = {
       let deletedIds = [];
       try {
         deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-        if (Array.isArray(deletedIds) && deletedIds.some(id => OFFICIAL_USER_IDS.has(Number(id)))) {
-          deletedIds = deletedIds.filter(id => !OFFICIAL_USER_IDS.has(Number(id)));
+        // Apenas o Administrador Total (Jorge, ID 1) não pode constar na lista de eliminados
+        if (Array.isArray(deletedIds) && deletedIds.includes(1)) {
+          deletedIds = deletedIds.filter(id => Number(id) !== 1);
           localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
         }
       } catch (e) { deletedIds = []; }
@@ -284,10 +285,24 @@ const ARCA_FIREBASE_CONFIG = {
         }
       } catch (e) {}
 
-      // 2. Apagar por ID direto do documento
+      // 2. Apagar imediatamente da base de utilizadores local (arca_utilizadores_v2)
+      try {
+        let users = JSON.parse(localStorage.getItem('arca_utilizadores_v2') || '[]');
+        users = users.filter(u => Number(u.id) !== numId);
+        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(users));
+      } catch (e) {}
+
+      // 3. Apagar imediatamente da base de órgãos sociais se existir (arca_membros_orgaos_v4)
+      try {
+        let membros = JSON.parse(localStorage.getItem('arca_membros_orgaos_v4') || '[]');
+        membros = membros.filter(m => Number(m.id) !== numId);
+        localStorage.setItem('arca_membros_orgaos_v4', JSON.stringify(membros));
+      } catch (e) {}
+
+      // 4. Apagar por ID direto do documento
       await firestore.collection('utilizadores').doc(docId).delete();
 
-      // 3. Salvaguarda: caso o documento tenha sido gravado com outro docId, procurar por campo id
+      // 5. Salvaguarda: caso o documento tenha sido gravado com outro docId, procurar por campo id
       const qSnap = await firestore.collection('utilizadores').where('id', '==', numId).get();
       qSnap.forEach(async (doc) => {
         if (doc.id !== docId) {

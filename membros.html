@@ -3015,14 +3015,13 @@
       if (fileInput) fileInput.value = '';
     };
 
-    window.handleFormFotoFileSelect = function(e) {
+    window.handleFormFotoFileSelect = async function(e) {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (re) => {
-          window.setFormFoto(re.target.result);
-        };
-        reader.readAsDataURL(file);
+        const compressed = (typeof window.compressArcaAvatar === 'function')
+          ? await window.compressArcaAvatar(file, 320, 320, 0.82)
+          : await new Promise(res => { const r = new FileReader(); r.onload = re => res(re.target.result); r.readAsDataURL(file); });
+        window.setFormFoto(compressed);
       }
     };
 
@@ -3038,7 +3037,7 @@
       if (zone) zone.classList.remove('drag-over');
     };
 
-    window.handleFormAvatarDrop = function(e) {
+    window.handleFormAvatarDrop = async function(e) {
       e.preventDefault();
       const zone = document.getElementById('formAvatarDropZone');
       if (zone) zone.classList.remove('drag-over');
@@ -3046,11 +3045,10 @@
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
         if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (re) => {
-            window.setFormFoto(re.target.result);
-          };
-          reader.readAsDataURL(file);
+          const compressed = (typeof window.compressArcaAvatar === 'function')
+            ? await window.compressArcaAvatar(file, 320, 320, 0.82)
+            : await new Promise(res => { const r = new FileReader(); r.onload = re => res(re.target.result); r.readAsDataURL(file); });
+          window.setFormFoto(compressed);
         } else {
           showToast('Por favor, arraste uma imagem válida (PNG, JPG, WebP).', 'error');
         }
@@ -3063,17 +3061,14 @@
       if (fileInput) fileInput.click();
     };
 
-    window.handleTableAvatarFileSelected = function(e) {
+    window.handleTableAvatarFileSelected = async function(e) {
       if (!currentTableAvatarUploadMemberId || !e.target.files || !e.target.files[0]) return;
       const file = e.target.files[0];
       const memberId = currentTableAvatarUploadMemberId;
       currentTableAvatarUploadMemberId = null;
 
-      const reader = new FileReader();
-      reader.onload = (re) => {
-        applyAvatarToMember(memberId, re.target.result);
-      };
-      reader.readAsDataURL(file);
+      await applyAvatarToMember(memberId, file);
+      e.target.value = '';
     };
 
     window.handleTableAvatarDragOver = function(e, membroId) {
@@ -3088,7 +3083,7 @@
       if (box) box.classList.remove('drag-over');
     };
 
-    window.handleTableAvatarDrop = function(e, membroId) {
+    window.handleTableAvatarDrop = async function(e, membroId) {
       e.preventDefault();
       const box = document.getElementById(`tableAvatarBox_${membroId}`);
       if (box) box.classList.remove('drag-over');
@@ -3096,35 +3091,52 @@
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         const file = e.dataTransfer.files[0];
         if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (re) => {
-            applyAvatarToMember(membroId, re.target.result);
-          };
-          reader.readAsDataURL(file);
+          await applyAvatarToMember(membroId, file);
         } else {
           showToast('Por favor, arraste um ficheiro de imagem válido (PNG, JPG, WebP).', 'error');
         }
       }
     };
 
-    function applyAvatarToMember(membroId, dataUrl) {
+    async function applyAvatarToMember(membroId, rawFileOrDataUrl) {
+      const compressed = (typeof window.compressArcaAvatar === 'function')
+        ? await window.compressArcaAvatar(rawFileOrDataUrl, 320, 320, 0.82)
+        : await new Promise(res => {
+            if (typeof rawFileOrDataUrl === 'string') return res(rawFileOrDataUrl);
+            const r = new FileReader();
+            r.onload = re => res(re.target.result);
+            r.readAsDataURL(rawFileOrDataUrl);
+          });
+
       let allUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
-      const uIdx = allUsers.findIndex(u => u.id === membroId);
+      const uIdx = allUsers.findIndex(u => Number(u.id) === Number(membroId));
       if (uIdx >= 0) {
-        allUsers[uIdx].foto = dataUrl;
+        allUsers[uIdx].foto = compressed;
         localStorage.setItem('arca_utilizadores_v2', JSON.stringify(allUsers));
+
         if (typeof window.saveArcaUtilizadorToCloud === 'function') {
-          window.saveArcaUtilizadorToCloud(allUsers[uIdx]);
+          await window.saveArcaUtilizadorToCloud(allUsers[uIdx]);
         }
 
         if (typeof window.getArcaCurrentUser === 'function') {
           const curr = window.getArcaCurrentUser();
-          if (curr && (curr.id === membroId || curr.login === allUsers[uIdx].login)) {
-            curr.foto = dataUrl;
+          if (curr && (Number(curr.id) === Number(membroId) || curr.login === allUsers[uIdx].login)) {
+            curr.foto = compressed;
             window.setArcaCurrentUser(curr);
           }
         }
       }
+
+      // Sincronizar também no storage de órgãos sociais
+      try {
+        const mKey = 'arca_membros_orgaos_v4';
+        let membrosList = JSON.parse(localStorage.getItem(mKey) || '[]');
+        const mIdx = membrosList.findIndex(m => Number(m.id) === Number(membroId));
+        if (mIdx >= 0) {
+          membrosList[mIdx].foto = compressed;
+          localStorage.setItem(mKey, JSON.stringify(membrosList));
+        }
+      } catch (e) {}
 
       membros = getMembrosFromCentralUtilizadores();
       renderMembros();

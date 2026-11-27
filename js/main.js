@@ -585,6 +585,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const JORGE_AVATAR_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231c6d42'/><stop offset='100%' stop-color='%230f3f26'/></linearGradient><linearGradient id='skin' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23fed7aa'/><stop offset='100%' stop-color='%23fdba74'/></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23bg)'/><circle cx='50' cy='40' r='20' fill='url(%23skin)'/><path d='M30 35c0-12 9-20 20-20s20 8 20 20c0 3-1 6-2 6s-4-4-9-4-7 4-11 4-6-3-8-6z' fill='%23334155'/><path d='M20 90c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231e293b'/><path d='M42 60l8 12 8-12' fill='%23ffffff'/><polygon points='48,66 52,66 50,78' fill='%23dc2626'/></svg>";
 
+  // Função Global de Compressão e Redimensionamento Otimizado de Fotografias de Perfil
+  window.compressArcaAvatar = function(fileOrDataUrl, maxWidth = 320, maxHeight = 320, quality = 0.82) {
+    return new Promise((resolve) => {
+      if (!fileOrDataUrl) return resolve('');
+      if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:image/svg+xml') && fileOrDataUrl.length < 50000) {
+        return resolve(fileOrDataUrl);
+      }
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        let width = img.naturalWidth || img.width;
+        let height = img.naturalHeight || img.height;
+        if (!width || !height) return resolve(typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '');
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width / height > maxWidth / maxHeight) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, width);
+        canvas.height = Math.max(1, height);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        try {
+          const compressed = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressed);
+        } catch (err) {
+          try {
+            resolve(canvas.toDataURL('image/png'));
+          } catch (e2) {
+            resolve(typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '');
+          }
+        }
+      };
+      img.onerror = function() {
+        resolve(typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '');
+      };
+      if (typeof fileOrDataUrl === 'string') {
+        img.src = fileOrDataUrl;
+      } else if (fileOrDataUrl instanceof Blob || fileOrDataUrl instanceof File) {
+        const reader = new FileReader();
+        reader.onload = (e) => { img.src = e.target.result; };
+        reader.onerror = () => { resolve(''); };
+        reader.readAsDataURL(fileOrDataUrl);
+      } else {
+        resolve('');
+      }
+    });
+  };
+
   const SEED_UTILIZADORES = [
     {
       id: 1,
@@ -1135,15 +1190,15 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   window.getArcaUtilizadores = function() {
-    // Lista canónica dos 23 utilizadores oficiais da ARCA que nunca podem ser eliminados
+    // Lista canónica dos utilizadores oficiais da ARCA
     const OFFICIAL_USER_IDS = new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]);
 
-    // Limpar IDs oficiais de arca_deleted_user_ids para evitar que dirigentes e utilizadores oficiais desapareçam
+    // O Administrador Total Jorge (ID 1) é a única conta estritamente imune à eliminação
     let deletedIds = [];
     try {
       deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-      if (Array.isArray(deletedIds) && deletedIds.some(id => OFFICIAL_USER_IDS.has(Number(id)))) {
-        deletedIds = deletedIds.filter(id => !OFFICIAL_USER_IDS.has(Number(id)));
+      if (Array.isArray(deletedIds) && deletedIds.includes(1)) {
+        deletedIds = deletedIds.filter(id => Number(id) !== 1);
         localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
       }
     } catch (e) { deletedIds = []; }
@@ -1161,14 +1216,18 @@ document.addEventListener('DOMContentLoaded', () => {
         parsed = JSON.parse(JSON.stringify(SEED_UTILIZADORES));
       }
 
-      // Filtrar eliminados não-oficiais
+      // Filtrar utilizadores eliminados pelo Administrador
       if (deletedIds.length > 0) {
         parsed = parsed.filter(p => !deletedIds.includes(Number(p.id)));
       }
 
-      // Assegurar SEMPRE a integração dos 23 utilizadores oficiais do seed central
+      // Integrar utilizadores do seed central (exceto utilizadores que foram eliminados pelo Administrador)
       SEED_UTILIZADORES.forEach(su => {
-        const idx = parsed.findIndex(p => Number(p.id) === Number(su.id));
+        const suId = Number(su.id);
+        if (deletedIds.includes(suId) && suId !== 1) {
+          return; // Utilizador eliminado pelo Administrador — NUNCA ressuscitar!
+        }
+        const idx = parsed.findIndex(p => Number(p.id) === suId);
         if (idx === -1) {
           parsed.push(JSON.parse(JSON.stringify(su)));
         } else {
@@ -1448,6 +1507,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (fresh.estado) u.estado = fresh.estado;
           if (fresh.orgao) u.orgao = fresh.orgao;
           if (fresh.cargo) u.cargo = fresh.cargo;
+          if (fresh.foto && fresh.foto !== u.foto) {
+            u.foto = fresh.foto;
+          }
         }
 
         // Salvaguarda inviolável para Jorge (ID 1 / Administrador Total):
@@ -1470,7 +1532,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((u.login === 'raquel.cunha' || (u.nome && u.nome.toLowerCase().includes('raquel alexandra'))) && (!u.numeroSocio || u.numeroSocio === 305)) {
           u.numeroSocio = 414;
         }
-        if (u.foto && (u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users') || u.foto.includes('xmlns="http://www.w3.org/2000/svg"') || (u.id === 1 && !u.foto.startsWith('data:image/')))) {
+
+        // Limpeza de URLs antigas da API externa e garantia de foto inicial
+        if (u.foto && u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users')) {
+          u.foto = (Number(u.id) === 1) ? JORGE_AVATAR_SVG : '';
+        }
+        if (!u.foto && Number(u.id) === 1) {
           u.foto = JORGE_AVATAR_SVG;
         }
 
@@ -1852,17 +1919,16 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         dropZone.classList.remove('drag-over');
       });
-      dropZone.addEventListener('drop', (e) => {
+      dropZone.addEventListener('drop', async (e) => {
         e.preventDefault();
         dropZone.classList.remove('drag-over');
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
           const file = e.dataTransfer.files[0];
           if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (re) => {
-              window.setGlobalPerfilFoto(re.target.result);
-            };
-            reader.readAsDataURL(file);
+            const compressed = (typeof window.compressArcaAvatar === 'function')
+              ? await window.compressArcaAvatar(file, 320, 320, 0.82)
+              : await new Promise(res => { const r = new FileReader(); r.onload = re => res(re.target.result); r.readAsDataURL(file); });
+            window.setGlobalPerfilFoto(compressed);
           } else {
             window.showToast('Por favor, arraste um ficheiro de imagem válido (PNG, JPG, WebP).', 'error');
           }
@@ -1944,26 +2010,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fileInput) fileInput.value = '';
   };
 
-  window.handleGlobalPerfilFotoSelect = function(e) {
+  window.handleGlobalPerfilFotoSelect = async function(e) {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (re) => {
-        window.setGlobalPerfilFoto(re.target.result);
-      };
-      reader.readAsDataURL(file);
+      const compressed = (typeof window.compressArcaAvatar === 'function')
+        ? await window.compressArcaAvatar(file, 320, 320, 0.82)
+        : await new Promise(res => { const r = new FileReader(); r.onload = re => res(re.target.result); r.readAsDataURL(file); });
+      window.setGlobalPerfilFoto(compressed);
     }
   };
 
-  window.salvarMeuPerfil = function(e) {
-    e.preventDefault();
+  window.salvarMeuPerfil = async function(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
     const user = window.getArcaCurrentUser();
 
     const novoNome = document.getElementById('globalPerfilNome').value.trim();
     const novoEmail = document.getElementById('globalPerfilEmail').value.trim();
     const novoTelefone = document.getElementById('globalPerfilTelefone').value.trim();
     const novaMorada = document.getElementById('globalPerfilMorada').value.trim();
-    const novaFoto = document.getElementById('inputGlobalPerfilFotoData').value;
+    const rawFoto = document.getElementById('inputGlobalPerfilFotoData').value;
+
+    const novaFoto = (rawFoto && typeof window.compressArcaAvatar === 'function')
+      ? await window.compressArcaAvatar(rawFoto, 320, 320, 0.82)
+      : rawFoto;
 
     user.nome = novoNome;
     user.email = novoEmail;
@@ -1974,11 +2043,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Atualizar no storage da sessão
     window.setArcaCurrentUser(user);
 
+    // Sincronizar na base de dados de utilizadores central (arca_utilizadores_v2)
+    try {
+      let users = [];
+      try { users = JSON.parse(localStorage.getItem('arca_utilizadores_v2')) || []; } catch (err) {}
+      const uIdx = users.findIndex(u => Number(u.id) === Number(user.id) || (u.login && u.login.toLowerCase() === (user.login || '').toLowerCase()));
+      if (uIdx >= 0) {
+        users[uIdx].nome = novoNome;
+        users[uIdx].email = novoEmail;
+        users[uIdx].telefone = novoTelefone;
+        users[uIdx].morada = novaMorada;
+        users[uIdx].foto = novaFoto;
+        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(users));
+        if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+          await window.saveArcaUtilizadorToCloud(users[uIdx]);
+        }
+      }
+    } catch (err) {}
+
     // Sincronizar também na base de dados de membros se este utilizador existir lá
     try {
       const membrosKey = 'arca_membros_orgaos_v4';
       let membros = JSON.parse(localStorage.getItem(membrosKey)) || [];
-      const mIdx = membros.findIndex(m => m.id === user.id || m.login === user.login || m.nome === user.nome);
+      const mIdx = membros.findIndex(m => Number(m.id) === Number(user.id) || (m.login && m.login.toLowerCase() === (user.login || '').toLowerCase()));
       if (mIdx >= 0) {
         membros[mIdx].nome = novoNome;
         membros[mIdx].email = novoEmail;
@@ -1993,7 +2080,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {}
 
     window.closeMeuPerfilModal();
-    window.showToast('Os seus dados e fotografia de perfil foram atualizados com sucesso!', 'success');
+    window.showToast('Os seus dados e fotografia de perfil foram atualizados e sincronizados com sucesso!', 'success');
   };
 
   window.trocarUtilizadorSessao = function(membroId) {
