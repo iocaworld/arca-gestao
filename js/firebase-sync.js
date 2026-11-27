@@ -519,7 +519,7 @@ const ARCA_FIREBASE_CONFIG = {
   // GESTÃO E SINCRONIZAÇÃO DE AGENDAS (JOGOS, EVENTOS, REUNIÕES, TAREFAS)
   // =========================================================================
 
-  const ARCA_AGENDA_STORAGE_KEY = 'arca_gestao_agenda_v1';
+  const ARCA_AGENDA_STORAGE_KEY = 'arca_gestao_agenda_v2';
   const ARCA_DELETED_AGENDA_KEY = 'arca_deleted_agenda_ids';
 
   window.syncArcaAgendaFromCloud = async function(onUpdated) {
@@ -534,15 +534,31 @@ const ARCA_FIREBASE_CONFIG = {
         deletedIds = JSON.parse(localStorage.getItem(ARCA_DELETED_AGENDA_KEY) || '[]');
       } catch (e) {}
 
+      const seedList = (typeof window.getArcaAgendaSeed === 'function') ? window.getArcaAgendaSeed() : [];
+      const batch = firestore.batch();
+      let batchCount = 0;
+
       snapshot.forEach(doc => {
         const item = doc.data();
-        if (item && item.id && !deletedIds.includes(Number(item.id))) {
-          cloudItems.push(item);
+        if (item && item.id) {
+          // Detetar se é um jogo de teste antigo para atualizar com o novo jogo oficial
+          const isOldDummyGame = item.categoria === 'jogos' && item.criadoPor === 'Jorge Manuel da Silva Cunha' && Number(item.id) <= 11;
+          if (isOldDummyGame) {
+            const newSeedMatch = seedList.find(s => Number(s.id) === Number(item.id));
+            if (newSeedMatch) {
+              batch.set(doc.ref, newSeedMatch, { merge: false });
+              cloudItems.push(newSeedMatch);
+              batchCount++;
+              return;
+            }
+          }
+          if (!deletedIds.includes(Number(item.id))) {
+            cloudItems.push(item);
+          }
         }
       });
 
-      // Se o Firestore não tiver itens ou estiver incompleto, semear com os itens oficiais da ARCA
-      const seedList = (typeof window.getArcaAgendaSeed === 'function') ? window.getArcaAgendaSeed() : [];
+      // Se o Firestore não tiver itens ou faltarem itens do novo seed (ex: 36 jogos e novos IDs), sincronizar
       let missingSeeds = [];
       seedList.forEach(si => {
         if (!deletedIds.includes(Number(si.id))) {

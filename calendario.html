@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     /* Estilos Específicos para o Módulo de Gestão (Calendário, Jogos, Eventos, Reuniões, Tarefas) */
     .app-main, .page-container {
@@ -461,6 +462,11 @@
           <button type="button" class="btn btn-outline btn-sm" onclick="recarregarAgendaNuvem(this)" id="btnReloadNuvem" title="Recarregar e sincronizar da Cloud Firestore">
             <span>🔄 Sincronizar Nuvem</span>
           </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="abrirModalImportarJogos()" style="display: inline-flex; align-items: center; gap: 0.45rem; background: #0284c7; color: #ffffff; border: none; font-weight: 700; box-shadow: var(--shadow-sm);" title="Importar listagem de jogos (Excel .xlsx/.xls, CSV ou PDF)">
+            <span style="font-size: 1.05rem;">📥</span>
+            <span>Importar Jogos</span>
+            <span style="font-size: 0.72rem; background: rgba(255,255,255,0.22); color: #ffffff; padding: 0.15rem 0.45rem; border-radius: 9999px; font-weight: 800;">Excel / CSV / PDF</span>
+          </button>
           <button type="button" class="btn btn-primary btn-sm" onclick="abrirNovoRegistoAgenda()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -634,6 +640,9 @@
                   <div style="border-top: 1px solid var(--border-light); margin: 0.25rem 0;"></div>
                   <button type="button" class="export-menu-item" onclick="imprimirAgenda(false)" style="width: 100%; border: none; background: transparent; text-align: left; padding: 0.6rem 1rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
                     <span>🖨️ Imprimir Listagem</span>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="abrirModalImportarJogos()" style="width: 100%; border: none; background: transparent; text-align: left; padding: 0.6rem 1rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; border-top: 1px solid var(--border-light); color: #0284c7; font-weight: 700;">
+                    <span>📥 Importar Jogos (Excel, CSV, PDF)</span>
                   </button>
                 </div>
               </div>
@@ -1000,7 +1009,132 @@
   </div>
 
   <!-- Scripts Necessários com Cache Busting -->
-  <script src="js/socios-data.js?v=20261127_v5"></script>
+    <!-- ======================================================================= -->
+  <!-- MODAL: IMPORTAR LISTAGEM DE JOGOS (EXCEL, CSV, PDF / TEXTO) -->
+  <!-- ======================================================================= -->
+  <div class="modal-overlay" id="modalImportarJogos" onclick="if(event.target === this) fecharModalImportarJogos()">
+    <div class="modal-content" style="background-color: #ffffff !important; opacity: 1 !important; border-radius: var(--radius-lg); width: 100%; max-width: 900px; max-height: 94vh; overflow-y: auto; box-shadow: var(--shadow-xl); position: relative; padding: 0;">
+      
+      <!-- Cabeçalho -->
+      <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="width: 38px; height: 38px; border-radius: 8px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">📥</div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-title);">Importar Listagem de Jogos</h3>
+            <p style="margin: 0; font-size: 0.82rem; color: var(--text-muted);">Carregue o calendário de jogos a partir de ficheiro Excel (.xlsx, .xls), CSV ou texto colado</p>
+          </div>
+        </div>
+        <button type="button" class="close-modal-btn" onclick="fecharModalImportarJogos()" style="border: none; background: transparent; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; line-height: 1;">&times;</button>
+      </div>
+
+      <!-- Corpo do Modal -->
+      <div style="padding: 1.5rem;">
+        
+        <!-- Alternador de Método: Ficheiro vs Colar Texto -->
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem; flex-wrap: wrap;">
+          <button type="button" id="tabImportFicheiro" class="btn btn-primary btn-xs" onclick="setImportTab('ficheiro')">
+            📁 Carregar Ficheiro (Excel / CSV)
+          </button>
+          <button type="button" id="tabImportTexto" class="btn btn-outline btn-xs" onclick="setImportTab('texto')">
+            📋 Colar Tabela / Texto de Jogos (ou do PDF)
+          </button>
+          <button type="button" class="btn btn-outline btn-xs" style="margin-left: auto;" onclick="descarregarModeloExcelJogos()" title="Descarregar ficheiro Excel de modelo com as colunas oficiais">
+            📄 Descarregar Modelo Excel
+          </button>
+        </div>
+
+        <!-- Painel 1: Carregar Ficheiro -->
+        <div id="panelImportFicheiro">
+          <div id="dropZoneJogos" style="border: 2px dashed #93c5fd; background: #f0f9ff; border-radius: var(--radius-md); padding: 2.25rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s ease;">
+            <input type="file" id="inputFicheiroJogos" accept=".xlsx, .xls, .csv, .txt, .pdf" style="display: none;" onchange="handleFileSelected(event)">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
+            <div style="font-weight: 700; color: #0369a1; font-size: 1.05rem; margin-bottom: 0.25rem;">
+              Arraste o ficheiro Excel (.xlsx / .xls) ou CSV para aqui
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Compatível com mapas de jogos da AF Aveiro, FPF ou folhas personalizadas
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('inputFicheiroJogos').click()">
+              Procurar Ficheiro no Computador...
+            </button>
+          </div>
+        </div>
+
+        <!-- Painel 2: Colar Texto / Tabela -->
+        <div id="panelImportTexto" style="display: none;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-title); display: block; margin-bottom: 0.35rem;">
+            Cole aqui o texto copiado de um PDF, página da federação ou folha de cálculo:
+          </label>
+          <textarea id="textoImportJogos" class="form-control" rows="6" placeholder="Exemplo de linhas:&#10;CAMPEONATO INTERDISTRITAL	Arc Assistência X Sc S. João Ver	PAVILHÃO DA ARCA	2027-03-07 18:00&#10;CD II Divisão Futsal	CCDR Covão Lobo &quot;B&quot; X Arc Assistência	PAV.GIM.COVÃO LOBO	2027-02-27 18:00" style="width: 100%; font-family: monospace; font-size: 0.82rem;"></textarea>
+          <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem;" onclick="processarTextoColadoJogos()">
+            🔍 Analisar e Processar Texto
+          </button>
+        </div>
+
+        <!-- Info das Colunas Reconhecidas -->
+        <div style="margin-top: 1rem; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <strong style="color: var(--text-title);">Estrutura esperada:</strong> Competição, Fase, Grupo, Jogo (Equipas), Local de Jogo, Data e Hora.
+          </div>
+          <span style="color: #0284c7; font-weight: 700; font-size: 0.78rem;">✓ Deteção Automática</span>
+        </div>
+
+        <!-- Área de Pré-visualização dos Jogos Reconhecidos -->
+        <div id="areaPreviewJogos" style="display: none; margin-top: 1.25rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="font-weight: 800; color: #0284c7; font-size: 0.95rem;">
+              <span id="previewCountBadge" style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.65rem; border-radius: 9999px; margin-right: 0.4rem;">0</span>
+              jogos identificados e prontos a importar:
+            </div>
+            
+            <!-- Modo de Importação -->
+            <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.85rem; font-weight: 600;">
+              <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                <input type="radio" name="importModeJogos" value="substituir" checked>
+                <span>Substituir jogos atuais</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                <input type="radio" name="importModeJogos" value="adicionar">
+                <span>Adicionar aos existentes</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Tabela de Pré-visualização -->
+          <div style="max-height: 280px; overflow-y: auto; border: 1px solid var(--border-light); border-radius: var(--radius-sm);">
+            <table class="data-table" style="font-size: 0.82rem;">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">#</th>
+                  <th style="width: 120px;">Data & Hora</th>
+                  <th>Jogo / Equipas</th>
+                  <th style="width: 80px; text-align: center;">Âmbito</th>
+                  <th style="width: 130px;">Secção</th>
+                  <th>Local</th>
+                  <th>Competição</th>
+                </tr>
+              </thead>
+              <tbody id="previewJogosTbody">
+                <!-- Linhas geradas via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Rodapé com Botões de Ação -->
+      <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border-light); background: #f8fafc; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+        <button type="button" class="btn btn-outline btn-sm" onclick="fecharModalImportarJogos()">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnConfirmarImportacaoJogos" onclick="confirmarImportacaoJogos()" disabled style="display: inline-flex; align-items: center; gap: 0.45rem;">
+          <span>💾 Confirmar e Importar Jogos</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+<script src="js/socios-data.js?v=20261127_v5"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="js/firebase-sync.js?v=20261127_v5"></script>
@@ -1073,6 +1207,7 @@
       if (e.key === 'Escape') {
         fecharModalAgendaFicha();
         fecharModalAgendaForm();
+        fecharModalImportarJogos();
       }
     });
 
@@ -1864,6 +1999,485 @@
         modal.classList.remove('active');
       }
     };
+
+    // =========================================================================
+    // IMPORTADOR DE JOGOS (EXCEL, CSV, PDF / TEXTO)
+    // =========================================================================
+    let parsedImportedJogos = [];
+
+    window.abrirModalImportarJogos = function() {
+      parsedImportedJogos = [];
+      const tbody = document.getElementById('previewJogosTbody');
+      if (tbody) tbody.innerHTML = '';
+      const previewArea = document.getElementById('areaPreviewJogos');
+      if (previewArea) previewArea.style.display = 'none';
+
+      const btnConfirm = document.getElementById('btnConfirmarImportacaoJogos');
+      if (btnConfirm) {
+        btnConfirm.disabled = true;
+        btnConfirm.innerHTML = '<span>💾 Confirmar e Importar Jogos</span>';
+      }
+
+      const fileInput = document.getElementById('inputFicheiroJogos');
+      if (fileInput) fileInput.value = '';
+      const textInput = document.getElementById('textoImportJogos');
+      if (textInput) textInput.value = '';
+
+      setImportTab('ficheiro');
+
+      const modal = document.getElementById('modalImportarJogos');
+      if (modal) {
+        modal.classList.add('active');
+        const box = modal.querySelector('.modal-content');
+        if (box) box.scrollTop = 0;
+      }
+    };
+
+    window.fecharModalImportarJogos = function() {
+      const modal = document.getElementById('modalImportarJogos');
+      if (modal) {
+        modal.classList.remove('active');
+      }
+      parsedImportedJogos = [];
+    };
+
+    window.setImportTab = function(tab) {
+      const btnFicheiro = document.getElementById('tabImportFicheiro');
+      const btnTexto = document.getElementById('tabImportTexto');
+      const panelFicheiro = document.getElementById('panelImportFicheiro');
+      const panelTexto = document.getElementById('panelImportTexto');
+
+      if (tab === 'ficheiro') {
+        if (btnFicheiro) btnFicheiro.className = 'btn btn-primary btn-xs';
+        if (btnTexto) btnTexto.className = 'btn btn-outline btn-xs';
+        if (panelFicheiro) panelFicheiro.style.display = 'block';
+        if (panelTexto) panelTexto.style.display = 'none';
+      } else {
+        if (btnFicheiro) btnFicheiro.className = 'btn btn-outline btn-xs';
+        if (btnTexto) btnTexto.className = 'btn btn-primary btn-xs';
+        if (panelFicheiro) panelFicheiro.style.display = 'none';
+        if (panelTexto) panelTexto.style.display = 'block';
+      }
+    };
+
+    // Suporte para Drag and Drop
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropZone = document.getElementById('dropZoneJogos');
+      if (dropZone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.style.background = '#e0f2fe';
+            dropZone.style.borderColor = '#0284c7';
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.style.background = '#f0f9ff';
+            dropZone.style.borderColor = '#93c5fd';
+          }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files && files.length > 0) {
+            handleProcessFile(files[0]);
+          }
+        }, false);
+      }
+    });
+
+    window.handleFileSelected = function(e) {
+      if (e.target.files && e.target.files.length > 0) {
+        handleProcessFile(e.target.files[0]);
+      }
+    };
+
+    function handleProcessFile(file) {
+      if (!file) return;
+      const fileName = file.name.toLowerCase();
+
+      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            if (typeof XLSX === 'undefined') {
+              alert('Biblioteca SheetJS ainda não carregada. Por favor tente novamente dentro de instantes.');
+              return;
+            }
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+            processarRowsObjetosJogos(jsonRows);
+          } catch(err) {
+            console.error('Erro ao ler Excel:', err);
+            if (window.showToast) window.showToast('Erro ao ler ficheiro Excel: ' + err.message, 'error');
+            else alert('Erro ao processar ficheiro Excel.');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          processarTextoJogosString(e.target.result);
+        };
+        reader.readAsText(file, 'utf-8');
+      } else {
+        alert('Por favor selecione um ficheiro Excel (.xlsx, .xls) ou CSV (.csv).');
+      }
+    }
+
+    window.processarTextoColadoJogos = function() {
+      const text = document.getElementById('textoImportJogos')?.value || '';
+      if (!text.trim()) {
+        alert('Por favor cole o texto ou tabela com a lista de jogos.');
+        return;
+      }
+      processarTextoJogosString(text);
+    };
+
+    function processarTextoJogosString(text) {
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const rows = [];
+
+      lines.forEach((line) => {
+        let parts = [];
+        if (line.includes('\t')) parts = line.split('\t');
+        else if (line.includes(';')) parts = line.split(';');
+        else if (line.includes(',')) parts = line.split(',');
+        else {
+          const match = line.match(/(.*?)\s+(?:X|x|vs|VS|-)\s+(.*?)(?:\s+(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}))?(?:\s+(\d{1,2}:\d{2}))?$/);
+          if (match) {
+            parts = ['Competição Oficial', '', '', match[1] + ' X ' + match[2], 'Pavilhão Oficial', (match[3] || '2026-11-27') + ' ' + (match[4] || '18:00')];
+          }
+        }
+
+        if (parts.length >= 3) {
+          // Se primeira linha for cabeçalho, ignorar
+          const p0 = parts[0].toLowerCase();
+          if (p0.includes('competi') || p0.includes('jogo') || p0.includes('data')) return;
+
+          rows.push({
+            'Competição': parts[0] || 'Competição Oficial',
+            'Fase': parts[1] || '',
+            'Grupo': parts[2] || '',
+            'Jogo': parts[3] || parts[1] || '',
+            'Local de jogo': parts[4] || 'Pavilhão Oficial',
+            'Data e hora': parts[5] || parts[2] || ''
+          });
+        }
+      });
+
+      if (rows.length === 0) {
+        alert('Não foram detetadas linhas de jogos válidas no texto colado.');
+        return;
+      }
+
+      processarRowsObjetosJogos(rows);
+    }
+
+    function processarRowsObjetosJogos(rawRows) {
+      if (!Array.isArray(rawRows) || rawRows.length === 0) {
+        alert('O ficheiro não contém dados de jogos.');
+        return;
+      }
+
+      const jogosList = [];
+
+      rawRows.forEach((row, index) => {
+        // Encontrar chaves dinâmicas
+        const getField = (aliases) => {
+          const keys = Object.keys(row);
+          for (let alias of aliases) {
+            const found = keys.find(k => k.toLowerCase().trim().includes(alias));
+            if (found && row[found] !== undefined && row[found] !== '') return row[found];
+          }
+          return '';
+        };
+
+        const competicao = String(getField(['competi', 'torneio', 'liga', 'campeonato']) || 'Campeonato Oficial').trim();
+        const fase = String(getField(['fase']) || '').trim();
+        const grupo = String(getField(['grupo', 'série', 'serie', 'zona']) || '').trim();
+        const jogoRaw = String(getField(['jogo', 'partida', 'equipa', 'encontro']) || '').trim();
+        const localRaw = String(getField(['local', 'pavilh', 'campo', 'recinto']) || '').trim();
+        const dataHoraRaw = getField(['data', 'hora', 'data e hora']);
+
+        if (!jogoRaw && !localRaw && !dataHoraRaw) return; // Ignora linhas em branco
+
+        // Processar Data e Hora
+        let dataStr = new Date().toISOString().slice(0, 10);
+        let horaInicio = '18:00';
+        let horaFim = '19:45';
+
+        if (dataHoraRaw instanceof Date && !isNaN(dataHoraRaw)) {
+          const yyyy = dataHoraRaw.getFullYear();
+          const mm = String(dataHoraRaw.getMonth() + 1).padStart(2, '0');
+          const dd = String(dataHoraRaw.getDate()).padStart(2, '0');
+          dataStr = `${yyyy}-${mm}-${dd}`;
+          const hh = String(dataHoraRaw.getHours()).padStart(2, '0');
+          const min = String(dataHoraRaw.getMinutes()).padStart(2, '0');
+          horaInicio = `${hh}:${min}`;
+        } else if (typeof dataHoraRaw === 'number') {
+          // Excel serial date code
+          try {
+            const dateObj = new Date((dataHoraRaw - (25567 + 2)) * 86400 * 1000);
+            const yyyy = dateObj.getFullYear();
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            dataStr = `${yyyy}-${mm}-${dd}`;
+            const hh = String(dateObj.getHours()).padStart(2, '0');
+            const min = String(dateObj.getMinutes()).padStart(2, '0');
+            horaInicio = `${hh}:${min}`;
+          } catch(e) {}
+        } else if (typeof dataHoraRaw === 'string') {
+          const str = dataHoraRaw.trim();
+          const dateMatch = str.match(/(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4})/);
+          if (dateMatch) {
+            let dVal = dateMatch[1];
+            if (dVal.includes('/')) {
+              const parts = dVal.split('/');
+              dVal = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            dataStr = dVal;
+          }
+          const timeMatch = str.match(/(\d{1,2}:\d{2})/);
+          if (timeMatch) {
+            horaInicio = timeMatch[1].padStart(5, '0');
+          }
+        }
+
+        // Calcular horaFim (+105 min)
+        try {
+          const [h, m] = horaInicio.split(':').map(Number);
+          const endMins = (h * 60 + m + 105) % 1440;
+          const endH = String(Math.floor(endMins / 60)).padStart(2, '0');
+          const endM = String(endMins % 60).padStart(2, '0');
+          horaFim = `${endH}:${endM}`;
+        } catch(e) {}
+
+        // Determinar secção (Feminino vs Masculino)
+        let seccao = 'Futsal Masculino';
+        const upperComp = competicao.toUpperCase();
+        const upperFase = fase.toUpperCase();
+        if (upperComp.includes('FEMININ') || upperComp.includes('INTERDISTRITAL') || upperFase.includes('FEMININ')) {
+          seccao = 'Futsal Feminino';
+        }
+
+        // Determinar Casa / Fora
+        const parts = jogoRaw.split(/\s+[XxvsVS]+\s+/);
+        const homeTeam = (parts[0] || '').trim();
+        const awayTeam = (parts[1] || '').trim();
+        const isArcaHome = /Arc\s+Assist/i.test(homeTeam) || /^ARCA/i.test(homeTeam);
+        const ambito = isArcaHome ? 'Casa' : 'Fora';
+        const adversario = isArcaHome ? awayTeam.replace(/Arc Assistência/gi, 'ARCA').trim() : homeTeam.replace(/Arc Assistência/gi, 'ARCA').trim();
+
+        const local = isArcaHome ? 'Pavilhão Carlos Almeida (ARCA)' : (localRaw || 'Pavilhão Adversário');
+
+        // Formatação de título limpo com ARCA
+        const tagSeccao = seccao === 'Futsal Feminino' ? 'Futsal Fem.' : 'Futsal Masc.';
+        let tituloJogo = jogoRaw
+          .replace(/Arc Assistência\s+X\s+/gi, 'ARCA vs ')
+          .replace(/\s+X\s+Arc Assistência/gi, ' vs ARCA')
+          .replace(/Arc Assistência/gi, 'ARCA')
+          .replace(/\s+[Xx]\s+/g, ' vs ');
+
+        const titulo = `${tagSeccao} • ${tituloJogo}`;
+
+        // Subtítulo
+        let subtitulo = competicao;
+        if (fase && fase !== competicao) subtitulo += ` • ${fase}`;
+        if (grupo && grupo !== fase && grupo !== competicao) subtitulo += ` • ${grupo}`;
+
+        // Estado baseado na data atual
+        const hojeIso = new Date().toISOString().slice(0, 10);
+        let estado = 'Confirmado';
+        if (dataStr < hojeIso) {
+          estado = 'Concluído';
+        }
+
+        // Descrição e logística
+        const descricao = `Jogo oficial da época desportiva 2026/2027 (${competicao}${fase ? ' • ' + fase : ''}${grupo ? ' • ' + grupo : ''}). Jogo: ${tituloJogo}.`;
+        const logistica = isArcaHome
+          ? 'Pavilhão Carlos Almeida (ARCA). Balneários das equipas e arbitragem, policiamento/segurança e abertura do bar da sede.'
+          : `Deslocação da comitiva ARCA em viatura oficial até ao ${localRaw || 'recinto adversário'}. Kit médico e equipamentos oficiais.`;
+
+        jogosList.push({
+          id: index + 1,
+          categoria: 'jogos',
+          tipo: 'Jogo Oficial',
+          titulo: titulo,
+          subtitulo: subtitulo,
+          data: dataStr,
+          horaInicio: horaInicio,
+          horaFim: horaFim,
+          local: local,
+          ambito: ambito,
+          seccao: seccao,
+          escalao: 'Seniores',
+          adversario: adversario || 'Adversário Oficial',
+          responsavel: 'Secção de Futsal / Direção ARCA',
+          contacto: '966 100 115',
+          estado: estado,
+          descricao: descricao,
+          logistica: logistica,
+          criadoPor: 'Importação Ficheiro Jogos',
+          criadoEm: new Date().toISOString()
+        });
+      });
+
+      if (jogosList.length === 0) {
+        alert('Não foi possível identificar jogos válidos a partir dos dados fornecidos.');
+        return;
+      }
+
+      parsedImportedJogos = jogosList;
+      renderPreviewImportJogos();
+    }
+
+    function renderPreviewImportJogos() {
+      const tbody = document.getElementById('previewJogosTbody');
+      const previewArea = document.getElementById('areaPreviewJogos');
+      const countBadge = document.getElementById('previewCountBadge');
+      const btnConfirm = document.getElementById('btnConfirmarImportacaoJogos');
+
+      if (!tbody || !previewArea) return;
+
+      tbody.innerHTML = parsedImportedJogos.map((j, idx) => `
+        <tr>
+          <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${idx + 1}</td>
+          <td style="white-space: nowrap; font-weight: 700;">
+            ${j.data} <span style="color: var(--text-muted); font-size: 0.75rem;">${j.horaInicio}</span>
+          </td>
+          <td>
+            <div style="font-weight: 700; color: var(--text-title);">${window.escapeHtml(j.titulo)}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Adversário: ${window.escapeHtml(j.adversario)}</div>
+          </td>
+          <td style="text-align: center;">
+            <span style="display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; background: ${j.ambito === 'Casa' ? '#dcfce7' : '#fef9c3'}; color: ${j.ambito === 'Casa' ? '#166534' : '#854d0e'};">
+              ${j.ambito}
+            </span>
+          </td>
+          <td>${j.seccao}</td>
+          <td>${window.escapeHtml(j.local)}</td>
+          <td style="font-size: 0.75rem; color: var(--text-muted);">${window.escapeHtml(j.subtitulo)}</td>
+        </tr>
+      `).join('');
+
+      if (countBadge) countBadge.textContent = parsedImportedJogos.length;
+      previewArea.style.display = 'block';
+
+      if (btnConfirm) {
+        btnConfirm.disabled = false;
+        btnConfirm.innerHTML = `<span>💾 Confirmar e Importar ${parsedImportedJogos.length} Jogos</span>`;
+      }
+    }
+
+    window.confirmarImportacaoJogos = async function() {
+      if (!parsedImportedJogos || parsedImportedJogos.length === 0) return;
+
+      const btnConfirm = document.getElementById('btnConfirmarImportacaoJogos');
+      if (btnConfirm) {
+        btnConfirm.disabled = true;
+        btnConfirm.innerHTML = '<span>⏳ A guardar e sincronizar...</span>';
+      }
+
+      const modoEl = document.querySelector('input[name="importModeJogos"]:checked');
+      const modo = modoEl ? modoEl.value : 'substituir';
+
+      let novaLista = [];
+
+      if (modo === 'substituir') {
+        // Remove todos os jogos existentes, preservando eventos, reuniões e tarefas
+        const outrosItens = agendaList.filter(x => x.categoria !== 'jogos');
+        parsedImportedJogos.forEach((j, i) => {
+          j.id = i + 1;
+        });
+        novaLista = [...parsedImportedJogos, ...outrosItens];
+      } else {
+        // Modo Adicionar aos existentes
+        let maxId = agendaList.reduce((max, item) => Math.max(max, Number(item.id) || 0), 0);
+        parsedImportedJogos.forEach((j) => {
+          maxId++;
+          j.id = maxId;
+          novaLista.push(j);
+        });
+        novaLista = [...agendaList, ...novaLista];
+      }
+
+      // Ordenar por data decrescente
+      novaLista.sort((a, b) => new Date(b.data + 'T' + (b.horaInicio || '00:00')) - new Date(a.data + 'T' + (a.horaInicio || '00:00')));
+      agendaList = novaLista;
+
+      // 1. Guardar localmente
+      if (typeof window.saveArcaAgendaLocal === 'function') {
+        window.saveArcaAgendaLocal(agendaList);
+      }
+
+      // 2. Sincronizar na Cloud Firestore
+      if (typeof window.saveArcaAgendaToCloud === 'function') {
+        for (const item of parsedImportedJogos) {
+          try {
+            await window.saveArcaAgendaToCloud(item);
+          } catch(e) {}
+        }
+      }
+
+      // 3. Registar no Log de Auditoria
+      const currentUser = (typeof window.getLoggedUser === 'function') ? window.getLoggedUser() : { nome: 'Administrador' };
+      if (typeof window.saveArcaLogToCloud === 'function') {
+        try {
+          await window.saveArcaLogToCloud({
+            id: Date.now(),
+            tipo: 'IMPORTACAO',
+            modulo: 'GESTÃO / JOGOS',
+            descricao: `Importação oficial de ${parsedImportedJogos.length} jogos de futsal via ficheiro (${modo === 'substituir' ? 'Substituição total da época' : 'Adicionados à época'})`,
+            utilizador: currentUser?.nome || 'Jorge Manuel da Silva Cunha',
+            timestamp: new Date().toISOString()
+          });
+        } catch(e) {}
+      }
+
+      // 4. Fechar modal e notificar
+      fecharModalImportarJogos();
+
+      if (window.showToast) {
+        window.showToast(`${parsedImportedJogos.length} jogos oficiais importados com sucesso!`, 'success');
+      } else {
+        alert(`${parsedImportedJogos.length} jogos oficiais importados com sucesso!`);
+      }
+
+      // Filtrar para a aba Jogos e atualizar tabela
+      filtrarCategoria('jogos');
+      renderAgenda();
+      atualizarKpisAgenda();
+    };
+
+    window.descarregarModeloExcelJogos = function() {
+      if (typeof XLSX === 'undefined') {
+        alert('Biblioteca XLSX ainda a carregar. Por favor tente novamente dentro de instantes.');
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+      const wsData = [
+        ['Competição', 'Fase', 'Grupo', 'Jogo', 'Local de jogo', 'Data e hora'],
+        ['CAMPEONATO INTERDISTRITAL AFAVEIRO_AFCOIMBRA', 'TAÇA DE ENCERRAMENTO', 'TAÇA DE ENCERRAMENTO', 'Arc Assistência X Sc S. João Ver', 'PAVILHÃO DA ARCA', '2027-03-07 18:00'],
+        ['CD II Divisão Futsal', 'Nova fase', 'ZONA SUL', 'CCDR Covão Lobo "B" X Arc Assistência', 'PAV.GIM.COVÃO LOBO', '2027-02-27 18:00'],
+        ['CAMPEONATO INTERDISTRITAL AFAVEIRO_AFCOIMBRA', 'TAÇA DE ENCERRAMENTO', 'TAÇA DE ENCERRAMENTO', 'Arc Assistência X Cf Santa Clara', 'PAVILHÃO DA ARCA', '2027-02-14 17:30'],
+        ['Taça Distrito Aveiro Masculino Futsal', 'I Eliminatória', '1ª ELIMINATÓRIA', 'FC Barcouço X Arc Assistência', 'PAV MUN BARCOUÇO', '2027-02-06 18:00']
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      XLSX.utils.book_append_sheet(wb, ws, 'Jogos ARCA');
+      XLSX.writeFile(wb, 'ARCA_Modelo_Importacao_Jogos.xlsx');
+    };
+
 
     window.aoMudarCategoriaForm = function(cat) {
       const tipoInput = document.getElementById('formAgendaTipo');
