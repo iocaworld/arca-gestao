@@ -1507,7 +1507,19 @@ document.addEventListener('DOMContentLoaded', () => {
           if (fresh.estado) u.estado = fresh.estado;
           if (fresh.orgao) u.orgao = fresh.orgao;
           if (fresh.cargo) u.cargo = fresh.cargo;
-          if (fresh.foto && fresh.foto !== u.foto) {
+          const uHasRealPhoto = u.foto && !u.foto.startsWith('data:image/svg+xml') && !u.foto.includes('gestao.arca-aguadadebaixo.pt');
+          const freshHasRealPhoto = fresh.foto && !fresh.foto.startsWith('data:image/svg+xml') && !fresh.foto.includes('gestao.arca-aguadadebaixo.pt');
+
+          if (uHasRealPhoto && !freshHasRealPhoto) {
+            // A sessão possui a fotografia real enviada pelo utilizador: atualizar na lista central
+            fresh.foto = u.foto;
+            try {
+              localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(allUsers));
+              if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+                window.saveArcaUtilizadorToCloud(fresh);
+              }
+            } catch (err) {}
+          } else if (freshHasRealPhoto) {
             u.foto = fresh.foto;
           }
         }
@@ -1813,9 +1825,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDiv = document.createElement('div');
     modalDiv.className = 'modal-overlay';
     modalDiv.id = 'modalMeuPerfilGlobal';
+    modalDiv.style.cssText = 'z-index: 99999; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);';
     modalDiv.onclick = function(e) { if (e.target === this) window.closeMeuPerfilModal(); };
     modalDiv.innerHTML = `
-      <div class="modal-content" style="max-width: 580px; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="modal-content" style="max-width: 580px; max-height: 92vh; display: flex; flex-direction: column; background: #ffffff; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1); border-radius: 12px; overflow: hidden;">
         <div class="modal-header">
           <div>
             <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin: 0;">👤 Os Meus Dados & Fotografia de Perfil</h2>

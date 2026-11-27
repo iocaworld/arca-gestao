@@ -1473,6 +1473,21 @@
           u.foto = JORGE_SVG;
         }
       });
+
+      // Sincronizar fotografia de sessão com o utilizador correspondente na lista
+      try {
+        const curr = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+        if (curr && curr.foto && !curr.foto.startsWith('data:image/svg+xml')) {
+          const uIdx = utilizadores.findIndex(u => Number(u.id) === Number(curr.id) || (u.login && curr.login && u.login.toLowerCase() === curr.login.toLowerCase()));
+          if (uIdx >= 0 && (!utilizadores[uIdx].foto || utilizadores[uIdx].foto.startsWith('data:image/svg+xml'))) {
+            utilizadores[uIdx].foto = curr.foto;
+            localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
+            if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+              window.saveArcaUtilizadorToCloud(utilizadores[uIdx]);
+            }
+          }
+        }
+      } catch (e) {}
     }
 
     function saveUtilizadores() {
@@ -3378,6 +3393,21 @@
             if (!deletedIds.includes(uId) && !seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
               seenIds.add(uId);
               if (uLog) seenLogins.add(uLog);
+
+              // Salvaguardar fotografia real se a nuvem ainda tiver o SVG ilustrativo
+              const localUser = utilizadores.find(lu => Number(lu.id) === uId);
+              const currUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+              const realPhoto = (localUser && localUser.foto && !localUser.foto.startsWith('data:image/svg+xml'))
+                ? localUser.foto
+                : ((currUser && Number(currUser.id) === uId && currUser.foto && !currUser.foto.startsWith('data:image/svg+xml')) ? currUser.foto : null);
+
+              if (realPhoto && (!u.foto || u.foto.startsWith('data:image/svg+xml'))) {
+                u.foto = realPhoto;
+                if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+                  window.saveArcaUtilizadorToCloud(u);
+                }
+              }
+
               if (!u.foto && uId === 1) u.foto = JORGE_SVG;
               unicos.push(u);
             }
@@ -3425,6 +3455,21 @@
               if (!deletedIds.includes(uId) && !seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
                 seenIds.add(uId);
                 if (uLog) seenLogins.add(uLog);
+
+                // Salvaguardar fotografia real se a nuvem ainda tiver o SVG ilustrativo
+                const localUser = utilizadores.find(lu => Number(lu.id) === uId);
+                const currUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+                const realPhoto = (localUser && localUser.foto && !localUser.foto.startsWith('data:image/svg+xml'))
+                  ? localUser.foto
+                  : ((currUser && Number(currUser.id) === uId && currUser.foto && !currUser.foto.startsWith('data:image/svg+xml')) ? currUser.foto : null);
+
+                if (realPhoto && (!u.foto || u.foto.startsWith('data:image/svg+xml'))) {
+                  u.foto = realPhoto;
+                  if (typeof window.saveArcaUtilizadorToCloud === 'function') {
+                    window.saveArcaUtilizadorToCloud(u);
+                  }
+                }
+
                 if (!u.foto && uId === 1) u.foto = JORGE_SVG;
                 unicos.push(u);
               }
