@@ -367,9 +367,9 @@
     .wizard-steps-bar {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
-      background: #f8fafc;
+      gap: 0.65rem;
+      padding: 0.85rem 1.5rem;
+      background: #fafaf9;
       border-bottom: 1px solid var(--border-light);
       overflow-x: auto;
     }
@@ -377,11 +377,11 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.4rem 0.85rem;
+      padding: 0.35rem 0.85rem;
       border-radius: 9999px;
       border: 1.5px solid #cbd5e1;
       background: #ffffff;
-      color: var(--text-muted);
+      color: #64748b;
       font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
@@ -389,9 +389,10 @@
       transition: all 0.15s ease;
     }
     .wizard-step-pill.active {
-      border-color: var(--primary);
-      background: rgba(28, 109, 66, 0.08);
-      color: var(--primary);
+      border-color: #0f3f26;
+      background: #ffffff;
+      color: #0f3f26;
+      box-shadow: 0 1px 3px rgba(15, 63, 38, 0.1);
     }
     .wizard-step-pill.completed {
       border-color: #10b981;
@@ -402,7 +403,7 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: #cbd5e1;
+      background: #0f3f26;
       color: #ffffff;
       display: inline-flex;
       align-items: center;
@@ -411,7 +412,7 @@
       font-weight: 800;
     }
     .wizard-step-pill.active .wizard-step-num {
-      background: var(--primary);
+      background: #0f3f26;
     }
     .wizard-step-pill.completed .wizard-step-num {
       background: #10b981;
@@ -428,21 +429,55 @@
       animation: tabFadeIn 0.15s ease-in-out;
     }
 
-    /* Grelha de Presenças */
+    /* Pílulas de Presenças de Membros (Estilo Portal Oficial) */
     .presencas-members-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 0.6rem;
-      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.5rem;
       margin-bottom: 1.25rem;
-    }
-    .presenca-card {
+      padding: 0.75rem;
+      background: #fafaf9;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
-      padding: 0.55rem 0.75rem;
-      background: #f8fafc;
-      display: flex;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .presenca-pill-item {
+      display: inline-flex;
       align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.65rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--text-body);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .presenca-pill-item:hover {
+      border-color: #0f3f26;
+      background: #f0fdf4;
+    }
+    .presenca-pill-item.selected {
+      border-color: #0f3f26;
+      background: #ecfdf5;
+      color: #0f3f26;
+      font-weight: 600;
+    }
+    .presenca-pill-item input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #0f3f26;
+      cursor: pointer;
+    }
+    .presenca-pill-role {
+      color: #64748b;
+      font-size: 0.74rem;
+      font-weight: normal;
+    }
       gap: 0.65rem;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -937,7 +972,12 @@
               </button>
               <ul class="nav-sublist">
                 <li><a href="utilizadores.html" class="nav-sublink">Utilizadores</a></li>
-                <li><a href="pedidos.html" class="nav-sublink">Pedidos e Validações</a></li>
+                <li>
+                  <a href="pedidos.html" class="nav-sublink" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Pedidos e Validações</span>
+                    <span class="nav-item-badge badge-pedidos-pendentes" style="background: #d97706; color: #ffffff; padding: 2px 7px; border-radius: 9999px; font-size: 0.72rem; display: none;">0</span>
+                  </a>
+                </li>
                 <li><a href="logs.html" class="nav-sublink">Relatórios, Logs e Atividades</a></li>
               </ul>
             </li>
@@ -1261,14 +1301,18 @@
   <div class="modal-overlay" id="modalFormAta" onclick="if(event.target === this) closeFormAtaModal()">
     <div class="modal-content" style="max-width: 920px; max-height: 94vh; display: flex; flex-direction: column;">
       
-      <div class="modal-header">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-light);">
         <div>
-          <h2 id="modalFormAtaTitle" style="margin: 0; font-size: 1.25rem; color: var(--text-title);">Nova Ata</h2>
+          <h2 id="modalFormAtaTitle" style="margin: 0; font-size: 1.25rem; color: var(--text-title); font-weight: 700;">Nova ata</h2>
           <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: var(--text-muted);">
             Registo oficial da reunião de Direção ou Assembleia da A.R.C.A.
           </p>
         </div>
-        <button class="modal-close-btn" type="button" onclick="closeFormAtaModal()">&times;</button>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeFormAtaModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('formAta').requestSubmit()">Guardar</button>
+          <button class="modal-close-btn" type="button" onclick="closeFormAtaModal()">&times;</button>
+        </div>
       </div>
 
       <!-- Barra dos 4 Passos do Assistente -->
@@ -1296,49 +1340,49 @@
 
         <!-- ABA 1: DADOS -->
         <div class="wizard-content-pane active" id="wizardPane_1">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
-            <div class="form-group" style="grid-column: 1 / -1;">
-              <label class="form-label" for="formAtaTipo">Tipo de reunião *</label>
+          <div style="display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label" for="formAtaTipo">Tipo de reunião</label>
               <select id="formAtaTipo" class="form-control" required onchange="handleTipoAtaChange(this.value)">
                 <option value="Reunião de Direção">Reunião de Direção</option>
                 <option value="Assembleia Geral Ordinária">Assembleia Geral Ordinária</option>
                 <option value="Assembleia Geral Extraordinária">Assembleia Geral Extraordinária</option>
-                <option value="Reunião Extraordinária">Reunião Extraordinária da Direção</option>
+                <option value="Reunião Extraordinária">Reunião Extraordinária</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="formAtaData">Data da Reunião *</label>
+              <label class="form-label" for="formAtaData">Data</label>
               <input type="date" id="formAtaData" class="form-control" required onchange="autoCalcularReferenciaAta()">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="formAtaHoraInicio">Hora de início *</label>
+              <label class="form-label" for="formAtaHoraInicio">Hora de início</label>
               <input type="time" id="formAtaHoraInicio" class="form-control" required value="21:00">
             </div>
 
             <div class="form-group">
               <label class="form-label" for="formAtaHoraFim">Hora de fim</label>
-              <input type="time" id="formAtaHoraFim" class="form-control">
+              <input type="time" id="formAtaHoraFim" class="form-control" placeholder="--:--">
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 140px 180px 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div style="display: grid; grid-template-columns: 140px 170px 1fr; gap: 1rem; margin-bottom: 1.25rem;">
             <div class="form-group">
-              <label class="form-label" for="formAtaNumero">N.º da ata *</label>
+              <label class="form-label" for="formAtaNumero">Nº da ata</label>
               <input type="number" id="formAtaNumero" class="form-control" required min="1" oninput="autoCalcularReferenciaAta()">
-              <small style="color: var(--text-muted); font-size: 0.72rem;">Atribuído automaticamente</small>
+              <small style="color: var(--text-muted); font-size: 0.72rem; display: block; margin-top: 3px;">Atribuído automaticamente</small>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="formAtaReferencia">Referência *</label>
-              <input type="text" id="formAtaReferencia" class="form-control" required placeholder="ex: 021/1126">
-              <small style="color: var(--text-muted); font-size: 0.72rem;">Formato nº/MMAA</small>
+              <label class="form-label" for="formAtaReferencia">Referência</label>
+              <input type="text" id="formAtaReferencia" class="form-control" required placeholder="021/1126">
+              <small style="color: var(--text-muted); font-size: 0.72rem; display: block; margin-top: 3px;">Formato nº/MMAA</small>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="formAtaLocal">Local da Reunião *</label>
-              <input type="text" id="formAtaLocal" class="form-control" required list="listaLocaisSugeridos" placeholder="ex: Pavilhão Carlos Almeida, Aguada de Baixo">
+              <label class="form-label" for="formAtaLocal">Local</label>
+              <input type="text" id="formAtaLocal" class="form-control" required list="listaLocaisSugeridos" placeholder="Pavilhão Carlos Almeida, Aguada de Baixo">
               <datalist id="listaLocaisSugeridos">
                 <option value="Pavilhão Carlos Almeida, Aguada de Baixo">
                 <option value="Sede da ARCA, Aguada de Baixo">
@@ -1351,7 +1395,7 @@
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="form-group">
-              <label class="form-label" for="formAtaPresidiu">Presidiu à Reunião *</label>
+              <label class="form-label" for="formAtaPresidiu">Presidiu</label>
               <input type="text" id="formAtaPresidiu" class="form-control" required list="listaMembrosPresidencia" value="Jorge Manuel da Silva Cunha">
               <datalist id="listaMembrosPresidencia">
                 <!-- Preenchido dinamicamente -->
@@ -1359,7 +1403,7 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="formAtaSecretariou">Secretariou a Reunião *</label>
+              <label class="form-label" for="formAtaSecretariou">Secretariou</label>
               <input type="text" id="formAtaSecretariou" class="form-control" required list="listaMembrosSecretariado" value="Raquel Alexandra Marques da Cunha">
               <datalist id="listaMembrosSecretariado">
                 <!-- Preenchido dinamicamente -->
@@ -1371,7 +1415,7 @@
         <!-- ABA 2: PRESENÇAS -->
         <div class="wizard-content-pane" id="wizardPane_2">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <strong style="color: var(--text-title); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            <strong style="color: var(--text-title); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px;">
               MEMBROS / UTILIZADORES (<span id="presencasCountHeader">0</span> PRESENTES)
             </strong>
             <button type="button" class="btn btn-outline btn-xs" onclick="selecionarTodosMembrosPresencas(true)">Marcar Todos da Direção</button>
@@ -1384,32 +1428,32 @@
 
           <!-- Pesquisa de Sócios -->
           <div style="margin-bottom: 1rem;">
-            <label class="form-label" style="font-size: 0.82rem; font-weight: 700;">Adicionar Sócio às Presenças</label>
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b;">SÓCIOS</label>
             <div style="position: relative;">
-              <input type="text" id="inputSearchSocioPresenca" class="form-control" placeholder="Procurar sócio por nome ou nº (mín. 2 caracteres)..." oninput="handleSearchSocioPresenca(this.value)">
+              <input type="text" id="inputSearchSocioPresenca" class="form-control" placeholder="Procurar sócio por nome ou nº (min. 2 caracteres)..." oninput="handleSearchSocioPresenca(this.value)">
               <div id="resultsSearchSocioPresenca" style="display: none; position: absolute; top: calc(100% + 2px); left: 0; right: 0; max-height: 180px; overflow-y: auto; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-sm); z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.08);"></div>
             </div>
           </div>
 
           <!-- Outra Pessoa / Convidado -->
           <div style="margin-bottom: 1.25rem;">
-            <label class="form-label" style="font-size: 0.82rem; font-weight: 700;">Outra Pessoa (Convidado / Técnico)</label>
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b;">OUTRA PESSOA</label>
             <div style="display: flex; gap: 0.5rem;">
-              <input type="text" id="inputOutraPessoaNome" class="form-control" placeholder="Nome da pessoa ou representante de entidade externa">
+              <input type="text" id="inputOutraPessoaNome" class="form-control" placeholder="Nome">
               <button type="button" class="btn btn-secondary btn-sm" onclick="adicionarOutraPessoaPresenca()">Adicionar</button>
             </div>
           </div>
 
           <!-- Resumo de Presentes -->
           <div>
-            <label class="form-label" style="font-size: 0.82rem; font-weight: 700;">LISTA DE PRESENÇAS CONFIRMADAS</label>
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b;">LISTA DE PRESENÇAS</label>
             <div class="presencas-chips-wrap" id="presencasChipsList">
               <span style="color: var(--text-muted); font-size: 0.82rem; align-self: center;">Ainda ninguém marcado.</span>
             </div>
           </div>
 
           <div class="form-group" style="margin-top: 1rem;">
-            <label class="form-label" for="formAtaOutrasPresencas">Convidados / outras presenças ou observações de presença</label>
+            <label class="form-label" for="formAtaOutrasPresencas">Convidados / outras presenças</label>
             <textarea id="formAtaOutrasPresencas" class="form-control" style="min-height: 60px;" placeholder="Registo de ausências justificadas ou notas adicionais..."></textarea>
           </div>
         </div>
@@ -1422,7 +1466,7 @@
 
           <div style="margin-top: 1rem;">
             <button type="button" class="btn btn-outline btn-sm" onclick="adicionarNovoPonto()" style="display: inline-flex; align-items: center; gap: 0.4rem;">
-              <span>+ Adicionar Ponto à Ordem de Trabalhos</span>
+              <span>+ Adicionar ponto</span>
             </button>
           </div>
         </div>
@@ -1430,24 +1474,24 @@
         <!-- ABA 4: APROVAÇÃO E ANEXOS -->
         <div class="wizard-content-pane" id="wizardPane_4">
           <div class="form-group" style="margin-bottom: 1.25rem;">
-            <label class="form-label" for="formAtaEstado">Estado da Ata *</label>
+            <label class="form-label" for="formAtaEstado">Estado</label>
             <select id="formAtaEstado" class="form-control" required style="font-weight: 700;">
               <option value="Rascunho">Rascunho / minuta</option>
               <option value="Aprovada">Aprovada & Assinada</option>
               <option value="Anulada">Anulada</option>
             </select>
             <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">
-              Depois de aprovada e assinada, a ata é arquivada oficialmente no livro de atas.
+              Depois de aprovada, a ata fica bloqueada.
             </small>
           </div>
 
           <div class="form-group" style="margin-bottom: 1.25rem;">
-            <label class="form-label" for="formAtaObservacoes">Observações Finais / Notas de Convocatória</label>
-            <textarea id="formAtaObservacoes" class="form-control" style="min-height: 75px;" placeholder="Indicações finais, advertências ou observações pertinentes..."></textarea>
+            <label class="form-label" for="formAtaObservacoes">Observações</label>
+            <textarea id="formAtaObservacoes" class="form-control" style="min-height: 85px;" placeholder="Indicações finais, advertências ou observações pertinentes..."></textarea>
           </div>
 
           <!-- Assinaturas -->
-          <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem;">
+          <div style="background: #fafaf9; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
               <strong style="font-size: 0.85rem; color: var(--text-title); text-transform: uppercase;">ASSINATURAS</strong>
               <div style="display: flex; gap: 0.4rem;">
@@ -1463,18 +1507,21 @@
 
           <!-- Anexos -->
           <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem;">
-            <strong style="font-size: 0.85rem; color: var(--text-title); text-transform: uppercase; display: block; margin-bottom: 0.5rem;">ANEXOS DA REUNIÃO</strong>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">
-              Pode anexar cópias digitais, convocatórias, relatórios ou outros documentos em formato PDF ou imagem.
-            </p>
+            <strong style="font-size: 0.85rem; color: var(--text-title); text-transform: uppercase; display: block; margin-bottom: 0.5rem;">ANEXOS</strong>
 
-            <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem;">
+            <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.4rem;">
               <input type="file" id="inputAtaAnexoFicheiro" style="display: none;" onchange="handleCarregarAnexoFicheiro(this)">
               <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('inputAtaAnexoFicheiro').click()">
-                📎 Escolher Ficheiro
+                Escolher ficheiro
               </button>
               <span id="labelNomeAnexoEscolhido" style="font-size: 0.84rem; color: var(--text-muted);">Nenhum ficheiro selecionado</span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('inputAtaAnexoFicheiro').click()">
+                Carregar anexo
+              </button>
             </div>
+            <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-bottom: 0.75rem;">
+              Máx. 15 MB por ficheiro. A ata é guardada como rascunho antes de carregar o anexo.
+            </small>
 
             <div id="listaAnexosAta" style="display: flex; flex-direction: column; gap: 0.4rem;">
               <!-- Anexos listados aqui -->
@@ -1483,17 +1530,17 @@
         </div>
 
         <!-- Rodapé de Ações do Modal -->
-        <div class="modal-footer" style="padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+        <div class="modal-footer" style="padding: 1rem 1.5rem; background: #fafaf9; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
           <button type="button" class="btn btn-outline btn-sm" id="btnWizardAnterior" onclick="voltarWizardStep()" style="display: none;">
-            ← Anterior
+            &larr; Anterior
           </button>
           <div style="display: flex; gap: 0.6rem; margin-left: auto;">
             <button type="button" class="btn btn-secondary btn-sm" onclick="closeFormAtaModal()">Cancelar</button>
-            <button type="button" class="btn btn-outline btn-sm" id="btnWizardSeguinte" onclick="avancarWizardStep()">
-              Seguinte →
+            <button type="button" class="btn btn-primary btn-sm" id="btnWizardSeguinte" onclick="avancarWizardStep()">
+              Seguinte &rarr;
             </button>
             <button type="submit" class="btn btn-primary btn-sm" id="btnWizardSalvar" style="display: none;">
-              Guardar Ata
+              Guardar ata
             </button>
           </div>
         </div>
@@ -1567,8 +1614,8 @@
     let ataSortField = 'data';
     let ataSortDir = 'desc';
 
-    // Estado da Vista (table ou cards)
-    let atasViewMode = localStorage.getItem('arca_atas_view_mode') || 'table';
+    // Estado da Vista (cards ou table)
+    let atasViewMode = localStorage.getItem('arca_atas_view_mode') || 'cards';
 
     // Seleção de Atas para Exportação
     let selectedAtaIds = new Set();
@@ -2991,7 +3038,7 @@
     };
 
     window.openNovaAtaModal = function() {
-      document.getElementById('modalFormAtaTitle').textContent = 'Nova Ata';
+      document.getElementById('modalFormAtaTitle').textContent = 'Nova ata';
       document.getElementById('formAtaId').value = '';
 
       const hoje = new Date().toISOString().split('T')[0];
@@ -3045,7 +3092,7 @@
       const a = atas.find(item => item.id === ataId);
       if (!a) return;
 
-      document.getElementById('modalFormAtaTitle').textContent = `Editar Ata ${a.referencia || '#' + a.numero}`;
+      document.getElementById('modalFormAtaTitle').textContent = `Editar ata ${a.referencia || '#' + a.numero}`;
       document.getElementById('formAtaId').value = a.id;
       document.getElementById('formAtaTipo').value = a.tipo || 'Reunião de Direção';
       document.getElementById('formAtaData').value = a.data || new Date().toISOString().split('T')[0];
@@ -3126,7 +3173,7 @@
       dlSec.innerHTML = opts;
     }
 
-    // Inicialização da Grelha de Presenças com Dirigentes Centrais
+    // Inicialização da Grelha de Presenças com todos os Membros / Dirigentes Oficiais
     function initPresencasMembersGrid() {
       const grid = document.getElementById('presencasMembersGrid');
       if (!grid) return;
@@ -3134,15 +3181,23 @@
       const users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
       const dirigentes = users.filter(u => u.orgao && u.orgao !== 'Nenhum' && u.estado === 'Ativo');
 
-      grid.innerHTML = dirigentes.map(d => `
-        <div class="presenca-card" id="presencaCardMember_${d.id}" onclick="toggleMembroPresenca(${d.id}, '${escapeHtml(d.nome)}', '${escapeHtml(d.cargo || 'Dirigente')}')">
-          <input type="checkbox" id="chkPresencaMember_${d.id}" onclick="event.stopPropagation(); toggleMembroPresenca(${d.id}, '${escapeHtml(d.nome)}', '${escapeHtml(d.cargo || 'Dirigente')}')">
-          <div class="presenca-card-details">
-            <div class="presenca-card-name">${escapeHtml(d.nome)}</div>
-            <div class="presenca-card-role">${escapeHtml(d.cargo || 'Vogal')} &bull; ${escapeHtml(d.orgao || 'Direção')}</div>
-          </div>
-        </div>
-      `).join('');
+      // Ordenação estritamente alfabética por nome
+      dirigentes.sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt'));
+
+      grid.innerHTML = dirigentes.map(d => {
+        let roleLabel = d.cargo || 'Vogal';
+        if (d.orgao && d.orgao !== 'Direção') {
+          roleLabel = `${d.orgao} - ${d.cargo || 'Membro'}`;
+        }
+        const isPres = wizardPresencas.some(p => p.id === d.id && p.tipo === 'membro');
+        return `
+          <label class="presenca-pill-item ${isPres ? 'selected' : ''}" id="presencaCardMember_${d.id}">
+            <input type="checkbox" id="chkPresencaMember_${d.id}" ${isPres ? 'checked' : ''}
+                   onchange="toggleMembroPresenca(${d.id}, '${escapeHtml(d.nome)}', '${escapeHtml(roleLabel)}')">
+            <span>${escapeHtml(d.nome)} <span class="presenca-pill-role">&bull; ${escapeHtml(roleLabel)}</span></span>
+          </label>
+        `;
+      }).join('');
     }
 
     window.toggleMembroPresenca = function(id, nome, cargo) {
@@ -3163,7 +3218,11 @@
 
       alvos.forEach(d => {
         if (!wizardPresencas.some(p => p.id === d.id && p.tipo === 'membro')) {
-          wizardPresencas.push({ id: d.id, nome: d.nome, cargo: d.cargo || 'Dirigente', tipo: 'membro' });
+          let roleLabel = d.cargo || 'Dirigente';
+          if (d.orgao && d.orgao !== 'Direção') {
+            roleLabel = `${d.orgao} - ${d.cargo || 'Membro'}`;
+          }
+          wizardPresencas.push({ id: d.id, nome: d.nome, cargo: roleLabel, tipo: 'membro' });
         }
       });
       renderPresencasUI();
@@ -3230,7 +3289,7 @@
       if (countEl) countEl.textContent = wizardPresencas.length;
 
       // Sincronizar checkboxes de membros
-      document.querySelectorAll('.presencas-members-grid .presenca-card').forEach(card => {
+      document.querySelectorAll('#presencasMembersGrid .presenca-pill-item').forEach(card => {
         const chk = card.querySelector('input[type="checkbox"]');
         const idStr = card.id.replace('presencaCardMember_', '');
         const id = parseInt(idStr, 10);
@@ -3265,8 +3324,17 @@
         assunto: "",
         discussao: "",
         deliberacao: "",
+        showVotacao: false,
         votacao: { tipo: "Unanimidade", aFavor: wizardPresencas.length || 0, contra: 0, abstencao: 0 }
       });
+      renderPontosUI();
+    };
+
+    window.toggleVotacaoPonto = function(idx) {
+      if (!wizardPontos[idx].votacao) {
+        wizardPontos[idx].votacao = { tipo: "Unanimidade", aFavor: wizardPresencas.length || 0, contra: 0, abstencao: 0 };
+      }
+      wizardPontos[idx].showVotacao = !wizardPontos[idx].showVotacao;
       renderPontosUI();
     };
 
@@ -3298,12 +3366,12 @@
         <div class="ponto-card">
           <div class="ponto-card-header">
             <div class="ponto-card-title">
-              <span>📌 Ponto ${idx + 1}</span>
+              <span>Ponto ${idx + 1}</span>
             </div>
             <div class="ponto-card-actions">
-              <button type="button" class="btn btn-outline btn-xs" onclick="moverPonto(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Subir ponto">↑</button>
-              <button type="button" class="btn btn-outline btn-xs" onclick="moverPonto(${idx}, 1)" ${idx === wizardPontos.length - 1 ? 'disabled' : ''} title="Descer ponto">↓</button>
-              <button type="button" class="btn btn-outline btn-xs" onclick="removerPonto(${idx})" style="color: #dc2626;" title="Remover este ponto">Remover</button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="moverPonto(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Subir ponto">&uarr;</button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="moverPonto(${idx}, 1)" ${idx === wizardPontos.length - 1 ? 'disabled' : ''} title="Descer ponto">&darr;</button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="removerPonto(${idx})" style="color: #dc2626; border-color: #fca5a5;" title="Remover este ponto">Remover</button>
             </div>
           </div>
 
@@ -3338,24 +3406,33 @@
                       oninput="wizardPontos[${idx}].deliberacao = this.value">${escapeHtml(p.deliberacao || '')}</textarea>
           </div>
 
-          <!-- Votação do Ponto -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.65rem 0.85rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-            <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.84rem;">
-              <span>🗳️ <strong>Resultado da Votação:</strong></span>
-              <select class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.82rem; width: auto;"
-                      onchange="setVotacaoTipo(${idx}, this.value)">
-                <option value="Unanimidade" ${p.votacao?.tipo === 'Unanimidade' ? 'selected' : ''}>Aprovado por Unanimidade</option>
-                <option value="Maioria" ${p.votacao?.tipo === 'Maioria' ? 'selected' : ''}>Aprovado por Maioria</option>
-                <option value="Rejeitado" ${p.votacao?.tipo === 'Rejeitado' ? 'selected' : ''}>Rejeitado</option>
-                <option value="Sem Votação" ${p.votacao?.tipo === 'Sem Votação' ? 'selected' : ''}>Apenas Informativo / Sem Votação</option>
-              </select>
+          <!-- Botão Registar Votação / Painel de Votação -->
+          ${!p.showVotacao ? `
+            <div>
+              <button type="button" class="btn btn-outline btn-xs" onclick="toggleVotacaoPonto(${idx})" style="display: inline-flex; align-items: center; gap: 0.35rem; color: #475569; border-color: #cbd5e1;">
+                <span>+ Registar votação</span>
+              </button>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #475569;">
-              <span>Favor: <input type="number" min="0" value="${p.votacao?.aFavor ?? (wizardPresencas.length || 0)}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.aFavor = parseInt(this.value)||0"></span>
-              <span>Contra: <input type="number" min="0" value="${p.votacao?.contra ?? 0}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.contra = parseInt(this.value)||0"></span>
-              <span>Abst: <input type="number" min="0" value="${p.votacao?.abstencao ?? 0}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.abstencao = parseInt(this.value)||0"></span>
+          ` : `
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.65rem 0.85rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.84rem;">
+                <span><strong>Resultado da Votação:</strong></span>
+                <select class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.82rem; width: auto;"
+                        onchange="setVotacaoTipo(${idx}, this.value)">
+                  <option value="Unanimidade" ${p.votacao?.tipo === 'Unanimidade' ? 'selected' : ''}>Aprovado por Unanimidade</option>
+                  <option value="Maioria" ${p.votacao?.tipo === 'Maioria' ? 'selected' : ''}>Aprovado por Maioria</option>
+                  <option value="Rejeitado" ${p.votacao?.tipo === 'Rejeitado' ? 'selected' : ''}>Rejeitado</option>
+                  <option value="Sem Votação" ${p.votacao?.tipo === 'Sem Votação' ? 'selected' : ''}>Apenas Informativo / Sem Votação</option>
+                </select>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #475569;">
+                <span>Favor: <input type="number" min="0" value="${p.votacao?.aFavor ?? (wizardPresencas.length || 0)}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.aFavor = parseInt(this.value)||0"></span>
+                <span>Contra: <input type="number" min="0" value="${p.votacao?.contra ?? 0}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.contra = parseInt(this.value)||0"></span>
+                <span>Abst: <input type="number" min="0" value="${p.votacao?.abstencao ?? 0}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.abstencao = parseInt(this.value)||0"></span>
+                <button type="button" onclick="toggleVotacaoPonto(${idx})" class="btn btn-outline btn-xs" style="color: #64748b; font-size: 0.7rem; padding: 2px 5px;" title="Ocultar votação">&times;</button>
+              </div>
             </div>
-          </div>
+          `}
         </div>
       `).join('');
     }
