@@ -940,6 +940,11 @@
               <option value="Fora">Fora (Deslocação)</option>
               <option value="Exterior">Exterior / Freguesia</option>
               <option value="Interno">Interno (Sede)</option>
+              <option value="Instalações">Instalações / Parque</option>
+              <option value="Administrativo">Administrativo</option>
+              <option value="Associativo">Associativo</option>
+              <option value="Financeiro">Financeiro / Contabilidade</option>
+              <option value="Geral">Geral</option>
             </select>
           </div>
         </div>
@@ -1761,6 +1766,8 @@
       const modal = document.getElementById('modalAgendaFicha');
       if (modal) {
         modal.classList.add('active');
+        const box = modal.querySelector('.modal-content');
+        if (box) box.scrollTop = 0;
       }
     };
 
@@ -1805,6 +1812,8 @@
       const modal = document.getElementById('modalAgendaForm');
       if (modal) {
         modal.classList.add('active');
+        const box = modal.querySelector('.modal-content');
+        if (box) box.scrollTop = 0;
       }
     };
 
@@ -1824,7 +1833,16 @@
       document.getElementById('formAgendaHoraInicio').value = item.horaInicio || '';
       document.getElementById('formAgendaHoraFim').value = item.horaFim || '';
       document.getElementById('formAgendaLocal').value = item.local || '';
-      document.getElementById('formAgendaAmbito').value = item.ambito || 'Casa';
+      const ambitoSelect = document.getElementById('formAgendaAmbito');
+      if (ambitoSelect) {
+        if (item.ambito && ![...ambitoSelect.options].some(o => o.value === item.ambito)) {
+          const opt = document.createElement('option');
+          opt.value = item.ambito;
+          opt.textContent = item.ambito;
+          ambitoSelect.appendChild(opt);
+        }
+        ambitoSelect.value = item.ambito || 'Casa';
+      }
       document.getElementById('formAgendaSeccao').value = item.seccao || '';
       document.getElementById('formAgendaEscalao').value = item.escalao || '';
       document.getElementById('formAgendaResponsavel').value = item.responsavel || '';
@@ -1835,6 +1853,8 @@
       const modal = document.getElementById('modalAgendaForm');
       if (modal) {
         modal.classList.add('active');
+        const box = modal.querySelector('.modal-content');
+        if (box) box.scrollTop = 0;
       }
     };
 
