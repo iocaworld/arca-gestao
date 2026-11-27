@@ -4375,16 +4375,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (menu) menu.classList.remove('show');
     };
 
-    // --- 4. EXTRATO DE QUOTAS & AVISO INDIVIDUAL DO SÓCIO (PDF / IMPRIMIR) ---
-    window.emitirExtratoSocioPDF = function(socioId) {
-      const targetId = Number(socioId) || Number(window.currentDrawerSocioId) || Number(currentDrawerSocioId);
-      const socio = socios.find(s => Number(s.id) === targetId);
+    // --- 4. EXTRATO DE QUOTAS & AVISO INDIVIDUAL DO SÓCIO (VISUALIZADOR NA PÁGINA + PDF/IMPRIMIR) ---
+    let currentExtratoSocio = null;
 
-      if (!socio) {
-        if (window.showToast) window.showToast('Por favor selecione ou abra a ficha de um associado.', 'warning');
-        return;
-      }
-
+    function buildExtratoSocioPaperHtml(socio) {
       ensureSocioQuotas(socio);
 
       const divida = Number(socio.divida || 0);
@@ -4413,9 +4407,186 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }).join('');
 
+      return `
+        <table class="header-table" style="width: 100%; border-collapse: collapse; border-bottom: 2.5px solid #0f3f26; padding-bottom: 12px; margin-bottom: 16px;">
+          <tr>
+            <td style="border: none; padding: 0; vertical-align: middle;">
+              <div style="font-size: 13pt; font-weight: 800; color: #0f3f26; letter-spacing: 0.5px;">A.R.C.A. - ASSOCIAÇÃO RECREATIVA E CULTURAL DE AGUADA DE BAIXO</div>
+              <div style="font-size: 8pt; color: #475569; font-weight: 600; margin-top: 2px;">Instituição de Utilidade Pública · NIF: 501 547 265 · Fundada em 1986</div>
+              <div style="font-size: 8pt; color: #475569; font-weight: 600;">Sede: Rua da ARCA, Pavilhão Carlos Almeida - 3750-031 Aguada de Baixo, Águeda</div>
+            </td>
+            <td style="border: none; padding: 0; vertical-align: middle; text-align: right; width: 140px;">
+              <div style="font-size: 16pt; font-weight: 900; color: #0f3f26; border: 2px solid #0f3f26; border-radius: 4px; padding: 4px 8px; text-align: center; background: #f0fdf4;">
+                SÓCIO Nº ${socio.numero}
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <div style="text-align: center; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px;">
+          <div style="font-size: 13pt; font-weight: 800; color: #0f3f26; letter-spacing: 0.5px; text-transform: uppercase;">Extrato de Associado & Aviso de Quotas</div>
+          <div style="font-size: 8.5pt; color: #64748b; margin-top: 3px;">Ref. Documento: <strong>${refExtrato}</strong> · Emitido em: <strong>${hojeDataExtenso}</strong></div>
+        </div>
+
+        <div style="border: 1.5px solid #0f3f26; border-radius: 6px; background: #ffffff; padding: 12px 14px; margin-bottom: 16px;">
+          <div style="font-size: 8.5pt; font-weight: 800; color: #0f3f26; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 5px; margin-bottom: 8px;">
+            Identificação do Associado
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; font-size: 9pt;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">Nome Completo:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${escapeHtml(socio.nome)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">Nº de Sócio:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">Nº ${socio.numero}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">NIF:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${escapeHtml(socio.nif || 'Não indicado')}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">Categoria:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${escapeHtml(socio.categoria || 'Efetivo')}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">Telefone / Telemóvel:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${escapeHtml(socio.telefone || '—')}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">Situação Cadastral:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${escapeHtml(socio.estadoMembro || 'Ativo')}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">Email:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${escapeHtml(socio.email || '—')}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px;">
+              <span style="color: #64748b; font-weight: 600;">Data de Inscrição:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${socio.dataInscricao || 'Histórico'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e2e8f0; padding-bottom: 3px; grid-column: 1 / -1;">
+              <span style="color: #64748b; font-weight: 600;">Morada / Domicílio:</span>
+              <span style="font-weight: 700; color: #1e293b; text-align: right;">${escapeHtml([socio.morada, socio.codPostal, socio.localidade || 'Aguada de Baixo'].filter(Boolean).join(', '))}</span>
+            </div>
+          </div>
+        </div>
+
+        ${divida > 0 ? `
+          <div style="background: #fef2f2; border: 1.5px solid #f87171; color: #991b1b; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 18pt;">⚠️</div>
+            <div style="font-size: 9.5pt; line-height: 1.4;">
+              <strong>AVISO DE LIQUIDAÇÃO DE QUOTAS PENDENTES:</strong><br>
+              Constatam-se <strong>${unpaidQuotas.length} quota(s) anual(ais)</strong> por regularizar referentes ao(s) ano(s) de <strong>${unpaidQuotas.map(q => q.ano).join(', ')}</strong>, totalizando o montante de <strong style="font-size: 11pt; color: #991b1b;">${divida.toFixed(2).replace('.', ',')} €</strong> (quota anual: 6,00 €). Agradecemos a respetiva liquidação para manter a sua ligação associativa regularizada.
+            </div>
+          </div>
+        ` : `
+          <div style="background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 18pt;">✅</div>
+            <div style="font-size: 9.5pt; line-height: 1.4;">
+              <strong>SITUAÇÃO FINANCEIRA TOTALMENTE REGULARIZADA:</strong><br>
+              Todas as quotas estatutárias de associado encontram-se integralmente liquidadas até ao ano de <strong>${socio.ultimaQuota || 2026}</strong>. A Direção da A.R.C.A. manifesta o seu agradecimento pela sua pontual dedicação e apoio contínuo ao nosso clube!
+            </div>
+          </div>
+        `}
+
+        <div style="font-weight: 800; color: #0f3f26; text-transform: uppercase; font-size: 8.5pt; margin-bottom: 6px; letter-spacing: 0.5px;">
+          Histórico Detalhado de Quotas
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+          <thead>
+            <tr>
+              <th style="background: #0f3f26; color: #ffffff; font-size: 8pt; font-weight: 700; text-transform: uppercase; padding: 7px 8px; border: 1px solid #0f3f26; width: 70px; text-align: center;">Ano</th>
+              <th style="background: #0f3f26; color: #ffffff; font-size: 8pt; font-weight: 700; text-transform: uppercase; padding: 7px 8px; border: 1px solid #0f3f26; width: 90px; text-align: right;">Valor Anual</th>
+              <th style="background: #0f3f26; color: #ffffff; font-size: 8pt; font-weight: 700; text-transform: uppercase; padding: 7px 8px; border: 1px solid #0f3f26; width: 120px; text-align: center;">Estado</th>
+              <th style="background: #0f3f26; color: #ffffff; font-size: 8pt; font-weight: 700; text-transform: uppercase; padding: 7px 8px; border: 1px solid #0f3f26; width: 110px; text-align: center;">Data Pagamento</th>
+              <th style="background: #0f3f26; color: #ffffff; font-size: 8pt; font-weight: 700; text-transform: uppercase; padding: 7px 8px; border: 1px solid #0f3f26; width: 130px; text-align: center;">Meio / Modo</th>
+              <th style="background: #0f3f26; color: #ffffff; font-size: 8pt; font-weight: 700; text-transform: uppercase; padding: 7px 8px; border: 1px solid #0f3f26; text-align: center;">Documento / Recibo</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${quotasRows}
+          </tbody>
+        </table>
+
+        ${divida > 0 ? `
+          <div style="background: #fafaf9; border: 1px solid #e7e5e4; border-left: 4px solid #0f3f26; border-radius: 4px; padding: 10px 14px; margin-bottom: 18px; font-size: 8.5pt; line-height: 1.5;">
+            <strong style="color: #0f3f26; font-size: 9pt;">INSTRUÇÕES PARA LIQUIDAÇÃO DE QUOTAS:</strong><br>
+            Poderá proceder à regularização do montante em débito através dos seguintes canais oficiais:<br>
+            • <strong>Transferência Bancária / MB:</strong> IBAN: <code>PT50 0035 0123 0001 2345 6789 0</code> (Caixa Geral de Depósitos - A.R.C.A.).<br>
+            &nbsp;&nbsp;<em>(Obrigatório indicar no descritivo da transferência: "Sócio Nº ${socio.numero} - ${escapeHtml(socio.nome)}")</em>.<br>
+            • <strong>Presencialmente:</strong> Na Secretaria da A.R.C.A. no Pavilhão Carlos Almeida ou junto de qualquer elemento da Direção / Tesouraria.<br>
+            • <strong>Envio de Comprovativo:</strong> Por correio eletrónico para <code>geral@arca.pt</code> ou WhatsApp institucional da Direção.
+          </div>
+        ` : ''}
+
+        <div style="margin-top: 15px; font-size: 8.5pt; color: #475569;">
+          Aguada de Baixo, ${hojeDataExtenso}.
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 26px; padding-top: 10px;">
+          <div style="text-align: center; border-top: 1px solid #94a3b8; padding-top: 6px; font-size: 8.5pt; color: #475569;">
+            <br><br>
+            <strong style="display: block; color: #1e293b; font-size: 9pt; margin-top: 2px;">A Direção da A.R.C.A.</strong>
+            <span>Pelos Órgãos Sociais</span>
+          </div>
+          <div style="text-align: center; border-top: 1px solid #94a3b8; padding-top: 6px; font-size: 8.5pt; color: #475569;">
+            <br><br>
+            <strong style="display: block; color: #1e293b; font-size: 9pt; margin-top: 2px;">O(A) Associado(a)</strong>
+            <span>${escapeHtml(socio.nome)} (Sócio nº ${socio.numero})</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 22px; text-align: center; font-size: 7.5pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+          A.R.C.A. - Associação Recreativa e Cultural de Aguada de Baixo · Documento emitido eletronicamente pelos serviços administrativos · geral@arca.pt
+        </div>
+      `;
+    }
+
+    window.emitirExtratoSocioPDF = function(socioId) {
+      const targetId = Number(socioId) || Number(window.currentDrawerSocioId) || Number(currentDrawerSocioId);
+      const socio = socios.find(s => Number(s.id) === targetId);
+
+      if (!socio) {
+        if (window.showToast) window.showToast('Por favor selecione ou abra a ficha de um associado.', 'warning');
+        return;
+      }
+
+      currentExtratoSocio = socio;
+      const paperHtml = buildExtratoSocioPaperHtml(socio);
+
+      // 1. Tentar abrir diretamente no visualizador oficial na própria página (sem bloqueio de pop-up)
+      const modal = document.getElementById('modalVisualizadorExtrato');
+      const content = document.getElementById('extratoViewerPaperContent');
+      const barTitle = document.getElementById('extratoViewerBarTitle');
+
+      if (modal && content) {
+        content.innerHTML = paperHtml;
+        if (barTitle) {
+          barTitle.textContent = `Extrato de Conta & Aviso de Quotas · Sócio nº ${socio.numero} (${socio.nome})`;
+        }
+        modal.classList.add('active');
+        return;
+      }
+
+      // 2. Se o modal não estiver no DOM, abrir via janela separada
+      abrirExtratoNovaJanela();
+    };
+
+    window.closeVisualizadorExtrato = function() {
+      const modal = document.getElementById('modalVisualizadorExtrato');
+      if (modal) modal.classList.remove('active');
+    };
+
+    window.abrirExtratoNovaJanela = function() {
+      if (!currentExtratoSocio) return;
+      const socio = currentExtratoSocio;
+      const paperHtml = buildExtratoSocioPaperHtml(socio);
+
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
-        alert('Por favor autorize janelas pop-up no seu navegador para abrir o Extrato de Quotas.');
+        alert('Por favor autorize janelas pop-up no seu navegador para abrir numa nova aba.');
         return;
       }
 
@@ -4448,179 +4619,15 @@ document.addEventListener('DOMContentLoaded', () => {
               justify-content: space-between;
               align-items: center;
             }
-            .header-table {
-              width: 100%;
+            table {
               border-collapse: collapse;
-              border-bottom: 2.5px solid #0f3f26;
-              padding-bottom: 12px;
-              margin-bottom: 16px;
-            }
-            .header-table td {
-              border: none;
-              padding: 0;
-              vertical-align: middle;
-            }
-            .brand-title {
-              font-size: 13pt;
-              font-weight: 800;
-              color: #0f3f26;
-              letter-spacing: 0.5px;
-            }
-            .brand-sub {
-              font-size: 8pt;
-              color: #475569;
-              font-weight: 600;
-              margin-top: 2px;
-            }
-            .doc-title-box {
-              text-align: center;
-              background: #f1f5f9;
-              border: 1px solid #cbd5e1;
-              border-radius: 6px;
-              padding: 10px 14px;
-              margin-bottom: 16px;
-            }
-            .doc-title {
-              font-size: 13pt;
-              font-weight: 800;
-              color: #0f3f26;
-              letter-spacing: 0.5px;
-              text-transform: uppercase;
-            }
-            .doc-meta {
-              font-size: 8.5pt;
-              color: #64748b;
-              margin-top: 3px;
-            }
-            .socio-card {
-              border: 1.5px solid #0f3f26;
-              border-radius: 6px;
-              background: #ffffff;
-              padding: 12px 14px;
-              margin-bottom: 16px;
-            }
-            .socio-card-title {
-              font-size: 8.5pt;
-              font-weight: 800;
-              color: #0f3f26;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              border-bottom: 1px dashed #cbd5e1;
-              padding-bottom: 5px;
-              margin-bottom: 8px;
-            }
-            .grid-2 {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 8px 16px;
-              font-size: 9pt;
-            }
-            .field-row {
-              display: flex;
-              justify-content: space-between;
-              border-bottom: 1px dotted #e2e8f0;
-              padding-bottom: 3px;
-            }
-            .field-label {
-              color: #64748b;
-              font-weight: 600;
-            }
-            .field-value {
-              font-weight: 700;
-              color: #1e293b;
-              text-align: right;
-            }
-            .status-banner {
-              border-radius: 6px;
-              padding: 12px 14px;
-              margin-bottom: 16px;
-              display: flex;
-              align-items: center;
-              gap: 12px;
-            }
-            .status-banner.atraso {
-              background: #fef2f2;
-              border: 1.5px solid #f87171;
-              color: #991b1b;
-            }
-            .status-banner.em-dia {
-              background: #f0fdf4;
-              border: 1.5px solid #86efac;
-              color: #166534;
-            }
-            .status-banner-icon {
-              font-size: 18pt;
-            }
-            .status-banner-text {
-              font-size: 9.5pt;
-              line-height: 1.4;
-            }
-            table.quotas-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 16px;
-            }
-            table.quotas-table th {
-              background: #0f3f26;
-              color: #ffffff;
-              font-size: 8pt;
-              font-weight: 700;
-              text-transform: uppercase;
-              padding: 7px 8px;
-              border: 1px solid #0f3f26;
-            }
-            table.quotas-table td {
-              padding: 6px 8px;
-              border: 1px solid #cbd5e1;
-              font-size: 9pt;
-            }
-            table.quotas-table tr:nth-child(even) {
-              background: #f8fafc;
-            }
-            .payment-box {
-              background: #fafaf9;
-              border: 1px solid #e7e5e4;
-              border-left: 4px solid #0f3f26;
-              border-radius: 4px;
-              padding: 10px 14px;
-              margin-bottom: 18px;
-              font-size: 8.5pt;
-              line-height: 1.5;
-            }
-            .signatures-row {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 30px;
-              margin-top: 26px;
-              padding-top: 10px;
-            }
-            .sign-box {
-              text-align: center;
-              border-top: 1px solid #94a3b8;
-              padding-top: 6px;
-              font-size: 8.5pt;
-              color: #475569;
-            }
-            .sign-box strong {
-              display: block;
-              color: #1e293b;
-              font-size: 9pt;
-              margin-top: 2px;
-            }
-            .footer-note {
-              margin-top: 22px;
-              text-align: center;
-              font-size: 7.5pt;
-              color: #94a3b8;
-              border-top: 1px solid #e2e8f0;
-              padding-top: 8px;
             }
             @media print {
               .no-print { display: none !important; }
             }
           </style>
         </head>
-        <body>
+        <body style="padding: 1.5rem;">
           <div class="no-print">
             <span style="font-weight: 600;">Extrato Oficial de Conta & Aviso de Quotas pronto para Impressão ou Guardar em PDF.</span>
             <div>
@@ -4628,139 +4635,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <button onclick="window.close()" style="padding: 6px 10px; background: transparent; color: #ffffff; border: 1px solid #ffffff; border-radius: 4px; cursor: pointer;">Fechar</button>
             </div>
           </div>
-
-          <table class="header-table">
-            <tr>
-              <td>
-                <div class="brand-title">A.R.C.A. - ASSOCIAÇÃO RECREATIVA E CULTURAL DE AGUADA DE BAIXO</div>
-                <div class="brand-sub">Instituição de Utilidade Pública · NIF: 501 547 265 · Fundada em 1986</div>
-                <div class="brand-sub">Sede: Rua da ARCA, Pavilhão Carlos Almeida - 3750-031 Aguada de Baixo, Águeda</div>
-              </td>
-              <td style="text-align: right; width: 140px;">
-                <div style="font-size: 16pt; font-weight: 900; color: #0f3f26; border: 2px solid #0f3f26; border-radius: 4px; padding: 4px 8px; text-align: center; background: #f0fdf4;">
-                  SÓCIO Nº ${socio.numero}
-                </div>
-              </td>
-            </tr>
-          </table>
-
-          <div class="doc-title-box">
-            <div class="doc-title">Extrato de Associado & Aviso de Quotas</div>
-            <div class="doc-meta">Ref. Documento: <strong>${refExtrato}</strong> · Emitido em: <strong>${hojeDataExtenso}</strong></div>
-          </div>
-
-          <div class="socio-card">
-            <div class="socio-card-title">Identificação do Associado</div>
-            <div class="grid-2">
-              <div class="field-row">
-                <span class="field-label">Nome Completo:</span>
-                <span class="field-value">${escapeHtml(socio.nome)}</span>
-              </div>
-              <div class="field-row">
-                <span class="field-label">Nº de Sócio:</span>
-                <span class="field-value">Nº ${socio.numero}</span>
-              </div>
-              <div class="field-row">
-                <span class="field-label">NIF:</span>
-                <span class="field-value">${escapeHtml(socio.nif || 'Não indicado')}</span>
-              </div>
-              <div class="field-row">
-                <span class="field-label">Categoria:</span>
-                <span class="field-value">${escapeHtml(socio.categoria || 'Efetivo')}</span>
-              </div>
-              <div class="field-row">
-                <span class="field-label">Telefone / Telemóvel:</span>
-                <span class="field-value">${escapeHtml(socio.telefone || '—')}</span>
-              </div>
-              <div class="field-row">
-                <span class="field-label">Situação Cadastral:</span>
-                <span class="field-value">${escapeHtml(socio.estadoMembro || 'Ativo')}</span>
-              </div>
-              <div class="field-row">
-                <span class="field-label">Email:</span>
-                <span class="field-value">${escapeHtml(socio.email || '—')}</span>
-              </div>
-              <div class="field-row">
-                <span class="field-label">Data de Inscrição:</span>
-                <span class="field-value">${socio.dataInscricao || 'Histórico'}</span>
-              </div>
-              <div class="field-row" style="grid-column: 1 / -1;">
-                <span class="field-label">Morada / Domicílio:</span>
-                <span class="field-value">${escapeHtml([socio.morada, socio.codPostal, socio.localidade || 'Aguada de Baixo'].filter(Boolean).join(', '))}</span>
-              </div>
-            </div>
-          </div>
-
-          ${divida > 0 ? `
-            <div class="status-banner atraso">
-              <div class="status-banner-icon">⚠️</div>
-              <div class="status-banner-text">
-                <strong>AVISO DE LIQUIDAÇÃO DE QUOTAS PENDENTES:</strong><br>
-                Constatam-se <strong>${unpaidQuotas.length} quota(s) anual(ais)</strong> por regularizar referentes ao(s) ano(s) de <strong>${unpaidQuotas.map(q => q.ano).join(', ')}</strong>, totalizando o montante de <strong style="font-size: 11pt; color: #991b1b;">${divida.toFixed(2).replace('.', ',')} €</strong> (quota anual: 6,00 €). Agradecemos a respetiva liquidação para manter a sua ligação associativa regularizada.
-              </div>
-            </div>
-          ` : `
-            <div class="status-banner em-dia">
-              <div class="status-banner-icon">✅</div>
-              <div class="status-banner-text">
-                <strong>SITUAÇÃO FINANCEIRA TOTALMENTE REGULARIZADA:</strong><br>
-                Todas as quotas estatutárias de associado encontram-se integralmente liquidadas até ao ano de <strong>${socio.ultimaQuota || 2026}</strong>. A Direção da A.R.C.A. manifesta o seu agradecimento pela sua pontual dedicação e apoio contínuo ao nosso clube!
-              </div>
-            </div>
-          `}
-
-          <div style="font-weight: 800; color: #0f3f26; text-transform: uppercase; font-size: 8.5pt; margin-bottom: 6px; letter-spacing: 0.5px;">
-            Histórico Detalhado de Quotas
-          </div>
-
-          <table class="quotas-table">
-            <thead>
-              <tr>
-                <th style="width: 70px; text-align: center;">Ano</th>
-                <th style="width: 90px; text-align: right;">Valor Anual</th>
-                <th style="width: 120px; text-align: center;">Estado</th>
-                <th style="width: 110px; text-align: center;">Data Pagamento</th>
-                <th style="width: 130px; text-align: center;">Meio / Modo</th>
-                <th style="text-align: center;">Documento / Recibo</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${quotasRows}
-            </tbody>
-          </table>
-
-          ${divida > 0 ? `
-            <div class="payment-box">
-              <strong style="color: #0f3f26; font-size: 9pt;">INSTRUÇÕES PARA LIQUIDAÇÃO DE QUOTAS:</strong><br>
-              Poderá proceder à regularização do montante em débito através dos seguintes canais oficiais:<br>
-              • <strong>Transferência Bancária / MB:</strong> IBAN: <code>PT50 0035 0123 0001 2345 6789 0</code> (Caixa Geral de Depósitos - A.R.C.A.).<br>
-              &nbsp;&nbsp;<em>(Obrigatório indicar no descritivo da transferência: "Sócio Nº ${socio.numero} - ${escapeHtml(socio.nome)}")</em>.<br>
-              • <strong>Presencialmente:</strong> Na Secretaria da A.R.C.A. no Pavilhão Carlos Almeida ou junto de qualquer elemento da Direção / Tesouraria.<br>
-              • <strong>Envio de Comprovativo:</strong> Por correio eletrónico para <code>geral@arca.pt</code> ou WhatsApp institucional da Direção.
-            </div>
-          ` : ''}
-
-          <div style="margin-top: 15px; font-size: 8.5pt; color: #475569;">
-            Aguada de Baixo, ${hojeDataExtenso}.
-          </div>
-
-          <div class="signatures-row">
-            <div class="sign-box">
-              <br><br>
-              <strong>A Direção da A.R.C.A.</strong>
-              <span>Pelos Órgãos Sociais</span>
-            </div>
-            <div class="sign-box">
-              <br><br>
-              <strong>O(A) Associado(a)</strong>
-              <span>${escapeHtml(socio.nome)} (Sócio nº ${socio.numero})</span>
-            </div>
-          </div>
-
-          <div class="footer-note">
-            A.R.C.A. - Associação Recreativa e Cultural de Aguada de Baixo · Documento emitido eletronicamente pelos serviços administrativos · geral@arca.pt
-          </div>
-
+          ${paperHtml}
           <script>
             window.addEventListener('load', () => {
               setTimeout(() => { window.print(); }, 400);
