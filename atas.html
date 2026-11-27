@@ -11,6 +11,14 @@
   
   <style>
     /* Estilos Específicos para o Módulo de Atas */
+    .app-main {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .page-container {
+      min-width: 0;
+      max-width: 100%;
+    }
     .card-box {
       overflow: visible !important;
     }
@@ -26,8 +34,8 @@
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
-      min-width: 260px;
-      padding: 0.85rem 0.75rem;
+      min-width: 250px;
+      padding: 0.75rem 0.65rem;
       z-index: 99999 !important;
       display: none;
     }
@@ -38,8 +46,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 0.5rem;
-      margin-bottom: 0.5rem;
+      padding-bottom: 0.45rem;
+      margin-bottom: 0.45rem;
       border-bottom: 1px solid var(--border-light);
       font-size: 0.82rem;
       color: var(--text-title);
@@ -57,18 +65,18 @@
     .col-picker-list {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-      max-height: 320px;
+      gap: 0.2rem;
+      max-height: 360px;
       overflow-y: auto;
     }
     .col-picker-item {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
-      padding: 0.45rem 0.5rem;
+      gap: 0.5rem;
+      padding: 0.32rem 0.45rem;
       border-radius: var(--radius-xs);
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-body);
       user-select: none;
       transition: background 0.15s ease;
@@ -1194,37 +1202,37 @@
         <!-- 1. VISTA EM TABELA (COM COLUNAS SELECIONÁVEIS E ORDENÁVEIS) -->
         <div class="card-box" id="containerAtasTable" style="overflow: hidden;">
           <div class="table-responsive" style="overflow-x: auto;">
-            <table class="modern-table" id="atasModernTable" style="min-width: 960px;">
+            <table class="modern-table" id="atasModernTable" style="width: 100%; min-width: 860px;">
               <thead>
                 <tr id="atasTableHeadRow">
-                  <th data-col="selecao" style="width: 44px; text-align: center;">
+                  <th data-col="selecao" style="width: 38px; text-align: center;">
                     <input type="checkbox" id="checkSelectAllAtas" title="Selecionar todas as atas visíveis" onchange="toggleSelectAllAtas(this.checked)" style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary);">
                   </th>
-                  <th class="sortable-th" data-col="data" style="width: 135px;" onclick="sortAtasTable('data')">
+                  <th class="sortable-th" data-col="data" style="width: 110px;" onclick="sortAtasTable('data')">
                     <span>Data</span><span class="sort-indicator" id="ataSortInd_data">▼</span>
                   </th>
-                  <th class="sortable-th" data-col="numero" style="width: 140px;" onclick="sortAtasTable('numero')">
+                  <th class="sortable-th" data-col="numero" style="width: 115px;" onclick="sortAtasTable('numero')">
                     <span>Nº Ata / Ref</span><span class="sort-indicator" id="ataSortInd_numero">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="tipo" style="width: 160px;" onclick="sortAtasTable('tipo')">
+                  <th class="sortable-th" data-col="tipo" style="width: 130px;" onclick="sortAtasTable('tipo')">
                     <span>Tipo Reunião</span><span class="sort-indicator" id="ataSortInd_tipo">⇅</span>
                   </th>
                   <th class="sortable-th" data-col="assunto" onclick="sortAtasTable('assunto')">
                     <span>Ordem de Trabalhos & Deliberações</span><span class="sort-indicator" id="ataSortInd_assunto">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="local" style="width: 180px;" onclick="sortAtasTable('local')">
+                  <th class="sortable-th" data-col="local" style="width: 135px;" onclick="sortAtasTable('local')">
                     <span>Local</span><span class="sort-indicator" id="ataSortInd_local">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="presencas" style="width: 110px;" onclick="sortAtasTable('presencas')">
+                  <th class="sortable-th" data-col="presencas" style="width: 85px;" onclick="sortAtasTable('presencas')">
                     <span>Presentes</span><span class="sort-indicator" id="ataSortInd_presencas">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="pontos" style="width: 90px;" onclick="sortAtasTable('pontos')">
+                  <th class="sortable-th" data-col="pontos" style="width: 75px;" onclick="sortAtasTable('pontos')">
                     <span>Pontos</span><span class="sort-indicator" id="ataSortInd_pontos">⇅</span>
                   </th>
-                  <th class="sortable-th" data-col="estado" style="width: 110px;" onclick="sortAtasTable('estado')">
+                  <th class="sortable-th" data-col="estado" style="width: 95px;" onclick="sortAtasTable('estado')">
                     <span>Estado</span><span class="sort-indicator" id="ataSortInd_estado">⇅</span>
                   </th>
-                  <th data-col="acoes" style="text-align: right; width: 145px;">Ações</th>
+                  <th data-col="acoes" style="text-align: right; width: 125px;">Ações</th>
                 </tr>
               </thead>
               <tbody id="tbodyAtas">
