@@ -11,6 +11,9 @@
   
   <style>
     /* Estilos Específicos para o Módulo de Atas */
+    .card-box {
+      overflow: visible !important;
+    }
     .col-picker-dropdown, .export-dropdown-group {
       position: relative;
       display: inline-block;
@@ -22,10 +25,10 @@
       background: #ffffff;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      min-width: 250px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
+      min-width: 260px;
       padding: 0.85rem 0.75rem;
-      z-index: 9999;
+      z-index: 99999 !important;
       display: none;
     }
     .col-picker-menu.show, .export-dropdown-menu.show {
@@ -171,11 +174,12 @@
       gap: 0.75rem;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.25rem;
+      overflow: visible !important;
+      position: relative;
     }
     .atas-search-box {
-      flex: 1;
-      min-width: 280px;
+      flex: 1 1 240px;
+      min-width: 200px;
       position: relative;
     }
     .atas-search-box input {
@@ -198,6 +202,7 @@
       flex-wrap: wrap;
       gap: 0.5rem;
       align-items: center;
+      overflow: visible !important;
     }
     .atas-filter-select {
       padding: 0.55rem 0.8rem;
@@ -1023,7 +1028,7 @@
         </div>
 
         <!-- Barra de Controlos, Pesquisa e Filtros -->
-        <div class="card-box" style="padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+        <div class="card-box" style="padding: 1rem 1.25rem; margin-bottom: 1.25rem; overflow: visible !important;">
           <div class="atas-controls-bar" style="margin-bottom: 0;">
             
             <!-- Campo de Pesquisa -->
@@ -1187,9 +1192,9 @@
         </div>
 
         <!-- 1. VISTA EM TABELA (COM COLUNAS SELECIONÁVEIS E ORDENÁVEIS) -->
-        <div class="card-box" id="containerAtasTable">
-          <div class="table-responsive">
-            <table class="modern-table" id="atasModernTable">
+        <div class="card-box" id="containerAtasTable" style="overflow: hidden;">
+          <div class="table-responsive" style="overflow-x: auto;">
+            <table class="modern-table" id="atasModernTable" style="min-width: 960px;">
               <thead>
                 <tr id="atasTableHeadRow">
                   <th data-col="selecao" style="width: 44px; text-align: center;">
