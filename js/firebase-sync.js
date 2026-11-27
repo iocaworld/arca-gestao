@@ -314,6 +314,145 @@ const ARCA_FIREBASE_CONFIG = {
     }
   };
 
+  // =========================================================================
+  // GESTÃO E SINCRONIZAÇÃO DE ATAS DA DIREÇÃO NA NUVEM (FIRESTORE)
+  // =========================================================================
+  const ARCA_ATAS_STORAGE_KEY = 'arca_atas_v1';
+
+  window.syncArcaAtasFromCloud = async function(onUpdated) {
+    const firestore = initFirebase();
+    if (!firestore) return null;
+
+    try {
+      const snapshot = await firestore.collection('atas').get();
+      let cloudAtas = [];
+      let deletedIds = [];
+      try {
+        deletedIds = JSON.parse(localStorage.getItem('arca_deleted_ata_ids') || '[]');
+      } catch (e) {}
+
+      snapshot.forEach(doc => {
+        const a = doc.data();
+        if (a && a.id && !deletedIds.includes(Number(a.id))) {
+          cloudAtas.push(a);
+        }
+      });
+
+      // Se o Firestore não tiver atas ou estiver incompleto, semear com as atas oficiais da ARCA
+      const seedList = (typeof window.getArcaAtasSeed === 'function') ? window.getArcaAtasSeed() : [];
+      let missingSeeds = [];
+      seedList.forEach(sa => {
+        if (!deletedIds.includes(Number(sa.id))) {
+          const exists = cloudAtas.some(ca => Number(ca.id) === Number(sa.id) || (ca.referencia && ca.referencia === sa.referencia));
+          if (!exists) {
+            missingSeeds.push(sa);
+          }
+        }
+      });
+
+      if (missingSeeds.length > 0) {
+        console.log(`[ARCA Firebase] A sincronizar ${missingSeeds.length} atas oficiais para o Firestore...`);
+        const batch = firestore.batch();
+        missingSeeds.forEach(sa => {
+          const docRef = firestore.collection('atas').doc(String(sa.id));
+          batch.set(docRef, sa, { merge: true });
+          cloudAtas.push(sa);
+        });
+        try {
+          await batch.commit();
+        } catch (e) {
+          console.warn('[ARCA Firebase] Erro ao gravar batch de atas:', e);
+        }
+      }
+
+      // Ordenar por ID decrescente (mais recentes primeiro)
+      cloudAtas.sort((a, b) => (b.numero || b.id || 0) - (a.numero || a.id || 0));
+
+      // Guardar na cache local
+      localStorage.setItem(ARCA_ATAS_STORAGE_KEY, JSON.stringify(cloudAtas));
+      console.log(`[ARCA Firebase] ${cloudAtas.length} atas sincronizadas da nuvem.`);
+
+      if (typeof onUpdated === 'function') {
+        onUpdated(cloudAtas);
+      }
+      return cloudAtas;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Aviso ao sincronizar atas da nuvem:', err.message);
+      return null;
+    }
+  };
+
+  window.saveArcaAtaToCloud = async function(ata) {
+    const firestore = initFirebase();
+    if (!firestore || !ata || !ata.id) return false;
+
+    try {
+      const docId = String(ata.id);
+
+      // Limpar do registo de eliminados
+      try {
+        let deletedIds = JSON.parse(localStorage.getItem('arca_deleted_ata_ids') || '[]');
+        deletedIds = deletedIds.filter(id => id !== Number(ata.id));
+        localStorage.setItem('arca_deleted_ata_ids', JSON.stringify(deletedIds));
+      } catch (e) {}
+
+      // Sanitizar dados
+      const cleanAta = {
+        id: Number(ata.id),
+        numero: Number(ata.numero || ata.id),
+        referencia: String(ata.referencia || '').trim(),
+        tipo: String(ata.tipo || 'Reunião de Direção').trim(),
+        data: String(ata.data || new Date().toISOString().slice(0, 10)),
+        horaInicio: String(ata.horaInicio || '21:00').trim(),
+        horaFim: String(ata.horaFim || '').trim(),
+        local: String(ata.local || 'Pavilhão Carlos Almeida, Aguada de Baixo').trim(),
+        presidiu: String(ata.presidiu || 'Jorge Manuel da Silva Cunha').trim(),
+        secretariou: String(ata.secretariou || 'Raquel Alexandra Marques da Cunha').trim(),
+        presencas: Array.isArray(ata.presencas) ? ata.presencas : [],
+        outrasPresencas: String(ata.outrasPresencas || '').trim(),
+        pontos: Array.isArray(ata.pontos) ? ata.pontos : [],
+        estado: String(ata.estado || 'Rascunho').trim(),
+        observacoes: String(ata.observacoes || '').trim(),
+        assinaturas: Array.isArray(ata.assinaturas) ? ata.assinaturas : [],
+        anexos: Array.isArray(ata.anexos) ? ata.anexos : [],
+        criadoEm: String(ata.criadoEm || new Date().toISOString()),
+        atualizadoEm: new Date().toISOString()
+      };
+
+      await firestore.collection('atas').doc(docId).set(cleanAta);
+      console.log(`[ARCA Firebase] Ata ${cleanAta.referencia || cleanAta.id} gravada com sucesso no Firestore.`);
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao gravar ata na nuvem:', err);
+      return false;
+    }
+  };
+
+  window.deleteArcaAtaFromCloud = async function(ataId) {
+    const firestore = initFirebase();
+    if (!firestore || !ataId) return false;
+
+    try {
+      const numId = Number(ataId);
+      const docId = String(ataId);
+
+      try {
+        const deletedIds = JSON.parse(localStorage.getItem('arca_deleted_ata_ids') || '[]');
+        if (!deletedIds.includes(numId)) {
+          deletedIds.push(numId);
+          localStorage.setItem('arca_deleted_ata_ids', JSON.stringify(deletedIds));
+        }
+      } catch (e) {}
+
+      await firestore.collection('atas').doc(docId).delete();
+      console.log(`[ARCA Firebase] Ata ID ${ataId} eliminada do Firestore.`);
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao eliminar ata do Firestore:', err);
+      return false;
+    }
+  };
+
   // Inicialização automática ao carregar
   document.addEventListener('DOMContentLoaded', () => {
     initFirebase();

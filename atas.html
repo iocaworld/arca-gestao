@@ -3,17 +3,627 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A.R.C.A. - Atas da Direção | Aguada de Baixo</title>
+  <title>A.R.C.A. - Livro de Atas da Direção | Aguada de Baixo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    /* Estilos Específicos para o Módulo de Atas */
+    .atas-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .ata-stat-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .ata-stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .ata-stat-info h4 {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ata-stat-info .stat-number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-title);
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+
+    /* Barra de Controlos e Filtros */
+    .atas-controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .atas-search-box {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+    .atas-search-box input {
+      width: 100%;
+      padding: 0.6rem 0.9rem 0.6rem 2.4rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      background: #ffffff;
+    }
+    .atas-search-box svg {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    .atas-filters-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .atas-filter-select {
+      padding: 0.55rem 0.8rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      background: #ffffff;
+      color: var(--text-title);
+      cursor: pointer;
+    }
+
+    /* Alternador de Vista (Tabela / Cartões) */
+    .view-toggle-group {
+      display: flex;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .view-toggle-btn {
+      padding: 0.5rem 0.8rem;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+    .view-toggle-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Vista em Cartões (Estilo Original da Imagem) */
+    .atas-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .ata-list-item {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .ata-list-item:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transform: translateY(-1px);
+    }
+    .ata-date-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 65px;
+      padding: 0.4rem 0.6rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+    .ata-date-day {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-title);
+      line-height: 1;
+    }
+    .ata-date-monthyear {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .ata-item-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .ata-item-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.3rem;
+    }
+    .ata-item-title {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--text-title);
+      text-decoration: none;
+    }
+    .ata-item-summary {
+      font-size: 0.86rem;
+      color: #475569;
+      line-height: 1.45;
+      margin-bottom: 0.4rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .ata-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .ata-item-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .ata-badge-rascunho {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+    }
+    .ata-badge-aprovada {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+    }
+    .ata-badge-anulada {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+    }
+
+    /* Modal Assistente de 4 Passos */
+    .wizard-steps-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-light);
+      overflow-x: auto;
+    }
+    .wizard-step-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .wizard-step-pill.active {
+      border-color: var(--primary);
+      background: rgba(28, 109, 66, 0.08);
+      color: var(--primary);
+    }
+    .wizard-step-pill.completed {
+      border-color: #10b981;
+      background: #ecfdf5;
+      color: #047857;
+    }
+    .wizard-step-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+    .wizard-step-pill.active .wizard-step-num {
+      background: var(--primary);
+    }
+    .wizard-step-pill.completed .wizard-step-num {
+      background: #10b981;
+    }
+
+    .wizard-content-pane {
+      display: none;
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .wizard-content-pane.active {
+      display: block;
+      animation: tabFadeIn 0.15s ease-in-out;
+    }
+
+    /* Grelha de Presenças */
+    .presencas-members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .presenca-card {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.75rem;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .presenca-card:hover {
+      border-color: #cbd5e1;
+      background: #ffffff;
+    }
+    .presenca-card.selected {
+      border-color: var(--primary);
+      background: rgba(28, 109, 66, 0.06);
+    }
+    .presenca-card input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .presenca-card-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .presenca-card-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-title);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .presenca-card-role {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+    }
+
+    /* Chips de Presenças Marcadas */
+    .presencas-chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      min-height: 40px;
+      padding: 0.5rem;
+      border: 1px dashed var(--border-light);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      margin-bottom: 1rem;
+    }
+    .presenca-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.6rem;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      color: #065f46;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .presenca-chip button {
+      background: none;
+      border: none;
+      color: #065f46;
+      cursor: pointer;
+      font-weight: 800;
+      padding: 0;
+      line-height: 1;
+    }
+
+    /* Ordem de Trabalhos (Pontos) */
+    .ponto-card {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .ponto-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .ponto-card-title {
+      font-weight: 800;
+      color: var(--text-title);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .ponto-card-actions {
+      display: flex;
+      gap: 0.35rem;
+    }
+    .ponto-card-actions button {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    /* Barra de Formatação Simples (B, I, S, Listas) */
+    .editor-toolbar {
+      display: flex;
+      gap: 0.25rem;
+      background: #f1f5f9;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+    .editor-toolbar button {
+      padding: 0.2rem 0.45rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-title);
+    }
+    .editor-toolbar button:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+    .editor-textarea {
+      width: 100%;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      border: 1px solid var(--border-light);
+      padding: 0.75rem;
+      font-family: inherit;
+      font-size: 0.86rem;
+      line-height: 1.5;
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    /* Visualizador Oficial de Ata (Folha Timbrada) */
+    .ata-viewer-paper {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 3rem 3.5rem;
+      font-family: 'Newsreader', Georgia, serif;
+      color: #1e293b;
+      line-height: 1.7;
+      position: relative;
+    }
+    .ata-viewer-paper-header {
+      text-align: center;
+      border-bottom: 2px solid #0f3f26;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .ata-viewer-paper-logo {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 0.75rem auto;
+    }
+    .ata-viewer-paper-header h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      letter-spacing: 1.5px;
+      color: #0f3f26;
+      margin: 0;
+      font-weight: 700;
+    }
+    .ata-viewer-paper-header p {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      color: #64748b;
+      margin: 0.25rem 0 0 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ata-viewer-paper-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.45rem;
+      text-align: center;
+      margin: 1.75rem 0 1.25rem 0;
+      color: #0f3f26;
+      font-weight: 700;
+    }
+    .ata-viewer-paper-meta {
+      background: #f8fafc;
+      border-left: 3px solid var(--primary);
+      padding: 0.85rem 1.2rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem;
+      color: #334155;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .ata-viewer-paper-meta strong {
+      color: #0f172a;
+    }
+    .ata-ponto-block {
+      margin-bottom: 1.75rem;
+    }
+    .ata-ponto-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f3f26;
+      margin: 0 0 0.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.35rem;
+    }
+    .ata-ponto-section-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #64748b;
+      margin: 0.6rem 0 0.2rem 0;
+      letter-spacing: 0.5px;
+    }
+    .ata-ponto-body {
+      font-size: 1.02rem;
+      text-align: justify;
+      margin-bottom: 0.5rem;
+    }
+    .ata-deliberacao-box {
+      background: #f0fdf4;
+      border-left: 3px solid #16a34a;
+      padding: 0.65rem 1rem;
+      font-size: 0.98rem;
+      margin: 0.5rem 0;
+      font-style: italic;
+    }
+    .ata-votacao-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      background: #e2e8f0;
+      border-radius: 9999px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #334155;
+      margin-top: 0.3rem;
+    }
+    .ata-signatures-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 3.5rem;
+      padding-top: 1.5rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      text-align: center;
+    }
+    .ata-signature-line {
+      border-top: 1px solid #94a3b8;
+      padding-top: 0.5rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .ata-signature-role {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Impressão Oficial de Ata */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #modalVisualizadorAta, #modalVisualizadorAta * {
+        visibility: visible;
+      }
+      #modalVisualizadorAta {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff;
+        box-shadow: none;
+        padding: 0;
+      }
+      .app-layout, .app-sidebar, .app-topbar, .modal-close-btn, .ata-viewer-actions-bar {
+        display: none !important;
+      }
+      .ata-viewer-paper {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
   <div class="app-layout">
     
-    <!-- Barra Lateral (Sidebar com Nova Estrutura de Menus) -->
+    <!-- Barra Lateral (Sidebar) -->
     <aside class="app-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -32,7 +642,7 @@
           <ul class="nav-list">
             <li>
               <a href="painel.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="3" y="3" width="7" height="7"/>
                   <rect x="14" y="3" width="7" height="7"/>
                   <rect x="14" y="14" width="7" height="7"/>
@@ -50,8 +660,8 @@
             <li>
               <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
                     <line x1="16" y1="2" x2="16" y2="6"/>
                     <line x1="8" y1="2" x2="8" y2="6"/>
                     <line x1="3" y1="10" x2="21" y2="10"/>
@@ -71,32 +681,30 @@
           </ul>
         </div>
 
-        <!-- 3. Menu: Sócios (Link Direto Unificado) -->
+        <!-- 3. Menu: Sócios -->
         <div>
           <ul class="nav-list">
             <li>
               <a href="socios.html" class="nav-item-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                   <circle cx="9" cy="7" r="4"/>
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
                 <span>Sócios & Cotas</span>
-                <span class="nav-item-badge">248</span>
               </a>
             </li>
           </ul>
         </div>
 
-        
         <!-- Menu: Tesouraria -->
         <div>
           <ul class="nav-list">
             <li>
               <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="2" y="4" width="20" height="16" rx="2"/>
                     <line x1="2" y1="10" x2="22" y2="10"/>
                     <circle cx="16" cy="15" r="1"/>
@@ -121,7 +729,7 @@
             <li>
               <button class="nav-item-parent open" type="button">
                 <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
@@ -139,14 +747,13 @@
           </ul>
         </div>
 
-        
-        <!-- Menu: Gestão Desportiva -->
+        <!-- 5. Menu: Gestão Desportiva -->
         <div>
           <ul class="nav-list">
             <li>
               <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
                     <path d="M2 12h20"/>
@@ -165,13 +772,13 @@
           </ul>
         </div>
 
-        <!-- 5. Menu: Documentação ARCA -->
+        <!-- 6. Menu: Documentação ARCA -->
         <div>
           <ul class="nav-list">
             <li>
               <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
                   </svg>
@@ -180,7 +787,7 @@
                 <span class="chevron">&#9656;</span>
               </button>
               <ul class="nav-sublist">
-                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento Provisional</a></li>
+                <li><a href="documentos.html?cat=plano_orcamento" class="nav-sublink">Plano de Atividades e Orçamento</a></li>
                 <li><a href="documentos.html?cat=exercicio" class="nav-sublink">Exercício</a></li>
                 <li><a href="documentos.html?cat=atas_assembleias" class="nav-sublink">Atas Assembleias</a></li>
                 <li><a href="documentos.html?cat=tomadas_posse" class="nav-sublink">Atas de Tomadas de Posse</a></li>
@@ -190,122 +797,13 @@
           </ul>
         </div>
 
-        <!-- 6. Menu: Secções & Grupos -->
+        <!-- 7. Menu: Painel de Controlo -->
         <div>
           <ul class="nav-list">
             <li>
               <button class="nav-item-parent" type="button">
                 <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                    <path d="M4 22h16"/>
-                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
-                    <path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/>
-                  </svg>
-                  <span>Secções & Grupos</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist">
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Futsal</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="seccoes.html?sec=futsal_masculino" class="nav-nested-link">Séniores Masculino</a></li>
-                    <li><a href="seccoes.html?sec=futsal_feminino" class="nav-nested-link">Séniores Femininos</a></li>
-                    <li><a href="seccoes.html?sec=futsal_formacao" class="nav-nested-link">Formação</a></li>
-                  </ul>
-                </li>
-                <li><a href="seccoes.html?sec=biciarca_team" class="nav-sublink">BiciArca Team</a></li>
-                <li><a href="seccoes.html?sec=biciarca_run" class="nav-sublink">BiciArca Run Team</a></li>
-                <li><a href="seccoes.html?sec=zumba" class="nav-sublink">Zumba</a></li>
-                <li><a href="seccoes.html?sec=funcional" class="nav-sublink">Treino Funcional</a></li>
-                <li><a href="seccoes.html?sec=pilates" class="nav-sublink">Pilates</a></li>
-                <li><a href="seccoes.html?sec=tea" class="nav-sublink">TEA</a></li>
-                <li><a href="seccoes.html?sec=olhares_disparos" class="nav-sublink">Olhares e Disparos</a></li>
-                <li><a href="seccoes.html?sec=bacharca" class="nav-sublink">Bach'Arca</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-
-        <!-- 7. Menu: Eventos & Organizações -->
-        <div>
-          <ul class="nav-list">
-            <li>
-              <button class="nav-item-parent" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                    <polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"/>
-                  </svg>
-                  <span>Eventos & Organizações</span>
-                </span>
-                <span class="chevron">&#9656;</span>
-              </button>
-              <ul class="nav-sublist">
-                <li><a href="eventos.html?ev=janeiras" class="nav-sublink">Janeiras</a></li>
-                <li><a href="eventos.html?ev=noite_sopas" class="nav-sublink">Noite das Sopas</a></li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Assistência e Apoio</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=peregrinos" class="nav-nested-link">Peregrinos</a></li>
-                    <li><a href="eventos.html?ev=bombeiros" class="nav-nested-link">Bombeiros</a></li>
-                    <li><a href="eventos.html?ev=animais" class="nav-nested-link">Animais</a></li>
-                    <li><a href="eventos.html?ev=angariacoes" class="nav-nested-link">Angariações</a></li>
-                  </ul>
-                </li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Torneios</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=arca_cup" class="nav-nested-link">ARCA Cup</a></li>
-                    <li><a href="eventos.html?ev=futsal_fem" class="nav-nested-link">Torneio Futsal Feminino</a></li>
-                  </ul>
-                </li>
-                <li><a href="eventos.html?ev=cicloturismo" class="nav-sublink">Cicloturismo</a></li>
-                <li><a href="eventos.html?ev=dia_freguesia" class="nav-sublink">Dia da Freguesia</a></li>
-                <li class="nav-nested-wrapper">
-                  <button class="nav-nested-parent" type="button">
-                    <span>Época Futsal</span>
-                    <span class="chevron-sm">&#9656;</span>
-                  </button>
-                  <ul class="nav-nested-list">
-                    <li><a href="eventos.html?ev=futsal_apresentacao" class="nav-nested-link">Apresentação</a></li>
-                    <li><a href="eventos.html?ev=futsal_encerramento" class="nav-nested-link">Encerramento</a></li>
-                  </ul>
-                </li>
-                <li><a href="eventos.html?ev=taca_jorginho" class="nav-sublink">Torneio Todos Arca - Taça Jorginho</a></li>
-                <li><a href="eventos.html?ev=agitagueda" class="nav-sublink">AgitÁgueda</a></li>
-                <li><a href="eventos.html?ev=andebol" class="nav-sublink">Eventos Andebol ARCA</a></li>
-                <li><a href="eventos.html?ev=jogos_sem_fronteiras" class="nav-sublink">Jogos Sem Fronteiras</a></li>
-                <li><a href="eventos.html?ev=rota_minis" class="nav-sublink">Rota Das Minis</a></li>
-                <li><a href="eventos.html?ev=aniversario_arca" class="nav-sublink">Aniversário ARCA</a></li>
-                <li><a href="eventos.html?ev=jantar_natal" class="nav-sublink">Jantar Natal e Agradecimento</a></li>
-                <li><a href="eventos.html?ev=outros" class="nav-sublink">Outros</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-
-        <!-- 8. Menu: Painel de Controlo -->
-        <div>
-          <ul class="nav-list">
-            <li>
-              <button class="nav-item-parent" type="button">
-                <span class="nav-parent-title">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                   </svg>
@@ -322,13 +820,13 @@
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-avatar">JC</div>
+        <div class="user-avatar" id="sidebarUserAvatar">JC</div>
         <div class="user-details">
-          <div class="user-name">Jorge Cunha</div>
-          <div class="user-role">Direção Geral</div>
+          <div class="user-name" id="sidebarUserName">Jorge Cunha</div>
+          <div class="user-role" id="sidebarUserRole">Presidente da Direção</div>
         </div>
         <a href="index.html" class="btn-sidebar-logout" title="Terminar Sessão">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
             <polyline points="16 17 21 12 16 7"/>
             <line x1="21" y1="12" x2="9" y2="12"/>
@@ -349,19 +847,22 @@
           <div class="breadcrumbs">
             <a href="painel.html">ARCA</a>
             <span>&rsaquo;</span>
-            <span>Direção</span>
+            <a href="membros.html">Direção</a>
             <span>&rsaquo;</span>
             <span class="current">Atas da Direção</span>
           </div>
         </div>
 
-        <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Editor de Ata da Direção em preparação!', 'success')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="topbar-right" style="display: flex; gap: 0.6rem; align-items: center;">
+          <button class="btn btn-outline btn-sm" id="btnSyncAtas" onclick="recarregarAtasNuvem(this)" title="Sincronizar livro de atas com a nuvem">
+            <span>🔄</span> <span>Atualizar</span>
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openNovaAtaModal()" style="display: flex; align-items: center; gap: 0.4rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>Nova Ata Direção</span>
+            <span>+ Nova Ata</span>
           </button>
         </div>
       </header>
@@ -371,71 +872,1824 @@
         
         <div class="page-title-bar">
           <div>
-            <h1>Atas das Reuniões de Direção</h1>
-            <p>Arquivo e registo oficial de deliberações, decisões de gestão e presenças nas reuniões da Direção da ARCA.</p>
+            <h1 style="display: flex; align-items: center; gap: 0.6rem;">
+              <span>📜 Atas.</span>
+            </h1>
+            <p>Atas das reuniões de Direção e Assembleias Gerais da A.R.C.A. (Aguada de Baixo)</p>
           </div>
         </div>
 
-        <!-- Tabela de Atas -->
-        <div class="card-box">
-          <div class="card-header-bar">
-            <h2>Livro de Atas da Direção (Mandato 2025/2027)</h2>
+        <!-- Indicadores Resumo -->
+        <div class="atas-stats-grid">
+          <div class="ata-stat-card">
+            <div class="ata-stat-icon" style="background: rgba(28, 109, 66, 0.1); color: var(--primary);">📚</div>
+            <div class="ata-stat-info">
+              <h4>Total de Atas</h4>
+              <div class="stat-number" id="statTotalAtas">0</div>
+            </div>
           </div>
+          <div class="ata-stat-card">
+            <div class="ata-stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">✅</div>
+            <div class="ata-stat-info">
+              <h4>Atas Aprovadas</h4>
+              <div class="stat-number" id="statAtasAprovadas">0</div>
+            </div>
+          </div>
+          <div class="ata-stat-card">
+            <div class="ata-stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">📝</div>
+            <div class="ata-stat-info">
+              <h4>Rascunhos / Minutas</h4>
+              <div class="stat-number" id="statAtasRascunhos">0</div>
+            </div>
+          </div>
+          <div class="ata-stat-card">
+            <div class="ata-stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">📅</div>
+            <div class="ata-stat-info">
+              <h4>Reuniões em 2026</h4>
+              <div class="stat-number" id="statAtasEsteAno">0</div>
+            </div>
+          </div>
+        </div>
 
+        <!-- Barra de Controlos, Pesquisa e Filtros -->
+        <div class="card-box" style="padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+          <div class="atas-controls-bar" style="margin-bottom: 0;">
+            
+            <!-- Campo de Pesquisa -->
+            <div class="atas-search-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="atasSearchInput" placeholder="Pesquisar por nº, local, assunto, deliberação ou participante..." oninput="filtrarAtas()">
+            </div>
+
+            <!-- Filtros Dropdowns -->
+            <div class="atas-filters-group">
+              <select id="filterTipoAta" class="atas-filter-select" onchange="filtrarAtas()">
+                <option value="all">Todos os tipos</option>
+                <option value="Reunião de Direção">Reunião de Direção</option>
+                <option value="Assembleia Geral Ordinária">Assembleia Geral Ordinária</option>
+                <option value="Assembleia Geral Extraordinária">Assembleia Geral Extraordinária</option>
+                <option value="Reunião Extraordinária">Reunião Extraordinária</option>
+              </select>
+
+              <select id="filterEstadoAta" class="atas-filter-select" onchange="filtrarAtas()">
+                <option value="all">Todos os estados</option>
+                <option value="Rascunho">Rascunho / Minuta</option>
+                <option value="Aprovada">Aprovada</option>
+                <option value="Anulada">Anulada</option>
+              </select>
+
+              <select id="filterAnoAta" class="atas-filter-select" onchange="filtrarAtas()">
+                <option value="all">Todos os anos</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+              </select>
+
+              <!-- Seletor de Colunas Personalizado (Dropdown) -->
+              <div class="col-picker-dropdown">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerAtas" onclick="toggleAtasColPickerMenu()" style="padding: 0.55rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.84rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
+                  </svg>
+                  <span>Colunas</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="col-picker-menu" id="colPickerMenuAtas">
+                  <div class="col-picker-header">
+                    <span>Personalizar Colunas</span>
+                    <button type="button" onclick="resetAtasColumns()">Repor</button>
+                  </div>
+                  <div class="col-picker-list" id="colPickerListAtas">
+                    <!-- Gerado dinamicamente via JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Alternador de Vista (Tabela / Cartões) -->
+              <div class="view-toggle-group">
+                <button type="button" class="view-toggle-btn active" id="btnViewTable" onclick="setAtasViewMode('table')" title="Vista detalhada em Tabela com colunas">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"/>
+                    <line x1="8" y1="12" x2="21" y2="12"/>
+                    <line x1="8" y1="18" x2="21" y2="18"/>
+                    <line x1="3" y1="6" x2="3.01" y2="6"/>
+                    <line x1="3" y1="12" x2="3.01" y2="12"/>
+                    <line x1="3" y1="18" x2="3.01" y2="18"/>
+                  </svg>
+                  <span>Tabela</span>
+                </button>
+                <button type="button" class="view-toggle-btn" id="btnViewCards" onclick="setAtasViewMode('cards')" title="Vista em Lista de Cartões (estilo original)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                  </svg>
+                  <span>Cartões</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. VISTA EM TABELA (COM COLUNAS SELECIONÁVEIS E ORDENÁVEIS) -->
+        <div class="card-box" id="containerAtasTable">
           <div class="table-responsive">
-            <table class="modern-table">
+            <table class="modern-table" id="atasModernTable">
               <thead>
-                <tr>
-                  <th>Nº Ata</th>
-                  <th>Data da Reunião</th>
-                  <th>Assunto Principal</th>
-                  <th>Presentes</th>
-                  <th>Estado</th>
-                  <th style="text-align: right;">Ação</th>
+                <tr id="atasTableHeadRow">
+                  <th class="sortable-th" data-col="data" style="width: 135px;" onclick="sortAtasTable('data')">
+                    <span>Data</span><span class="sort-indicator" id="ataSortInd_data">▼</span>
+                  </th>
+                  <th class="sortable-th" data-col="numero" style="width: 140px;" onclick="sortAtasTable('numero')">
+                    <span>Nº Ata / Ref</span><span class="sort-indicator" id="ataSortInd_numero">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="tipo" style="width: 160px;" onclick="sortAtasTable('tipo')">
+                    <span>Tipo Reunião</span><span class="sort-indicator" id="ataSortInd_tipo">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="assunto" onclick="sortAtasTable('assunto')">
+                    <span>Ordem de Trabalhos & Deliberações</span><span class="sort-indicator" id="ataSortInd_assunto">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="local" style="width: 180px;" onclick="sortAtasTable('local')">
+                    <span>Local</span><span class="sort-indicator" id="ataSortInd_local">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="presencas" style="width: 110px;" onclick="sortAtasTable('presencas')">
+                    <span>Presentes</span><span class="sort-indicator" id="ataSortInd_presencas">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="pontos" style="width: 90px;" onclick="sortAtasTable('pontos')">
+                    <span>Pontos</span><span class="sort-indicator" id="ataSortInd_pontos">⇅</span>
+                  </th>
+                  <th class="sortable-th" data-col="estado" style="width: 110px;" onclick="sortAtasTable('estado')">
+                    <span>Estado</span><span class="sort-indicator" id="ataSortInd_estado">⇅</span>
+                  </th>
+                  <th data-col="acoes" style="text-align: right; width: 145px;">Ações</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Ata Direção #12/2026</strong></td>
-                  <td>15/10/2026</td>
-                  <td>Preparação das comemorações e homenagem a associados com mais de 25 anos</td>
-                  <td>5 membros</td>
-                  <td><span class="status-pill em-dia">Aprovada & Assinada</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Ata Direção #12/2026...', 'success')">Ver Documento</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><strong>Ata Direção #11/2026</strong></td>
-                  <td>08/07/2026</td>
-                  <td>Organização do Agit'ARCA 2026 e contratação de artistas e som</td>
-                  <td>4 membros</td>
-                  <td><span class="status-pill em-dia">Aprovada & Assinada</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Ata Direção #11/2026...', 'success')">Ver Documento</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><strong>Ata Direção #10/2026</strong></td>
-                  <td>14/06/2026</td>
-                  <td>BiciARCA 2026 &bull; Logística de percurso e almoço convívio dos ciclistas</td>
-                  <td>6 membros</td>
-                  <td><span class="status-pill em-dia">Aprovada & Assinada</span></td>
-                  <td style="text-align: right;">
-                    <button class="btn btn-secondary btn-sm" onclick="showToast('A abrir Ata Direção #10/2026...', 'success')">Ver Documento</button>
-                  </td>
-                </tr>
+              <tbody id="tbodyAtas">
+                <!-- Injetado dinamicamente via JS -->
               </tbody>
             </table>
           </div>
         </div>
 
+        <!-- 2. VISTA EM CARTÕES (ESTILO LISTA ORIGINAL DO PORTAL) -->
+        <div id="containerAtasCards" style="display: none;">
+          <div class="atas-cards-list" id="listAtasCards">
+            <!-- Injetado dinamicamente via JS -->
+          </div>
+        </div>
+
       </main>
     </div>
-
   </div>
 
-  <script src="js/socios-data.js"></script>
-  <script src="js/main.js"></script>
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: ASSISTENTE DE 4 PASSOS PARA CRIAR OU EDITAR ATA -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="modalFormAta" onclick="if(event.target === this) closeFormAtaModal()">
+    <div class="modal-content" style="max-width: 920px; max-height: 94vh; display: flex; flex-direction: column;">
+      
+      <div class="modal-header">
+        <div>
+          <h2 id="modalFormAtaTitle" style="margin: 0; font-size: 1.25rem; color: var(--text-title);">Nova Ata</h2>
+          <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: var(--text-muted);">
+            Registo oficial da reunião de Direção ou Assembleia da A.R.C.A.
+          </p>
+        </div>
+        <button class="modal-close-btn" type="button" onclick="closeFormAtaModal()">&times;</button>
+      </div>
+
+      <!-- Barra dos 4 Passos do Assistente -->
+      <div class="wizard-steps-bar">
+        <button type="button" class="wizard-step-pill active" id="wizardPill_1" onclick="goToWizardStep(1)">
+          <span class="wizard-step-num">1</span>
+          <span>Dados</span>
+        </button>
+        <button type="button" class="wizard-step-pill" id="wizardPill_2" onclick="goToWizardStep(2)">
+          <span class="wizard-step-num">2</span>
+          <span>Presenças</span>
+        </button>
+        <button type="button" class="wizard-step-pill" id="wizardPill_3" onclick="goToWizardStep(3)">
+          <span class="wizard-step-num">3</span>
+          <span>Ordem de trabalhos</span>
+        </button>
+        <button type="button" class="wizard-step-pill" id="wizardPill_4" onclick="goToWizardStep(4)">
+          <span class="wizard-step-num">4</span>
+          <span>Aprovação e anexos</span>
+        </button>
+      </div>
+
+      <form id="formAta" onsubmit="handleSalvarAta(event)" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+        <input type="hidden" id="formAtaId">
+
+        <!-- ABA 1: DADOS -->
+        <div class="wizard-content-pane active" id="wizardPane_1">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label" for="formAtaTipo">Tipo de reunião *</label>
+              <select id="formAtaTipo" class="form-control" required onchange="handleTipoAtaChange(this.value)">
+                <option value="Reunião de Direção">Reunião de Direção</option>
+                <option value="Assembleia Geral Ordinária">Assembleia Geral Ordinária</option>
+                <option value="Assembleia Geral Extraordinária">Assembleia Geral Extraordinária</option>
+                <option value="Reunião Extraordinária">Reunião Extraordinária da Direção</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="formAtaData">Data da Reunião *</label>
+              <input type="date" id="formAtaData" class="form-control" required onchange="autoCalcularReferenciaAta()">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="formAtaHoraInicio">Hora de início *</label>
+              <input type="time" id="formAtaHoraInicio" class="form-control" required value="21:00">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="formAtaHoraFim">Hora de fim</label>
+              <input type="time" id="formAtaHoraFim" class="form-control">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 180px 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label" for="formAtaNumero">N.º da ata *</label>
+              <input type="number" id="formAtaNumero" class="form-control" required min="1" oninput="autoCalcularReferenciaAta()">
+              <small style="color: var(--text-muted); font-size: 0.72rem;">Atribuído automaticamente</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="formAtaReferencia">Referência *</label>
+              <input type="text" id="formAtaReferencia" class="form-control" required placeholder="ex: 021/1126">
+              <small style="color: var(--text-muted); font-size: 0.72rem;">Formato nº/MMAA</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="formAtaLocal">Local da Reunião *</label>
+              <input type="text" id="formAtaLocal" class="form-control" required list="listaLocaisSugeridos" placeholder="ex: Pavilhão Carlos Almeida, Aguada de Baixo">
+              <datalist id="listaLocaisSugeridos">
+                <option value="Pavilhão Carlos Almeida, Aguada de Baixo">
+                <option value="Sede da ARCA, Aguada de Baixo">
+                <option value="Grupo WhatsApp - Direção ARCA">
+                <option value="AgitÁgueda">
+                <option value="Torneio Todos ARCA - Taça Jorginho">
+              </datalist>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="formAtaPresidiu">Presidiu à Reunião *</label>
+              <input type="text" id="formAtaPresidiu" class="form-control" required list="listaMembrosPresidencia" value="Jorge Manuel da Silva Cunha">
+              <datalist id="listaMembrosPresidencia">
+                <!-- Preenchido dinamicamente -->
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="formAtaSecretariou">Secretariou a Reunião *</label>
+              <input type="text" id="formAtaSecretariou" class="form-control" required list="listaMembrosSecretariado" value="Raquel Alexandra Marques da Cunha">
+              <datalist id="listaMembrosSecretariado">
+                <!-- Preenchido dinamicamente -->
+              </datalist>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 2: PRESENÇAS -->
+        <div class="wizard-content-pane" id="wizardPane_2">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <strong style="color: var(--text-title); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+              MEMBROS / UTILIZADORES (<span id="presencasCountHeader">0</span> PRESENTES)
+            </strong>
+            <button type="button" class="btn btn-outline btn-xs" onclick="selecionarTodosMembrosPresencas(true)">Marcar Todos da Direção</button>
+          </div>
+
+          <!-- Grelha de Membros Oficiais (Checkbox Cards) -->
+          <div class="presencas-members-grid" id="presencasMembersGrid">
+            <!-- Gerado via JS com base nos dirigentes centrais -->
+          </div>
+
+          <!-- Pesquisa de Sócios -->
+          <div style="margin-bottom: 1rem;">
+            <label class="form-label" style="font-size: 0.82rem; font-weight: 700;">Adicionar Sócio às Presenças</label>
+            <div style="position: relative;">
+              <input type="text" id="inputSearchSocioPresenca" class="form-control" placeholder="Procurar sócio por nome ou nº (mín. 2 caracteres)..." oninput="handleSearchSocioPresenca(this.value)">
+              <div id="resultsSearchSocioPresenca" style="display: none; position: absolute; top: calc(100% + 2px); left: 0; right: 0; max-height: 180px; overflow-y: auto; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-sm); z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.08);"></div>
+            </div>
+          </div>
+
+          <!-- Outra Pessoa / Convidado -->
+          <div style="margin-bottom: 1.25rem;">
+            <label class="form-label" style="font-size: 0.82rem; font-weight: 700;">Outra Pessoa (Convidado / Técnico)</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="inputOutraPessoaNome" class="form-control" placeholder="Nome da pessoa ou representante de entidade externa">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="adicionarOutraPessoaPresenca()">Adicionar</button>
+            </div>
+          </div>
+
+          <!-- Resumo de Presentes -->
+          <div>
+            <label class="form-label" style="font-size: 0.82rem; font-weight: 700;">LISTA DE PRESENÇAS CONFIRMADAS</label>
+            <div class="presencas-chips-wrap" id="presencasChipsList">
+              <span style="color: var(--text-muted); font-size: 0.82rem; align-self: center;">Ainda ninguém marcado.</span>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label class="form-label" for="formAtaOutrasPresencas">Convidados / outras presenças ou observações de presença</label>
+            <textarea id="formAtaOutrasPresencas" class="form-control" style="min-height: 60px;" placeholder="Registo de ausências justificadas ou notas adicionais..."></textarea>
+          </div>
+        </div>
+
+        <!-- ABA 3: ORDEM DE TRABALHOS (PONTOS) -->
+        <div class="wizard-content-pane" id="wizardPane_3">
+          <div id="pontosContainer">
+            <!-- Pontos injetados dinamicamente via JS -->
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="adicionarNovoPonto()" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+              <span>+ Adicionar Ponto à Ordem de Trabalhos</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ABA 4: APROVAÇÃO E ANEXOS -->
+        <div class="wizard-content-pane" id="wizardPane_4">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="formAtaEstado">Estado da Ata *</label>
+            <select id="formAtaEstado" class="form-control" required style="font-weight: 700;">
+              <option value="Rascunho">Rascunho / minuta</option>
+              <option value="Aprovada">Aprovada & Assinada</option>
+              <option value="Anulada">Anulada</option>
+            </select>
+            <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">
+              Depois de aprovada e assinada, a ata é arquivada oficialmente no livro de atas.
+            </small>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="formAtaObservacoes">Observações Finais / Notas de Convocatória</label>
+            <textarea id="formAtaObservacoes" class="form-control" style="min-height: 75px;" placeholder="Indicações finais, advertências ou observações pertinentes..."></textarea>
+          </div>
+
+          <!-- Assinaturas -->
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+              <strong style="font-size: 0.85rem; color: var(--text-title); text-transform: uppercase;">ASSINATURAS</strong>
+              <div style="display: flex; gap: 0.4rem;">
+                <button type="button" class="btn btn-outline btn-xs" onclick="adicionarAssinaturaModal()">+ Assinatura</button>
+                <button type="button" class="btn btn-secondary btn-xs" onclick="autoPreencherAssinaturasPresidenteSecretaria()">Preencher Presidente/Secretário pelos cargos</button>
+              </div>
+            </div>
+
+            <div id="listaAssinaturasAta" style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <!-- Assinaturas listadas via JS -->
+            </div>
+          </div>
+
+          <!-- Anexos -->
+          <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem;">
+            <strong style="font-size: 0.85rem; color: var(--text-title); text-transform: uppercase; display: block; margin-bottom: 0.5rem;">ANEXOS DA REUNIÃO</strong>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">
+              Pode anexar cópias digitais, convocatórias, relatórios ou outros documentos em formato PDF ou imagem.
+            </p>
+
+            <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem;">
+              <input type="file" id="inputAtaAnexoFicheiro" style="display: none;" onchange="handleCarregarAnexoFicheiro(this)">
+              <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('inputAtaAnexoFicheiro').click()">
+                📎 Escolher Ficheiro
+              </button>
+              <span id="labelNomeAnexoEscolhido" style="font-size: 0.84rem; color: var(--text-muted);">Nenhum ficheiro selecionado</span>
+            </div>
+
+            <div id="listaAnexosAta" style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <!-- Anexos listados aqui -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Rodapé de Ações do Modal -->
+        <div class="modal-footer" style="padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+          <button type="button" class="btn btn-outline btn-sm" id="btnWizardAnterior" onclick="voltarWizardStep()" style="display: none;">
+            ← Anterior
+          </button>
+          <div style="display: flex; gap: 0.6rem; margin-left: auto;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeFormAtaModal()">Cancelar</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btnWizardSeguinte" onclick="avancarWizardStep()">
+              Seguinte →
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm" id="btnWizardSalvar" style="display: none;">
+              Guardar Ata
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: VISUALIZADOR OFICIAL DA ATA EM FOLHA TIMBRADA (SEM DOWNLOAD) -->
+  <!-- ========================================================================= -->
+  <div class="modal-overlay" id="modalVisualizadorAta" onclick="if(event.target === this) closeVisualizadorAta()">
+    <div class="modal-content" style="max-width: 900px; max-height: 96vh; display: flex; flex-direction: column; background: #e2e8f0; padding: 0;">
+      
+      <!-- Barra Superior de Ferramentas do Visualizador -->
+      <div class="ata-viewer-actions-bar" style="background: #0f3f26; color: #ffffff; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-radius: var(--radius-md) var(--radius-md) 0 0;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.1rem;">📜</span>
+          <span id="viewerBarTitle" style="font-weight: 700; font-size: 0.95rem;">Visualização Oficial de Ata</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="window.print()" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25);">
+            🖨️ Imprimir / PDF
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" id="btnEditarFromViewer" onclick="editarAtaFromViewer()" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25);">
+            ✏️ Editar
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="copiarTextoAtaViewer()" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25);" title="Copiar texto formal da ata">
+            📋 Copiar Texto
+          </button>
+          <button type="button" class="modal-close-btn" onclick="closeVisualizadorAta()" style="color: #ffffff; font-size: 1.5rem; line-height: 1; padding: 0 0.4rem; background: none; border: none; cursor: pointer;">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Área de Leitura Integral da Ata (Documento Oficial Timbrado) -->
+      <div style="padding: 1.5rem; overflow-y: auto; flex: 1;">
+        <div class="ata-viewer-paper" id="ataViewerPaper">
+          <!-- Injetado dinamicamente via renderVisualizadorAta() -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/socios-data.js?v=20261126_v12"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-sync.js?v=20261126_v12"></script>
+  <script src="js/atas-data.js?v=20261126_v12"></script>
+  <script src="js/main.js?v=20261126_v12"></script>
+
+  <script>
+    // =========================================================================
+    // LÓGICA DE GESTÃO DO LIVRO DE ATAS DA DIREÇÃO
+    // =========================================================================
+
+    let atas = [];
+    let currentAtaEmVisualizacao = null;
+    let currentWizardStep = 1;
+    let wizardPontos = [];
+    let wizardPresencas = [];
+    let wizardAssinaturas = [];
+    let wizardAnexos = [];
+
+    // Estado da Ordenação
+    let ataSortField = 'data';
+    let ataSortDir = 'desc';
+
+    // Estado da Vista (table ou cards)
+    let atasViewMode = localStorage.getItem('arca_atas_view_mode') || 'table';
+
+    // Configuração de Colunas Personalizáveis
+    const STORAGE_KEY_COLS_ATAS = 'arca_cols_atas_v1';
+    const DEFAULT_ATAS_COLS = {
+      data: true,
+      numero: true,
+      tipo: true,
+      assunto: true,
+      local: true,
+      presencas: true,
+      pontos: true,
+      estado: true,
+      acoes: true
+    };
+    let activeAtasCols = { ...DEFAULT_ATAS_COLS };
+
+    function loadAtasCols() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_COLS_ATAS);
+        if (saved) activeAtasCols = { ...DEFAULT_ATAS_COLS, ...JSON.parse(saved) };
+      } catch (e) {
+        activeAtasCols = { ...DEFAULT_ATAS_COLS };
+      }
+    }
+
+    function saveAtasCols() {
+      try {
+        localStorage.setItem(STORAGE_KEY_COLS_ATAS, JSON.stringify(activeAtasCols));
+      } catch (e) {}
+    }
+
+    function isAtasColVisible(key) {
+      return activeAtasCols[key] !== false;
+    }
+
+    // Inicialização da Página
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAtasCols();
+      initAtasColPicker();
+      loadAtas();
+      initPresencasMembersGrid();
+      initMembrosDatalists();
+      updateAtasStats();
+      renderAtas();
+      applyAtasViewModeUI();
+
+      // Sincronização com Firestore
+      if (typeof window.syncArcaAtasFromCloud === 'function') {
+        window.syncArcaAtasFromCloud((cloudAtas) => {
+          if (Array.isArray(cloudAtas) && cloudAtas.length > 0) {
+            atas = cloudAtas;
+            updateAtasStats();
+            renderAtas();
+          }
+        });
+      }
+
+      // Fechar modal ao premir Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeVisualizadorAta();
+          closeFormAtaModal();
+        }
+      });
+
+      // Fechar menu de colunas ao clicar fora
+      document.addEventListener('click', (e) => {
+        const picker = document.querySelector('.col-picker-dropdown');
+        if (picker && !picker.contains(e.target)) {
+          const menu = document.getElementById('colPickerMenuAtas');
+          if (menu) menu.classList.remove('show');
+        }
+      });
+    });
+
+    // Carregamento de Atas (Local + Fallback Seed)
+    function loadAtas() {
+      if (typeof window.getArcaAtas === 'function') {
+        atas = window.getArcaAtas();
+      } else {
+        try {
+          const local = localStorage.getItem('arca_atas_v1');
+          atas = local ? JSON.parse(local) : [];
+        } catch (e) { atas = []; }
+      }
+    }
+
+    function saveAtas() {
+      if (typeof window.saveArcaAtasLocal === 'function') {
+        window.saveArcaAtasLocal(atas);
+      } else {
+        localStorage.setItem('arca_atas_v1', JSON.stringify(atas));
+      }
+      updateAtasStats();
+      renderAtas();
+    }
+
+    window.recarregarAtasNuvem = async function(btn) {
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ A carregar...</span>';
+      }
+      if (typeof window.syncArcaAtasFromCloud === 'function') {
+        const res = await window.syncArcaAtasFromCloud();
+        if (Array.isArray(res)) atas = res;
+        updateAtasStats();
+        renderAtas();
+        if (window.showToast) window.showToast('Livro de Atas sincronizado com a nuvem com sucesso!', 'success');
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🔄</span> <span>Atualizar</span>';
+      }
+    };
+
+    // Estatísticas
+    function updateAtasStats() {
+      const elTotal = document.getElementById('statTotalAtas');
+      const elAprov = document.getElementById('statAtasAprovadas');
+      const elRasc = document.getElementById('statAtasRascunhos');
+      const elAno = document.getElementById('statAtasEsteAno');
+
+      const total = atas.length;
+      const aprov = atas.filter(a => a.estado === 'Aprovada').length;
+      const rasc = atas.filter(a => a.estado === 'Rascunho').length;
+      const esteAno = atas.filter(a => a.data && a.data.startsWith('2026')).length;
+
+      if (elTotal) elTotal.textContent = total;
+      if (elAprov) elAprov.textContent = aprov;
+      if (elRasc) elRasc.textContent = rasc;
+      if (elAno) elAno.textContent = esteAno;
+    }
+
+    // Alternador de Vista (Tabela / Cartões)
+    window.setAtasViewMode = function(mode) {
+      atasViewMode = mode;
+      localStorage.setItem('arca_atas_view_mode', mode);
+      applyAtasViewModeUI();
+    };
+
+    function applyAtasViewModeUI() {
+      const btnTable = document.getElementById('btnViewTable');
+      const btnCards = document.getElementById('btnViewCards');
+      const containerTable = document.getElementById('containerAtasTable');
+      const containerCards = document.getElementById('containerAtasCards');
+
+      if (atasViewMode === 'table') {
+        btnTable?.classList.add('active');
+        btnCards?.classList.remove('active');
+        if (containerTable) containerTable.style.display = 'block';
+        if (containerCards) containerCards.style.display = 'none';
+      } else {
+        btnCards?.classList.add('active');
+        btnTable?.classList.remove('active');
+        if (containerTable) containerTable.style.display = 'none';
+        if (containerCards) containerCards.style.display = 'block';
+      }
+    }
+
+    // Colunas & Ordenação
+    window.toggleAtasColPickerMenu = function() {
+      const menu = document.getElementById('colPickerMenuAtas');
+      if (menu) menu.classList.toggle('show');
+    };
+
+    function initAtasColPicker() {
+      const list = document.getElementById('colPickerListAtas');
+      if (!list) return;
+
+      const labels = {
+        data: 'Data & Hora',
+        numero: 'Nº Ata / Ref',
+        tipo: 'Tipo de Reunião',
+        assunto: 'Ordem de Trabalhos',
+        local: 'Local da Reunião',
+        presencas: 'Presentes',
+        pontos: 'Qtd. Pontos',
+        estado: 'Estado da Ata',
+        acoes: 'Ações Disponíveis'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => {
+        const isChecked = isAtasColVisible(key);
+        return `
+          <label class="col-picker-item">
+            <input type="checkbox" data-col="${key}" ${isChecked ? 'checked' : ''} onchange="toggleAtaCol('${key}', this.checked)">
+            <span>${label}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    window.toggleAtaCol = function(key, isVisible) {
+      activeAtasCols[key] = isVisible;
+      saveAtasCols();
+      applyAtasColumnsVisibility();
+      renderAtas();
+    };
+
+    window.resetAtasColumns = function() {
+      activeAtasCols = { ...DEFAULT_ATAS_COLS };
+      saveAtasCols();
+      initAtasColPicker();
+      applyAtasColumnsVisibility();
+      renderAtas();
+    };
+
+    function applyAtasColumnsVisibility() {
+      document.querySelectorAll('#atasTableHeadRow th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        if (col) {
+          th.style.display = isAtasColVisible(col) ? '' : 'none';
+        }
+      });
+    }
+
+    window.sortAtasTable = function(field) {
+      if (ataSortField === field) {
+        ataSortDir = (ataSortDir === 'asc') ? 'desc' : 'asc';
+      } else {
+        ataSortField = field;
+        ataSortDir = (field === 'data' || field === 'numero' || field === 'pontos' || field === 'presencas') ? 'desc' : 'asc';
+      }
+      updateAtaSortIndicators();
+      renderAtas();
+    };
+
+    function updateAtaSortIndicators() {
+      document.querySelectorAll('#atasTableHeadRow th.sortable-th').forEach(th => {
+        const col = th.getAttribute('data-col');
+        const ind = th.querySelector('.sort-indicator');
+        if (col === ataSortField) {
+          if (ind) ind.textContent = (ataSortDir === 'asc') ? '▲' : '▼';
+          th.classList.add('sorted');
+        } else {
+          if (ind) ind.textContent = '⇅';
+          th.classList.remove('sorted');
+        }
+      });
+    }
+
+    // Filtragem e Renderização
+    window.filtrarAtas = function() {
+      renderAtas();
+    };
+
+    function getAtasFiltradas() {
+      const searchVal = (document.getElementById('atasSearchInput')?.value || '').toLowerCase().trim();
+      const tipoVal = document.getElementById('filterTipoAta')?.value || 'all';
+      const estadoVal = document.getElementById('filterEstadoAta')?.value || 'all';
+      const anoVal = document.getElementById('filterAnoAta')?.value || 'all';
+
+      return atas.filter(a => {
+        if (tipoVal !== 'all' && a.tipo !== tipoVal) return false;
+        if (estadoVal !== 'all' && a.estado !== estadoVal) return false;
+        if (anoVal !== 'all' && a.data && !a.data.startsWith(anoVal)) return false;
+
+        if (searchVal) {
+          const matchNum = String(a.numero || '').toLowerCase().includes(searchVal);
+          const matchRef = String(a.referencia || '').toLowerCase().includes(searchVal);
+          const matchTipo = String(a.tipo || '').toLowerCase().includes(searchVal);
+          const matchLocal = String(a.local || '').toLowerCase().includes(searchVal);
+          const matchPresidiu = String(a.presidiu || '').toLowerCase().includes(searchVal);
+          const matchSecretariou = String(a.secretariou || '').toLowerCase().includes(searchVal);
+          const matchPontos = (a.pontos || []).some(p => 
+            (p.assunto || '').toLowerCase().includes(searchVal) ||
+            (p.discussao || '').toLowerCase().includes(searchVal) ||
+            (p.deliberacao || '').toLowerCase().includes(searchVal)
+          );
+          const matchPresencas = (a.presencas || []).some(pr => (pr.nome || '').toLowerCase().includes(searchVal));
+
+          if (!matchNum && !matchRef && !matchTipo && !matchLocal && !matchPresidiu && !matchSecretariou && !matchPontos && !matchPresencas) {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function renderAtas() {
+      const tbody = document.getElementById('tbodyAtas');
+      const cardsList = document.getElementById('listAtasCards');
+      if (!tbody && !cardsList) return;
+
+      const filtradas = getAtasFiltradas();
+
+      // Ordenação
+      filtradas.sort((a, b) => {
+        let valA, valB;
+        if (ataSortField === 'numero') {
+          valA = a.numero || a.id || 0;
+          valB = b.numero || b.id || 0;
+          return ataSortDir === 'asc' ? valA - valB : valB - valA;
+        } else if (ataSortField === 'pontos') {
+          valA = a.pontos?.length || 0;
+          valB = b.pontos?.length || 0;
+          return ataSortDir === 'asc' ? valA - valB : valB - valA;
+        } else if (ataSortField === 'presencas') {
+          valA = a.presencas?.length || 0;
+          valB = b.presencas?.length || 0;
+          return ataSortDir === 'asc' ? valA - valB : valB - valA;
+        } else if (ataSortField === 'data') {
+          valA = a.data ? `${a.data} ${a.horaInicio || ''}` : '';
+          valB = b.data ? `${b.data} ${b.horaInicio || ''}` : '';
+        } else if (ataSortField === 'tipo') {
+          valA = a.tipo || '';
+          valB = b.tipo || '';
+        } else if (ataSortField === 'local') {
+          valA = a.local || '';
+          valB = b.local || '';
+        } else if (ataSortField === 'estado') {
+          valA = a.estado || '';
+          valB = b.estado || '';
+        } else {
+          valA = (a.pontos?.[0]?.assunto || a.referencia || '');
+          valB = (b.pontos?.[0]?.assunto || b.referencia || '');
+        }
+        const cmp = String(valA).localeCompare(String(valB), 'pt');
+        return ataSortDir === 'asc' ? cmp : -cmp;
+      });
+
+      // 1. RENDERIZAR TABELA
+      if (tbody) {
+        if (filtradas.length === 0) {
+          const visibleColsCount = Object.values(activeAtasCols).filter(Boolean).length || 8;
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="${visibleColsCount}" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
+                <strong>Nenhuma ata encontrada com os filtros selecionados.</strong>
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = filtradas.map(a => {
+            const dataFmt = a.data ? formatarDataPt(a.data) : '—';
+            const resumoAssuntos = (a.pontos && a.pontos.length > 0)
+              ? a.pontos.map(p => p.assunto).filter(Boolean).join(' · ')
+              : 'Sem ordem de trabalhos definida.';
+
+            const badgeEstado = (a.estado === 'Aprovada')
+              ? '<span class="ata-badge-aprovada">Aprovada</span>'
+              : (a.estado === 'Anulada' ? '<span class="ata-badge-anulada">Anulada</span>' : '<span class="ata-badge-rascunho">Rascunho</span>');
+
+            return `
+              <tr data-ata-id="${a.id}">
+                <!-- Data -->
+                <td data-col="data" style="${!isAtasColVisible('data') ? 'display: none;' : ''}">
+                  <div style="font-weight: 700; color: var(--text-title); font-size: 0.88rem;">${dataFmt}</div>
+                  <div style="font-size: 0.74rem; color: var(--text-muted);">${a.horaInicio ? a.horaInicio + 'h' : ''}${a.horaFim ? ' às ' + a.horaFim + 'h' : ''}</div>
+                </td>
+
+                <!-- Nº / Ref -->
+                <td data-col="numero" style="${!isAtasColVisible('numero') ? 'display: none;' : ''}">
+                  <strong style="color: var(--primary); font-size: 0.92rem;">Ata ${a.referencia || '#' + a.numero}</strong>
+                  <div style="font-size: 0.72rem; color: var(--text-muted);">Nº ${a.numero}</div>
+                </td>
+
+                <!-- Tipo -->
+                <td data-col="tipo" style="${!isAtasColVisible('tipo') ? 'display: none;' : ''}">
+                  <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-title);">${escapeHtml(a.tipo || 'Reunião de Direção')}</span>
+                </td>
+
+                <!-- Ordem de Trabalhos -->
+                <td data-col="assunto" style="${!isAtasColVisible('assunto') ? 'display: none;' : ''}">
+                  <a href="javascript:void(0)" onclick="openVisualizadorAta(${a.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none; font-size: 0.92rem; display: block; margin-bottom: 2px;">
+                    ${escapeHtml(a.pontos?.[0]?.assunto || ('Ata ' + (a.referencia || a.numero)))}
+                  </a>
+                  <div style="font-size: 0.78rem; color: #475569; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
+                    ${escapeHtml(resumoAssuntos)}
+                  </div>
+                </td>
+
+                <!-- Local -->
+                <td data-col="local" style="${!isAtasColVisible('local') ? 'display: none;' : ''}">
+                  <div style="font-size: 0.82rem; color: var(--text-title);">${escapeHtml(a.local || 'Pavilhão Carlos Almeida')}</div>
+                </td>
+
+                <!-- Presentes -->
+                <td data-col="presencas" style="${!isAtasColVisible('presencas') ? 'display: none;' : ''}">
+                  <span style="font-size: 0.84rem; font-weight: 700; color: var(--text-title);">${a.presencas?.length || 0}</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">membros</span>
+                </td>
+
+                <!-- Pontos -->
+                <td data-col="pontos" style="${!isAtasColVisible('pontos') ? 'display: none;' : ''}">
+                  <span class="badge-socio-tag" style="background: #f1f5f9; color: #334155; font-size: 0.76rem;">${a.pontos?.length || 0} pts</span>
+                </td>
+
+                <!-- Estado -->
+                <td data-col="estado" style="${!isAtasColVisible('estado') ? 'display: none;' : ''}">
+                  ${badgeEstado}
+                </td>
+
+                <!-- Ações -->
+                <td data-col="acoes" style="text-align: right; ${!isAtasColVisible('acoes') ? 'display: none;' : ''}">
+                  <div style="display: flex; gap: 0.35rem; justify-content: flex-end;">
+                    <button class="btn btn-outline btn-xs" onclick="openVisualizadorAta(${a.id})" title="Consultar e ler ata diretamente no ecrã" style="color: var(--primary);">
+                      👁️ Ver
+                    </button>
+                    <button class="btn btn-outline btn-xs" onclick="openEditarAtaModal(${a.id})" title="Editar ata">
+                      ✏️
+                    </button>
+                    <button class="btn btn-outline btn-xs" onclick="handleEliminarAta(${a.id})" title="Eliminar ata" style="color: #dc2626;">
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 2. RENDERIZAR CARTÕES (ESTILO ORIGINAL DO PORTAL)
+      if (cardsList) {
+        if (filtradas.length === 0) {
+          cardsList.innerHTML = `
+            <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted); background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
+              <strong>Nenhuma ata encontrada com os filtros selecionados.</strong>
+            </div>
+          `;
+        } else {
+          cardsList.innerHTML = filtradas.map(a => {
+            const parts = (a.data || '').split('-');
+            const dia = parts[2] || '01';
+            const mesAno = (parts[1] && parts[0]) ? `${parts[1]}/${parts[0]}` : '11/2026';
+
+            const badgeEstado = (a.estado === 'Aprovada')
+              ? '<span class="ata-badge-aprovada">Aprovada</span>'
+              : (a.estado === 'Anulada' ? '<span class="ata-badge-anulada">Anulada</span>' : '<span class="ata-badge-rascunho">Rascunho</span>');
+
+            const resumoPontos = (a.pontos && a.pontos.length > 0)
+              ? a.pontos.map(p => p.assunto).filter(Boolean).join(' · ')
+              : 'Sem assuntos registados.';
+
+            return `
+              <div class="ata-list-item" onclick="openVisualizadorAta(${a.id})">
+                <!-- Distintivo de Data Lateral -->
+                <div class="ata-date-badge">
+                  <div class="ata-date-day">${dia}</div>
+                  <div class="ata-date-monthyear">${mesAno}</div>
+                </div>
+
+                <!-- Conteúdo Principal -->
+                <div class="ata-item-main">
+                  <div class="ata-item-header">
+                    <span class="ata-item-title">Ata ${escapeHtml(a.referencia || ('#' + a.numero))} - ${escapeHtml(a.tipo || 'Reunião de Direção')}</span>
+                  </div>
+                  <div class="ata-item-summary">
+                    ${escapeHtml(resumoPontos)}
+                  </div>
+                  <div class="ata-item-meta">
+                    <span>🕒 ${a.horaInicio || '21:00'}</span>
+                    <span>📍 em ${escapeHtml(a.local || 'Pavilhão Carlos Almeida')}</span>
+                    <span>👥 ${a.presencas?.length || 0} presentes</span>
+                    <span>📑 ${a.pontos?.length || 0} pontos</span>
+                  </div>
+                </div>
+
+                <!-- Estado e Ações Rápidas -->
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+                  ${badgeEstado}
+                  <div style="display: flex; gap: 0.35rem;" onclick="event.stopPropagation()">
+                    <button class="btn btn-outline btn-xs" onclick="openVisualizadorAta(${a.id})" title="Ler ata diretamente">👁️ Ver</button>
+                    <button class="btn btn-outline btn-xs" onclick="openEditarAtaModal(${a.id})" title="Editar ata">✏️</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    // =========================================================================
+    // VISUALIZADOR OFICIAL DA ATA EM FOLHA TIMBRADA (CONSULTA DIRETA NO ECRÃ)
+    // =========================================================================
+    window.openVisualizadorAta = function(ataId) {
+      const ata = atas.find(a => a.id === ataId);
+      if (!ata) return;
+
+      currentAtaEmVisualizacao = ata;
+      const modal = document.getElementById('modalVisualizadorAta');
+      const paper = document.getElementById('ataViewerPaper');
+      const barTitle = document.getElementById('viewerBarTitle');
+
+      if (barTitle) barTitle.textContent = `Ata ${ata.referencia || '#' + ata.numero} · ${ata.tipo || 'Reunião de Direção'}`;
+
+      if (paper) {
+        const dataExtenso = formatarDataPorExtensoPt(ata.data);
+        const presencasDir = (ata.presencas || []).filter(p => !p.tipo || p.tipo === 'membro');
+        const presencasSocios = (ata.presencas || []).filter(p => p.tipo === 'socio');
+        const presencasOutros = (ata.presencas || []).filter(p => p.tipo === 'outro');
+
+        let listaPresencasHtml = '';
+        if (presencasDir.length > 0) {
+          listaPresencasHtml += `<strong>Dirigentes Presentes:</strong> ${presencasDir.map(d => `${escapeHtml(d.nome)} (${escapeHtml(d.cargo || 'Dirigente')})`).join(', ')}.<br>`;
+        }
+        if (presencasSocios.length > 0) {
+          listaPresencasHtml += `<strong>Sócios Presentes:</strong> ${presencasSocios.map(s => `${escapeHtml(s.nome)}${s.numero ? ' (Sócio nº ' + s.numero + ')' : ''}`).join(', ')}.<br>`;
+        }
+        if (presencasOutros.length > 0) {
+          listaPresencasHtml += `<strong>Outros Participantes / Convidados:</strong> ${presencasOutros.map(o => escapeHtml(o.nome)).join(', ')}.<br>`;
+        }
+        if (ata.outrasPresencas) {
+          listaPresencasHtml += `<strong>Observações de Presença:</strong> ${escapeHtml(ata.outrasPresencas)}<br>`;
+        }
+
+        // Renderizar Pontos da Ordem de Trabalhos
+        let pontosHtml = '';
+        if (Array.isArray(ata.pontos) && ata.pontos.length > 0) {
+          pontosHtml = ata.pontos.map((p, idx) => `
+            <div class="ata-ponto-block">
+              <div class="ata-ponto-heading">Ponto ${idx + 1} &bull; ${escapeHtml(p.assunto || 'Sem assunto')}</div>
+              
+              <div class="ata-ponto-section-label">Discussão & Apresentação</div>
+              <div class="ata-ponto-body">${formatarTextoFormatado(p.discussao || 'Sem discussão registada.')}</div>
+              
+              <div class="ata-ponto-section-label">Deliberação</div>
+              <div class="ata-deliberacao-box">${formatarTextoFormatado(p.deliberacao || 'Sem deliberação específica tomada.')}</div>
+
+              ${p.votacao ? `
+                <div class="ata-votacao-pill">
+                  <span>🗳️ Votação:</span>
+                  <strong>${escapeHtml(p.votacao.tipo || 'Unanimidade')}</strong>
+                  ${p.votacao.aFavor !== undefined ? `(${p.votacao.aFavor} a favor, ${p.votacao.contra || 0} contra, ${p.votacao.abstencao || 0} abstenções)` : ''}
+                </div>
+              ` : ''}
+            </div>
+          `).join('');
+        } else {
+          pontosHtml = '<p style="font-style: italic; color: #64748b;">Nenhum ponto de ordem de trabalhos registado.</p>';
+        }
+
+        // Assinaturas Formais
+        let assinaturasHtml = `
+          <div class="ata-signatures-grid">
+            <div>
+              <div class="ata-signature-line">${escapeHtml(ata.presidiu || 'Jorge Manuel da Silva Cunha')}</div>
+              <div class="ata-signature-role">Presidente da Direção</div>
+            </div>
+            <div>
+              <div class="ata-signature-line">${escapeHtml(ata.secretariou || 'Raquel Alexandra Marques da Cunha')}</div>
+              <div class="ata-signature-role">Secretária da Direção</div>
+            </div>
+          </div>
+        `;
+
+        // Anexos
+        let anexosHtml = '';
+        if (Array.isArray(ata.anexos) && ata.anexos.length > 0) {
+          anexosHtml = `
+            <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px dashed #cbd5e1; font-family: 'Plus Jakarta Sans', sans-serif;">
+              <strong style="font-size: 0.85rem; color: #0f3f26; text-transform: uppercase;">DOCUMENTOS & ANEXOS ASSOCIADOS</strong>
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.6rem;">
+                ${ata.anexos.map(an => `
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.5rem 0.8rem; border-radius: 6px; font-size: 0.84rem;">
+                    <span>📎 <strong>${escapeHtml(an.nome)}</strong> <small style="color: #64748b;">(${formatarBytes(an.tamanho || 0)})</small></span>
+                    ${an.dataUrl ? `<button class="btn btn-outline btn-xs" onclick="abrirAnexoEmPopup('${an.dataUrl}', '${escapeHtml(an.nome)}')">👁️ Visualizar Anexo</button>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        paper.innerHTML = `
+          <!-- Cabeçalho Oficial Timbrado -->
+          <div class="ata-viewer-paper-header">
+            <img src="assets/arca-logo.png" alt="ARCA" class="ata-viewer-paper-logo">
+            <h2>Associação Recreativa e Cultural de Aguada de Baixo</h2>
+            <p>Livro Oficial de Atas da Direção &bull; Mandato Institucional</p>
+          </div>
+
+          <!-- Título da Ata -->
+          <div class="ata-viewer-paper-title">
+            ATA N.º ${escapeHtml(String(ata.numero))} / ${escapeHtml(ata.referencia || '')}
+          </div>
+
+          <!-- Metadados da Sessão -->
+          <div class="ata-viewer-paper-meta">
+            <strong>Sessão:</strong> ${escapeHtml(ata.tipo || 'Reunião de Direção')}<br>
+            <strong>Data & Hora:</strong> Aos ${dataExtenso}, pelas ${ata.horaInicio || '21:00'} horas${ata.horaFim ? ' com encerramento às ' + ata.horaFim + ' horas' : ''}.<br>
+            <strong>Local de Realização:</strong> ${escapeHtml(ata.local || 'Pavilhão Carlos Almeida, Aguada de Baixo')}.<br>
+            <strong>Mesa dos Trabalhos:</strong> Presidiu o Presidente ${escapeHtml(ata.presidiu || 'Jorge Manuel da Silva Cunha')} e secretariou a Secretária ${escapeHtml(ata.secretariou || 'Raquel Alexandra Marques da Cunha')}.<br>
+            <div style="margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid #e2e8f0;">
+              ${listaPresencasHtml}
+            </div>
+          </div>
+
+          <!-- Introdução Formal da Ata -->
+          <p style="text-align: justify; font-size: 1.02rem; margin-bottom: 1.5rem;">
+            Aos ${dataExtenso}, reuniu em sessão ordinária a Direção da Associação Recreativa e Cultural de Aguada de Baixo, no local e horário acima consignados, com a presença dos membros indicados, a fim de apreciar e deliberar sobre os pontos constantes da seguinte ordem de trabalhos:
+          </p>
+
+          <!-- Pontos e Deliberações -->
+          ${pontosHtml}
+
+          <!-- Encerramento Formal -->
+          <p style="text-align: justify; font-size: 1.02rem; margin-top: 2rem;">
+            E nada mais havendo a tratar, foi dada por encerrada a reunião pelas ${ata.horaFim || '23:00'} horas, da qual se lavrou a presente ata que, após lida e aprovada em conferência da Direção, vai ser assinada por quem presidiu e secretariou os trabalhos, nos termos regimentais e estatutários.
+          </p>
+
+          <!-- Bloco de Assinaturas -->
+          ${assinaturasHtml}
+
+          <!-- Anexos se existirem -->
+          ${anexosHtml}
+        `;
+      }
+
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeVisualizadorAta = function() {
+      const modal = document.getElementById('modalVisualizadorAta');
+      if (modal) modal.classList.remove('active');
+      currentAtaEmVisualizacao = null;
+    };
+
+    window.editarAtaFromViewer = function() {
+      if (!currentAtaEmVisualizacao) return;
+      const id = currentAtaEmVisualizacao.id;
+      closeVisualizadorAta();
+      openEditarAtaModal(id);
+    };
+
+    window.copiarTextoAtaViewer = function() {
+      const paper = document.getElementById('ataViewerPaper');
+      if (!paper) return;
+      const text = paper.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        if (window.showToast) window.showToast('Texto da ata copiado para a área de transferência!', 'success');
+      }).catch(() => {
+        alert('Texto copiado!');
+      });
+    };
+
+    window.abrirAnexoEmPopup = function(dataUrl, nome) {
+      const w = window.open('');
+      if (w) {
+        w.document.write(`
+          <html>
+            <head><title>${nome}</title></head>
+            <body style="margin: 0; background: #334155; display: flex; align-items: center; justify-content: center;">
+              <iframe src="${dataUrl}" style="width: 100vw; height: 100vh; border: none;"></iframe>
+            </body>
+          </html>
+        `);
+      }
+    };
+
+    // =========================================================================
+    // ASSISTENTE DE 4 PASSOS: CRIAR / EDITAR ATA
+    // =========================================================================
+    window.goToWizardStep = function(step) {
+      currentWizardStep = step;
+
+      // Atualizar pílulas de passos
+      for (let i = 1; i <= 4; i++) {
+        const pill = document.getElementById(`wizardPill_${i}`);
+        const pane = document.getElementById(`wizardPane_${i}`);
+        if (pill) {
+          pill.classList.toggle('active', i === step);
+          pill.classList.toggle('completed', i < step);
+        }
+        if (pane) {
+          pane.classList.toggle('active', i === step);
+        }
+      }
+
+      // Atualizar botões de navegação
+      const btnAnterior = document.getElementById('btnWizardAnterior');
+      const btnSeguinte = document.getElementById('btnWizardSeguinte');
+      const btnSalvar = document.getElementById('btnWizardSalvar');
+
+      if (btnAnterior) btnAnterior.style.display = (step > 1) ? 'inline-flex' : 'none';
+      if (btnSeguinte) btnSeguinte.style.display = (step < 4) ? 'inline-flex' : 'none';
+      if (btnSalvar) btnSalvar.style.display = (step === 4) ? 'inline-flex' : 'none';
+    };
+
+    window.avancarWizardStep = function() {
+      if (currentWizardStep < 4) {
+        goToWizardStep(currentWizardStep + 1);
+      }
+    };
+
+    window.voltarWizardStep = function() {
+      if (currentWizardStep > 1) {
+        goToWizardStep(currentWizardStep - 1);
+      }
+    };
+
+    window.openNovaAtaModal = function() {
+      document.getElementById('modalFormAtaTitle').textContent = 'Nova Ata';
+      document.getElementById('formAtaId').value = '';
+
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('formAtaData').value = hoje;
+      document.getElementById('formAtaHoraInicio').value = '21:00';
+      document.getElementById('formAtaHoraFim').value = '23:00';
+      document.getElementById('formAtaLocal').value = 'Pavilhão Carlos Almeida, Aguada de Baixo';
+      document.getElementById('formAtaTipo').value = 'Reunião de Direção';
+      document.getElementById('formAtaPresidiu').value = 'Jorge Manuel da Silva Cunha';
+      document.getElementById('formAtaSecretariou').value = 'Raquel Alexandra Marques da Cunha';
+      document.getElementById('formAtaEstado').value = 'Rascunho';
+      document.getElementById('formAtaObservacoes').value = '';
+      document.getElementById('formAtaOutrasPresencas').value = '';
+
+      // Calcular próximo número de ata
+      const maxNum = atas.reduce((max, a) => Math.max(max, a.numero || a.id || 0), 0);
+      const nextNum = maxNum + 1;
+      document.getElementById('formAtaNumero').value = nextNum;
+      autoCalcularReferenciaAta();
+
+      // Resetar presenças (pré-selecionar Presidente e Secretária)
+      wizardPresencas = [
+        { id: 1, nome: "Jorge Manuel da Silva Cunha", cargo: "Presidente", tipo: "membro" },
+        { id: 5, nome: "Raquel Alexandra Marques da Cunha", cargo: "Secretária", tipo: "membro" }
+      ];
+      renderPresencasUI();
+
+      // Resetar pontos com 1 ponto vazio
+      wizardPontos = [
+        {
+          numero: 1,
+          assunto: "Aprovação da ata da reunião anterior",
+          discussao: "Foi apresentada a ata da reunião anterior para apreciação dos membros da Direção.",
+          deliberacao: "Aprovada por unanimidade.",
+          votacao: { tipo: "Unanimidade", aFavor: 2, contra: 0, abstencao: 0 }
+        }
+      ];
+      renderPontosUI();
+
+      // Resetar assinaturas e anexos
+      autoPreencherAssinaturasPresidenteSecretaria();
+      wizardAnexos = [];
+      renderAnexosUI();
+
+      goToWizardStep(1);
+      const modal = document.getElementById('modalFormAta');
+      if (modal) modal.classList.add('active');
+    };
+
+    window.openEditarAtaModal = function(ataId) {
+      const a = atas.find(item => item.id === ataId);
+      if (!a) return;
+
+      document.getElementById('modalFormAtaTitle').textContent = `Editar Ata ${a.referencia || '#' + a.numero}`;
+      document.getElementById('formAtaId').value = a.id;
+      document.getElementById('formAtaTipo').value = a.tipo || 'Reunião de Direção';
+      document.getElementById('formAtaData').value = a.data || new Date().toISOString().split('T')[0];
+      document.getElementById('formAtaHoraInicio').value = a.horaInicio || '21:00';
+      document.getElementById('formAtaHoraFim').value = a.horaFim || '';
+      document.getElementById('formAtaNumero').value = a.numero || a.id;
+      document.getElementById('formAtaReferencia').value = a.referencia || '';
+      document.getElementById('formAtaLocal').value = a.local || 'Pavilhão Carlos Almeida, Aguada de Baixo';
+      document.getElementById('formAtaPresidiu').value = a.presidiu || 'Jorge Manuel da Silva Cunha';
+      document.getElementById('formAtaSecretariou').value = a.secretariou || 'Raquel Alexandra Marques da Cunha';
+      document.getElementById('formAtaEstado').value = a.estado || 'Rascunho';
+      document.getElementById('formAtaObservacoes').value = a.observacoes || '';
+      document.getElementById('formAtaOutrasPresencas').value = a.outrasPresencas || '';
+
+      // Presenças
+      wizardPresencas = Array.isArray(a.presencas) ? JSON.parse(JSON.stringify(a.presencas)) : [];
+      renderPresencasUI();
+
+      // Pontos
+      wizardPontos = Array.isArray(a.pontos) && a.pontos.length > 0 
+        ? JSON.parse(JSON.stringify(a.pontos)) 
+        : [{ numero: 1, assunto: "", discussao: "", deliberacao: "", votacao: { tipo: "Unanimidade" } }];
+      renderPontosUI();
+
+      // Assinaturas
+      wizardAssinaturas = Array.isArray(a.assinaturas) ? JSON.parse(JSON.stringify(a.assinaturas)) : [];
+      if (wizardAssinaturas.length === 0) autoPreencherAssinaturasPresidenteSecretaria();
+      renderAssinaturasUI();
+
+      // Anexos
+      wizardAnexos = Array.isArray(a.anexos) ? JSON.parse(JSON.stringify(a.anexos)) : [];
+      renderAnexosUI();
+
+      goToWizardStep(1);
+      const modal = document.getElementById('modalFormAta');
+      if (modal) modal.classList.add('active');
+    };
+
+    window.closeFormAtaModal = function() {
+      const modal = document.getElementById('modalFormAta');
+      if (modal) modal.classList.remove('active');
+    };
+
+    window.autoCalcularReferenciaAta = function() {
+      const numVal = parseInt(document.getElementById('formAtaNumero')?.value || '0', 10);
+      const dataVal = document.getElementById('formAtaData')?.value || '';
+      if (!numVal) return;
+
+      const numStr = String(numVal).padStart(3, '0');
+      let mmaa = '1126';
+      if (dataVal) {
+        const parts = dataVal.split('-');
+        if (parts.length >= 2) {
+          const mes = parts[1];
+          const ano = parts[0].slice(-2);
+          mmaa = `${mes}${ano}`;
+        }
+      }
+      const refInput = document.getElementById('formAtaReferencia');
+      if (refInput && (!refInput.value || refInput.value.includes('/'))) {
+        refInput.value = `${numStr}/${mmaa}`;
+      }
+    };
+
+    window.handleTipoAtaChange = function(tipo) {
+      autoCalcularReferenciaAta();
+    };
+
+    // Datalists de Membros da Presidência e Secretariado
+    function initMembrosDatalists() {
+      const users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+      const dlPres = document.getElementById('listaMembrosPresidencia');
+      const dlSec = document.getElementById('listaMembrosSecretariado');
+      if (!dlPres || !dlSec) return;
+
+      const opts = users.map(u => `<option value="${escapeHtml(u.nome)}">${escapeHtml(u.nome)} (${escapeHtml(u.cargo || u.perfil || 'Membro')})</option>`).join('');
+      dlPres.innerHTML = opts;
+      dlSec.innerHTML = opts;
+    }
+
+    // Inicialização da Grelha de Presenças com Dirigentes Centrais
+    function initPresencasMembersGrid() {
+      const grid = document.getElementById('presencasMembersGrid');
+      if (!grid) return;
+
+      const users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+      const dirigentes = users.filter(u => u.orgao && u.orgao !== 'Nenhum' && u.estado === 'Ativo');
+
+      grid.innerHTML = dirigentes.map(d => `
+        <div class="presenca-card" id="presencaCardMember_${d.id}" onclick="toggleMembroPresenca(${d.id}, '${escapeHtml(d.nome)}', '${escapeHtml(d.cargo || 'Dirigente')}')">
+          <input type="checkbox" id="chkPresencaMember_${d.id}" onclick="event.stopPropagation(); toggleMembroPresenca(${d.id}, '${escapeHtml(d.nome)}', '${escapeHtml(d.cargo || 'Dirigente')}')">
+          <div class="presenca-card-details">
+            <div class="presenca-card-name">${escapeHtml(d.nome)}</div>
+            <div class="presenca-card-role">${escapeHtml(d.cargo || 'Vogal')} &bull; ${escapeHtml(d.orgao || 'Direção')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.toggleMembroPresenca = function(id, nome, cargo) {
+      const idx = wizardPresencas.findIndex(p => p.id === id && p.tipo === 'membro');
+      if (idx >= 0) {
+        wizardPresencas.splice(idx, 1);
+      } else {
+        wizardPresencas.push({ id, nome, cargo, tipo: 'membro' });
+      }
+      renderPresencasUI();
+    };
+
+    window.selecionarTodosMembrosPresencas = function(somenteDirecao) {
+      const users = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
+      const alvos = somenteDirecao 
+        ? users.filter(u => u.orgao === 'Direção' && u.estado === 'Ativo')
+        : users.filter(u => u.orgao && u.orgao !== 'Nenhum' && u.estado === 'Ativo');
+
+      alvos.forEach(d => {
+        if (!wizardPresencas.some(p => p.id === d.id && p.tipo === 'membro')) {
+          wizardPresencas.push({ id: d.id, nome: d.nome, cargo: d.cargo || 'Dirigente', tipo: 'membro' });
+        }
+      });
+      renderPresencasUI();
+    };
+
+    // Pesquisa de Sócios para Presenças
+    window.handleSearchSocioPresenca = function(query) {
+      const box = document.getElementById('resultsSearchSocioPresenca');
+      if (!box) return;
+      const q = (query || '').toLowerCase().trim();
+
+      if (q.length < 2) {
+        box.style.display = 'none';
+        return;
+      }
+
+      const socios = (typeof window.getSociosList === 'function') ? window.getSociosList() : [];
+      const match = socios.filter(s => 
+        (s.nome && s.nome.toLowerCase().includes(q)) || 
+        (s.numero && String(s.numero).includes(q))
+      ).slice(0, 8);
+
+      if (match.length === 0) {
+        box.innerHTML = `<div style="padding: 0.6rem; color: #64748b; font-size: 0.8rem;">Nenhum sócio encontrado.</div>`;
+      } else {
+        box.innerHTML = match.map(s => `
+          <div style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.84rem;"
+               onclick="adicionarSocioPresenca(${s.numero}, '${escapeHtml(s.nome)}')">
+            <span><strong>#${s.numero}</strong> &bull; ${escapeHtml(s.nome)}</span>
+            <span style="font-size: 0.75rem; color: var(--primary);">+ Adicionar</span>
+          </div>
+        `).join('');
+      }
+      box.style.display = 'block';
+    };
+
+    window.adicionarSocioPresenca = function(numero, nome) {
+      if (!wizardPresencas.some(p => p.numero === numero && p.tipo === 'socio')) {
+        wizardPresencas.push({ id: 'socio_' + numero, numero, nome, cargo: `Sócio nº ${numero}`, tipo: 'socio' });
+      }
+      document.getElementById('inputSearchSocioPresenca').value = '';
+      document.getElementById('resultsSearchSocioPresenca').style.display = 'none';
+      renderPresencasUI();
+    };
+
+    window.adicionarOutraPessoaPresenca = function() {
+      const input = document.getElementById('inputOutraPessoaNome');
+      const nome = input?.value?.trim();
+      if (!nome) return;
+
+      wizardPresencas.push({ id: 'outro_' + Date.now(), nome, cargo: 'Convidado / Outro', tipo: 'outro' });
+      input.value = '';
+      renderPresencasUI();
+    };
+
+    window.removerPresencaPorIndex = function(idx) {
+      wizardPresencas.splice(idx, 1);
+      renderPresencasUI();
+    };
+
+    function renderPresencasUI() {
+      // Atualizar contador
+      const countEl = document.getElementById('presencasCountHeader');
+      if (countEl) countEl.textContent = wizardPresencas.length;
+
+      // Sincronizar checkboxes de membros
+      document.querySelectorAll('.presencas-members-grid .presenca-card').forEach(card => {
+        const chk = card.querySelector('input[type="checkbox"]');
+        const idStr = card.id.replace('presencaCardMember_', '');
+        const id = parseInt(idStr, 10);
+        const isPres = wizardPresencas.some(p => p.id === id && p.tipo === 'membro');
+        card.classList.toggle('selected', isPres);
+        if (chk) chk.checked = isPres;
+      });
+
+      // Renderizar chips
+      const chipsWrap = document.getElementById('presencasChipsList');
+      if (!chipsWrap) return;
+
+      if (wizardPresencas.length === 0) {
+        chipsWrap.innerHTML = `<span style="color: var(--text-muted); font-size: 0.82rem; align-self: center;">Ainda ninguém marcado.</span>`;
+      } else {
+        chipsWrap.innerHTML = wizardPresencas.map((p, idx) => `
+          <div class="presenca-chip" style="${p.tipo === 'socio' ? 'background: #eff6ff; border-color: #bfdbfe; color: #1e40af;' : (p.tipo === 'outro' ? 'background: #fdf2f8; border-color: #fbcfe8; color: #9d174d;' : '')}">
+            <span>${escapeHtml(p.nome)} <small>(${escapeHtml(p.cargo || p.tipo)})</small></span>
+            <button type="button" onclick="removerPresencaPorIndex(${idx})">&times;</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    // =========================================================================
+    // ORDEM DE TRABALHOS: GESTÃO DE PONTOS
+    // =========================================================================
+    window.adicionarNovoPonto = function() {
+      const nextNum = wizardPontos.length + 1;
+      wizardPontos.push({
+        numero: nextNum,
+        assunto: "",
+        discussao: "",
+        deliberacao: "",
+        votacao: { tipo: "Unanimidade", aFavor: wizardPresencas.length || 0, contra: 0, abstencao: 0 }
+      });
+      renderPontosUI();
+    };
+
+    window.removerPonto = function(idx) {
+      if (wizardPontos.length <= 1) {
+        alert('A ata deve ter pelo menos um ponto na ordem de trabalhos.');
+        return;
+      }
+      wizardPontos.splice(idx, 1);
+      wizardPontos.forEach((p, i) => p.numero = i + 1);
+      renderPontosUI();
+    };
+
+    window.moverPonto = function(idx, direcao) {
+      const targetIdx = idx + direcao;
+      if (targetIdx < 0 || targetIdx >= wizardPontos.length) return;
+      const tmp = wizardPontos[idx];
+      wizardPontos[idx] = wizardPontos[targetIdx];
+      wizardPontos[targetIdx] = tmp;
+      wizardPontos.forEach((p, i) => p.numero = i + 1);
+      renderPontosUI();
+    };
+
+    function renderPontosUI() {
+      const container = document.getElementById('pontosContainer');
+      if (!container) return;
+
+      container.innerHTML = wizardPontos.map((p, idx) => `
+        <div class="ponto-card">
+          <div class="ponto-card-header">
+            <div class="ponto-card-title">
+              <span>📌 Ponto ${idx + 1}</span>
+            </div>
+            <div class="ponto-card-actions">
+              <button type="button" class="btn btn-outline btn-xs" onclick="moverPonto(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Subir ponto">↑</button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="moverPonto(${idx}, 1)" ${idx === wizardPontos.length - 1 ? 'disabled' : ''} title="Descer ponto">↓</button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="removerPonto(${idx})" style="color: #dc2626;" title="Remover este ponto">Remover</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <input type="text" class="form-control" placeholder="Assunto do ponto (ex.: Aprovação do plano de atividades)"
+                   value="${escapeHtml(p.assunto || '')}" oninput="wizardPontos[${idx}].assunto = this.value" style="font-weight: 700;">
+          </div>
+
+          <div style="margin-bottom: 0.85rem;">
+            <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #64748b;">DISCUSSÃO / APRESENTAÇÃO</label>
+            <div class="editor-toolbar">
+              <button type="button" onclick="formatarTextareaPonto('taDiscussao_${idx}', '**', '**')">B</button>
+              <button type="button" onclick="formatarTextareaPonto('taDiscussao_${idx}', '*', '*')">I</button>
+              <button type="button" onclick="formatarTextareaPonto('taDiscussao_${idx}', '~~', '~~')">S</button>
+              <button type="button" onclick="formatarTextareaPonto('taDiscussao_${idx}', '• ', '')">• Lista</button>
+              <button type="button" onclick="formatarTextareaPonto('taDiscussao_${idx}', '1. ', '')">1. Lista</button>
+            </div>
+            <textarea id="taDiscussao_${idx}" class="editor-textarea" placeholder="O que foi apresentado e discutido..."
+                      oninput="wizardPontos[${idx}].discussao = this.value">${escapeHtml(p.discussao || '')}</textarea>
+          </div>
+
+          <div style="margin-bottom: 0.85rem;">
+            <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #64748b;">DELIBERAÇÃO</label>
+            <div class="editor-toolbar">
+              <button type="button" onclick="formatarTextareaPonto('taDeliberacao_${idx}', '**', '**')">B</button>
+              <button type="button" onclick="formatarTextareaPonto('taDeliberacao_${idx}', '*', '*')">I</button>
+              <button type="button" onclick="formatarTextareaPonto('taDeliberacao_${idx}', '~~', '~~')">S</button>
+              <button type="button" onclick="formatarTextareaPonto('taDeliberacao_${idx}', '• ', '')">• Lista</button>
+              <button type="button" onclick="formatarTextareaPonto('taDeliberacao_${idx}', '1. ', '')">1. Lista</button>
+            </div>
+            <textarea id="taDeliberacao_${idx}" class="editor-textarea" placeholder="O que foi decidido..."
+                      oninput="wizardPontos[${idx}].deliberacao = this.value">${escapeHtml(p.deliberacao || '')}</textarea>
+          </div>
+
+          <!-- Votação do Ponto -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.65rem 0.85rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.84rem;">
+              <span>🗳️ <strong>Resultado da Votação:</strong></span>
+              <select class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.82rem; width: auto;"
+                      onchange="setVotacaoTipo(${idx}, this.value)">
+                <option value="Unanimidade" ${p.votacao?.tipo === 'Unanimidade' ? 'selected' : ''}>Aprovado por Unanimidade</option>
+                <option value="Maioria" ${p.votacao?.tipo === 'Maioria' ? 'selected' : ''}>Aprovado por Maioria</option>
+                <option value="Rejeitado" ${p.votacao?.tipo === 'Rejeitado' ? 'selected' : ''}>Rejeitado</option>
+                <option value="Sem Votação" ${p.votacao?.tipo === 'Sem Votação' ? 'selected' : ''}>Apenas Informativo / Sem Votação</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #475569;">
+              <span>Favor: <input type="number" min="0" value="${p.votacao?.aFavor ?? (wizardPresencas.length || 0)}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.aFavor = parseInt(this.value)||0"></span>
+              <span>Contra: <input type="number" min="0" value="${p.votacao?.contra ?? 0}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.contra = parseInt(this.value)||0"></span>
+              <span>Abst: <input type="number" min="0" value="${p.votacao?.abstencao ?? 0}" style="width: 45px; padding: 2px 4px;" oninput="wizardPontos[${idx}].votacao.abstencao = parseInt(this.value)||0"></span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.formatarTextareaPonto = function(id, prefix, suffix) {
+      const ta = document.getElementById(id);
+      if (!ta) return;
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const val = ta.value;
+      const selected = val.substring(start, end);
+      const replacement = prefix + (selected || 'texto') + suffix;
+      ta.value = val.substring(0, start) + replacement + val.substring(end);
+      ta.focus();
+      ta.setSelectionRange(start + prefix.length, start + prefix.length + (selected ? selected.length : 5));
+      ta.dispatchEvent(new Event('input'));
+    };
+
+    window.setVotacaoTipo = function(idx, val) {
+      if (!wizardPontos[idx].votacao) wizardPontos[idx].votacao = {};
+      wizardPontos[idx].votacao.tipo = val;
+    };
+
+    // =========================================================================
+    // ASSINATURAS E ANEXOS
+    // =========================================================================
+    window.autoPreencherAssinaturasPresidenteSecretaria = function() {
+      const pres = document.getElementById('formAtaPresidiu')?.value || 'Jorge Manuel da Silva Cunha';
+      const sec = document.getElementById('formAtaSecretariou')?.value || 'Raquel Alexandra Marques da Cunha';
+      wizardAssinaturas = [
+        { nome: pres, cargo: "Presidente", estado: "Assinado", data: new Date().toISOString().split('T')[0] },
+        { nome: sec, cargo: "Secretária", estado: "Assinado", data: new Date().toISOString().split('T')[0] }
+      ];
+      renderAssinaturasUI();
+    };
+
+    window.adicionarAssinaturaModal = function() {
+      const nome = prompt('Nome do assinante:');
+      if (!nome) return;
+      const cargo = prompt('Cargo institucional:', 'Vogal da Direção') || 'Dirigente';
+      wizardAssinaturas.push({ nome, cargo, estado: "Assinado", data: new Date().toISOString().split('T')[0] });
+      renderAssinaturasUI();
+    };
+
+    window.removerAssinatura = function(idx) {
+      wizardAssinaturas.splice(idx, 1);
+      renderAssinaturasUI();
+    };
+
+    function renderAssinaturasUI() {
+      const list = document.getElementById('listaAssinaturasAta');
+      if (!list) return;
+
+      if (wizardAssinaturas.length === 0) {
+        list.innerHTML = `<span style="color: var(--text-muted); font-size: 0.82rem;">Nenhuma assinatura configurada.</span>`;
+      } else {
+        list.innerHTML = wizardAssinaturas.map((ass, idx) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--border-light); padding: 0.45rem 0.75rem; border-radius: 4px; font-size: 0.84rem;">
+            <span>✍️ <strong>${escapeHtml(ass.nome)}</strong> &bull; ${escapeHtml(ass.cargo)}</span>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <span class="badge-socio-tag" style="background: #dcfce7; color: #166534; font-size: 0.72rem;">${ass.estado}</span>
+              <button type="button" class="btn btn-outline btn-xs" onclick="removerAssinatura(${idx})" style="color: #dc2626;">&times;</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Gestão de Anexos
+    window.handleCarregarAnexoFicheiro = function(input) {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      const label = document.getElementById('labelNomeAnexoEscolhido');
+      if (label) label.textContent = `${file.name} (${formatarBytes(file.size)})`;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        wizardAnexos.push({
+          id: 'anexo_' + Date.now(),
+          nome: file.name,
+          tipo: file.type || 'application/octet-stream',
+          tamanho: file.size,
+          dataUrl: e.target.result
+        });
+        renderAnexosUI();
+        if (label) label.textContent = 'Ficheiro adicionado com sucesso!';
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.removerAnexo = function(idx) {
+      wizardAnexos.splice(idx, 1);
+      renderAnexosUI();
+    };
+
+    function renderAnexosUI() {
+      const list = document.getElementById('listaAnexosAta');
+      if (!list) return;
+
+      if (wizardAnexos.length === 0) {
+        list.innerHTML = `<span style="color: var(--text-muted); font-size: 0.82rem;">Sem ficheiros anexados.</span>`;
+      } else {
+        list.innerHTML = wizardAnexos.map((an, idx) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid var(--border-light); padding: 0.45rem 0.75rem; border-radius: 4px; font-size: 0.84rem;">
+            <span>📎 <strong>${escapeHtml(an.nome)}</strong> <small style="color: #64748b;">(${formatarBytes(an.tamanho || 0)})</small></span>
+            <div style="display: flex; gap: 0.4rem;">
+              ${an.dataUrl ? `<button type="button" class="btn btn-outline btn-xs" onclick="abrirAnexoEmPopup('${an.dataUrl}', '${escapeHtml(an.nome)}')">👁️</button>` : ''}
+              <button type="button" class="btn btn-outline btn-xs" onclick="removerAnexo(${idx})" style="color: #dc2626;">&times;</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // =========================================================================
+    // GRAVAÇÃO & ELIMINAÇÃO DE ATAS
+    // =========================================================================
+    window.handleSalvarAta = async function(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+      const idVal = document.getElementById('formAtaId').value;
+      const tipo = document.getElementById('formAtaTipo').value;
+      const data = document.getElementById('formAtaData').value;
+      const horaInicio = document.getElementById('formAtaHoraInicio').value;
+      const horaFim = document.getElementById('formAtaHoraFim').value;
+      const numero = parseInt(document.getElementById('formAtaNumero').value, 10);
+      const referencia = document.getElementById('formAtaReferencia').value.trim();
+      const local = document.getElementById('formAtaLocal').value.trim();
+      const presidiu = document.getElementById('formAtaPresidiu').value.trim();
+      const secretariou = document.getElementById('formAtaSecretariou').value.trim();
+      const estado = document.getElementById('formAtaEstado').value;
+      const observacoes = document.getElementById('formAtaObservacoes').value.trim();
+      const outrasPresencas = document.getElementById('formAtaOutrasPresencas').value.trim();
+
+      if (!data || !numero || !referencia || !local) {
+        alert('Por favor, preencha os campos obrigatórios (Data, Nº da Ata, Referência e Local).');
+        return;
+      }
+
+      let savedAta = null;
+
+      if (idVal) {
+        // Atualizar existente
+        const id = parseInt(idVal, 10);
+        const idx = atas.findIndex(a => a.id === id);
+        if (idx >= 0) {
+          atas[idx].tipo = tipo;
+          atas[idx].data = data;
+          atas[idx].horaInicio = horaInicio;
+          atas[idx].horaFim = horaFim;
+          atas[idx].numero = numero;
+          atas[idx].referencia = referencia;
+          atas[idx].local = local;
+          atas[idx].presidiu = presidiu;
+          atas[idx].secretariou = secretariou;
+          atas[idx].presencas = wizardPresencas;
+          atas[idx].outrasPresencas = outrasPresencas;
+          atas[idx].pontos = wizardPontos;
+          atas[idx].estado = estado;
+          atas[idx].observacoes = observacoes;
+          atas[idx].assinaturas = wizardAssinaturas;
+          atas[idx].anexos = wizardAnexos;
+          atas[idx].atualizadoEm = new Date().toISOString();
+          savedAta = atas[idx];
+        }
+      } else {
+        // Criar nova
+        const maxId = atas.reduce((max, a) => Math.max(max, a.id || 0), 0);
+        const nova = {
+          id: maxId + 1,
+          numero,
+          referencia,
+          tipo,
+          data,
+          horaInicio,
+          horaFim,
+          local,
+          presidiu,
+          secretariou,
+          presencas: wizardPresencas,
+          outrasPresencas,
+          pontos: wizardPontos,
+          estado,
+          observacoes,
+          assinaturas: wizardAssinaturas,
+          anexos: wizardAnexos,
+          criadoEm: new Date().toISOString(),
+          atualizadoEm: new Date().toISOString()
+        };
+        atas.unshift(nova);
+        savedAta = nova;
+      }
+
+      // Guardar na Nuvem (Firestore)
+      if (savedAta && typeof window.saveArcaAtaToCloud === 'function') {
+        await window.saveArcaAtaToCloud(savedAta);
+      }
+
+      saveAtas();
+      closeFormAtaModal();
+      if (window.showToast) window.showToast(`Ata ${referencia || '#' + numero} guardada com sucesso!`, 'success');
+    };
+
+    window.handleEliminarAta = async function(ataId) {
+      const a = atas.find(x => x.id === ataId);
+      if (!a) return;
+
+      if (confirm(`Tem a certeza de que pretende eliminar permanentemente a Ata ${a.referencia || '#' + a.numero}? Esta ação não pode ser desfeita.`)) {
+        atas = atas.filter(x => x.id !== ataId);
+
+        if (typeof window.deleteArcaAtaFromCloud === 'function') {
+          await window.deleteArcaAtaFromCloud(ataId);
+        }
+
+        saveAtas();
+        if (window.showToast) window.showToast(`Ata eliminada com sucesso.`, 'success');
+      }
+    };
+
+    // =========================================================================
+    // UTILITÁRIOS E FORMATAÇÃO
+    // =========================================================================
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatarDataPt(isoStr) {
+      if (!isoStr) return '';
+      const parts = isoStr.split('-');
+      if (parts.length < 3) return isoStr;
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    function formatarDataPorExtensoPt(isoStr) {
+      if (!isoStr) return 'data não especificada';
+      const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+      const parts = isoStr.split('-');
+      if (parts.length < 3) return isoStr;
+      const dia = parseInt(parts[2], 10);
+      const mes = meses[parseInt(parts[1], 10) - 1] || '';
+      const ano = parts[0];
+      return `${dia} de ${mes} de ${ano}`;
+    }
+
+    function formatarTextoFormatado(str) {
+      if (!str) return '';
+      let res = escapeHtml(str);
+      // Negrito
+      res = res.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Itálico
+      res = res.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // Rasurado
+      res = res.replace(/~~(.*?)~~/g, '<del>$1</del>');
+      // Quebras de linha
+      res = res.replace(/\n/g, '<br>');
+      return res;
+    }
+
+    function formatarBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+  </script>
 </body>
 </html>
