@@ -7,10 +7,121 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20261127_v1">
   
   <style>
     /* Estilos Específicos para o Módulo de Atas */
+    .col-picker-dropdown, .export-dropdown-group {
+      position: relative;
+      display: inline-block;
+    }
+    .col-picker-menu, .export-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      min-width: 250px;
+      padding: 0.85rem 0.75rem;
+      z-index: 9999;
+      display: none;
+    }
+    .col-picker-menu.show, .export-dropdown-menu.show {
+      display: block !important;
+    }
+    .col-picker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.82rem;
+      color: var(--text-title);
+      font-weight: 700;
+    }
+    .col-picker-header button {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      font-weight: 600;
+    }
+    .col-picker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .col-picker-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.45rem 0.5rem;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-body);
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+    .col-picker-item:hover {
+      background: #f1f5f9;
+    }
+    .col-picker-item input[type="checkbox"] {
+      cursor: pointer;
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Itens do Menu de Exportação */
+    .export-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: none;
+      background: none;
+      border-radius: var(--radius-xs);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--text-title);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .export-menu-item:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+
+    /* Barra de Seleção Múltipla */
+    .atas-selection-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.1rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 2px 4px rgba(30, 64, 175, 0.05);
+      flex-wrap: wrap;
+    }
+    .selected-row {
+      background-color: #f0fdf4 !important;
+    }
+    .selected-card {
+      border-color: var(--primary) !important;
+      background-color: #f0fdf4 !important;
+    }
     .atas-stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -950,7 +1061,7 @@
 
               <!-- Seletor de Colunas Personalizado (Dropdown) -->
               <div class="col-picker-dropdown">
-                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerAtas" onclick="toggleAtasColPickerMenu()" style="padding: 0.55rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.84rem;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleColPickerAtas" style="padding: 0.55rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.84rem;">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/>
                   </svg>
@@ -965,6 +1076,54 @@
                   <div class="col-picker-list" id="colPickerListAtas">
                     <!-- Gerado dinamicamente via JS -->
                   </div>
+                </div>
+              </div>
+
+              <!-- Menu Exportar (PDF, Word, Imprimir) -->
+              <div class="export-dropdown-group">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleExportAtas" onclick="toggleAtasExportMenu(event)" style="padding: 0.55rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.84rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  <span>Exportar</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="export-dropdown-menu" id="exportDropdownMenuAtas">
+                  <div class="col-picker-header" style="margin-bottom: 0.4rem;">
+                    <span>Exportar Atas</span>
+                    <span id="exportTargetLabel" style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">Todas as visíveis</span>
+                  </div>
+                  <button type="button" class="export-menu-item" onclick="exportarListagemAtasPDF(false)">
+                    <span style="font-size: 1.15rem;">📄</span>
+                    <div>
+                      <div style="font-weight: 700;">Listagem em PDF</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Documento timbrado para impressão / PDF</small>
+                    </div>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarListagemAtasWord(false)">
+                    <span style="font-size: 1.15rem;">📝</span>
+                    <div>
+                      <div style="font-weight: 700;">Listagem em Word (.doc)</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Tabela formatada para Microsoft Word</small>
+                    </div>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarAtasCompletasWord(false)">
+                    <span style="font-size: 1.15rem;">📚</span>
+                    <div>
+                      <div style="font-weight: 700;">Atas Integrais em Word (.doc)</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Textos formais integrais com deliberações</small>
+                    </div>
+                  </button>
+                  <div style="border-top: 1px solid var(--border-light); margin: 0.35rem 0;"></div>
+                  <button type="button" class="export-menu-item" onclick="imprimirListagemAtas(false)">
+                    <span style="font-size: 1.15rem;">🖨️</span>
+                    <div>
+                      <div style="font-weight: 700;">Imprimir Listagem</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Impressão direta da listagem</small>
+                    </div>
+                  </button>
                 </div>
               </div>
 
@@ -996,12 +1155,46 @@
           </div>
         </div>
 
+        <!-- Barra de Ações de Seleção Múltipla -->
+        <div id="atasSelectionBanner" class="atas-selection-banner" style="display: none;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.4rem; font-weight: 800; color: #1e40af; font-size: 0.9rem;">
+              <span>☑️</span>
+              <span id="labelSelectedAtasCount">0 atas selecionadas</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-xs" onclick="selectAllVisibleAtas()" style="background: #ffffff; border-color: #bfdbfe; color: #1e40af;">
+              Selecionar Todas
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" onclick="clearSelectedAtas()" style="background: #ffffff; border-color: #cbd5e1; color: #64748b;">
+              Limpar Seleção
+            </button>
+          </div>
+          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
+            <span style="font-size: 0.78rem; font-weight: 700; color: #1e3a8a; margin-right: 0.2rem;">Exportar Seleção:</span>
+            <button type="button" class="btn btn-primary btn-xs" onclick="exportarListagemAtasPDF(true)" title="Exportar listagem das atas selecionadas para PDF">
+              📄 PDF
+            </button>
+            <button type="button" class="btn btn-secondary btn-xs" onclick="exportarListagemAtasWord(true)" title="Exportar listagem das atas selecionadas para Word">
+              📝 Word (Lista)
+            </button>
+            <button type="button" class="btn btn-secondary btn-xs" onclick="exportarAtasCompletasWord(true)" title="Exportar atas completas selecionadas para Word com textos e deliberações">
+              📚 Word (Atas Completas)
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" onclick="imprimirListagemAtas(true)" style="background: #ffffff;">
+              🖨️ Imprimir
+            </button>
+          </div>
+        </div>
+
         <!-- 1. VISTA EM TABELA (COM COLUNAS SELECIONÁVEIS E ORDENÁVEIS) -->
         <div class="card-box" id="containerAtasTable">
           <div class="table-responsive">
             <table class="modern-table" id="atasModernTable">
               <thead>
                 <tr id="atasTableHeadRow">
+                  <th data-col="selecao" style="width: 44px; text-align: center;">
+                    <input type="checkbox" id="checkSelectAllAtas" title="Selecionar todas as atas visíveis" onchange="toggleSelectAllAtas(this.checked)" style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary);">
+                  </th>
                   <th class="sortable-th" data-col="data" style="width: 135px;" onclick="sortAtasTable('data')">
                     <span>Data</span><span class="sort-indicator" id="ataSortInd_data">▼</span>
                   </th>
@@ -1309,6 +1502,9 @@
           <button type="button" class="btn btn-outline btn-sm" onclick="window.print()" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25);">
             🖨️ Imprimir / PDF
           </button>
+          <button type="button" class="btn btn-outline btn-sm" id="btnExportWordFromViewer" onclick="exportarAtaIndividualWord()" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25);" title="Exportar esta ata para Microsoft Word (.doc)">
+            📝 Exportar Word
+          </button>
           <button type="button" class="btn btn-outline btn-sm" id="btnEditarFromViewer" onclick="editarAtaFromViewer()" style="background: rgba(255,255,255,0.12); color: #ffffff; border-color: rgba(255,255,255,0.25);">
             ✏️ Editar
           </button>
@@ -1359,9 +1555,13 @@
     // Estado da Vista (table ou cards)
     let atasViewMode = localStorage.getItem('arca_atas_view_mode') || 'table';
 
+    // Seleção de Atas para Exportação
+    let selectedAtaIds = new Set();
+
     // Configuração de Colunas Personalizáveis
     const STORAGE_KEY_COLS_ATAS = 'arca_cols_atas_v1';
     const DEFAULT_ATAS_COLS = {
+      selecao: true,
       data: true,
       numero: true,
       tipo: true,
@@ -1377,7 +1577,12 @@
     function loadAtasCols() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY_COLS_ATAS);
-        if (saved) activeAtasCols = { ...DEFAULT_ATAS_COLS, ...JSON.parse(saved) };
+        if (saved) {
+          activeAtasCols = { ...DEFAULT_ATAS_COLS, ...JSON.parse(saved) };
+          if (activeAtasCols.selecao === undefined) activeAtasCols.selecao = true;
+        } else {
+          activeAtasCols = { ...DEFAULT_ATAS_COLS };
+        }
       } catch (e) {
         activeAtasCols = { ...DEFAULT_ATAS_COLS };
       }
@@ -1423,12 +1628,17 @@
         }
       });
 
-      // Fechar menu de colunas ao clicar fora
+      // Fechar menus de colunas e exportar ao clicar fora
       document.addEventListener('click', (e) => {
         const picker = document.querySelector('.col-picker-dropdown');
         if (picker && !picker.contains(e.target)) {
           const menu = document.getElementById('colPickerMenuAtas');
           if (menu) menu.classList.remove('show');
+        }
+        const exportGroup = document.querySelector('.export-dropdown-group');
+        if (exportGroup && !exportGroup.contains(e.target)) {
+          const exportMenu = document.getElementById('exportDropdownMenuAtas');
+          if (exportMenu) exportMenu.classList.remove('show');
         }
       });
     });
@@ -1518,16 +1728,25 @@
     }
 
     // Colunas & Ordenação
-    window.toggleAtasColPickerMenu = function() {
+    window.toggleAtasColPickerMenu = function(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const menu = document.getElementById('colPickerMenuAtas');
+      const exportMenu = document.getElementById('exportDropdownMenuAtas');
+      if (exportMenu) exportMenu.classList.remove('show');
       if (menu) menu.classList.toggle('show');
     };
 
     function initAtasColPicker() {
+      const toggleBtn = document.getElementById('btnToggleColPickerAtas');
+      const menu = document.getElementById('colPickerMenuAtas');
       const list = document.getElementById('colPickerListAtas');
       if (!list) return;
 
       const labels = {
+        selecao: 'Caixa de Seleção (Exportar)',
         data: 'Data & Hora',
         numero: 'Nº Ata / Ref',
         tipo: 'Tipo de Reunião',
@@ -1542,12 +1761,27 @@
       list.innerHTML = Object.entries(labels).map(([key, label]) => {
         const isChecked = isAtasColVisible(key);
         return `
-          <label class="col-picker-item">
+          <label class="col-picker-item" onclick="event.stopPropagation()">
             <input type="checkbox" data-col="${key}" ${isChecked ? 'checked' : ''} onchange="toggleAtaCol('${key}', this.checked)">
             <span>${label}</span>
           </label>
         `;
       }).join('');
+
+      if (toggleBtn && menu) {
+        toggleBtn.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const exportMenu = document.getElementById('exportDropdownMenuAtas');
+          if (exportMenu) exportMenu.classList.remove('show');
+          menu.classList.toggle('show');
+        };
+        menu.onclick = function(e) {
+          e.stopPropagation();
+        };
+      }
+
+      applyAtasColumnsVisibility();
     }
 
     window.toggleAtaCol = function(key, isVisible) {
@@ -1572,6 +1806,681 @@
           th.style.display = isAtasColVisible(col) ? '' : 'none';
         }
       });
+      document.querySelectorAll('#tbodyAtas tr td').forEach(td => {
+        const col = td.getAttribute('data-col');
+        if (col) {
+          td.style.display = isAtasColVisible(col) ? '' : 'none';
+        }
+      });
+    }
+
+    // =========================================================================
+    // SELEÇÃO MÚLTIPLA E EXPORTAÇÃO (PDF, WORD, IMPRIMIR)
+    // =========================================================================
+
+    window.handleSelectAta = function(id, isChecked) {
+      id = Number(id);
+      if (isChecked) {
+        selectedAtaIds.add(id);
+      } else {
+        selectedAtaIds.delete(id);
+      }
+      updateSelectionUI();
+    };
+
+    window.toggleSelectAllAtas = function(isChecked) {
+      const filtradas = getAtasFiltradas();
+      if (isChecked) {
+        filtradas.forEach(a => selectedAtaIds.add(Number(a.id)));
+      } else {
+        filtradas.forEach(a => selectedAtaIds.delete(Number(a.id)));
+      }
+      updateSelectionUI();
+    };
+
+    window.selectAllVisibleAtas = function() {
+      const filtradas = getAtasFiltradas();
+      filtradas.forEach(a => selectedAtaIds.add(Number(a.id)));
+      updateSelectionUI();
+    };
+
+    window.clearSelectedAtas = function() {
+      selectedAtaIds.clear();
+      updateSelectionUI();
+    };
+
+    function updateSelectionUI() {
+      const banner = document.getElementById('atasSelectionBanner');
+      const label = document.getElementById('labelSelectedAtasCount');
+      const checkAll = document.getElementById('checkSelectAllAtas');
+      const exportTargetLabel = document.getElementById('exportTargetLabel');
+
+      const filtradas = getAtasFiltradas();
+      const visibleIds = new Set(filtradas.map(a => Number(a.id)));
+      let visibleSelectedCount = 0;
+      visibleIds.forEach(id => {
+        if (selectedAtaIds.has(id)) visibleSelectedCount++;
+      });
+
+      if (banner && label) {
+        if (selectedAtaIds.size > 0) {
+          banner.style.display = 'flex';
+          label.textContent = `${selectedAtaIds.size} ata${selectedAtaIds.size > 1 ? 's' : ''} selecionada${selectedAtaIds.size > 1 ? 's' : ''}`;
+        } else {
+          banner.style.display = 'none';
+        }
+      }
+
+      if (checkAll) {
+        if (filtradas.length > 0 && visibleSelectedCount === filtradas.length) {
+          checkAll.checked = true;
+          checkAll.indeterminate = false;
+        } else if (visibleSelectedCount > 0) {
+          checkAll.checked = false;
+          checkAll.indeterminate = true;
+        } else {
+          checkAll.checked = false;
+          checkAll.indeterminate = false;
+        }
+      }
+
+      if (exportTargetLabel) {
+        exportTargetLabel.textContent = selectedAtaIds.size > 0 
+          ? `${selectedAtaIds.size} selecionada(s)` 
+          : 'Todas as visíveis';
+      }
+
+      // Atualiza destaques e checkboxes em tabela
+      document.querySelectorAll('#tbodyAtas tr[data-ata-id]').forEach(tr => {
+        const id = Number(tr.getAttribute('data-ata-id'));
+        const cb = tr.querySelector('.ata-row-check');
+        if (selectedAtaIds.has(id)) {
+          tr.classList.add('selected-row');
+          if (cb) cb.checked = true;
+        } else {
+          tr.classList.remove('selected-row');
+          if (cb) cb.checked = false;
+        }
+      });
+
+      // Atualiza destaques e checkboxes em cartões
+      document.querySelectorAll('#listAtasCards .ata-list-item[data-id]').forEach(card => {
+        const id = Number(card.getAttribute('data-id'));
+        const cb = card.querySelector('.ata-card-check');
+        if (selectedAtaIds.has(id)) {
+          card.classList.add('selected-card');
+          if (cb) cb.checked = true;
+        } else {
+          card.classList.remove('selected-card');
+          if (cb) cb.checked = false;
+        }
+      });
+    }
+
+    function getAtasToExport(onlySelected) {
+      const filtradas = getAtasFiltradas();
+      if (onlySelected || selectedAtaIds.size > 0) {
+        const subset = atas.filter(a => selectedAtaIds.has(Number(a.id)));
+        if (subset.length > 0) return subset;
+      }
+      return filtradas;
+    }
+
+    window.toggleAtasExportMenu = function(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const menu = document.getElementById('exportDropdownMenuAtas');
+      const colMenu = document.getElementById('colPickerMenuAtas');
+      if (colMenu) colMenu.classList.remove('show');
+      if (menu) {
+        menu.classList.toggle('show');
+        const targetLabel = document.getElementById('exportTargetLabel');
+        if (targetLabel) {
+          targetLabel.textContent = selectedAtaIds.size > 0 
+            ? `${selectedAtaIds.size} selecionada(s)` 
+            : 'Todas as visíveis';
+        }
+      }
+    };
+
+    function downloadWordDocument(htmlContent, filename) {
+      const blob = new Blob(['\ufeff', htmlContent], {
+        type: 'application/msword;charset=utf-8'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 300);
+    }
+
+    // 1. Exportar Listagem para PDF (Imprimir)
+    window.exportarListagemAtasPDF = function(onlySelected) {
+      const exportMenu = document.getElementById('exportDropdownMenuAtas');
+      if (exportMenu) exportMenu.classList.remove('show');
+
+      const items = getAtasToExport(onlySelected);
+      if (!items || items.length === 0) {
+        alert('Nenhuma ata selecionada ou disponível para exportar.');
+        return;
+      }
+
+      const agora = new Date();
+      const dataEmissao = agora.toLocaleDateString('pt-PT') + ' às ' + agora.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const emittedBy = currentUser ? currentUser.nome : 'Direção da A.R.C.A.';
+
+      const rowsHtml = items.map((a) => {
+        const dataFmt = a.data ? formatarDataPt(a.data) : '—';
+        const horaFmt = (a.horaInicio ? a.horaInicio + 'h' : '') + (a.horaFim ? ' às ' + a.horaFim + 'h' : '');
+        const assuntosFmt = (a.pontos && a.pontos.length > 0)
+          ? a.pontos.map((p, pIdx) => `<div style="margin-bottom: 2px;"><strong>${pIdx + 1}.</strong> ${escapeHtml(p.assunto || '')}</div>`).join('')
+          : '<em>Sem ordem de trabalhos</em>';
+        const badgeColor = (a.estado === 'Aprovada') ? '#166534' : (a.estado === 'Anulada' ? '#64748b' : '#92400e');
+        const badgeBg = (a.estado === 'Aprovada') ? '#dcfce7' : (a.estado === 'Anulada' ? '#f1f5f9' : '#fef3c7');
+
+        return `
+          <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 7px 6px; font-weight: bold; color: #0f3f26; white-space: nowrap;">
+              Ata ${escapeHtml(a.referencia || String(a.numero))}
+            </td>
+            <td style="padding: 7px 6px; white-space: nowrap;">
+              <div style="font-weight: 600;">${dataFmt}</div>
+              <div style="font-size: 8pt; color: #64748b;">${horaFmt}</div>
+            </td>
+            <td style="padding: 7px 6px; font-weight: 600; font-size: 9pt;">
+              ${escapeHtml(a.tipo || 'Reunião de Direção')}
+            </td>
+            <td style="padding: 7px 6px; font-size: 8.5pt; line-height: 1.35;">
+              ${assuntosFmt}
+            </td>
+            <td style="padding: 7px 6px; font-size: 8.5pt; color: #334155;">
+              ${escapeHtml(a.local || 'Pavilhão Carlos Almeida')}
+            </td>
+            <td style="padding: 7px 6px; text-align: center; font-weight: bold; font-size: 9pt;">
+              ${a.presencas ? a.presencas.length : 0}
+            </td>
+            <td style="padding: 7px 6px; text-align: center;">
+              <span style="display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 7.8pt; font-weight: bold; color: ${badgeColor}; background: ${badgeBg};">
+                ${escapeHtml(a.estado || 'Rascunho')}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html lang="pt-PT">
+        <head>
+          <meta charset="UTF-8">
+          <title>A.R.C.A. - Listagem de Atas da Direção</title>
+          <style>
+            @page {
+              size: A4 landscape;
+              margin: 12mm 10mm;
+            }
+            body {
+              font-family: 'Segoe UI', Arial, sans-serif;
+              color: #1e293b;
+              margin: 0;
+              padding: 10px;
+              font-size: 9.5pt;
+            }
+            .header-container {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 2px solid #0f3f26;
+              padding-bottom: 12px;
+              margin-bottom: 15px;
+            }
+            .brand-left {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+            }
+            .brand-logo {
+              width: 55px;
+              height: 55px;
+              object-fit: contain;
+            }
+            .brand-title {
+              font-size: 13pt;
+              font-weight: 800;
+              color: #0f3f26;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin: 0;
+            }
+            .brand-sub {
+              font-size: 8pt;
+              color: #64748b;
+              margin: 2px 0 0 0;
+            }
+            .report-title {
+              font-size: 12pt;
+              font-weight: 700;
+              color: #0f3f26;
+              margin: 0;
+              text-align: right;
+            }
+            .report-meta {
+              font-size: 8pt;
+              color: #64748b;
+              margin-top: 3px;
+              text-align: right;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 15px;
+            }
+            th {
+              background: #0f3f26;
+              color: #ffffff;
+              padding: 7px 6px;
+              font-size: 8.5pt;
+              font-weight: bold;
+              text-align: left;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+            }
+            .footer-info {
+              display: flex;
+              justify-content: space-between;
+              border-top: 1px solid #cbd5e1;
+              padding-top: 8px;
+              font-size: 8pt;
+              color: #64748b;
+              margin-top: 15px;
+            }
+            @media print {
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print" style="margin-bottom: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+            <button onclick="window.print()" style="padding: 8px 16px; background: #0f3f26; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+              🖨️ Imprimir / Guardar em PDF
+            </button>
+            <button onclick="window.close()" style="padding: 8px 16px; background: #64748b; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Fechar
+            </button>
+          </div>
+
+          <div class="header-container">
+            <div class="brand-left">
+              <img class="brand-logo" src="img/logo-marca.png" onerror="this.style.display='none'">
+              <div>
+                <h1 class="brand-title">A.R.C.A. · AGUADA DE BAIXO</h1>
+                <p class="brand-sub">Associação Recreativa e Cultural de Aguada de Baixo · NIF: 501 539 036</p>
+              </div>
+            </div>
+            <div>
+              <div class="report-title">LIVRO DE ATAS DA DIREÇÃO</div>
+              <div class="report-meta">
+                Listagem Oficial · ${items.length} Ata(s) incluída(s)<br>
+                Emitido em: ${dataEmissao} por ${escapeHtml(emittedBy)}
+              </div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 12%;">N.º / Ref.</th>
+                <th style="width: 15%;">Data & Hora</th>
+                <th style="width: 16%;">Tipo de Reunião</th>
+                <th style="width: 32%;">Ordem de Trabalhos & Deliberações</th>
+                <th style="width: 13%;">Local</th>
+                <th style="width: 5%; text-align: center;">Pres.</th>
+                <th style="width: 7%; text-align: center;">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <div class="footer-info">
+            <div>Plataforma de Gestão A.R.C.A. · Módulo de Direção Executiva</div>
+            <div>Documento oficial gerado eletronicamente</div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const printWin = window.open('', '_blank', 'width=1100,height=850');
+      if (printWin) {
+        printWin.document.write(printHtml);
+        printWin.document.close();
+        printWin.focus();
+        setTimeout(() => {
+          printWin.print();
+        }, 600);
+      } else {
+        alert('O navegador bloqueou a abertura da janela de impressão. Por favor autorize os popups para este site.');
+      }
+    };
+
+    window.imprimirListagemAtas = function(onlySelected) {
+      window.exportarListagemAtasPDF(onlySelected);
+    };
+
+    // 2. Exportar Listagem para Word (.doc)
+    window.exportarListagemAtasWord = function(onlySelected) {
+      const exportMenu = document.getElementById('exportDropdownMenuAtas');
+      if (exportMenu) exportMenu.classList.remove('show');
+
+      const items = getAtasToExport(onlySelected);
+      if (!items || items.length === 0) {
+        alert('Nenhuma ata selecionada ou disponível para exportar.');
+        return;
+      }
+
+      const agora = new Date();
+      const dataEmissao = agora.toLocaleDateString('pt-PT') + ' às ' + agora.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const emittedBy = currentUser ? currentUser.nome : 'Direção da A.R.C.A.';
+
+      const rowsHtml = items.map((a) => {
+        const dataFmt = a.data ? formatarDataPt(a.data) : '—';
+        const horaFmt = (a.horaInicio ? a.horaInicio + 'h' : '') + (a.horaFim ? ' às ' + a.horaFim + 'h' : '');
+        const assuntosFmt = (a.pontos && a.pontos.length > 0)
+          ? a.pontos.map((p, pIdx) => `<p style="margin: 2px 0;"><strong>${pIdx + 1}.</strong> ${escapeHtml(p.assunto || '')}</p>`).join('')
+          : '<em>Sem ordem de trabalhos</em>';
+
+        return `
+          <tr>
+            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; font-weight: bold; color: #0f3f26;">
+              Ata ${escapeHtml(a.referencia || String(a.numero))}
+            </td>
+            <td style="border: 1px solid #cbd5e1; padding: 6px 8px;">
+              <strong>${dataFmt}</strong><br>
+              <span style="font-size: 8.5pt; color: #64748b;">${horaFmt}</span>
+            </td>
+            <td style="border: 1px solid #cbd5e1; padding: 6px 8px;">
+              ${escapeHtml(a.tipo || 'Reunião de Direção')}
+            </td>
+            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; font-size: 9.5pt;">
+              ${assuntosFmt}
+            </td>
+            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; font-size: 9.5pt;">
+              ${escapeHtml(a.local || 'Pavilhão Carlos Almeida')}
+            </td>
+            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center; font-weight: bold;">
+              ${a.presencas ? a.presencas.length : 0}
+            </td>
+            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center; font-weight: bold;">
+              ${escapeHtml(a.estado || 'Rascunho')}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      const wordDocHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset='utf-8'>
+          <title>A.R.C.A. - Listagem de Atas</title>
+          <!--[if gte mso 9]>
+          <xml>
+            <w:WordDocument>
+              <w:View>Print</w:View>
+              <w:Zoom>100</w:Zoom>
+              <w:DoNotOptimizeForBrowser/>
+            </w:WordDocument>
+          </xml>
+          <![endif]-->
+          <style>
+            @page Section1 {
+              size: 29.7cm 21.0cm; /* Paisagem A4 */
+              margin: 1.8cm 1.8cm 1.8cm 1.8cm;
+              mso-header-margin: 1.0cm;
+              mso-footer-margin: 1.0cm;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 10.5pt; color: #1e293b; line-height: 1.4; }
+            h1 { color: #0f3f26; font-size: 15pt; margin-bottom: 2px; }
+            p.sub { color: #64748b; font-size: 9pt; margin-top: 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th { background: #0f3f26; color: #ffffff; font-weight: bold; border: 1px solid #0f3f26; padding: 8px; font-size: 9.5pt; text-align: left; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            <h1>A.R.C.A. · ASSOCIAÇÃO RECREATIVA E CULTURAL DE AGUADA DE BAIXO</h1>
+            <p class="sub">Pessoa Coletiva N.º 501 539 036 · Aguada de Baixo</p>
+            
+            <div style="background: #f1f5f9; padding: 10px 12px; border-left: 4px solid #0f3f26; margin: 12px 0 16px 0;">
+              <h2 style="margin: 0; color: #0f3f26; font-size: 13pt;">LIVRO DE ATAS DA DIREÇÃO · LISTAGEM OFICIAL</h2>
+              <p style="margin: 3px 0 0 0; font-size: 9pt; color: #475569;">
+                Total de Atas: <strong>${items.length}</strong> | Emitido em: <strong>${dataEmissao}</strong> por <strong>${escapeHtml(emittedBy)}</strong>
+              </p>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 12%;">N.º / Ref.</th>
+                  <th style="width: 15%;">Data & Hora</th>
+                  <th style="width: 15%;">Tipo de Reunião</th>
+                  <th style="width: 34%;">Ordem de Trabalhos & Deliberações</th>
+                  <th style="width: 14%;">Local</th>
+                  <th style="width: 4%; text-align: center;">Pres.</th>
+                  <th style="width: 6%; text-align: center;">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+
+            <div style="margin-top: 25px; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8.5pt; color: #64748b;">
+              Plataforma de Gestão Oficial da A.R.C.A. · Documento exportado para Microsoft Word
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      downloadWordDocument(wordDocHtml, `Listagem_Atas_ARCA_${agora.toISOString().slice(0, 10)}.doc`);
+    };
+
+    // 3. Exportar Atas Completas para Word (.doc)
+    window.exportarAtaIndividualWord = function(ataId) {
+      const ata = ataId ? atas.find(a => a.id === Number(ataId)) : currentAtaEmVisualizacao;
+      if (!ata) {
+        alert('Ata não encontrada para exportar.');
+        return;
+      }
+      const wordHtml = gerarHtmlAtaFormalWord([ata]);
+      const filename = `Ata_${String(ata.referencia || ata.numero).replace(/[\/\\]/g, '_')}_ARCA.doc`;
+      downloadWordDocument(wordHtml, filename);
+    };
+
+    window.exportarAtasCompletasWord = function(onlySelected) {
+      const exportMenu = document.getElementById('exportDropdownMenuAtas');
+      if (exportMenu) exportMenu.classList.remove('show');
+
+      const items = getAtasToExport(onlySelected);
+      if (!items || items.length === 0) {
+        alert('Nenhuma ata selecionada ou disponível para exportar.');
+        return;
+      }
+      const wordHtml = gerarHtmlAtaFormalWord(items);
+      const filename = `Atas_Integrais_ARCA_${new Date().toISOString().slice(0, 10)}.doc`;
+      downloadWordDocument(wordHtml, filename);
+    };
+
+    function gerarHtmlAtaFormalWord(atasList) {
+      const atasContent = atasList.map((ata, ataIndex) => {
+        const parts = (ata.data || '').split('-');
+        const dia = parts[2] || '01';
+        const mesNum = parseInt(parts[1] || '1', 10);
+        const ano = parts[0] || '2026';
+        const meses = ['', 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const mesExtenso = meses[mesNum] || 'novembro';
+
+        const presencasFmt = (ata.presencas && ata.presencas.length > 0)
+          ? ata.presencas.map(p => `<li><strong>${escapeHtml(p.nome)}</strong>${p.cargo ? ' (' + escapeHtml(p.cargo) + ')' : ''}</li>`).join('')
+          : '<li>Registo de presenças constante na folha de presenças anexa.</li>';
+
+        const outrosPresencasFmt = ata.outrasPresencas 
+          ? `<p style="margin-top: 8px;"><em>Outras presenças / ausências:</em> ${escapeHtml(ata.outrasPresencas)}</p>` 
+          : '';
+
+        const pontosFmt = (ata.pontos && ata.pontos.length > 0)
+          ? ata.pontos.map((p, idx) => `
+              <div style="margin-bottom: 18px;">
+                <h3 style="color: #0f3f26; font-size: 11pt; margin-bottom: 4px;">PONTO ${idx + 1} - ${escapeHtml(p.assunto || 'Assunto')}</h3>
+                <div style="margin-left: 10px; margin-bottom: 6px;">
+                  <strong style="color: #334155; font-size: 9.5pt;">Discussão e Apresentação:</strong>
+                  <div style="margin-top: 2px; text-align: justify;">${p.discussao ? escapeHtml(p.discussao).replace(/\n/g, '<br>') : '<em>Sem notas de discussão registadas.</em>'}</div>
+                </div>
+                <div style="margin-left: 10px; margin-bottom: 6px;">
+                  <strong style="color: #0f3f26; font-size: 9.5pt;">Deliberação:</strong>
+                  <div style="margin-top: 2px; text-align: justify;">${p.deliberacao ? escapeHtml(p.deliberacao).replace(/\n/g, '<br>') : '<em>Tomada de conhecimento geral.</em>'}</div>
+                </div>
+                ${p.votacao ? `<div style="margin-left: 10px; font-size: 9pt; color: #475569;"><strong>Votação:</strong> ${escapeHtml(p.votacao)}</div>` : ''}
+              </div>
+            `).join('')
+          : '<p><em>Sem ordem de trabalhos discriminada.</em></p>';
+
+        const assinaturasFmt = (ata.assinaturas && ata.assinaturas.length > 0)
+          ? ata.assinaturas.map(ass => `
+              <td style="width: 50%; text-align: center; padding: 25px 15px 10px 15px; vertical-align: top;">
+                <div style="border-bottom: 1px solid #334155; width: 85%; margin: 0 auto 8px auto; height: 35px;"></div>
+                <strong style="font-size: 10pt; color: #0f3f26;">${escapeHtml(ass.nome || 'Dirigente')}</strong><br>
+                <span style="font-size: 9pt; color: #64748b;">${escapeHtml(ass.cargo || 'Membro da Direção')}</span>
+              </td>
+            `).join('')
+          : `
+              <td style="width: 50%; text-align: center; padding: 25px 15px 10px 15px;">
+                <div style="border-bottom: 1px solid #334155; width: 85%; margin: 0 auto 8px auto; height: 35px;"></div>
+                <strong style="font-size: 10pt; color: #0f3f26;">${escapeHtml(ata.presidiu || 'Presidente da Direção')}</strong><br>
+                <span style="font-size: 9pt; color: #64748b;">Presidente da Direção</span>
+              </td>
+              <td style="width: 50%; text-align: center; padding: 25px 15px 10px 15px;">
+                <div style="border-bottom: 1px solid #334155; width: 85%; margin: 0 auto 8px auto; height: 35px;"></div>
+                <strong style="font-size: 10pt; color: #0f3f26;">${escapeHtml(ata.secretariou || 'Secretária da Direção')}</strong><br>
+                <span style="font-size: 9pt; color: #64748b;">Secretária</span>
+              </td>
+            `;
+
+        const pageBreak = ataIndex < atasList.length - 1 ? '<br clear="all" style="page-break-before:always; mso-break-type:section-break">' : '';
+
+        return `
+          <div style="margin-bottom: 30px;">
+            <!-- Cabeçalho Timbrado Oficial -->
+            <div style="text-align: center; border-bottom: 2px solid #0f3f26; padding-bottom: 12px; margin-bottom: 20px;">
+              <h2 style="color: #0f3f26; font-size: 14pt; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                ASSOCIAÇÃO RECREATIVA E CULTURAL DE AGUADA DE BAIXO
+              </h2>
+              <p style="font-size: 8.5pt; color: #64748b; margin: 2px 0 0 0;">
+                Fundada a 12 de Março de 1986 · Pessoa Coletiva N.º 501 539 036 · Aguada de Baixo
+              </p>
+              <div style="font-size: 9pt; font-weight: bold; color: #0f3f26; margin-top: 4px; text-transform: uppercase;">
+                LIVRO OFICIAL DE ATAS DA DIREÇÃO EXECUTIVA
+              </div>
+            </div>
+
+            <!-- Título da Ata -->
+            <div style="text-align: center; margin-bottom: 22px;">
+              <h1 style="color: #0f3f26; font-size: 15pt; margin: 0 0 4px 0; text-transform: uppercase;">
+                ATA N.º ${ata.numero || 'S/N'} (${escapeHtml(ata.referencia || '0' + ata.numero + '/2026')})
+              </h1>
+              <div style="font-size: 10pt; font-weight: bold; color: #475569;">
+                ${escapeHtml(ata.tipo || 'Reunião Ordinária da Direção Executiva')}
+              </div>
+            </div>
+
+            <!-- Abertura Formal -->
+            <p style="text-align: justify; line-height: 1.5; margin-bottom: 14px;">
+              Aos <strong>${dia} dias do mês de ${mesExtenso} do ano de ${ano}</strong>, pelas <strong>${ata.horaInicio || '21:00'} horas</strong>, reuniu nas instalações da A.R.C.A., sitas em <strong>${escapeHtml(ata.local || 'Pavilhão Carlos Almeida, Aguada de Baixo')}</strong>, a Direção da Associação Recreativa e Cultural de Aguada de Baixo, sob a presidência de <strong>${escapeHtml(ata.presidiu || 'Jorge Manuel da Silva Cunha')}</strong> e secretariada por <strong>${escapeHtml(ata.secretariou || 'Raquel Alexandra Marques da Cunha')}</strong>.
+            </p>
+
+            <!-- Presenças -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 14px; margin-bottom: 16px;">
+              <strong style="color: #0f3f26; font-size: 9.5pt; text-transform: uppercase; display: block; margin-bottom: 4px;">
+                Membros Presentes à Reunião:
+              </strong>
+              <ul style="margin: 0; padding-left: 20px; font-size: 9.5pt; line-height: 1.45;">
+                ${presencasFmt}
+              </ul>
+              ${outrosPresencasFmt}
+            </div>
+
+            <!-- Ordem de Trabalhos -->
+            <h3 style="color: #0f3f26; font-size: 11pt; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-top: 20px; text-transform: uppercase;">
+              Ordem de Trabalhos e Deliberações
+            </h3>
+            <div style="margin-top: 12px;">
+              ${pontosFmt}
+            </div>
+
+            <!-- Encerramento -->
+            <p style="text-align: justify; line-height: 1.5; margin-top: 20px; margin-bottom: 25px;">
+              E nada mais havendo a tratar, foi encerrada a sessão pelas <strong>${ata.horaFim || '23:00'} horas</strong>, da qual se lavrou a presente ata que, depois de lida e aprovada em minuta, vai ser devidamente assinada pela Mesa e pelos membros da Direção presentes.
+            </p>
+
+            <!-- Assinaturas -->
+            <table style="width: 100%; border: none; margin-top: 30px;">
+              <tr>
+                ${assinaturasFmt}
+              </tr>
+            </table>
+
+            <div style="margin-top: 20px; font-size: 8pt; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 6px;">
+              Plataforma de Gestão Oficial A.R.C.A. · Aguada de Baixo
+            </div>
+          </div>
+          ${pageBreak}
+        `;
+      }).join('');
+
+      return `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset='utf-8'>
+          <title>A.R.C.A. - Ata Oficial</title>
+          <!--[if gte mso 9]>
+          <xml>
+            <w:WordDocument>
+              <w:View>Print</w:View>
+              <w:Zoom>100</w:Zoom>
+              <w:DoNotOptimizeForBrowser/>
+            </w:WordDocument>
+          </xml>
+          <![endif]-->
+          <style>
+            @page Section1 {
+              size: 21.0cm 29.7cm; /* Retrato A4 */
+              margin: 2.2cm 2.0cm 2.2cm 2.0cm;
+              mso-header-margin: 1.0cm;
+              mso-footer-margin: 1.0cm;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Times New Roman', serif; font-size: 11pt; color: #1e293b; line-height: 1.45; }
+            h1, h2, h3 { font-family: 'Arial', sans-serif; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            ${atasContent}
+          </div>
+        </body>
+        </html>
+      `;
     }
 
     window.sortAtasTable = function(field) {
@@ -1703,7 +2612,12 @@
               : (a.estado === 'Anulada' ? '<span class="ata-badge-anulada">Anulada</span>' : '<span class="ata-badge-rascunho">Rascunho</span>');
 
             return `
-              <tr data-ata-id="${a.id}">
+              <tr data-ata-id="${a.id}" class="${selectedAtaIds.has(Number(a.id)) ? 'selected-row' : ''}">
+                <!-- Seleção -->
+                <td data-col="selecao" style="text-align: center; ${!isAtasColVisible('selecao') ? 'display: none;' : ''}">
+                  <input type="checkbox" class="ata-row-check" value="${a.id}" ${selectedAtaIds.has(Number(a.id)) ? 'checked' : ''} onchange="handleSelectAta(${a.id}, this.checked)" style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary);">
+                </td>
+
                 <!-- Data -->
                 <td data-col="data" style="${!isAtasColVisible('data') ? 'display: none;' : ''}">
                   <div style="font-weight: 700; color: var(--text-title); font-size: 0.88rem;">${dataFmt}</div>
@@ -1796,7 +2710,12 @@
               : 'Sem assuntos registados.';
 
             return `
-              <div class="ata-list-item" onclick="openVisualizadorAta(${a.id})">
+              <div class="ata-list-item ${selectedAtaIds.has(Number(a.id)) ? 'selected-card' : ''}" data-id="${a.id}" onclick="openVisualizadorAta(${a.id})">
+                <!-- Checkbox de Seleção -->
+                <div style="display: flex; align-items: center; padding-right: 0.6rem;" onclick="event.stopPropagation()">
+                  <input type="checkbox" class="ata-card-check" value="${a.id}" ${selectedAtaIds.has(Number(a.id)) ? 'checked' : ''} onchange="handleSelectAta(${a.id}, this.checked)" style="cursor: pointer; width: 18px; height: 18px; accent-color: var(--primary);">
+                </div>
+
                 <!-- Distintivo de Data Lateral -->
                 <div class="ata-date-badge">
                   <div class="ata-date-day">${dia}</div>
@@ -1832,6 +2751,9 @@
           }).join('');
         }
       }
+
+      applyAtasColumnsVisibility();
+      updateSelectionUI();
     }
 
     // =========================================================================
