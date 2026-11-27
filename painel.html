@@ -537,6 +537,29 @@
 
           <div class="card-box" style="padding: 1.75rem; margin-bottom: 0;">
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <div class="metric-icon-box" style="width: 44px; height: 44px; background: rgba(30, 64, 175, 0.12); color: #1e40af; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.2rem; color: var(--text-title);">Utilizadores & Permissões</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Painel de Controlo / Acessos</span>
+              </div>
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-body); margin-bottom: 1.25rem;">
+              Gestão de contas de acesso à plataforma oficial da ARCA, atribuição de perfis, permissões modulares e segurança.
+            </p>
+            <a href="utilizadores.html" class="btn btn-primary btn-sm" style="width: 100%;">
+              <span>Gerir Utilizadores &rarr;</span>
+            </a>
+          </div>
+
+          <div class="card-box" style="padding: 1.75rem; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
               <div class="metric-icon-box" style="width: 44px; height: 44px; background: rgba(15, 118, 110, 0.12); color: #0f766e; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -569,9 +592,9 @@
   <!-- Firebase SDK e Sincronização em Tempo Real -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-sync.js?v=20261126_v12"></script>
-  <script src="js/socios-data.js?v=20261126_v12"></script>
-  <script src="js/main.js?v=20261126_v12"></script>
+  <script src="js/firebase-sync.js?v=20261127_v3"></script>
+  <script src="js/socios-data.js?v=20261127_v3"></script>
+  <script src="js/main.js?v=20261127_v3"></script>
   <script>
     if (typeof window.syncArcaUtilizadoresFromCloud === 'function') {
       window.syncArcaUtilizadoresFromCloud();
