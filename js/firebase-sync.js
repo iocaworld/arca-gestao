@@ -516,6 +516,148 @@ const ARCA_FIREBASE_CONFIG = {
   };
 
   // =========================================================================
+  // GESTÃO E SINCRONIZAÇÃO DE AGENDAS (JOGOS, EVENTOS, REUNIÕES, TAREFAS)
+  // =========================================================================
+
+  const ARCA_AGENDA_STORAGE_KEY = 'arca_gestao_agenda_v1';
+  const ARCA_DELETED_AGENDA_KEY = 'arca_deleted_agenda_ids';
+
+  window.syncArcaAgendaFromCloud = async function(onUpdated) {
+    const firestore = initFirebase();
+    if (!firestore) return null;
+
+    try {
+      const snapshot = await firestore.collection('agenda_gestao').get();
+      let cloudItems = [];
+      let deletedIds = [];
+      try {
+        deletedIds = JSON.parse(localStorage.getItem(ARCA_DELETED_AGENDA_KEY) || '[]');
+      } catch (e) {}
+
+      snapshot.forEach(doc => {
+        const item = doc.data();
+        if (item && item.id && !deletedIds.includes(Number(item.id))) {
+          cloudItems.push(item);
+        }
+      });
+
+      // Se o Firestore não tiver itens ou estiver incompleto, semear com os itens oficiais da ARCA
+      const seedList = (typeof window.getArcaAgendaSeed === 'function') ? window.getArcaAgendaSeed() : [];
+      let missingSeeds = [];
+      seedList.forEach(si => {
+        if (!deletedIds.includes(Number(si.id))) {
+          const exists = cloudItems.some(ci => Number(ci.id) === Number(si.id));
+          if (!exists) {
+            missingSeeds.push(si);
+          }
+        }
+      });
+
+      if (missingSeeds.length > 0) {
+        console.log(`[ARCA Firebase] A sincronizar ${missingSeeds.length} agendamentos oficiais para o Firestore...`);
+        const batch = firestore.batch();
+        missingSeeds.forEach(si => {
+          const docRef = firestore.collection('agenda_gestao').doc(String(si.id));
+          batch.set(docRef, si, { merge: true });
+          cloudItems.push(si);
+        });
+        try {
+          await batch.commit();
+        } catch (e) {
+          console.warn('[ARCA Firebase] Erro ao gravar batch de agenda:', e);
+        }
+      }
+
+      // Ordenar por data decrescente (ou mais próximos)
+      cloudItems.sort((a, b) => new Date(b.data + 'T' + (b.horaInicio || '00:00')) - new Date(a.data + 'T' + (a.horaInicio || '00:00')));
+
+      // Guardar na cache local
+      localStorage.setItem(ARCA_AGENDA_STORAGE_KEY, JSON.stringify(cloudItems));
+      console.log(`[ARCA Firebase] ${cloudItems.length} agendamentos sincronizados da nuvem.`);
+
+      if (typeof onUpdated === 'function') {
+        onUpdated(cloudItems);
+      }
+      return cloudItems;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Aviso ao sincronizar agenda da nuvem:', err.message);
+      return null;
+    }
+  };
+
+  window.saveArcaAgendaToCloud = async function(item) {
+    const firestore = initFirebase();
+    if (!firestore || !item || !item.id) return false;
+
+    try {
+      const docId = String(item.id);
+
+      // Desmarcar dos apagados se existir
+      try {
+        let deletedIds = JSON.parse(localStorage.getItem(ARCA_DELETED_AGENDA_KEY) || '[]');
+        deletedIds = deletedIds.filter(id => id !== Number(item.id));
+        localStorage.setItem(ARCA_DELETED_AGENDA_KEY, JSON.stringify(deletedIds));
+      } catch (e) {}
+
+      const cleanItem = {
+        id: Number(item.id),
+        categoria: String(item.categoria || 'jogos').trim(),
+        tipo: String(item.tipo || 'Geral').trim(),
+        titulo: String(item.titulo || '').trim(),
+        subtitulo: String(item.subtitulo || '').trim(),
+        data: String(item.data || new Date().toISOString().slice(0, 10)),
+        horaInicio: String(item.horaInicio || '09:00').trim(),
+        horaFim: String(item.horaFim || '').trim(),
+        local: String(item.local || 'Pavilhão Carlos Almeida, Aguada de Baixo').trim(),
+        ambito: String(item.ambito || 'Casa').trim(),
+        seccao: String(item.seccao || 'Geral').trim(),
+        escalao: String(item.escalao || 'Geral').trim(),
+        adversario: String(item.adversario || '').trim(),
+        responsavel: String(item.responsavel || 'Jorge Manuel da Silva Cunha').trim(),
+        contacto: String(item.contacto || '').trim(),
+        estado: String(item.estado || 'Confirmado').trim(),
+        descricao: String(item.descricao || '').trim(),
+        logistica: String(item.logistica || '').trim(),
+        criadoPor: String(item.criadoPor || 'Jorge Manuel da Silva Cunha').trim(),
+        criadoEm: String(item.criadoEm || new Date().toISOString()),
+        atualizadoEm: new Date().toISOString()
+      };
+
+      await firestore.collection('agenda_gestao').doc(docId).set(cleanItem, { merge: true });
+      console.log(`[ARCA Firebase] Agendamento ID ${cleanItem.id} (${cleanItem.titulo}) gravado no Firestore.`);
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao gravar agendamento na nuvem:', err);
+      return false;
+    }
+  };
+
+  window.deleteArcaAgendaFromCloud = async function(itemId) {
+    const firestore = initFirebase();
+    if (!firestore || !itemId) return false;
+
+    try {
+      const numId = Number(itemId);
+      const docId = String(itemId);
+
+      try {
+        const deletedIds = JSON.parse(localStorage.getItem(ARCA_DELETED_AGENDA_KEY) || '[]');
+        if (!deletedIds.includes(numId)) {
+          deletedIds.push(numId);
+          localStorage.setItem(ARCA_DELETED_AGENDA_KEY, JSON.stringify(deletedIds));
+        }
+      } catch (e) {}
+
+      await firestore.collection('agenda_gestao').doc(docId).delete();
+      console.log(`[ARCA Firebase] Agendamento ID ${itemId} eliminado do Firestore.`);
+      return true;
+    } catch (err) {
+      console.warn('[ARCA Firebase] Erro ao eliminar agendamento do Firestore:', err);
+      return false;
+    }
+  };
+
+  // =========================================================================
   // SINCRONIZAÇÃO DE LOGS, AUDITORIA E ATIVIDADES (COLEÇÃO 'logs_atividades')
   // =========================================================================
 

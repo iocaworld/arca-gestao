@@ -8,6 +8,118 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Estilos Específicos para o Módulo de Gestão (Calendário, Jogos, Eventos, Reuniões, Tarefas) */
+    .app-main, .page-container {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .card-box {
+      overflow: visible !important;
+    }
+    .col-picker-dropdown, .export-dropdown-group {
+      position: relative;
+      display: inline-block;
+    }
+    .col-picker-menu, .export-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+    }
+    .export-menu-item:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+    .sortable-th {
+      transition: background 0.15s ease;
+      user-select: none;
+    }
+    .sortable-th:hover {
+      background: #f8fafc;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .data-table th {
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 0.85rem 1rem;
+      border-bottom: 2px solid var(--border-light);
+    }
+    .data-table td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.88rem;
+      color: var(--text-body);
+      vertical-align: middle;
+    }
+    .data-table tbody tr {
+      transition: background 0.15s ease;
+    }
+    .data-table tbody tr:hover {
+      background: #f8fafc;
+    }
+    .data-table tbody tr.row-selected {
+      background: #eff6ff !important;
+    }
+    .agenda-card-item {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .agenda-card-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07) !important;
+    }
+    .tab-cat-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      z-index: 1050;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      backdrop-filter: blur(3px);
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #fichaPrintableArea, #fichaPrintableArea * {
+        visibility: visible;
+      }
+      #fichaPrintableArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -362,13 +474,16 @@
           </div>
         </div>
 
-        <div class="topbar-right">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Marcação na agenda em preparação!', 'success')">
+                <div class="topbar-right" style="display: flex; gap: 0.5rem; align-items: center;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="recarregarAgendaNuvem(this)" id="btnReloadNuvem" title="Recarregar e sincronizar da Cloud Firestore">
+            <span>🔄 Sincronizar Nuvem</span>
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="abrirNovoRegistoAgenda()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>Nova Marcação</span>
+            <span>Novo Registo / Marcação</span>
           </button>
         </div>
       </header>
@@ -379,118 +494,262 @@
         <div class="page-title-bar">
           <div>
             <h1 id="pageHeadingAgenda">Gestão & Calendário Geral</h1>
-            <p>Resumo unificado de todas as agendas: jogos, eventos da ARCA, reuniões de Direção, tarefas importantes e feriados.</p>
+            <p id="pageSubheadingAgenda">Gestão completa e unificada de Jogos Oficiais, Eventos Associativos, Reuniões de Direção e Tarefas da A.R.C.A.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <!-- Alternador de Vista (Tabela / Cartões) -->
+            <div class="view-mode-toggle" style="display: inline-flex; background: #e2e8f0; padding: 3px; border-radius: var(--radius-sm);">
+              <button type="button" class="btn-view-toggle active" id="btnViewTable" onclick="setAgendaViewMode('table')" title="Vista de Tabela com Colunas" style="border: none; background: #ffffff; color: var(--primary); padding: 0.4rem 0.75rem; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span>Tabela</span>
+              </button>
+              <button type="button" class="btn-view-toggle" id="btnViewCards" onclick="setAgendaViewMode('cards')" title="Vista de Cartões Visuais" style="border: none; background: transparent; color: var(--text-muted); padding: 0.4rem 0.75rem; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Cartões</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Filtros Rápidos de Agenda -->
-        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-          <a href="calendario.html" class="btn btn-secondary btn-sm" id="tabBtnAll">Todas as Agendas</a>
-          <a href="calendario.html?filtro=jogos" class="btn btn-outline btn-sm" id="tabBtnJogos">⚽ Jogos</a>
-          <a href="calendario.html?filtro=eventos" class="btn btn-outline btn-sm" id="tabBtnEventos">🎉 Eventos</a>
-          <a href="calendario.html?filtro=reunioes" class="btn btn-outline btn-sm" id="tabBtnReunioes">📑 Reuniões Direção</a>
-          <a href="calendario.html?filtro=tarefas" class="btn btn-outline btn-sm" id="tabBtnTarefas">📌 Tarefas & Importantes</a>
-        </div>
-
-        <!-- Lista de Eventos e Agendas -->
-        <div class="card-box">
-          <div class="card-header-bar">
-            <h2>Agenda de Atividades & Datas Marcadas (2026)</h2>
+        <!-- Cards de Estatísticas e Indicadores (KPIs) -->
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div class="stat-card" style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.15rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 46px; height: 46px; border-radius: var(--radius-md); background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+              📅
+            </div>
+            <div>
+              <div style="font-size: 1.55rem; font-weight: 800; color: var(--text-title);" id="statTotalAgendas">0</div>
+              <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Total Registos</div>
+            </div>
           </div>
 
-          <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;" id="eventsContainer">
+          <div class="stat-card" style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.15rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 46px; height: 46px; border-radius: var(--radius-md); background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+              ⚽
+            </div>
+            <div>
+              <div style="font-size: 1.55rem; font-weight: 800; color: #16a34a;" id="statJogosAgendados">0</div>
+              <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Jogos Oficiais</div>
+            </div>
+          </div>
+
+          <div class="stat-card" style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.15rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 46px; height: 46px; border-radius: var(--radius-md); background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+              🎉
+            </div>
+            <div>
+              <div style="font-size: 1.55rem; font-weight: 800; color: #d97706;" id="statEventosAssociacao">0</div>
+              <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Eventos ARCA</div>
+            </div>
+          </div>
+
+          <div class="stat-card" style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.15rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="width: 46px; height: 46px; border-radius: var(--radius-md); background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+              📑
+            </div>
+            <div>
+              <div style="font-size: 1.55rem; font-weight: 800; color: #7c3aed;" id="statReunioesTarefas">0</div>
+              <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Reuniões & Tarefas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abas Principais de Categoria (Sincronizadas com o Menu e URL) -->
+        <div class="tabs-nav-bar" style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary btn-sm tab-cat-btn" id="tabBtnAll" onclick="filtrarCategoria('all')">
+            <span>📅 Todas as Agendas</span>
+            <span class="badge-count" id="countTabAll" style="background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 9999px; font-size: 0.75rem; margin-left: 4px;">0</span>
+          </button>
+          <button type="button" class="btn btn-outline btn-sm tab-cat-btn" id="tabBtnJogos" onclick="filtrarCategoria('jogos')">
+            <span>⚽ Jogos</span>
+            <span class="badge-count" id="countTabJogos" style="background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 9999px; font-size: 0.75rem; margin-left: 4px;">0</span>
+          </button>
+          <button type="button" class="btn btn-outline btn-sm tab-cat-btn" id="tabBtnEventos" onclick="filtrarCategoria('eventos')">
+            <span>🎉 Eventos</span>
+            <span class="badge-count" id="countTabEventos" style="background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 9999px; font-size: 0.75rem; margin-left: 4px;">0</span>
+          </button>
+          <button type="button" class="btn btn-outline btn-sm tab-cat-btn" id="tabBtnReunioes" onclick="filtrarCategoria('reunioes')">
+            <span>📑 Reuniões Direção</span>
+            <span class="badge-count" id="countTabReunioes" style="background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 9999px; font-size: 0.75rem; margin-left: 4px;">0</span>
+          </button>
+          <button type="button" class="btn btn-outline btn-sm tab-cat-btn" id="tabBtnTarefas" onclick="filtrarCategoria('tarefas')">
+            <span>📌 Tarefas & Importantes</span>
+            <span class="badge-count" id="countTabTarefas" style="background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 9999px; font-size: 0.75rem; margin-left: 4px;">0</span>
+          </button>
+        </div>
+
+        <!-- Barra de Ferramentas: Pesquisa, Filtros Rápidos, Colunas e Exportação -->
+        <div class="card-box" style="margin-bottom: 1.25rem; padding: 1.15rem; background: #ffffff;">
+          <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
             
-            <!-- Item 1: Evento BiciARCA -->
-            <div class="event-card" data-category="eventos" style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; border: 1px solid var(--border-light); border-radius: var(--radius-md); background: #ffffff;">
-              <div style="display: flex; align-items: center; gap: 1.25rem;">
-                <div style="background: var(--color-amber-light); color: var(--color-amber); padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-align: center; min-width: 85px;">
-                  <div style="font-size: 1.5rem; font-weight: 800; line-height: 1;">14</div>
-                  <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">JUN 2026</div>
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-                    <span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Evento</span>
-                    <h3 style="font-size: 1.15rem; color: var(--text-title); margin: 0;">Passeio de Cicloturismo / BiciARCA 2026</h3>
-                  </div>
-                  <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Concentração no Pavilhão da ARCA às 08:30h com almoço convívio para associados e participantes.</p>
-                </div>
-              </div>
-              <span class="status-pill em-dia">Confirmado</span>
+            <!-- Barra de Pesquisa -->
+            <div style="flex: 1; min-width: 260px; max-width: 450px; position: relative;">
+              <input type="text" id="inputSearchAgenda" class="form-control" placeholder="Pesquisar por título, adversário, local, responsável..." style="width: 100%; padding-left: 2.35rem;" oninput="onAgendaSearchInput(this.value)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
             </div>
 
-            <!-- Item 2: Jogos / Torneio Futsal -->
-            <div class="event-card" data-category="jogos" style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; border: 1px solid var(--border-light); border-radius: var(--radius-md); background: #ffffff;">
-              <div style="display: flex; align-items: center; gap: 1.25rem;">
-                <div style="background: var(--primary-light); color: var(--primary); padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-align: center; min-width: 85px;">
-                  <div style="font-size: 1.5rem; font-weight: 800; line-height: 1;">27</div>
-                  <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">JUN 2026</div>
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-                    <span class="status-pill" style="background: var(--primary-light); color: var(--primary);">Jogos</span>
-                    <h3 style="font-size: 1.15rem; color: var(--text-title); margin: 0;">Torneio Inter-Freguesias no Pavilhão ARCA</h3>
+            <!-- Filtros Secundários -->
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              
+              <!-- Filtro de Estado -->
+              <select id="selectFiltroEstado" class="form-control" style="min-width: 150px; height: 38px;" onchange="onFiltroEstadoChange(this.value)">
+                <option value="all">Todos os Estados</option>
+                <option value="Confirmado">Confirmado</option>
+                <option value="Em Planeamento">Em Planeamento</option>
+                <option value="Pavilhão Reservado">Pavilhão Reservado</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Adiado">Adiado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+
+              <!-- Filtro de Âmbito / Recinto -->
+              <select id="selectFiltroAmbito" class="form-control" style="min-width: 140px; height: 38px;" onchange="onFiltroAmbitoChange(this.value)">
+                <option value="all">Todos os Âmbitos</option>
+                <option value="Casa">Casa / Pavilhão</option>
+                <option value="Fora">Fora (Deslocação)</option>
+                <option value="Exterior">Exterior / Freguesia</option>
+                <option value="Interno">Interno / Sede</option>
+              </select>
+
+              <!-- Seletor de Colunas (Dropdown) -->
+              <div class="col-picker-dropdown" style="position: relative;">
+                <button type="button" class="btn btn-outline btn-sm" id="btnToggleColPicker" onclick="toggleAgendaColPickerMenu(event)" style="height: 38px; display: inline-flex; align-items: center; gap: 0.35rem;" title="Escolher colunas visíveis da tabela">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"/></svg>
+                  <span>Colunas</span>
+                  <span style="font-size: 0.75rem;">&#9662;</span>
+                </button>
+                <div class="col-picker-menu" id="colPickerMenuAgenda" style="display: none; position: absolute; right: 0; top: calc(100% + 6px); background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); width: 230px; z-index: 100; padding: 0.5rem 0;">
+                  <div style="padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border-light);">
+                    Colunas Visíveis
                   </div>
-                  <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Jogos da fase de grupos no Pavilhão desportivo com arbitragem oficial e apoio médico.</p>
+                  <div id="colPickerListAgenda" style="padding: 0.25rem 0;">
+                    <!-- Preenchido dinamicamente via JS -->
+                  </div>
                 </div>
               </div>
-              <span class="status-pill em-dia">Pavilhão Reservado</span>
-            </div>
 
-            <!-- Item 3: Reunião de Direção -->
-            <div class="event-card" data-category="reunioes" style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; border: 1px solid var(--border-light); border-radius: var(--radius-md); background: #ffffff;">
-              <div style="display: flex; align-items: center; gap: 1.25rem;">
-                <div style="background: var(--color-blue-light); color: var(--color-blue); padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-align: center; min-width: 85px;">
-                  <div style="font-size: 1.5rem; font-weight: 800; line-height: 1;">08</div>
-                  <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">JUL 2026</div>
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-                    <span class="status-pill" style="background: var(--color-blue-light); color: var(--color-blue);">Reunião</span>
-                    <h3 style="font-size: 1.15rem; color: var(--text-title); margin: 0;">Reunião Mensal da Direção ARCA</h3>
-                  </div>
-                  <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Ordem de trabalhos: Balanço do 1º semestre, preparativos do Agit'ARCA e análise de novas inscrições.</p>
+              <!-- Menu Exportar e Imprimir Global -->
+              <div class="export-dropdown-group" style="position: relative;">
+                <button type="button" class="btn btn-outline btn-sm" id="btnToggleExportMenu" onclick="toggleAgendaExportMenu(event)" style="height: 38px; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; color: var(--primary);" title="Exportar ou Imprimir listagem">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Exportar / Imprimir</span>
+                  <span style="font-size: 0.75rem;">&#9662;</span>
+                </button>
+                <div class="export-dropdown-menu" id="exportMenuAgenda" style="display: none; position: absolute; right: 0; top: calc(100% + 6px); background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); width: 220px; z-index: 100; padding: 0.4rem 0;">
+                  <button type="button" class="export-menu-item" onclick="exportarAgendaCSV(false)" style="width: 100%; border: none; background: transparent; text-align: left; padding: 0.6rem 1rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                    <span>📊 Exportar para CSV</span>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarAgendaExcel(false)" style="width: 100%; border: none; background: transparent; text-align: left; padding: 0.6rem 1rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                    <span>📗 Exportar para Excel</span>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarAgendaPDF(false)" style="width: 100%; border: none; background: transparent; text-align: left; padding: 0.6rem 1rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                    <span>📄 Exportar para PDF</span>
+                  </button>
+                  <div style="border-top: 1px solid var(--border-light); margin: 0.25rem 0;"></div>
+                  <button type="button" class="export-menu-item" onclick="imprimirAgenda(false)" style="width: 100%; border: none; background: transparent; text-align: left; padding: 0.6rem 1rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                    <span>🖨️ Imprimir Listagem</span>
+                  </button>
                 </div>
               </div>
-              <span class="status-pill pendente">Às 21:00h</span>
-            </div>
 
-            <!-- Item 4: Evento Agit'ARCA -->
-            <div class="event-card" data-category="eventos" style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; border: 1px solid var(--border-light); border-radius: var(--radius-md); background: #ffffff;">
-              <div style="display: flex; align-items: center; gap: 1.25rem;">
-                <div style="background: var(--color-amber-light); color: var(--color-amber); padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-align: center; min-width: 85px;">
-                  <div style="font-size: 1.5rem; font-weight: 800; line-height: 1;">18</div>
-                  <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">JUL 2026</div>
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-                    <span class="status-pill" style="background: var(--color-amber-light); color: var(--color-amber);">Evento</span>
-                    <h3 style="font-size: 1.15rem; color: var(--text-title); margin: 0;">Agit'ARCA 2026 &bull; Festival Cultural de Verão</h3>
-                  </div>
-                  <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Noite de convívio, atuações musicais e tasquinhas no espaço exterior da ARCA.</p>
-                </div>
-              </div>
-              <span class="status-pill em-dia">Em Planeamento</span>
             </div>
-
-            <!-- Item 5: Tarefa e Importante -->
-            <div class="event-card" data-category="tarefas" style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; border: 1px solid var(--border-light); border-radius: var(--radius-md); background: #ffffff;">
-              <div style="display: flex; align-items: center; gap: 1.25rem;">
-                <div style="background: #f1f5f9; color: #475569; padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-align: center; min-width: 85px;">
-                  <div style="font-size: 1.5rem; font-weight: 800; line-height: 1;">31</div>
-                  <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">DEZ 2026</div>
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-                    <span class="status-pill" style="background: #f1f5f9; color: #475569;">Tarefa</span>
-                    <h3 style="font-size: 1.15rem; color: var(--text-title); margin: 0;">Fecho do Exercício Contabilístico 2026</h3>
-                  </div>
-                  <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">Consolidação do balancete anual, inventário das instalações e envio de relatório à Assembleia.</p>
-                </div>
-              </div>
-              <span class="status-pill pendente">Prazo Oficial</span>
-            </div>
-
           </div>
+        </div>
+
+        <!-- Barra de Ações em Lote para Itens Selecionados -->
+        <div id="selectionActionBar" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1.25rem; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-weight: 800; color: #1e40af; font-size: 0.92rem;" id="selectionCountLabel">0 selecionados</span>
+            <span style="color: #60a5fa;">•</span>
+            <span style="font-size: 0.85rem; color: #1e3a8a;">Ações em bloco disponíveis:</span>
+          </div>
+          <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary btn-xs" onclick="exportarAgendaCSV(true)" title="Exportar registos selecionados em CSV">
+              📊 CSV
+            </button>
+            <button type="button" class="btn btn-secondary btn-xs" onclick="exportarAgendaExcel(true)" title="Exportar registos selecionados em Excel">
+              📗 Excel
+            </button>
+            <button type="button" class="btn btn-primary btn-xs" onclick="exportarAgendaPDF(true)" title="Exportar registos selecionados em PDF">
+              📄 PDF
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" onclick="imprimirAgenda(true)" style="background: #ffffff;" title="Imprimir registos selecionados">
+              🖨️ Imprimir
+            </button>
+            <div style="border-left: 1px solid #bfdbfe; height: 22px; margin: 0 0.25rem;"></div>
+            <button type="button" class="btn btn-xs" onclick="eliminarAgendaSelecionados()" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-weight: 700;" title="Apagar registos selecionados">
+              🗑️ Apagar Selecionados
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" onclick="limparSelecaoAgenda()" style="background: #ffffff; color: var(--text-muted);" title="Desmarcar todos">
+              ✕ Limpar
+            </button>
+          </div>
+        </div>
+
+        <!-- 1. VISTA DE TABELA -->
+        <div class="card-box" id="containerTableView" style="padding: 0; overflow: hidden; background: #ffffff;">
+          <div class="table-container" style="overflow-x: auto; width: 100%;">
+            <table class="data-table" id="tableAgenda" style="width: 100%; border-collapse: collapse; min-width: 950px;">
+              <thead>
+                <tr>
+                  <th class="col-selecao" style="width: 42px; text-align: center;">
+                    <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllAgenda(this.checked)" title="Selecionar todos">
+                  </th>
+                  <th class="col-data sortable-th" onclick="setAgendaSort('data')" style="cursor: pointer; min-width: 130px;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <span>Data & Hora</span>
+                      <span class="sort-indicator" id="sortIndData">↕</span>
+                    </div>
+                  </th>
+                  <th class="col-categoria sortable-th" onclick="setAgendaSort('categoria')" style="cursor: pointer; min-width: 125px;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <span>Categoria</span>
+                      <span class="sort-indicator" id="sortIndCategoria">↕</span>
+                    </div>
+                  </th>
+                  <th class="col-titulo sortable-th" onclick="setAgendaSort('titulo')" style="cursor: pointer; min-width: 250px;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <span>Título / Adversário</span>
+                      <span class="sort-indicator" id="sortIndTitulo">↕</span>
+                    </div>
+                  </th>
+                  <th class="col-local sortable-th" onclick="setAgendaSort('local')" style="cursor: pointer; min-width: 160px;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <span>Local & Âmbito</span>
+                      <span class="sort-indicator" id="sortIndLocal">↕</span>
+                    </div>
+                  </th>
+                  <th class="col-responsavel" style="min-width: 150px;">Secção & Responsável</th>
+                  <th class="col-estado sortable-th" onclick="setAgendaSort('estado')" style="cursor: pointer; min-width: 130px; text-align: center;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <span>Estado</span>
+                      <span class="sort-indicator" id="sortIndEstado">↕</span>
+                    </div>
+                  </th>
+                  <th class="col-acoes" style="min-width: 120px; text-align: right; padding-right: 1.25rem;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyAgenda">
+                <!-- Linhas geradas dinamicamente via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. VISTA DE CARTÕES -->
+        <div id="containerCardsView" style="display: none; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1.25rem;">
+          <!-- Cartões gerados dinamicamente via JS -->
+        </div>
+
+        <!-- Mensagem de Vazio / Sem Resultados -->
+        <div id="emptyAgendaState" style="display: none; padding: 3.5rem 1.5rem; text-align: center; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-top: 1rem;">
+          <div style="font-size: 3rem; margin-bottom: 0.75rem;">📅</div>
+          <h3 style="font-size: 1.15rem; color: var(--text-title); margin: 0 0 0.5rem 0;">Nenhum registo encontrado</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0 0 1.25rem 0;">Não foram encontradas marcações com os filtros de pesquisa selecionados.</p>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="limparFiltrosAgenda()">Limpar Filtros de Pesquisa</button>
         </div>
 
       </main>
@@ -498,50 +757,1746 @@
 
   </div>
 
-  <script src="js/socios-data.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    // Filtro simples de URL para os submenus da Gestão
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const filtro = urlParams.get('filtro');
+  <!-- ======================================================================= -->
+  <!-- MODAL: FICHA DETALHADA DO JOGO / EVENTO / REUNIÃO (CONSULTA & IMPRESSÃO) -->
+  <!-- ======================================================================= -->
+  <div class="modal-overlay" id="modalAgendaFicha" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 1050; align-items: center; justify-content: center; padding: 1.25rem; backdrop-filter: blur(3px);">
+    <div class="modal-box" style="background: #ffffff; border-radius: var(--radius-lg); width: 100%; max-width: 780px; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-xl); position: relative;">
+      
+      <!-- Cabeçalho do Modal -->
+      <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span id="fichaCatBadge" style="padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Categoria</span>
+          <span id="fichaEstadoBadge" style="padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">Estado</span>
+        </div>
+        <button type="button" class="close-modal-btn" onclick="fecharModalAgendaFicha()" style="border: none; background: transparent; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; line-height: 1;">&times;</button>
+      </div>
 
-      if (filtro) {
-        const events = document.querySelectorAll('.event-card');
-        events.forEach(card => {
-          if (card.getAttribute('data-category') === filtro) {
-            card.style.display = 'flex';
-          } else {
-            card.style.display = 'none';
+      <!-- Corpo da Ficha -->
+      <div style="padding: 1.75rem;" id="fichaPrintableArea">
+        
+        <!-- Cabeçalho Oficial ARCA para Impressão -->
+        <div class="ficha-header-print" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <img src="assets/arca-logo.png" alt="ARCA" style="height: 54px; width: auto;">
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">A.R.C.A. - Aguada de Baixo</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Associação Recreativa e Cultural de Aguada de Baixo • Fundada em 1986</div>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Registo Oficial</div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-title);" id="fichaIdLabel">#000</div>
+          </div>
+        </div>
+
+        <h2 id="fichaTitulo" style="font-size: 1.45rem; font-weight: 800; color: var(--text-title); margin: 0 0 0.35rem 0;">Título da Atividade</h2>
+        <div id="fichaSubtitulo" style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">Subtítulo ou Informação Complementar</div>
+
+        <!-- Grelha de Detalhes -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem;">Data & Horário</div>
+            <div style="font-size: 1rem; font-weight: 800; color: var(--text-title);" id="fichaDataHora">—</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem;">Local & Recinto</div>
+            <div style="font-size: 1rem; font-weight: 800; color: var(--text-title);" id="fichaLocal">—</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem;">Secção & Escalão</div>
+            <div style="font-size: 1rem; font-weight: 800; color: var(--text-title);" id="fichaSeccaoEscalao">—</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid var(--border-light); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem;">Responsável / Contacto</div>
+            <div style="font-size: 1rem; font-weight: 800; color: var(--text-title);" id="fichaResponsavel">—</div>
+          </div>
+        </div>
+
+        <!-- Descrição -->
+        <div style="margin-bottom: 1.25rem;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.5rem 0;">Descrição / Enquadramento</h4>
+          <div id="fichaDescricao" style="background: #ffffff; border: 1px solid var(--border-light); padding: 1rem; border-radius: var(--radius-md); font-size: 0.92rem; line-height: 1.5; color: var(--text-body); white-space: pre-wrap;">—</div>
+        </div>
+
+        <!-- Logística & Tarefas Associadas -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.5rem 0;">Apoio Logístico, Tarefas & Material</h4>
+          <div id="fichaLogistica" style="background: #f8fafc; border: 1px solid var(--border-light); padding: 1rem; border-radius: var(--radius-md); font-size: 0.92rem; line-height: 1.5; color: var(--text-body); white-space: pre-wrap;">—</div>
+        </div>
+
+        <!-- Rodapé da Ficha Oficial com Assinatura para Impressão -->
+        <div class="ficha-footer-print" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; font-size: 0.8rem; color: #64748b;">
+          <div>Emitido via Plataforma de Gestão ARCA em <span id="fichaEmissaoData"></span></div>
+          <div style="text-align: center; border-top: 1px solid #94a3b8; width: 220px; padding-top: 0.25rem;">
+            A Direção da A.R.C.A.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Rodapé com Botões de Ação -->
+      <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border-light); background: #f8fafc; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="imprimirFichaAgendaIndividual()" title="Imprimir ficha formatada">
+            🖨️ Imprimir Ficha
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="exportarFichaAgendaPDF()" title="Exportar ficha em PDF">
+            📄 Descarregar PDF
+          </button>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="editarRegistoFromFicha()" title="Editar este registo">
+            ✏️ Editar
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="fecharModalAgendaFicha()">
+            Fechar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: FORMULÁRIO DE CRIAÇÃO E EDIÇÃO (NOVO / EDITAR REGISTO)           -->
+  <!-- ======================================================================= -->
+  <div class="modal-overlay" id="modalAgendaForm" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 1050; align-items: center; justify-content: center; padding: 1.25rem; backdrop-filter: blur(3px);">
+    <div class="modal-box" style="background: #ffffff; border-radius: var(--radius-lg); width: 100%; max-width: 760px; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-xl); position: relative;">
+      
+      <!-- Cabeçalho -->
+      <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+        <h3 id="modalFormTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-title); display: flex; align-items: center; gap: 0.5rem;">
+          <span>📝 Novo Registo de Agenda</span>
+        </h3>
+        <button type="button" class="close-modal-btn" onclick="fecharModalAgendaForm()" style="border: none; background: transparent; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; line-height: 1;">&times;</button>
+      </div>
+
+      <!-- Formulário -->
+      <form id="formAgendaItem" onsubmit="submeterFormAgendaItem(event)" style="padding: 1.5rem;">
+        <input type="hidden" id="formAgendaId" value="">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+          
+          <!-- Categoria -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaCategoria" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Categoria *</label>
+            <select id="formAgendaCategoria" class="form-control" required style="width: 100%;" onchange="aoMudarCategoriaForm(this.value)">
+              <option value="jogos">⚽ Jogos</option>
+              <option value="eventos">🎉 Eventos</option>
+              <option value="reunioes">📑 Reuniões Direção</option>
+              <option value="tarefas">📌 Tarefas & Importantes</option>
+            </select>
+          </div>
+
+          <!-- Tipo / Subcategoria -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaTipo" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Tipo / Subtipo *</label>
+            <input type="text" id="formAgendaTipo" class="form-control" required placeholder="Ex: Jogo Oficial, Torneio, Tradição, etc." style="width: 100%;">
+          </div>
+
+          <!-- Estado -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaEstado" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Estado *</label>
+            <select id="formAgendaEstado" class="form-control" required style="width: 100%;">
+              <option value="Confirmado">Confirmado</option>
+              <option value="Em Planeamento">Em Planeamento</option>
+              <option value="Pavilhão Reservado">Pavilhão Reservado</option>
+              <option value="Concluído">Concluído</option>
+              <option value="Adiado">Adiado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Título -->
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="formAgendaTitulo" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Título / Designação Oficial *</label>
+          <input type="text" id="formAgendaTitulo" class="form-control" required placeholder="Ex: Futsal Seniores Masc. • ARCA vs AD Casal" style="width: 100%;">
+        </div>
+
+        <!-- Subtítulo / Adversário -->
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="formAgendaSubtitulo" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Subtítulo / Competição / Adversário</label>
+          <input type="text" id="formAgendaSubtitulo" class="form-control" placeholder="Ex: Campeonato Distrital AFA • 1ª Divisão" style="width: 100%;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+          <!-- Data -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaData" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Data *</label>
+            <input type="date" id="formAgendaData" class="form-control" required style="width: 100%;">
+          </div>
+
+          <!-- Hora Início -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaHoraInicio" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Hora Início *</label>
+            <input type="time" id="formAgendaHoraInicio" class="form-control" required style="width: 100%;">
+          </div>
+
+          <!-- Hora Fim -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaHoraFim" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Hora Fim (Opcional)</label>
+            <input type="time" id="formAgendaHoraFim" class="form-control" style="width: 100%;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <!-- Local -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaLocal" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Local / Instalação *</label>
+            <input type="text" id="formAgendaLocal" class="form-control" required value="Pavilhão Carlos Almeida, Aguada de Baixo" style="width: 100%;">
+          </div>
+
+          <!-- Âmbito -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaAmbito" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Âmbito *</label>
+            <select id="formAgendaAmbito" class="form-control" required style="width: 100%;">
+              <option value="Casa">Casa (Pavilhão)</option>
+              <option value="Fora">Fora (Deslocação)</option>
+              <option value="Exterior">Exterior / Freguesia</option>
+              <option value="Interno">Interno (Sede)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+          <!-- Secção -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaSeccao" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Secção / Modalidade</label>
+            <input type="text" id="formAgendaSeccao" class="form-control" placeholder="Ex: Futsal Masculino, BiciARCA, Direção..." style="width: 100%;">
+          </div>
+
+          <!-- Escalão -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaEscalao" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Escalão / Público</label>
+            <input type="text" id="formAgendaEscalao" class="form-control" placeholder="Ex: Seniores, Veteranos, Sócios..." style="width: 100%;">
+          </div>
+
+          <!-- Responsável -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaResponsavel" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Responsável</label>
+            <input type="text" id="formAgendaResponsavel" class="form-control" placeholder="Ex: Jorge Cunha, Danilo Saraiva..." style="width: 100%;">
+          </div>
+
+          <!-- Contacto -->
+          <div class="form-group">
+            <label class="form-label" for="formAgendaContacto" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Contacto Telefónico</label>
+            <input type="text" id="formAgendaContacto" class="form-control" placeholder="Ex: 966 100 115" style="width: 100%;">
+          </div>
+        </div>
+
+        <!-- Descrição -->
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="formAgendaDescricao" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Descrição / Detalhes da Marcação</label>
+          <textarea id="formAgendaDescricao" class="form-control" rows="3" placeholder="Informações detalhadas sobre a atividade ou jogo..." style="width: 100%;"></textarea>
+        </div>
+
+        <!-- Logística & Tarefas -->
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" for="formAgendaLogistica" style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">Apoio Logístico & Tarefas (Bar, Bilheteira, Limpeza, Policiamento...)</label>
+          <textarea id="formAgendaLogistica" class="form-control" rows="2" placeholder="Ex: Bar por Artur e Sérgio; Bilheteira por Raquel Cunha..." style="width: 100%;"></textarea>
+        </div>
+
+        <!-- Botões de Submissão -->
+        <div style="border-top: 1px solid var(--border-light); padding-top: 1.25rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="fecharModalAgendaForm()">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btnSaveAgenda">
+            <span>💾 Guardar Registo</span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Scripts Necessários com Cache Busting -->
+  <script src="js/socios-data.js?v=20261127_v5"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-sync.js?v=20261127_v5"></script>
+  <script src="js/agenda-data.js?v=20261127_v5"></script>
+  <script src="js/main.js?v=20261127_v5"></script>
+
+  <!-- LÓGICA COMPLETA DE GESTÃO DO MÓDULO GESTÃO (CALENDÁRIO, JOGOS, EVENTOS, REUNIÕES, TAREFAS) -->
+  <script id="agendaLogicScript">
+    // =========================================================================
+    // ESTADO GLOBAL DA PÁGINA
+    // =========================================================================
+    let agendaList = [];
+    let selectedAgendaIds = new Set();
+    let currentFichaItem = null;
+
+    // Filtros e Ordenação
+    let activeCategoria = 'all';
+    let activeEstado = 'all';
+    let activeAmbito = 'all';
+    let activeSearchText = '';
+    let sortField = 'data';
+    let sortDir = 'desc';
+
+    // Vista: 'table' ou 'cards'
+    let agendaViewMode = localStorage.getItem('arca_agenda_view_mode') || 'table';
+
+    // Configuração de Colunas da Tabela
+    const STORAGE_KEY_COLS_AGENDA = 'arca_cols_agenda_v1';
+    const DEFAULT_AGENDA_COLS = {
+      selecao: true,
+      data: true,
+      categoria: true,
+      titulo: true,
+      local: true,
+      responsavel: true,
+      estado: true,
+      acoes: true
+    };
+    let activeAgendaCols = { ...DEFAULT_AGENDA_COLS };
+
+    function loadAgendaCols() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_COLS_AGENDA);
+        if (saved) {
+          activeAgendaCols = { ...DEFAULT_AGENDA_COLS, ...JSON.parse(saved) };
+          if (activeAgendaCols.selecao === undefined) activeAgendaCols.selecao = true;
+        } else {
+          activeAgendaCols = { ...DEFAULT_AGENDA_COLS };
+        }
+      } catch (e) {
+        activeAgendaCols = { ...DEFAULT_AGENDA_COLS };
+      }
+    }
+
+    function saveAgendaCols() {
+      try {
+        localStorage.setItem(STORAGE_KEY_COLS_AGENDA, JSON.stringify(activeAgendaCols));
+      } catch (e) {}
+    }
+
+    function isAgendaColVisible(colKey) {
+      return activeAgendaCols[colKey] !== false;
+    }
+
+    // =========================================================================
+    // INICIALIZAÇÃO DA PÁGINA
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAgendaCols();
+      initAgendaColPicker();
+
+      // Ler filtro da URL se existir (ex: ?filtro=jogos)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlFiltro = urlParams.get('filtro');
+      if (urlFiltro && ['jogos', 'eventos', 'reunioes', 'tarefas'].includes(urlFiltro.toLowerCase())) {
+        activeCategoria = urlFiltro.toLowerCase();
+      }
+
+      // Carregar dados locais
+      loadAgendaData();
+      atualizarTitulosEAbas();
+      atualizarContadoresAbas();
+      updateAgendaStats();
+      renderAgenda();
+      applyAgendaViewModeUI();
+
+      // Sincronização automática em segundo plano com o Firestore Cloud
+      if (typeof window.syncArcaAgendaFromCloud === 'function') {
+        window.syncArcaAgendaFromCloud((cloudItems) => {
+          if (Array.isArray(cloudItems) && cloudItems.length > 0) {
+            agendaList = cloudItems;
+            atualizarContadoresAbas();
+            updateAgendaStats();
+            renderAgenda();
           }
         });
-
-        // Atualizar títulos e botões
-        const titleMap = {
-          jogos: 'Calendário de Jogos',
-          eventos: 'Calendário de Eventos',
-          reunioes: 'Calendário de Reuniões de Direção',
-          tarefas: 'Tarefas e Datas Importantes'
-        };
-
-        if (titleMap[filtro]) {
-          document.getElementById('pageHeadingAgenda').textContent = titleMap[filtro];
-          document.getElementById('agendaCategoryTitle').textContent = titleMap[filtro];
-        }
-
-        // Realçar botão da aba
-        const tabBtn = document.getElementById('tabBtn' + filtro.charAt(0).toUpperCase() + filtro.slice(1));
-        if (tabBtn) {
-          tabBtn.className = 'btn btn-primary btn-sm';
-          document.getElementById('tabBtnAll').className = 'btn btn-outline btn-sm';
-        }
-
-        // Realçar sublink na sidebar
-        document.querySelectorAll('.sidebar-nav .nav-sublink').forEach(link => link.classList.remove('active'));
-        const activeLink = document.getElementById('sublink' + filtro.charAt(0).toUpperCase() + filtro.slice(1));
-        if (activeLink) activeLink.classList.add('active');
       }
+
+      // Fechar modal ao premir Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          fecharModalAgendaFicha();
+          fecharModalAgendaForm();
+        }
+      });
+
+      // Fechar menus de colunas e exportar ao clicar fora
+      document.addEventListener('click', (e) => {
+        const colMenu = document.getElementById('colPickerMenuAgenda');
+        const colBtn = document.getElementById('btnToggleColPicker');
+        if (colMenu && colBtn && !colMenu.contains(e.target) && !colBtn.contains(e.target)) {
+          colMenu.style.display = 'none';
+        }
+
+        const expMenu = document.getElementById('exportMenuAgenda');
+        const expBtn = document.getElementById('btnToggleExportMenu');
+        if (expMenu && expBtn && !expMenu.contains(e.target) && !expBtn.contains(e.target)) {
+          expMenu.style.display = 'none';
+        }
+      });
     });
+
+    function loadAgendaData() {
+      if (typeof window.getArcaAgenda === 'function') {
+        agendaList = window.getArcaAgenda();
+      } else {
+        try {
+          const raw = localStorage.getItem('arca_gestao_agenda_v1');
+          agendaList = raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          agendaList = [];
+        }
+      }
+    }
+
+    function saveAgendaData() {
+      if (typeof window.saveArcaAgendaLocal === 'function') {
+        window.saveArcaAgendaLocal(agendaList);
+      } else {
+        localStorage.setItem('arca_gestao_agenda_v1', JSON.stringify(agendaList));
+      }
+      atualizarContadoresAbas();
+      updateAgendaStats();
+      renderAgenda();
+    }
+
+    window.recarregarAgendaNuvem = async function(btn) {
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ A sincronizar...</span>';
+      }
+      if (typeof window.syncArcaAgendaFromCloud === 'function') {
+        try {
+          const res = await window.syncArcaAgendaFromCloud();
+          if (res && Array.isArray(res)) {
+            agendaList = res;
+            atualizarContadoresAbas();
+            updateAgendaStats();
+            renderAgenda();
+            if (window.showToast) window.showToast('Agendas sincronizadas com sucesso da Cloud Firestore!', 'success');
+          }
+        } catch (e) {
+          if (window.showToast) window.showToast('Erro ao sincronizar com a Cloud.', 'warning');
+        }
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🔄 Sincronizar Nuvem</span>';
+      }
+    };
+
+    // =========================================================================
+    // FILTROS, PESQUISA E ORDENAÇÃO
+    // =========================================================================
+    window.filtrarCategoria = function(cat) {
+      activeCategoria = cat;
+      atualizarTitulosEAbas();
+      renderAgenda();
+    };
+
+    function atualizarTitulosEAbas() {
+      const titles = {
+        all: {
+          heading: 'Gestão & Calendário Geral',
+          subheading: 'Gestão completa e unificada de Jogos Oficiais, Eventos Associativos, Reuniões de Direção e Tarefas da A.R.C.A.',
+          breadcrumb: 'Calendário Geral'
+        },
+        jogos: {
+          heading: 'Gestão • Calendário de Jogos Oficiais',
+          subheading: 'Acompanhamento dos jogos de Futsal Masculino, Feminino, torneios e competições federadas da ARCA.',
+          breadcrumb: 'Jogos'
+        },
+        eventos: {
+          heading: 'Gestão • Eventos Anuais & Atividades ARCA',
+          subheading: 'Planeamento, logística, voluntários e coordenação dos grandes eventos associativos em Aguada de Baixo.',
+          breadcrumb: 'Eventos'
+        },
+        reunioes: {
+          heading: 'Gestão • Reuniões de Direção & Assembleias',
+          subheading: 'Convocatórias, datas de reuniões de Direção, Assembleias Gerais e deliberações associativas.',
+          breadcrumb: 'Reuniões'
+        },
+        tarefas: {
+          heading: 'Gestão • Tarefas, Manutenção & Prazos Importantes',
+          subheading: 'Prazos legais, inscrições federativas AFA, obras no pavilhão e tarefas administrativas de relevo.',
+          breadcrumb: 'Tarefas e Importantes'
+        }
+      };
+
+      const info = titles[activeCategoria] || titles.all;
+      const elHeading = document.getElementById('pageHeadingAgenda');
+      const elSubheading = document.getElementById('pageSubheadingAgenda');
+      const elBreadcrumb = document.getElementById('agendaCategoryTitle');
+
+      if (elHeading) elHeading.textContent = info.heading;
+      if (elSubheading) elSubheading.textContent = info.subheading;
+      if (elBreadcrumb) elBreadcrumb.textContent = info.breadcrumb;
+
+      // Realçar abas
+      const tabIds = {
+        all: 'tabBtnAll',
+        jogos: 'tabBtnJogos',
+        eventos: 'tabBtnEventos',
+        reunioes: 'tabBtnReunioes',
+        tarefas: 'tabBtnTarefas'
+      };
+
+      Object.entries(tabIds).forEach(([key, btnId]) => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          if (key === activeCategoria) {
+            btn.className = 'btn btn-primary btn-sm tab-cat-btn';
+          } else {
+            btn.className = 'btn btn-outline btn-sm tab-cat-btn';
+          }
+        }
+      });
+
+      // Realçar sublink na sidebar
+      document.querySelectorAll('.sidebar-nav .nav-sublink').forEach(link => link.classList.remove('active'));
+      const activeSidebarId = activeCategoria === 'all' ? 'sublinkGeral' : 'sublink' + activeCategoria.charAt(0).toUpperCase() + activeCategoria.slice(1);
+      const activeLink = document.getElementById(activeSidebarId);
+      if (activeLink) activeLink.classList.add('active');
+    }
+
+    function atualizarContadoresAbas() {
+      const countAll = agendaList.length;
+      const countJogos = agendaList.filter(x => x.categoria === 'jogos').length;
+      const countEventos = agendaList.filter(x => x.categoria === 'eventos').length;
+      const countReunioes = agendaList.filter(x => x.categoria === 'reunioes').length;
+      const countTarefas = agendaList.filter(x => x.categoria === 'tarefas').length;
+
+      const elA = document.getElementById('countTabAll');
+      const elJ = document.getElementById('countTabJogos');
+      const elE = document.getElementById('countTabEventos');
+      const elR = document.getElementById('countTabReunioes');
+      const elT = document.getElementById('countTabTarefas');
+
+      if (elA) elA.textContent = countAll;
+      if (elJ) elJ.textContent = countJogos;
+      if (elE) elE.textContent = countEventos;
+      if (elR) elR.textContent = countReunioes;
+      if (elT) elT.textContent = countTarefas;
+    }
+
+    window.onAgendaSearchInput = function(val) {
+      activeSearchText = (val || '').trim().toLowerCase();
+      renderAgenda();
+    };
+
+    window.onFiltroEstadoChange = function(val) {
+      activeEstado = val;
+      renderAgenda();
+    };
+
+    window.onFiltroAmbitoChange = function(val) {
+      activeAmbito = val;
+      renderAgenda();
+    };
+
+    window.limparFiltrosAgenda = function() {
+      activeSearchText = '';
+      activeEstado = 'all';
+      activeAmbito = 'all';
+      activeCategoria = 'all';
+
+      const sInput = document.getElementById('inputSearchAgenda');
+      if (sInput) sInput.value = '';
+
+      const sEstado = document.getElementById('selectFiltroEstado');
+      if (sEstado) sEstado.value = 'all';
+
+      const sAmbito = document.getElementById('selectFiltroAmbito');
+      if (sAmbito) sAmbito.value = 'all';
+
+      atualizarTitulosEAbas();
+      renderAgenda();
+    };
+
+    window.setAgendaSort = function(field) {
+      if (sortField === field) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortField = field;
+        sortDir = field === 'data' ? 'desc' : 'asc';
+      }
+      updateSortIndicators();
+      renderAgenda();
+    };
+
+    function updateSortIndicators() {
+      const fields = ['Data', 'Categoria', 'Titulo', 'Local', 'Estado'];
+      fields.forEach(f => {
+        const ind = document.getElementById('sortInd' + f);
+        if (ind) {
+          if (sortField.toLowerCase() === f.toLowerCase()) {
+            ind.textContent = sortDir === 'asc' ? '▲' : '▼';
+            ind.style.color = 'var(--primary)';
+          } else {
+            ind.textContent = '↕';
+            ind.style.color = '#94a3b8';
+          }
+        }
+      });
+    }
+
+    function getFiltradosAgenda() {
+      return agendaList.filter(item => {
+        // Categoria
+        if (activeCategoria !== 'all' && item.categoria !== activeCategoria) {
+          return false;
+        }
+
+        // Estado
+        if (activeEstado !== 'all' && item.estado !== activeEstado) {
+          return false;
+        }
+
+        // Âmbito
+        if (activeAmbito !== 'all' && item.ambito !== activeAmbito) {
+          return false;
+        }
+
+        // Pesquisa de texto livre
+        if (activeSearchText) {
+          const haystack = [
+            item.titulo,
+            item.subtitulo,
+            item.local,
+            item.seccao,
+            item.escalao,
+            item.adversario,
+            item.responsavel,
+            item.descricao,
+            item.logistica,
+            item.data
+          ].filter(Boolean).join(' ').toLowerCase();
+
+          if (!haystack.includes(activeSearchText)) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    }
+
+    function updateAgendaStats() {
+      const elTotal = document.getElementById('statTotalAgendas');
+      const elJogos = document.getElementById('statJogosAgendados');
+      const elEventos = document.getElementById('statEventosAssociacao');
+      const elReunioes = document.getElementById('statReunioesTarefas');
+
+      if (elTotal) elTotal.textContent = agendaList.length;
+      if (elJogos) elJogos.textContent = agendaList.filter(x => x.categoria === 'jogos').length;
+      if (elEventos) elEventos.textContent = agendaList.filter(x => x.categoria === 'eventos').length;
+      if (elReunioes) elReunioes.textContent = agendaList.filter(x => x.categoria === 'reunioes' || x.categoria === 'tarefas').length;
+    }
+
+    // =========================================================================
+    // RENDERIZAÇÃO: TABELA E CARTÕES
+    // =========================================================================
+    function renderAgenda() {
+      const tbody = document.getElementById('tbodyAgenda');
+      const cardsContainer = document.getElementById('containerCardsView');
+      const emptyState = document.getElementById('emptyAgendaState');
+
+      const filtrados = getFiltradosAgenda();
+
+      // Ordenar
+      filtrados.sort((a, b) => {
+        let valA = a[sortField] || '';
+        let valB = b[sortField] || '';
+
+        if (sortField === 'data') {
+          valA = (a.data || '') + 'T' + (a.horaInicio || '00:00');
+          valB = (b.data || '') + 'T' + (b.horaInicio || '00:00');
+          return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+
+        if (typeof valA === 'string') {
+          return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+
+        return sortDir === 'asc' ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+      });
+
+      if (filtrados.length === 0) {
+        if (tbody) tbody.innerHTML = '';
+        if (cardsContainer) cardsContainer.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        updateSelectionBarUI();
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      // 1. Renderizar Tabela
+      if (tbody) {
+        tbody.innerHTML = filtrados.map(item => {
+          const isSelected = selectedAgendaIds.has(Number(item.id));
+          const catPill = getCategoriaPillHtml(item.categoria);
+          const estadoBadge = getEstadoBadgeHtml(item.estado);
+          const dataFmt = formatarDataCurta(item.data, item.horaInicio);
+          const ambitoBadge = getAmbitoBadgeHtml(item.ambito);
+
+          return `
+            <tr class="${isSelected ? 'row-selected' : ''}" style="${isSelected ? 'background: #eff6ff;' : ''}">
+              <td class="col-selecao" style="text-align: center; ${isAgendaColVisible('selecao') ? '' : 'display: none;'}">
+                <input type="checkbox" data-id="${item.id}" ${isSelected ? 'checked' : ''} onchange="toggleSelectRowAgenda(${item.id}, this.checked)">
+              </td>
+              <td class="col-data" style="${isAgendaColVisible('data') ? '' : 'display: none;'}">
+                <div style="font-weight: 800; color: var(--text-title);">${dataFmt.diaMes}</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">${dataFmt.hora}</div>
+              </td>
+              <td class="col-categoria" style="${isAgendaColVisible('categoria') ? '' : 'display: none;'}">
+                ${catPill}
+              </td>
+              <td class="col-titulo" style="${isAgendaColVisible('titulo') ? '' : 'display: none;'}">
+                <div style="font-weight: 700; color: var(--text-title); font-size: 0.93rem; cursor: pointer;" onclick="abrirFichaAgenda(${item.id})">
+                  ${window.escapeHtml(item.titulo)}
+                </div>
+                ${item.subtitulo ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">${window.escapeHtml(item.subtitulo)}</div>` : ''}
+              </td>
+              <td class="col-local" style="${isAgendaColVisible('local') ? '' : 'display: none;'}">
+                <div style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 2px;">
+                  ${ambitoBadge}
+                </div>
+                <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">
+                  ${window.escapeHtml(item.local || 'Pavilhão Carlos Almeida')}
+                </div>
+              </td>
+              <td class="col-responsavel" style="${isAgendaColVisible('responsavel') ? '' : 'display: none;'}">
+                <div style="font-weight: 600; color: var(--text-body); font-size: 0.86rem;">${window.escapeHtml(item.responsavel || 'Direção ARCA')}</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">${window.escapeHtml(item.seccao || 'Geral')}</div>
+              </td>
+              <td class="col-estado" style="text-align: center; ${isAgendaColVisible('estado') ? '' : 'display: none;'}">
+                ${estadoBadge}
+              </td>
+              <td class="col-acoes" style="text-align: right; padding-right: 1.25rem; ${isAgendaColVisible('acoes') ? '' : 'display: none;'}">
+                <div style="display: inline-flex; gap: 0.35rem; align-items: center;">
+                  <button type="button" class="btn btn-outline btn-xs" onclick="abrirFichaAgenda(${item.id})" title="Ver ficha completa">
+                    👁️ Ver
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-xs" onclick="abrirEdicaoAgenda(${item.id})" title="Editar registo">
+                    ✏️
+                  </button>
+                  <button type="button" class="btn btn-xs" onclick="confirmarEliminarAgenda(${item.id})" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5;" title="Apagar registo">
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 2. Renderizar Cartões
+      if (cardsContainer) {
+        cardsContainer.innerHTML = filtrados.map(item => {
+          const isSelected = selectedAgendaIds.has(Number(item.id));
+          const catPill = getCategoriaPillHtml(item.categoria);
+          const estadoBadge = getEstadoBadgeHtml(item.estado);
+          const dataFmt = formatarDataCurta(item.data, item.horaInicio);
+          const ambitoBadge = getAmbitoBadgeHtml(item.ambito);
+
+          return `
+            <div class="card-box agenda-card-item ${isSelected ? 'card-selected' : ''}" style="display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; border: 1px solid ${isSelected ? '#93c5fd' : 'var(--border-light)'}; background: ${isSelected ? '#f0f7ff' : '#ffffff'}; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+              <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" data-id="${item.id}" ${isSelected ? 'checked' : ''} onchange="toggleSelectRowAgenda(${item.id}, this.checked)">
+                    ${catPill}
+                  </div>
+                  <div>${estadoBadge}</div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 0.85rem;">
+                  <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); text-align: center; min-width: 75px; padding: 0.5rem 0.6rem;">
+                    <div style="font-size: 1.45rem; font-weight: 800; line-height: 1; color: var(--primary);">${dataFmt.diaNumero}</div>
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">${dataFmt.mesAno}</div>
+                    <div style="font-size: 0.72rem; font-weight: 600; color: #64748b; margin-top: 2px;">${dataFmt.hora}</div>
+                  </div>
+
+                  <div style="flex: 1;">
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-title); margin: 0 0 0.25rem 0; cursor: pointer;" onclick="abrirFichaAgenda(${item.id})">
+                      ${window.escapeHtml(item.titulo)}
+                    </h3>
+                    ${item.subtitulo ? `<div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.4rem;">${window.escapeHtml(item.subtitulo)}</div>` : ''}
+                    <div style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: var(--text-body);">
+                      ${ambitoBadge}
+                      <span style="font-size: 0.8rem; color: var(--text-muted);">${window.escapeHtml(item.local || '')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                ${item.descricao ? `
+                  <p style="font-size: 0.86rem; color: var(--text-body); margin: 0 0 0.85rem 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    ${window.escapeHtml(item.descricao)}
+                  </p>
+                ` : ''}
+              </div>
+
+              <div style="border-top: 1px solid var(--border-light); padding-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 0.78rem; color: var(--text-muted);">
+                  Resp: <strong>${window.escapeHtml(item.responsavel ? item.responsavel.split(' ')[0] : 'ARCA')}</strong>
+                </div>
+                <div style="display: flex; gap: 0.35rem;">
+                  <button type="button" class="btn btn-outline btn-xs" onclick="abrirFichaAgenda(${item.id})">👁️ Ver Ficha</button>
+                  <button type="button" class="btn btn-secondary btn-xs" onclick="abrirEdicaoAgenda(${item.id})">✏️</button>
+                  <button type="button" class="btn btn-xs" onclick="confirmarEliminarAgenda(${item.id})" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5;">🗑️</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Atualizar checkbox mestre e barra de seleção
+      updateSelectAllCheckboxState(filtrados);
+      updateSelectionBarUI();
+    }
+
+    // =========================================================================
+    // SELEÇÃO E BARRA DE AÇÕES EM LOTE
+    // =========================================================================
+    window.toggleSelectRowAgenda = function(id, isChecked) {
+      const numId = Number(id);
+      if (isChecked) {
+        selectedAgendaIds.add(numId);
+      } else {
+        selectedAgendaIds.delete(numId);
+      }
+      renderAgenda();
+    };
+
+    window.toggleSelectAllAgenda = function(isChecked) {
+      const filtrados = getFiltradosAgenda();
+      if (isChecked) {
+        filtrados.forEach(item => selectedAgendaIds.add(Number(item.id)));
+      } else {
+        selectedAgendaIds.clear();
+      }
+      renderAgenda();
+    };
+
+    window.limparSelecaoAgenda = function() {
+      selectedAgendaIds.clear();
+      renderAgenda();
+    };
+
+    function updateSelectAllCheckboxState(filtrados) {
+      const chk = document.getElementById('selectAllCheckbox');
+      if (!chk) return;
+
+      if (!filtrados || filtrados.length === 0) {
+        chk.checked = false;
+        chk.indeterminate = false;
+        return;
+      }
+
+      const countSelectedInView = filtrados.filter(item => selectedAgendaIds.has(Number(item.id))).length;
+      if (countSelectedInView === 0) {
+        chk.checked = false;
+        chk.indeterminate = false;
+      } else if (countSelectedInView === filtrados.length) {
+        chk.checked = true;
+        chk.indeterminate = false;
+      } else {
+        chk.checked = false;
+        chk.indeterminate = true;
+      }
+    }
+
+    function updateSelectionBarUI() {
+      const bar = document.getElementById('selectionActionBar');
+      const label = document.getElementById('selectionCountLabel');
+      if (!bar) return;
+
+      const count = selectedAgendaIds.size;
+      if (count > 0) {
+        bar.style.display = 'flex';
+        if (label) label.textContent = `${count} ${count === 1 ? 'registo selecionado' : 'registos selecionados'}`;
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
+    // =========================================================================
+    // VISTA ALTERNADA: TABELA VS CARTÕES
+    // =========================================================================
+    window.setAgendaViewMode = function(mode) {
+      agendaViewMode = mode;
+      localStorage.setItem('arca_agenda_view_mode', mode);
+      applyAgendaViewModeUI();
+    };
+
+    function applyAgendaViewModeUI() {
+      const tableDiv = document.getElementById('containerTableView');
+      const cardsDiv = document.getElementById('containerCardsView');
+      const btnTable = document.getElementById('btnViewTable');
+      const btnCards = document.getElementById('btnViewCards');
+
+      if (agendaViewMode === 'cards') {
+        if (tableDiv) tableDiv.style.display = 'none';
+        if (cardsDiv) cardsDiv.style.display = 'grid';
+        if (btnCards) {
+          btnCards.className = 'btn-view-toggle active';
+          btnCards.style.background = '#ffffff';
+          btnCards.style.color = 'var(--primary)';
+          btnCards.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+        }
+        if (btnTable) {
+          btnTable.className = 'btn-view-toggle';
+          btnTable.style.background = 'transparent';
+          btnTable.style.color = 'var(--text-muted)';
+          btnTable.style.boxShadow = 'none';
+        }
+      } else {
+        if (tableDiv) tableDiv.style.display = 'block';
+        if (cardsDiv) cardsDiv.style.display = 'none';
+        if (btnTable) {
+          btnTable.className = 'btn-view-toggle active';
+          btnTable.style.background = '#ffffff';
+          btnTable.style.color = 'var(--primary)';
+          btnTable.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+        }
+        if (btnCards) {
+          btnCards.className = 'btn-view-toggle';
+          btnCards.style.background = 'transparent';
+          btnCards.style.color = 'var(--text-muted)';
+          btnCards.style.boxShadow = 'none';
+        }
+      }
+    }
+
+    // =========================================================================
+    // SELETOR DE COLUNAS
+    // =========================================================================
+    window.toggleAgendaColPickerMenu = function(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('colPickerMenuAgenda');
+      if (menu) {
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      }
+      const expMenu = document.getElementById('exportMenuAgenda');
+      if (expMenu) expMenu.style.display = 'none';
+    };
+
+    function initAgendaColPicker() {
+      const list = document.getElementById('colPickerListAgenda');
+      if (!list) return;
+
+      const labels = {
+        selecao: 'Caixa de Seleção',
+        data: 'Data & Horário',
+        categoria: 'Categoria / Tipo',
+        titulo: 'Título & Adversário',
+        local: 'Local & Recinto',
+        responsavel: 'Secção & Responsável',
+        estado: 'Estado da Marcação',
+        acoes: 'Ações Disponíveis'
+      };
+
+      list.innerHTML = Object.entries(labels).map(([key, label]) => {
+        const isChecked = isAgendaColVisible(key);
+        return `
+          <label style="display: flex; align-items: center; gap: 0.6rem; padding: 0.35rem 0.85rem; font-size: 0.84rem; cursor: pointer; color: var(--text-body);" onclick="event.stopPropagation()">
+            <input type="checkbox" data-col="${key}" ${isChecked ? 'checked' : ''} onchange="toggleAgendaCol('${key}', this.checked)">
+            <span>${label}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    window.toggleAgendaCol = function(colKey, isVisible) {
+      activeAgendaCols[colKey] = isVisible;
+      saveAgendaCols();
+      renderAgenda();
+    };
+
+    // =========================================================================
+    // MENU EXPORTAR E IMPRIMIR DROPDOWN
+    // =========================================================================
+    window.toggleAgendaExportMenu = function(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('exportMenuAgenda');
+      if (menu) {
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      }
+      const colMenu = document.getElementById('colPickerMenuAgenda');
+      if (colMenu) colMenu.style.display = 'none';
+    };
+
+    // =========================================================================
+    // CONSULTA DETALHADA (FICHA DO JOGO / EVENTO / REUNIÃO)
+    // =========================================================================
+    window.abrirFichaAgenda = function(id) {
+      const item = agendaList.find(x => Number(x.id) === Number(id));
+      if (!item) return;
+
+      currentFichaItem = item;
+
+      document.getElementById('fichaIdLabel').textContent = `#${String(item.id).padStart(3, '0')}`;
+      document.getElementById('fichaTitulo').textContent = item.titulo || 'Sem Título';
+      document.getElementById('fichaSubtitulo').textContent = item.subtitulo || 'Sem subtítulo';
+
+      // Badges
+      const catBadge = document.getElementById('fichaCatBadge');
+      if (catBadge) {
+        catBadge.textContent = getCategoriaNome(item.categoria);
+        catBadge.style.background = getCategoriaCorFundo(item.categoria);
+        catBadge.style.color = getCategoriaCorTexto(item.categoria);
+      }
+
+      const estadoBadge = document.getElementById('fichaEstadoBadge');
+      if (estadoBadge) {
+        estadoBadge.textContent = item.estado || 'Confirmado';
+        estadoBadge.style.background = getEstadoCorFundo(item.estado);
+        estadoBadge.style.color = getEstadoCorTexto(item.estado);
+      }
+
+      // Detalhes
+      const dataStr = formatarDataExtensa(item.data, item.horaInicio, item.horaFim);
+      document.getElementById('fichaDataHora').textContent = dataStr;
+      document.getElementById('fichaLocal').textContent = `${item.local || 'Pavilhão Carlos Almeida'} (${item.ambito || 'Geral'})`;
+      document.getElementById('fichaSeccaoEscalao').textContent = `${item.seccao || 'Geral'} • ${item.escalao || 'Geral'}`;
+      document.getElementById('fichaResponsavel').textContent = `${item.responsavel || 'Direção ARCA'} ${item.contacto ? '(' + item.contacto + ')' : ''}`;
+
+      document.getElementById('fichaDescricao').textContent = item.descricao || 'Sem descrição registada.';
+      document.getElementById('fichaLogistica').textContent = item.logistica || 'Sem requisitos logísticos especiais registados.';
+      document.getElementById('fichaEmissaoData').textContent = new Date().toLocaleDateString('pt-PT');
+
+      const modal = document.getElementById('modalAgendaFicha');
+      if (modal) modal.style.display = 'flex';
+    };
+
+    window.fecharModalAgendaFicha = function() {
+      const modal = document.getElementById('modalAgendaFicha');
+      if (modal) modal.style.display = 'none';
+      currentFichaItem = null;
+    };
+
+    window.editarRegistoFromFicha = function() {
+      if (currentFichaItem) {
+        const id = currentFichaItem.id;
+        fecharModalAgendaFicha();
+        abrirEdicaoAgenda(id);
+      }
+    };
+
+    // =========================================================================
+    // FORMULÁRIO DE CRIAÇÃO E EDIÇÃO
+    // =========================================================================
+    window.abrirNovoRegistoAgenda = function() {
+      document.getElementById('modalFormTitle').innerHTML = '<span>📝 Novo Registo de Agenda</span>';
+      document.getElementById('formAgendaId').value = '';
+      document.getElementById('formAgendaItem').reset();
+
+      // Categoria pré-selecionada se não estiver em "all"
+      if (activeCategoria !== 'all') {
+        document.getElementById('formAgendaCategoria').value = activeCategoria;
+      } else {
+        document.getElementById('formAgendaCategoria').value = 'jogos';
+      }
+
+      document.getElementById('formAgendaData').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('formAgendaHoraInicio').value = '18:00';
+      document.getElementById('formAgendaLocal').value = 'Pavilhão Carlos Almeida, Aguada de Baixo';
+      document.getElementById('formAgendaAmbito').value = 'Casa';
+      document.getElementById('formAgendaResponsavel').value = 'Jorge Manuel da Silva Cunha';
+      document.getElementById('formAgendaEstado').value = 'Confirmado';
+
+      const modal = document.getElementById('modalAgendaForm');
+      if (modal) modal.style.display = 'flex';
+    };
+
+    window.abrirEdicaoAgenda = function(id) {
+      const item = agendaList.find(x => Number(x.id) === Number(id));
+      if (!item) return;
+
+      document.getElementById('modalFormTitle').innerHTML = `<span>✏️ Editar Registo #${item.id}</span>`;
+      document.getElementById('formAgendaId').value = item.id;
+
+      document.getElementById('formAgendaCategoria').value = item.categoria || 'jogos';
+      document.getElementById('formAgendaTipo').value = item.tipo || '';
+      document.getElementById('formAgendaEstado').value = item.estado || 'Confirmado';
+      document.getElementById('formAgendaTitulo').value = item.titulo || '';
+      document.getElementById('formAgendaSubtitulo').value = item.subtitulo || '';
+      document.getElementById('formAgendaData').value = item.data || '';
+      document.getElementById('formAgendaHoraInicio').value = item.horaInicio || '';
+      document.getElementById('formAgendaHoraFim').value = item.horaFim || '';
+      document.getElementById('formAgendaLocal').value = item.local || '';
+      document.getElementById('formAgendaAmbito').value = item.ambito || 'Casa';
+      document.getElementById('formAgendaSeccao').value = item.seccao || '';
+      document.getElementById('formAgendaEscalao').value = item.escalao || '';
+      document.getElementById('formAgendaResponsavel').value = item.responsavel || '';
+      document.getElementById('formAgendaContacto').value = item.contacto || '';
+      document.getElementById('formAgendaDescricao').value = item.descricao || '';
+      document.getElementById('formAgendaLogistica').value = item.logistica || '';
+
+      const modal = document.getElementById('modalAgendaForm');
+      if (modal) modal.style.display = 'flex';
+    };
+
+    window.fecharModalAgendaForm = function() {
+      const modal = document.getElementById('modalAgendaForm');
+      if (modal) modal.style.display = 'none';
+    };
+
+    window.aoMudarCategoriaForm = function(cat) {
+      const tipoInput = document.getElementById('formAgendaTipo');
+      if (!tipoInput) return;
+      if (cat === 'jogos') tipoInput.value = 'Jogo Oficial';
+      else if (cat === 'eventos') tipoInput.value = 'Evento Associativo';
+      else if (cat === 'reunioes') tipoInput.value = 'Reunião de Direção';
+      else if (cat === 'tarefas') tipoInput.value = 'Tarefa / Prazo';
+    };
+
+    window.submeterFormAgendaItem = async function(e) {
+      e.preventDefault();
+
+      const idVal = document.getElementById('formAgendaId').value;
+      const isEdit = Boolean(idVal);
+      const targetId = isEdit ? Number(idVal) : (agendaList.reduce((max, x) => Math.max(max, Number(x.id) || 0), 0) + 1);
+
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const autorNome = currentUser ? (currentUser.nome || currentUser.login) : 'Administrador';
+
+      const novoItem = {
+        id: targetId,
+        categoria: document.getElementById('formAgendaCategoria').value,
+        tipo: document.getElementById('formAgendaTipo').value.trim(),
+        estado: document.getElementById('formAgendaEstado').value,
+        titulo: document.getElementById('formAgendaTitulo').value.trim(),
+        subtitulo: document.getElementById('formAgendaSubtitulo').value.trim(),
+        data: document.getElementById('formAgendaData').value,
+        horaInicio: document.getElementById('formAgendaHoraInicio').value,
+        horaFim: document.getElementById('formAgendaHoraFim').value,
+        local: document.getElementById('formAgendaLocal').value.trim(),
+        ambito: document.getElementById('formAgendaAmbito').value,
+        seccao: document.getElementById('formAgendaSeccao').value.trim(),
+        escalao: document.getElementById('formAgendaEscalao').value.trim(),
+        responsavel: document.getElementById('formAgendaResponsavel').value.trim(),
+        contacto: document.getElementById('formAgendaContacto').value.trim(),
+        descricao: document.getElementById('formAgendaDescricao').value.trim(),
+        logistica: document.getElementById('formAgendaLogistica').value.trim(),
+        atualizadoEm: new Date().toISOString()
+      };
+
+      // VERIFICAÇÃO DE PERMISSÕES E APROVAÇÃO DE ADMINISTRADOR
+      const isAdmin = currentUser && (currentUser.perfil === 'Administrador Total' || currentUser.orgao === 'Direção' || currentUser.login === 'jorge');
+
+      if (!isAdmin) {
+        // Enviar pedido para pedidos_admin
+        if (typeof window.saveArcaPedidoAdminToCloud === 'function') {
+          await window.saveArcaPedidoAdminToCloud({
+            id: Date.now(),
+            utilizador: autorNome,
+            utilizador_id: currentUser ? currentUser.id : null,
+            tipo: isEdit ? 'Modificação de Agenda' : 'Criação de Agenda',
+            descricao: `Pedido de ${isEdit ? 'modificação' : 'criação'} do registo: "${novoItem.titulo}" (${novoItem.data})`,
+            estado: 'Pendente',
+            data_pedido: new Date().toISOString(),
+            detalhes: novoItem
+          });
+        }
+        fecharModalAgendaForm();
+        if (window.showToast) {
+          window.showToast('O seu pedido foi submetido com sucesso e aguarda validação do Administrador.', 'info');
+        } else {
+          alert('O seu pedido foi submetido com sucesso e aguarda validação do Administrador.');
+        }
+        return;
+      }
+
+      // Execução direta para Administradores
+      if (isEdit) {
+        const idx = agendaList.findIndex(x => Number(x.id) === targetId);
+        if (idx !== -1) {
+          novoItem.criadoPor = agendaList[idx].criadoPor || autorNome;
+          novoItem.criadoEm = agendaList[idx].criadoEm || new Date().toISOString();
+          agendaList[idx] = novoItem;
+        }
+      } else {
+        novoItem.criadoPor = autorNome;
+        novoItem.criadoEm = new Date().toISOString();
+        agendaList.unshift(novoItem);
+      }
+
+      // Guardar localmente
+      saveAgendaData();
+
+      // Guardar no Firestore Cloud
+      if (typeof window.saveArcaAgendaToCloud === 'function') {
+        window.saveArcaAgendaToCloud(novoItem);
+      }
+
+      // Registar no Histórico de Logs & Auditoria
+      if (typeof window.saveArcaLogToCloud === 'function') {
+        window.saveArcaLogToCloud({
+          id: Date.now(),
+          utilizador: autorNome,
+          acao: isEdit ? 'Edição de Registo de Gestão' : 'Criação de Registo de Gestão',
+          detalhes: `${isEdit ? 'Atualizada' : 'Criada'} marcação #${novoItem.id}: "${novoItem.titulo}" para a data ${novoItem.data}`,
+          data_hora: new Date().toISOString(),
+          tipo: 'agenda',
+          referencia_id: novoItem.id
+        });
+      }
+
+      fecharModalAgendaForm();
+      if (window.showToast) {
+        window.showToast(isEdit ? 'Registo atualizado com sucesso!' : 'Novo registo criado com sucesso!', 'success');
+      }
+    };
+
+    // =========================================================================
+    // REMOÇÃO COM CONFIRMAÇÃO E VALIDAÇÕES
+    // =========================================================================
+    window.confirmarEliminarAgenda = async function(id) {
+      const item = agendaList.find(x => Number(x.id) === Number(id));
+      if (!item) return;
+
+      const ok = confirm(`Tem a certeza que deseja eliminar o registo:\n\n"${item.titulo}" (${item.data})?\n\nEsta operação é permanente.`);
+      if (!ok) return;
+
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const autorNome = currentUser ? (currentUser.nome || currentUser.login) : 'Administrador';
+      const isAdmin = currentUser && (currentUser.perfil === 'Administrador Total' || currentUser.orgao === 'Direção' || currentUser.login === 'jorge');
+
+      if (!isAdmin) {
+        if (typeof window.saveArcaPedidoAdminToCloud === 'function') {
+          await window.saveArcaPedidoAdminToCloud({
+            id: Date.now(),
+            utilizador: autorNome,
+            utilizador_id: currentUser ? currentUser.id : null,
+            tipo: 'Eliminação de Registo de Agenda',
+            descricao: `Pedido para eliminar o registo #${item.id}: "${item.titulo}" (${item.data})`,
+            estado: 'Pendente',
+            data_pedido: new Date().toISOString(),
+            detalhes: { targetId: item.id }
+          });
+        }
+        if (window.showToast) {
+          window.showToast('O seu pedido de eliminação foi submetido e aguarda validação do Administrador.', 'info');
+        } else {
+          alert('O seu pedido de eliminação foi submetido e aguarda validação do Administrador.');
+        }
+        return;
+      }
+
+      // Execução direta
+      agendaList = agendaList.filter(x => Number(x.id) !== Number(id));
+      selectedAgendaIds.delete(Number(id));
+      saveAgendaData();
+
+      if (typeof window.deleteArcaAgendaFromCloud === 'function') {
+        window.deleteArcaAgendaFromCloud(id);
+      }
+
+      if (typeof window.saveArcaLogToCloud === 'function') {
+        window.saveArcaLogToCloud({
+          id: Date.now(),
+          utilizador: autorNome,
+          acao: 'Eliminação de Registo de Gestão',
+          detalhes: `Eliminado registo #${item.id}: "${item.titulo}" (${item.data})`,
+          data_hora: new Date().toISOString(),
+          tipo: 'agenda',
+          referencia_id: item.id
+        });
+      }
+
+      if (window.showToast) {
+        window.showToast('Registo eliminado com sucesso.', 'success');
+      }
+    };
+
+    window.eliminarAgendaSelecionados = async function() {
+      if (selectedAgendaIds.size === 0) return;
+
+      const count = selectedAgendaIds.size;
+      const ok = confirm(`Tem a certeza que deseja eliminar os ${count} registos selecionados da lista?\n\nEsta operação é permanente.`);
+      if (!ok) return;
+
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const autorNome = currentUser ? (currentUser.nome || currentUser.login) : 'Administrador';
+      const isAdmin = currentUser && (currentUser.perfil === 'Administrador Total' || currentUser.orgao === 'Direção' || currentUser.login === 'jorge');
+
+      const idsToDelete = Array.from(selectedAgendaIds);
+
+      if (!isAdmin) {
+        if (typeof window.saveArcaPedidoAdminToCloud === 'function') {
+          await window.saveArcaPedidoAdminToCloud({
+            id: Date.now(),
+            utilizador: autorNome,
+            utilizador_id: currentUser ? currentUser.id : null,
+            tipo: 'Eliminação em Bloco de Agenda',
+            descricao: `Pedido para eliminar ${count} registos de agenda selecionados.`,
+            estado: 'Pendente',
+            data_pedido: new Date().toISOString(),
+            detalhes: { targetIds: idsToDelete }
+          });
+        }
+        if (window.showToast) {
+          window.showToast('O seu pedido em bloco foi submetido e aguarda validação do Administrador.', 'info');
+        } else {
+          alert('O seu pedido em bloco foi submetido e aguarda validação do Administrador.');
+        }
+        return;
+      }
+
+      // Execução direta
+      agendaList = agendaList.filter(x => !selectedAgendaIds.has(Number(x.id)));
+
+      idsToDelete.forEach(id => {
+        if (typeof window.deleteArcaAgendaFromCloud === 'function') {
+          window.deleteArcaAgendaFromCloud(id);
+        }
+      });
+
+      if (typeof window.saveArcaLogToCloud === 'function') {
+        window.saveArcaLogToCloud({
+          id: Date.now(),
+          utilizador: autorNome,
+          acao: 'Eliminação Múltipla de Registo de Gestão',
+          detalhes: `Eliminados ${count} registos de agenda (IDs: ${idsToDelete.join(', ')})`,
+          data_hora: new Date().toISOString(),
+          tipo: 'agenda'
+        });
+      }
+
+      selectedAgendaIds.clear();
+      saveAgendaData();
+
+      if (window.showToast) {
+        window.showToast(`${count} registos eliminados com sucesso.`, 'success');
+      }
+    };
+
+    // =========================================================================
+    // EXPORTAÇÃO (CSV, EXCEL, PDF, IMPRIMIR)
+    // =========================================================================
+    function getListaParaExportar(onlySelected = false) {
+      if (onlySelected) {
+        return agendaList.filter(x => selectedAgendaIds.has(Number(x.id)));
+      }
+      return getFiltradosAgenda();
+    }
+
+    window.exportarAgendaCSV = function(onlySelected = false) {
+      const list = getListaParaExportar(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum registo disponível para exportar.', 'warning');
+        return;
+      }
+
+      const headers = [
+        'ID',
+        'Categoria',
+        'Tipo',
+        'Data',
+        'Hora Início',
+        'Hora Fim',
+        'Título',
+        'Subtítulo / Competição',
+        'Local',
+        'Âmbito',
+        'Secção',
+        'Escalão',
+        'Responsável',
+        'Contacto',
+        'Estado',
+        'Descrição',
+        'Logística'
+      ];
+
+      const rows = list.map(item => [
+        item.id || '',
+        `"${(item.categoria || '').replace(/"/g, '""')}"`,
+        `"${(item.tipo || '').replace(/"/g, '""')}"`,
+        item.data || '',
+        item.horaInicio || '',
+        item.horaFim || '',
+        `"${(item.titulo || '').replace(/"/g, '""')}"`,
+        `"${(item.subtitulo || '').replace(/"/g, '""')}"`,
+        `"${(item.local || '').replace(/"/g, '""')}"`,
+        `"${(item.ambito || '').replace(/"/g, '""')}"`,
+        `"${(item.seccao || '').replace(/"/g, '""')}"`,
+        `"${(item.escalao || '').replace(/"/g, '""')}"`,
+        `"${(item.responsavel || '').replace(/"/g, '""')}"`,
+        `"${(item.contacto || '').replace(/"/g, '""')}"`,
+        `"${(item.estado || '').replace(/"/g, '""')}"`,
+        `"${(item.descricao || '').replace(/"/g, '""')}"`,
+        `"${(item.logistica || '').replace(/"/g, '""')}"`
+      ].join(';'));
+
+      const csvContent = '\uFEFF' + headers.join(';') + '\r\n' + rows.join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ARCA_Agenda_Gestao_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      if (window.showToast) window.showToast('Listagem exportada para CSV com sucesso!', 'success');
+    };
+
+    window.exportarAgendaExcel = function(onlySelected = false) {
+      const list = getListaParaExportar(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum registo disponível para exportar.', 'warning');
+        return;
+      }
+
+      const rowsHtml = list.map(item => `
+        <tr>
+          <td>${item.id}</td>
+          <td>${window.escapeHtml(item.categoria)}</td>
+          <td>${window.escapeHtml(item.tipo)}</td>
+          <td>${item.data}</td>
+          <td>${item.horaInicio}</td>
+          <td>${item.horaFim || ''}</td>
+          <td>${window.escapeHtml(item.titulo)}</td>
+          <td>${window.escapeHtml(item.subtitulo || '')}</td>
+          <td>${window.escapeHtml(item.local || '')}</td>
+          <td>${window.escapeHtml(item.ambito || '')}</td>
+          <td>${window.escapeHtml(item.seccao || '')}</td>
+          <td>${window.escapeHtml(item.escalao || '')}</td>
+          <td>${window.escapeHtml(item.responsavel || '')}</td>
+          <td>${window.escapeHtml(item.contacto || '')}</td>
+          <td>${window.escapeHtml(item.estado || '')}</td>
+          <td>${window.escapeHtml(item.descricao || '')}</td>
+          <td>${window.escapeHtml(item.logistica || '')}</td>
+        </tr>
+      `).join('');
+
+      const tableHtml = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"></head>
+        <body>
+          <table border="1">
+            <thead>
+              <tr style="background: #0284c7; color: #ffffff; font-weight: bold;">
+                <th>ID</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Título</th>
+                <th>Subtítulo</th>
+                <th>Local</th>
+                <th>Âmbito</th>
+                <th>Secção</th>
+                <th>Escalão</th>
+                <th>Responsável</th>
+                <th>Contacto</th>
+                <th>Estado</th>
+                <th>Descrição</th>
+                <th>Logística</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ARCA_Agenda_Gestao_${new Date().toISOString().slice(0, 10)}.xls`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      if (window.showToast) window.showToast('Listagem exportada para Excel com sucesso!', 'success');
+    };
+
+    window.exportarAgendaPDF = function(onlySelected = false) {
+      const list = getListaParaExportar(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum registo disponível para gerar documento.', 'warning');
+        return;
+      }
+
+      const hojeData = new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const hojeHora = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+      const rowsHtml = list.map((item, idx) => `
+        <tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+          <td style="text-align: center; font-weight: 800;">${item.id}</td>
+          <td style="white-space: nowrap; font-weight: 700;">${item.data} <span style="color: #64748b; font-size: 8pt;">${item.horaInicio}</span></td>
+          <td style="text-transform: uppercase; font-size: 7.5pt; font-weight: 700;">${item.categoria}</td>
+          <td>
+            <div style="font-weight: 800; color: #0f172a;">${window.escapeHtml(item.titulo)}</div>
+            ${item.subtitulo ? `<div style="font-size: 7.5pt; color: #64748b;">${window.escapeHtml(item.subtitulo)}</div>` : ''}
+          </td>
+          <td>${window.escapeHtml(item.local || '')}</td>
+          <td>${window.escapeHtml(item.responsavel || '')}</td>
+          <td style="text-align: center; font-weight: 700;">${window.escapeHtml(item.estado || '')}</td>
+        </tr>
+      `).join('');
+
+      const docHtml = `
+        <!DOCTYPE html>
+        <html lang="pt-PT">
+        <head>
+          <meta charset="UTF-8">
+          <title>A.R.C.A. - Relatório Oficial de Agendas</title>
+          <style>
+            @page { size: A4 landscape; margin: 12mm 15mm; }
+            body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 9pt; color: #1e293b; margin: 0; padding: 0; }
+            .header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0284c7; padding-bottom: 10px; margin-bottom: 14px; }
+            .title-box h1 { margin: 0 0 3px 0; font-size: 14pt; color: #0284c7; font-weight: 800; text-transform: uppercase; }
+            .title-box p { margin: 0; font-size: 8pt; color: #64748b; font-weight: 600; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 8.5pt; }
+            th { background: #0284c7; color: #ffffff; text-align: left; padding: 6px 8px; font-size: 8pt; font-weight: 700; text-transform: uppercase; }
+            td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+            .footer-info { margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 8px; font-size: 8pt; color: #64748b; display: flex; justify-content: space-between; }
+          </style>
+        </head>
+        <body>
+          <div class="header-bar">
+            <div class="title-box">
+              <h1>A.R.C.A. - Associação Recreativa e Cultural de Aguada de Baixo</h1>
+              <p>Relatório de Gestão de Agendas (Jogos Oficiais, Eventos Associativos, Reuniões e Tarefas)</p>
+            </div>
+            <div style="text-align: right; font-size: 8pt; color: #64748b;">
+              <div>Emissão: <strong>${hojeData} às ${hojeHora}</strong></div>
+              <div>Total de Registos: <strong>${list.length}</strong></div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 35px; text-align: center;">ID</th>
+                <th style="width: 100px;">Data & Hora</th>
+                <th style="width: 80px;">Categoria</th>
+                <th>Título / Atividade</th>
+                <th style="width: 150px;">Local & Recinto</th>
+                <th style="width: 130px;">Responsável</th>
+                <th style="width: 95px; text-align: center;">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <div class="footer-info">
+            <div>Documento Oficial emitido pelo Sistema Integrado de Gestão da A.R.C.A.</div>
+            <div>A Direção da A.R.C.A.</div>
+          </div>
+
+          <' + 'script>
+            window.onload = function() { window.print(); };
+          <' + '/script>
+        </body>
+        </html>
+      `;
+
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.open();
+        printWin.document.write(docHtml);
+        printWin.document.close();
+      }
+    };
+
+    window.imprimirAgenda = function(onlySelected = false) {
+      window.exportarAgendaPDF(onlySelected);
+    };
+
+    window.imprimirFichaAgendaIndividual = function() {
+      if (!currentFichaItem) return;
+      const printContents = document.getElementById('fichaPrintableArea').innerHTML;
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.open();
+        printWin.document.write(`
+          <!DOCTYPE html>
+          <html lang="pt-PT">
+          <head>
+            <meta charset="UTF-8">
+            <title>Ficha Oficial ARCA • ${window.escapeHtml(currentFichaItem.titulo)}</title>
+            <style>
+              @page { size: A4 portrait; margin: 15mm; }
+              body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10pt; color: #0f172a; margin: 0; padding: 0; }
+              .ficha-header-print { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #0284c7; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+              .ficha-footer-print { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; font-size: 8.5pt; color: #64748b; }
+            </style>
+          </head>
+          <body>
+            ${printContents}
+            <' + 'script>window.onload = function() { window.print(); };<' + '/script>
+          </body>
+          </html>
+        `);
+        printWin.document.close();
+      }
+    };
+
+    window.exportarFichaAgendaPDF = function() {
+      window.imprimirFichaAgendaIndividual();
+    };
+
+    // =========================================================================
+    // UTILITÁRIOS E FORMATAÇÃO VISUAL
+    // =========================================================================
+    function getCategoriaPillHtml(cat) {
+      const c = (cat || '').toLowerCase();
+      if (c === 'jogos') {
+        return '<span class="status-pill" style="background: #dcfce7; color: #15803d; font-weight: 800; font-size: 0.76rem;">⚽ Jogos</span>';
+      }
+      if (c === 'eventos') {
+        return '<span class="status-pill" style="background: #fef3c7; color: #b45309; font-weight: 800; font-size: 0.76rem;">🎉 Evento</span>';
+      }
+      if (c === 'reunioes') {
+        return '<span class="status-pill" style="background: #e0e7ff; color: #4338ca; font-weight: 800; font-size: 0.76rem;">📑 Reunião</span>';
+      }
+      if (c === 'tarefas') {
+        return '<span class="status-pill" style="background: #f1f5f9; color: #475569; font-weight: 800; font-size: 0.76rem;">📌 Tarefa</span>';
+      }
+      return '<span class="status-pill" style="background: #f3f4f6; color: #374151; font-weight: 800; font-size: 0.76rem;">Geral</span>';
+    }
+
+    function getEstadoBadgeHtml(estado) {
+      const e = (estado || 'Confirmado').toLowerCase();
+      if (e.includes('confirmado') || e.includes('em dia') || e.includes('aprovado')) {
+        return '<span class="status-pill" style="background: #dcfce7; color: #15803d; font-weight: 700; font-size: 0.75rem;">Confirmado</span>';
+      }
+      if (e.includes('concluído') || e.includes('realizado')) {
+        return '<span class="status-pill" style="background: #e2e8f0; color: #334155; font-weight: 700; font-size: 0.75rem;">Concluído</span>';
+      }
+      if (e.includes('reservado')) {
+        return '<span class="status-pill" style="background: #e0f2fe; color: #0369a1; font-weight: 700; font-size: 0.75rem;">Pavilhão Reservado</span>';
+      }
+      if (e.includes('planeamento') || e.includes('preparação')) {
+        return '<span class="status-pill" style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 0.75rem;">Em Planeamento</span>';
+      }
+      if (e.includes('adiado')) {
+        return '<span class="status-pill" style="background: #ffedd5; color: #c2410c; font-weight: 700; font-size: 0.75rem;">Adiado</span>';
+      }
+      if (e.includes('cancelado')) {
+        return '<span class="status-pill" style="background: #fee2e2; color: #b91c1c; font-weight: 700; font-size: 0.75rem;">Cancelado</span>';
+      }
+      return `<span class="status-pill" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 0.75rem;">${window.escapeHtml(estado)}</span>`;
+    }
+
+    function getAmbitoBadgeHtml(ambito) {
+      const a = (ambito || '').toLowerCase();
+      if (a === 'casa') {
+        return '<span style="background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">CASA</span>';
+      }
+      if (a === 'fora') {
+        return '<span style="background: #ffedd5; color: #c2410c; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">FORA</span>';
+      }
+      if (a === 'exterior') {
+        return '<span style="background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">EXTERIOR</span>';
+      }
+      return '<span style="background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">INTERNO</span>';
+    }
+
+    function getCategoriaNome(cat) {
+      if (cat === 'jogos') return 'Jogos Oficiais';
+      if (cat === 'eventos') return 'Eventos ARCA';
+      if (cat === 'reunioes') return 'Reunião Direção';
+      if (cat === 'tarefas') return 'Tarefa / Prazo';
+      return 'Geral';
+    }
+
+    function getCategoriaCorFundo(cat) {
+      if (cat === 'jogos') return '#dcfce7';
+      if (cat === 'eventos') return '#fef3c7';
+      if (cat === 'reunioes') return '#e0e7ff';
+      if (cat === 'tarefas') return '#f1f5f9';
+      return '#e2e8f0';
+    }
+
+    function getCategoriaCorTexto(cat) {
+      if (cat === 'jogos') return '#15803d';
+      if (cat === 'eventos') return '#b45309';
+      if (cat === 'reunioes') return '#4338ca';
+      if (cat === 'tarefas') return '#475569';
+      return '#1e293b';
+    }
+
+    function getEstadoCorFundo(estado) {
+      const e = (estado || '').toLowerCase();
+      if (e.includes('confirmado')) return '#dcfce7';
+      if (e.includes('concluído')) return '#e2e8f0';
+      if (e.includes('planeamento')) return '#fef3c7';
+      return '#e0f2fe';
+    }
+
+    function getEstadoCorTexto(estado) {
+      const e = (estado || '').toLowerCase();
+      if (e.includes('confirmado')) return '#15803d';
+      if (e.includes('concluído')) return '#334155';
+      if (e.includes('planeamento')) return '#b45309';
+      return '#0369a1';
+    }
+
+    function formatarDataCurta(dataStr, horaStr) {
+      if (!dataStr) return { diaMes: '—', hora: horaStr || '—', diaNumero: '—', mesAno: '—' };
+      const parts = dataStr.split('-');
+      if (parts.length === 3) {
+        const ano = parts[0];
+        const mesIdx = Number(parts[1]) - 1;
+        const dia = parts[2];
+        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const mesNome = meses[mesIdx] || parts[1];
+
+        return {
+          diaMes: `${dia} ${mesNome} ${ano}`,
+          hora: horaStr ? `às ${horaStr}h` : '',
+          diaNumero: dia,
+          mesAno: `${mesNome} ${ano}`
+        };
+      }
+      return { diaMes: dataStr, hora: horaStr || '', diaNumero: dataStr, mesAno: '' };
+    }
+
+    function formatarDataExtensa(dataStr, horaInicio, horaFim) {
+      if (!dataStr) return 'Data não definida';
+      const parts = dataStr.split('-');
+      if (parts.length === 3) {
+        const ano = parts[0];
+        const mesIdx = Number(parts[1]) - 1;
+        const dia = Number(parts[2]);
+        const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const mesNome = meses[mesIdx] || parts[1];
+
+        let res = `${dia} de ${mesNome} de ${ano}`;
+        if (horaInicio) {
+          res += ` das ${horaInicio}h`;
+          if (horaFim) {
+            res += ` às ${horaFim}h`;
+          }
+        }
+        return res;
+      }
+      return `${dataStr} ${horaInicio || ''}`;
+    }
+
+    window.escapeHtml = function(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
   </script>
 </body>
 </html>
