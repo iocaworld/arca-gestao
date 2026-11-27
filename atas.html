@@ -3585,116 +3585,131 @@
         return;
       }
 
-      let savedAta = null;
+      async function executarGravacao() {
+        let savedAta = null;
+        if (idVal) {
+          const id = parseInt(idVal, 10);
+          const idx = atas.findIndex(a => a.id === id);
+          if (idx >= 0) {
+            atas[idx].tipo = tipo;
+            atas[idx].data = data;
+            atas[idx].horaInicio = horaInicio;
+            atas[idx].horaFim = horaFim;
+            atas[idx].numero = numero;
+            atas[idx].referencia = referencia;
+            atas[idx].local = local;
+            atas[idx].presidiu = presidiu;
+            atas[idx].secretariou = secretariou;
+            atas[idx].presencas = wizardPresencas;
+            atas[idx].outrasPresencas = outrasPresencas;
+            atas[idx].pontos = wizardPontos;
+            atas[idx].estado = estado;
+            atas[idx].observacoes = observacoes;
+            atas[idx].assinaturas = wizardAssinaturas;
+            atas[idx].anexos = wizardAnexos;
+            atas[idx].atualizadoEm = new Date().toISOString();
+            savedAta = atas[idx];
+          }
+        } else {
+          const maxId = atas.reduce((max, a) => Math.max(max, a.id || 0), 0);
+          const nova = {
+            id: maxId + 1,
+            numero,
+            referencia,
+            tipo,
+            data,
+            horaInicio,
+            horaFim,
+            local,
+            presidiu,
+            secretariou,
+            presencas: wizardPresencas,
+            outrasPresencas,
+            pontos: wizardPontos,
+            estado,
+            observacoes,
+            assinaturas: wizardAssinaturas,
+            anexos: wizardAnexos,
+            criadoEm: new Date().toISOString(),
+            atualizadoEm: new Date().toISOString()
+          };
+          atas.unshift(nova);
+          savedAta = nova;
+        }
+
+        if (savedAta && typeof window.saveArcaAtaToCloud === 'function') {
+          await window.saveArcaAtaToCloud(savedAta);
+        }
+
+        saveAtas();
+        closeFormAtaModal();
+        if (window.showToast) window.showToast(`Ata ${referencia || '#' + numero} guardada com sucesso!`, 'success');
+      }
 
       if (idVal) {
-        // Atualizar existente
-        const id = parseInt(idVal, 10);
-        const idx = atas.findIndex(a => a.id === id);
-        if (idx >= 0) {
-          atas[idx].tipo = tipo;
-          atas[idx].data = data;
-          atas[idx].horaInicio = horaInicio;
-          atas[idx].horaFim = horaFim;
-          atas[idx].numero = numero;
-          atas[idx].referencia = referencia;
-          atas[idx].local = local;
-          atas[idx].presidiu = presidiu;
-          atas[idx].secretariou = secretariou;
-          atas[idx].presencas = wizardPresencas;
-          atas[idx].outrasPresencas = outrasPresencas;
-          atas[idx].pontos = wizardPontos;
-          atas[idx].estado = estado;
-          atas[idx].observacoes = observacoes;
-          atas[idx].assinaturas = wizardAssinaturas;
-          atas[idx].anexos = wizardAnexos;
-          atas[idx].atualizadoEm = new Date().toISOString();
-          savedAta = atas[idx];
+        // Se for modificação de ata existente, despoletar confirmação com Sim / Cancelar e validação
+        const res = await window.executarComConfirmacaoEAutorizacao({
+          operacao: 'MODIFICAR',
+          modulo: 'Atas da Direção',
+          titulo: 'Confirmar Alteração de Ata',
+          mensagem: `Deseja guardar as alterações efetuadas na <strong>Ata ${referencia || '#' + numero}</strong> (${tipo})?`,
+          textoConfirmar: 'Sim, Guardar',
+          assuntoPedido: `Pedido de autorização para modificar a Ata ${referencia || '#' + numero}`,
+          descricaoPedido: `Solicito autorização à Administração para atualizar a Ata ${referencia || '#' + numero} (${tipo}).`,
+          dadosOperacao: { id: parseInt(idVal, 10), numero, referencia, tipo, data },
+          onConfirm: executarGravacao
+        });
+
+        if (res.enviadoAprovacao) {
+          closeFormAtaModal();
         }
       } else {
-        // Criar nova
-        const maxId = atas.reduce((max, a) => Math.max(max, a.id || 0), 0);
-        const nova = {
-          id: maxId + 1,
-          numero,
-          referencia,
-          tipo,
-          data,
-          horaInicio,
-          horaFim,
-          local,
-          presidiu,
-          secretariou,
-          presencas: wizardPresencas,
-          outrasPresencas,
-          pontos: wizardPontos,
-          estado,
-          observacoes,
-          assinaturas: wizardAssinaturas,
-          anexos: wizardAnexos,
-          criadoEm: new Date().toISOString(),
-          atualizadoEm: new Date().toISOString()
-        };
-        atas.unshift(nova);
-        savedAta = nova;
+        await executarGravacao();
       }
-
-      // Guardar na Nuvem (Firestore)
-      if (savedAta && typeof window.saveArcaAtaToCloud === 'function') {
-        await window.saveArcaAtaToCloud(savedAta);
-      }
-
-      saveAtas();
-      closeFormAtaModal();
-      if (window.showToast) window.showToast(`Ata ${referencia || '#' + numero} guardada com sucesso!`, 'success');
     };
 
     window.handleEliminarAta = async function(ataId) {
       const a = atas.find(x => x.id === ataId);
       if (!a) return;
+      const refNome = a.referencia || '#' + a.numero;
 
-      // Verificação de exigência de autorização prévia pelo Administrador
-      if (typeof window.verificarExigeAutorizacao === 'function' && window.verificarExigeAutorizacao('atas', 'eliminar')) {
-        alert('A sua conta requer autorização prévia da Administração para eliminar atas. O formulário de envio de pedido ao Administrador será aberto.');
-        if (typeof window.abrirModalEnviarPedidoAdmin === 'function') {
-          window.abrirModalEnviarPedidoAdmin({
-            tipo: 'MANIPULACAO',
-            modulo: 'Atas da Direção',
-            assunto: `Pedido de autorização para eliminar a Ata ${a.referencia || '#' + a.numero}`,
-            descricao: `Solicito autorização à Administração para eliminar a Ata ${a.referencia || '#' + a.numero} referente a '${a.tipo}'.`
-          });
+      await window.executarComConfirmacaoEAutorizacao({
+        operacao: 'ELIMINAR',
+        modulo: 'Atas da Direção',
+        titulo: 'Confirmar Eliminação de Ata',
+        mensagem: `Tem a certeza de que pretende eliminar permanentemente a <strong>Ata ${refNome}</strong> (${a.tipo || 'Reunião de Direção'})?<br><br><small style="color: #991b1b;">Esta ação removerá o registo do livro oficial de atas.</small>`,
+        textoConfirmar: 'Sim, Eliminar',
+        assuntoPedido: `Pedido de autorização para eliminar a Ata ${refNome}`,
+        descricaoPedido: `Solicito autorização à Administração para eliminar a Ata ${refNome} referente a '${a.tipo}'.`,
+        dadosOperacao: { id: a.id, numero: a.numero, referencia: a.referencia, tipo: a.tipo },
+        onConfirm: async () => {
+          atas = atas.filter(x => x.id !== ataId);
+
+          if (typeof window.deleteArcaAtaFromCloud === 'function') {
+            await window.deleteArcaAtaFromCloud(ataId);
+          }
+
+          saveAtas();
+
+          if (typeof window.logArcaAtividade === 'function') {
+            window.logArcaAtividade({
+              modulo: 'Atas',
+              acao: 'ELIMINACAO',
+              tipoBadge: 'Eliminação',
+              descricao: `Eliminada a Ata ${refNome} (${a.tipo || 'Reunião'})`,
+              detalhes: `Ata apagada do sistema. É possível restaurar o registo integral no painel de Relatórios e Logs.`,
+              nivel: 'critico',
+              revertivel: true,
+              entidade: 'atas',
+              entidadeId: ataId,
+              dadosAnteriores: a,
+              dadosNovos: null
+            });
+          }
+
+          if (window.showToast) window.showToast(`Ata eliminada com sucesso. Pode restaurá-la a qualquer momento em Relatórios, Logs e Atividades.`, 'success');
         }
-        return;
-      }
-
-      if (confirm(`Tem a certeza de que pretende eliminar permanentemente a Ata ${a.referencia || '#' + a.numero}? Esta ação não pode ser desfeita.`)) {
-        atas = atas.filter(x => x.id !== ataId);
-
-        if (typeof window.deleteArcaAtaFromCloud === 'function') {
-          await window.deleteArcaAtaFromCloud(ataId);
-        }
-
-        saveAtas();
-
-        // Registo automático de auditoria com dados para reversão
-        if (typeof window.logArcaAtividade === 'function') {
-          window.logArcaAtividade({
-            modulo: 'Atas',
-            acao: 'ELIMINACAO',
-            tipoBadge: 'Eliminação',
-            descricao: `Eliminada a Ata ${a.referencia || '#' + a.numero} (${a.tipo || 'Reunião'})`,
-            detalhes: `Ata apagada do sistema. É possível restaurar o registo integral no painel de Relatórios e Logs.`,
-            nivel: 'critico',
-            revertivel: true,
-            entidade: 'atas',
-            entidadeId: ataId,
-            dadosAnteriores: a,
-            dadosNovos: null
-          });
-        }
-
-        if (window.showToast) window.showToast(`Ata eliminada com sucesso. Pode restaurá-la a qualquer momento em Relatórios, Logs e Atividades.`, 'success');
-      }
+      });
     };
 
     // =========================================================================

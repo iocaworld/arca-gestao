@@ -1717,38 +1717,63 @@
     // =========================================================================
     // Ação Rápida de Alternar Estado (Ativo <-> Suspenso / Pendente)
     // =========================================================================
-    window.quickToggleStatus = function(userId) {
+    window.quickToggleStatus = async function(userId) {
       const u = utilizadores.find(x => x.id === userId);
       if (!u) return;
 
       if (u.estado === 'Pendente') {
-        if (confirm(`Pretende APROVAR e ATIVAR a conta de ${u.nome}? O utilizador passará a poder entrar no site.`)) {
-          u.estado = 'Ativo';
-          saveUtilizadores();
-          if (window.showToast) window.showToast(`Conta de ${u.nome} ativada com sucesso!`, 'success');
-        }
+        await window.executarComConfirmacaoEAutorizacao({
+          operacao: 'MODIFICAR',
+          modulo: 'Utilizadores',
+          titulo: 'Aprovar e Ativar Conta',
+          mensagem: `Pretende APROVAR e ATIVAR a conta de <strong>${u.nome}</strong> (@${u.login})? O utilizador passará a ter acesso imediato ao site.`,
+          textoConfirmar: 'Sim, Ativar',
+          assuntoPedido: `Pedido para aprovar e ativar conta de ${u.nome}`,
+          descricaoPedido: `Solicito autorização à Administração para aprovar o registo pendente do utilizador ${u.nome}.`,
+          dadosOperacao: { userId, novoEstado: 'Ativo' },
+          onConfirm: async () => {
+            u.estado = 'Ativo';
+            saveUtilizadores();
+            if (window.showToast) window.showToast(`Conta de ${u.nome} ativada com sucesso!`, 'success');
+          }
+        });
       } else if (u.estado === 'Ativo') {
         const motivo = prompt(`Suspender temporariamente a conta de ${u.nome}?\nIndique o motivo da suspensão:`, 'Averiguação interna da Direção');
         if (motivo !== null) {
-          u.estado = 'Suspenso';
-          u.motivo_suspensao = motivo.trim() || 'Suspenso temporariamente pela Direção';
-          saveUtilizadores();
-          if (window.showToast) window.showToast(`Conta de ${u.nome} foi suspensa.`, 'warning');
+          await window.executarComConfirmacaoEAutorizacao({
+            operacao: 'MODIFICAR',
+            modulo: 'Utilizadores',
+            titulo: 'Suspender Acesso de Utilizador',
+            mensagem: `Pretende SUSPENDER o acesso de <strong>${u.nome}</strong> (@${u.login})?<br><br><strong>Motivo:</strong> ${motivo.trim() || 'Suspenso temporariamente pela Direção'}`,
+            textoConfirmar: 'Sim, Suspender',
+            assuntoPedido: `Pedido para suspender conta de ${u.nome}`,
+            descricaoPedido: `Solicito autorização para suspender o utilizador ${u.nome}. Motivo: ${motivo}`,
+            dadosOperacao: { userId, novoEstado: 'Suspenso', motivo },
+            onConfirm: async () => {
+              u.estado = 'Suspenso';
+              u.motivo_suspensao = motivo.trim() || 'Suspenso temporariamente pela Direção';
+              saveUtilizadores();
+              if (window.showToast) window.showToast(`Conta de ${u.nome} foi suspensa.`, 'warning');
+            }
+          });
         }
-      } else if (u.estado === 'Suspenso') {
-        if (confirm(`Pretende REATIVAR o acesso de ${u.nome}?`)) {
-          u.estado = 'Ativo';
-          u.motivo_suspensao = '';
-          saveUtilizadores();
-          if (window.showToast) window.showToast(`Conta de ${u.nome} reativada com sucesso!`, 'success');
-        }
-      } else if (u.estado === 'Anulado') {
-        if (confirm(`Esta conta encontra-se ANULADA. Pretende reativar a conta de ${u.nome}?`)) {
-          u.estado = 'Ativo';
-          u.motivo_suspensao = '';
-          saveUtilizadores();
-          if (window.showToast) window.showToast(`Conta de ${u.nome} reativada!`, 'success');
-        }
+      } else if (u.estado === 'Suspenso' || u.estado === 'Anulado') {
+        await window.executarComConfirmacaoEAutorizacao({
+          operacao: 'MODIFICAR',
+          modulo: 'Utilizadores',
+          titulo: 'Reativar Conta de Utilizador',
+          mensagem: `Pretende REATIVAR o acesso de <strong>${u.nome}</strong> (@${u.login})? O utilizador voltará a ter acesso normal ao portal.`,
+          textoConfirmar: 'Sim, Reativar',
+          assuntoPedido: `Pedido para reativar conta de ${u.nome}`,
+          descricaoPedido: `Solicito autorização à Administração para reativar a conta de ${u.nome}.`,
+          dadosOperacao: { userId, novoEstado: 'Ativo' },
+          onConfirm: async () => {
+            u.estado = 'Ativo';
+            u.motivo_suspensao = '';
+            saveUtilizadores();
+            if (window.showToast) window.showToast(`Conta de ${u.nome} reativada com sucesso!`, 'success');
+          }
+        });
       }
     };
 
@@ -2343,83 +2368,105 @@
       });
 
       let savedUser = null;
+      async function executarGravacaoUser() {
+        if (idVal) {
+          // Editar existente
+          const id = parseInt(idVal, 10);
+          const idx = utilizadores.findIndex(u => u.id === id);
+          if (idx >= 0) {
+            utilizadores[idx].nome = nome;
+            utilizadores[idx].login = login;
+            utilizadores[idx].username = '@' + login;
+            utilizadores[idx].email = email;
+            utilizadores[idx].telefone = telefone;
+            utilizadores[idx].numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
+            utilizadores[idx].perfil = perfil;
+            utilizadores[idx].orgao = orgao;
+            utilizadores[idx].cargo = cargo;
+            utilizadores[idx].morada = morada;
+            utilizadores[idx].estado = estado;
+            utilizadores[idx].motivo_suspensao = motivo;
+            utilizadores[idx].data_registo = dataRegisto;
+            utilizadores[idx].data_rgpd = dataRgpd;
+            utilizadores[idx].foto = foto;
+            utilizadores[idx].permissoes_modulos = novasPermissoes;
+            if (passVal) utilizadores[idx].password = passVal;
+
+            savedUser = utilizadores[idx];
+
+            // Se for o utilizador atual, atualizar sessão
+            try {
+              const curr = window.getArcaCurrentUser();
+              if (curr && (curr.id === id || curr.login === login)) {
+                curr.nome = nome;
+                curr.email = email;
+                curr.foto = foto;
+                curr.morada = morada;
+                curr.numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
+                curr.orgao = orgao;
+                curr.cargo = cargo;
+                curr.permissoes_modulos = novasPermissoes;
+                window.setArcaCurrentUser(curr);
+              }
+            } catch (err) {}
+          }
+        } else {
+          // Criar novo
+          const maxId = utilizadores.reduce((max, u) => Math.max(max, u.id || 0), 0);
+          const novo = {
+            id: maxId + 1,
+            nome,
+            login,
+            username: '@' + login,
+            email,
+            telefone,
+            numeroSocio: socioVal ? parseInt(socioVal, 10) : null,
+            perfil,
+            orgao,
+            cargo,
+            morada: morada || 'Aguada de Baixo',
+            estado,
+            motivo_suspensao: motivo,
+            data_registo: dataRegisto || new Date().toISOString().split('T')[0],
+            data_rgpd: dataRgpd || new Date().toISOString().split('T')[0],
+            ultimo_acesso: 'Nunca',
+            foto,
+            password: passVal || 'arca2026',
+            permissoes_modulos: novasPermissoes
+          };
+          utilizadores.unshift(novo);
+          savedUser = novo;
+        }
+
+        // Gravação direta na Nuvem (Firestore) antes de fechar o modal
+        if (savedUser && typeof window.saveArcaUtilizadorToCloud === 'function') {
+          await window.saveArcaUtilizadorToCloud(savedUser);
+        }
+
+        saveUtilizadores();
+        closeFormUtilizadorModal();
+        if (window.showToast) window.showToast('Conta de utilizador guardada com sucesso!', 'success');
+      }
+
       if (idVal) {
-        // Editar existente
-        const id = parseInt(idVal, 10);
-        const idx = utilizadores.findIndex(u => u.id === id);
-        if (idx >= 0) {
-          utilizadores[idx].nome = nome;
-          utilizadores[idx].login = login;
-          utilizadores[idx].username = '@' + login;
-          utilizadores[idx].email = email;
-          utilizadores[idx].telefone = telefone;
-          utilizadores[idx].numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
-          utilizadores[idx].perfil = perfil;
-          utilizadores[idx].orgao = orgao;
-          utilizadores[idx].cargo = cargo;
-          utilizadores[idx].morada = morada;
-          utilizadores[idx].estado = estado;
-          utilizadores[idx].motivo_suspensao = motivo;
-          utilizadores[idx].data_registo = dataRegisto;
-          utilizadores[idx].data_rgpd = dataRgpd;
-          utilizadores[idx].foto = foto;
-          utilizadores[idx].permissoes_modulos = novasPermissoes;
-          if (passVal) utilizadores[idx].password = passVal;
+        const res = await window.executarComConfirmacaoEAutorizacao({
+          operacao: 'MODIFICAR',
+          modulo: 'Utilizadores',
+          titulo: 'Confirmar Alteração de Utilizador',
+          mensagem: `Deseja guardar as alterações efetuadas na conta de <strong>${nome}</strong> (@${login})?`,
+          textoConfirmar: 'Sim, Guardar',
+          assuntoPedido: `Pedido de autorização para modificar conta de ${nome}`,
+          descricaoPedido: `Solicito autorização à Administração para atualizar os dados e permissões do utilizador ${nome} (@${login}).`,
+          dadosOperacao: { id: parseInt(idVal, 10), nome, login, perfil },
+          onConfirm: executarGravacaoUser
+        });
 
-          savedUser = utilizadores[idx];
-
-          // Se for o utilizador atual, atualizar sessão
-          try {
-            const curr = window.getArcaCurrentUser();
-            if (curr && (curr.id === id || curr.login === login)) {
-              curr.nome = nome;
-              curr.email = email;
-              curr.foto = foto;
-              curr.morada = morada;
-              curr.numeroSocio = socioVal ? parseInt(socioVal, 10) : null;
-              curr.orgao = orgao;
-              curr.cargo = cargo;
-              curr.permissoes_modulos = novasPermissoes;
-              window.setArcaCurrentUser(curr);
-            }
-          } catch (err) {}
+        if (res.enviadoAprovacao) {
+          closeFormUtilizadorModal();
         }
       } else {
-        // Criar novo
-        const maxId = utilizadores.reduce((max, u) => Math.max(max, u.id || 0), 0);
-        const novo = {
-          id: maxId + 1,
-          nome,
-          login,
-          username: '@' + login,
-          email,
-          telefone,
-          numeroSocio: socioVal ? parseInt(socioVal, 10) : null,
-          perfil,
-          orgao,
-          cargo,
-          morada: morada || 'Aguada de Baixo',
-          estado,
-          motivo_suspensao: motivo,
-          data_registo: dataRegisto || new Date().toISOString().split('T')[0],
-          data_rgpd: dataRgpd || new Date().toISOString().split('T')[0],
-          ultimo_acesso: 'Nunca',
-          foto,
-          password: passVal || 'arca2026',
-          permissoes_modulos: novasPermissoes
-        };
-        utilizadores.unshift(novo);
-        savedUser = novo;
+        await executarGravacaoUser();
       }
-
-      // Gravação direta na Nuvem (Firestore) antes de fechar o modal
-      if (savedUser && typeof window.saveArcaUtilizadorToCloud === 'function') {
-        await window.saveArcaUtilizadorToCloud(savedUser);
-      }
-
-      saveUtilizadores();
-      closeFormUtilizadorModal();
-      if (window.showToast) window.showToast('Conta de utilizador guardada com sucesso!', 'success');
     };
 
     window.handleEliminarUtilizador = async function(userId) {
@@ -2430,44 +2477,55 @@
         return;
       }
 
-      // Verificação de autorização prévia pelo Administrador
-      if (typeof window.verificarExigeAutorizacao === 'function' && window.verificarExigeAutorizacao('utilizadores', 'eliminar')) {
-        alert('A sua conta requer autorização prévia da Administração para eliminar utilizadores. O formulário de envio de pedido ao Administrador será aberto.');
-        if (typeof window.abrirModalEnviarPedidoAdmin === 'function') {
-          window.abrirModalEnviarPedidoAdmin({
-            tipo: 'MANIPULACAO',
-            modulo: 'Utilizadores',
-            assunto: `Pedido de autorização para eliminar conta de ${u.nome}`,
-            descricao: `Solicito autorização à Administração para eliminar a conta do utilizador '${u.nome}' (${u.login}).`
-          });
-        }
-        return;
-      }
+      await window.executarComConfirmacaoEAutorizacao({
+        operacao: 'ELIMINAR',
+        modulo: 'Utilizadores',
+        titulo: 'Confirmar Eliminação de Utilizador',
+        mensagem: `Tem a certeza de que pretende eliminar permanentemente a conta de <strong>${u.nome}</strong> (@${u.login})?<br><br><small style="color: #991b1b;">Esta ação revogará todos os acessos do utilizador ao sistema.</small>`,
+        textoConfirmar: 'Sim, Eliminar',
+        assuntoPedido: `Pedido de autorização para eliminar conta de ${u.nome}`,
+        descricaoPedido: `Solicito autorização à Administração para eliminar a conta do utilizador '${u.nome}' (${u.login}).`,
+        dadosOperacao: { id: u.id, nome: u.nome, login: u.login },
+        onConfirm: async () => {
+          utilizadores = utilizadores.filter(x => x.id !== userId);
+          
+          // Registar como eliminado para nunca mais ressuscitar
+          try {
+            const deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+            if (!deletedIds.includes(Number(userId))) {
+              deletedIds.push(Number(userId));
+              localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+            }
+          } catch (e) {}
 
-      if (confirm(`Tem a certeza de que pretende eliminar permanentemente a conta de ${u.nome}? Esta ação é irreversível.`)) {
-        utilizadores = utilizadores.filter(x => x.id !== userId);
-        
-        // Registar como eliminado para nunca mais ressuscitar
-        try {
-          const deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-          if (!deletedIds.includes(Number(userId))) {
-            deletedIds.push(Number(userId));
-            localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+          if (typeof window.deleteArcaUtilizadorFromCloud === 'function') {
+            await window.deleteArcaUtilizadorFromCloud(userId);
           }
-        } catch (e) {}
+          saveUtilizadores();
 
-        if (typeof window.deleteArcaUtilizadorFromCloud === 'function') {
-          await window.deleteArcaUtilizadorFromCloud(userId);
+          // Registo automático de auditoria com dados para reversão
+          if (typeof window.logArcaAtividade === 'function') {
+            window.logArcaAtividade({
+              modulo: 'Utilizadores',
+              acao: 'ELIMINACAO',
+              tipoBadge: 'Eliminação',
+              descricao: `Eliminada a conta de utilizador '${u.nome}' (${u.login})`,
+              detalhes: `Conta apagada do sistema. É possível restaurar o utilizador no painel de Relatórios e Logs.`,
+              nivel: 'critico',
+              revertivel: true,
+              entidade: 'utilizadores',
+              entidadeId: userId,
+              dadosAnteriores: u,
+              dadosNovos: null
+            });
+          }
+
+          renderUtilizadores();
+          updateUsersStats();
+          if (window.showToast) window.showToast(`Conta de ${u.nome} eliminada com sucesso. Pode restaurá-la em Relatórios, Logs e Atividades.`, 'info');
         }
-        saveUtilizadores();
-
-        // Registo automático de auditoria com dados para reversão
-        if (typeof window.logArcaAtividade === 'function') {
-          window.logArcaAtividade({
-            modulo: 'Utilizadores',
-            acao: 'ELIMINACAO',
-            tipoBadge: 'Eliminação',
-            descricao: `Eliminada a conta de utilizador '${u.nome}' (${u.login})`,
+      });
+    };
             detalhes: `Conta removida pelo Administrador. É possível restaurar o registo no painel de Relatórios e Logs.`,
             nivel: 'critico',
             revertivel: true,

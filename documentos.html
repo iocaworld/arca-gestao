@@ -2137,20 +2137,30 @@ Este ficheiro digital atesta o arquivo oficial do documento.
     async function deleteDocument(docId) {
       const doc = loadedDocuments.find(d => d.id === docId);
       if (!doc) return;
+      const catName = CATEGORIES[doc.category]?.name || doc.category;
 
-      const confirmDelete = confirm(`Tem a certeza que deseja remover o documento oficial:\n"${doc.title}" da pasta "${CATEGORIES[doc.category]?.name}"?`);
-      if (!confirmDelete) return;
-
-      try {
-        await dbDelete(docId);
-        loadedDocuments = loadedDocuments.filter(d => d.id !== docId);
-        syncLocalStorageMetadata();
-        renderDocuments();
-        showNotification(`Documento "${doc.title}" removido com sucesso.`);
-      } catch (err) {
-        console.error('Erro ao remover:', err);
-        alert('Erro ao remover documento.');
-      }
+      await window.executarComConfirmacaoEAutorizacao({
+        operacao: 'ELIMINAR',
+        modulo: 'Documentação ARCA',
+        titulo: 'Confirmar Remoção de Documento',
+        mensagem: `Tem a certeza que deseja remover o documento oficial <strong>"${doc.title}"</strong> da pasta <em>"${catName}"</em>?<br><br><small style="color: #991b1b;">O ficheiro será apagado do arquivo digital.</small>`,
+        textoConfirmar: 'Sim, Eliminar',
+        assuntoPedido: `Pedido de autorização para remover documento "${doc.title}"`,
+        descricaoPedido: `Solicito autorização à Administração para remover o documento oficial "${doc.title}" da pasta "${catName}".`,
+        dadosOperacao: { id: doc.id, title: doc.title, category: doc.category },
+        onConfirm: async () => {
+          try {
+            await dbDelete(docId);
+            loadedDocuments = loadedDocuments.filter(d => d.id !== docId);
+            syncLocalStorageMetadata();
+            renderDocuments();
+            showNotification(`Documento "${doc.title}" removido com sucesso.`);
+          } catch (err) {
+            console.error('Erro ao remover:', err);
+            alert('Erro ao remover documento.');
+          }
+        }
+      });
     }
 
     // Restaurar Coleção Padrão de Ficheiros

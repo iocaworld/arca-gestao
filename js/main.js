@@ -3024,7 +3024,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Ação: Guardar Dados Cadastrais do Sócio
-    window.saveSocioDataFromDrawer = function(id = currentDrawerSocioId) {
+    window.saveSocioDataFromDrawer = async function(id = currentDrawerSocioId) {
       const socio = socios.find(s => s.id === id);
       if (!socio) return;
 
@@ -3043,75 +3043,96 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      socio.numero = newNum;
-      socio.nome = newNome;
-      socio.nif = document.getElementById('drawer_nif').value.trim();
-      socio.dataNascimento = document.getElementById('drawer_nascimento').value;
-      socio.telefone = document.getElementById('drawer_telefone').value.trim();
-      socio.email = document.getElementById('drawer_email').value.trim();
-      socio.morada = document.getElementById('drawer_morada').value.trim();
-      socio.codPostal = document.getElementById('drawer_codPostal').value.trim();
-      socio.localidade = document.getElementById('drawer_localidade').value.trim() || 'Aguada de Baixo';
-      socio.dataInscricao = document.getElementById('drawer_dataInscricao').value;
-      socio.categoria = document.getElementById('drawer_categoria').value;
-      socio.estadoMembro = document.getElementById('drawer_estadoMembro').value;
-      socio.isento = document.getElementById('drawer_isento').checked;
-      socio.rgpdData = document.getElementById('drawer_rgpdData').value;
-      socio.observacoes = document.getElementById('drawer_observacoes').value;
+      await window.executarComConfirmacaoEAutorizacao({
+        operacao: 'MODIFICAR',
+        modulo: 'Sócios & Cotas',
+        titulo: 'Confirmar Alteração de Associado',
+        mensagem: `Deseja guardar as alterações efetuadas na ficha do <strong>Sócio nº ${socio.numero} (${newNome})</strong>?`,
+        textoConfirmar: 'Sim, Guardar',
+        assuntoPedido: `Pedido para modificar dados do Sócio nº ${socio.numero} (${newNome})`,
+        descricaoPedido: `Solicito autorização para atualizar os dados cadastrais do associado nº ${socio.numero} (${newNome}).`,
+        dadosOperacao: { id: socio.id, numero: newNum, nome: newNome },
+        onConfirm: async () => {
+          socio.numero = newNum;
+          socio.nome = newNome;
+          socio.nif = document.getElementById('drawer_nif').value.trim();
+          socio.dataNascimento = document.getElementById('drawer_nascimento').value;
+          socio.telefone = document.getElementById('drawer_telefone').value.trim();
+          socio.email = document.getElementById('drawer_email').value.trim();
+          socio.morada = document.getElementById('drawer_morada').value.trim();
+          socio.codPostal = document.getElementById('drawer_codPostal').value.trim();
+          socio.localidade = document.getElementById('drawer_localidade').value.trim() || 'Aguada de Baixo';
+          socio.dataInscricao = document.getElementById('drawer_dataInscricao').value;
+          socio.categoria = document.getElementById('drawer_categoria').value;
+          socio.estadoMembro = document.getElementById('drawer_estadoMembro').value;
+          socio.isento = document.getElementById('drawer_isento').checked;
+          socio.rgpdData = document.getElementById('drawer_rgpdData').value;
+          socio.observacoes = document.getElementById('drawer_observacoes').value;
 
-      const newUltima = parseInt(document.getElementById('drawer_ultimaQuota').value);
-      if (!isNaN(newUltima)) {
-        socio.ultimaQuota = newUltima;
-      }
+          const newUltima = parseInt(document.getElementById('drawer_ultimaQuota').value);
+          if (!isNaN(newUltima)) {
+            socio.ultimaQuota = newUltima;
+          }
 
-      // Recalcular dívida e estado do associado
-      if (socio.isento) {
-        socio.divida = 0;
-        socio.estado = 'Em Dia';
-      } else {
-        const currentYear = 2026;
-        if (socio.ultimaQuota >= currentYear) {
-          socio.divida = 0;
-          socio.estado = 'Em Dia';
-        } else {
-          const yearsDiff = currentYear - socio.ultimaQuota;
-          socio.divida = yearsDiff * 6.00;
-          socio.estado = (yearsDiff === 1) ? 'Pendente' : 'Atrasado';
+          // Recalcular dívida e estado do associado
+          if (socio.isento) {
+            socio.divida = 0;
+            socio.estado = 'Em Dia';
+          } else {
+            const currentYear = 2026;
+            if (socio.ultimaQuota >= currentYear) {
+              socio.divida = 0;
+              socio.estado = 'Em Dia';
+            } else {
+              const yearsDiff = currentYear - socio.ultimaQuota;
+              socio.divida = yearsDiff * 6.00;
+              socio.estado = (yearsDiff === 1) ? 'Pendente' : 'Atrasado';
+            }
+          }
+
+          socio.ultimaAtualizacao = new Date().toISOString().slice(0, 10);
+
+          // Reestruturar lista de quotas se a última quota mudou
+          ensureSocioQuotas(socio);
+
+          saveSocios();
+          updateStats();
+          applyFilters();
+
+          if (drawerHeaderTitle) {
+            drawerHeaderTitle.textContent = `Sócio nº ${socio.numero}`;
+          }
+
+          showToast(`Ficha do sócio nº ${socio.numero} (${socio.nome}) guardada com sucesso!`, 'success');
+          renderDrawerContent();
         }
-      }
-
-      socio.ultimaAtualizacao = new Date().toISOString().slice(0, 10);
-
-      // Reestruturar lista de quotas se a última quota mudou
-      ensureSocioQuotas(socio);
-
-      saveSocios();
-      updateStats();
-      applyFilters();
-
-      if (drawerHeaderTitle) {
-        drawerHeaderTitle.textContent = `Sócio nº ${socio.numero}`;
-      }
-
-      showToast(`Ficha do sócio nº ${socio.numero} (${socio.nome}) guardada com sucesso!`, 'success');
-      renderDrawerContent();
+      });
     };
 
     // Ação: Eliminar Sócio Definitivamente
-    window.deleteSocioFromDrawer = function(id = currentDrawerSocioId) {
+    window.deleteSocioFromDrawer = async function(id = currentDrawerSocioId) {
       const socio = socios.find(s => s.id === id);
       if (!socio) return;
 
-      const confirmDelete = confirm(`Tem a certeza absoluta de que deseja eliminar o associado nº ${socio.numero} (${socio.nome})?\n\nEsta ação apagará permanentemente a ficha do sócio e o respetivo registo de quotas.`);
-      if (!confirmDelete) return;
+      await window.executarComConfirmacaoEAutorizacao({
+        operacao: 'ELIMINAR',
+        modulo: 'Sócios & Cotas',
+        titulo: 'Confirmar Eliminação de Associado',
+        mensagem: `Tem a certeza absoluta de que deseja eliminar o <strong>Associado nº ${socio.numero} (${socio.nome})</strong>?<br><br><small style="color: #991b1b;">Esta ação apagará permanentemente a ficha do sócio e o respetivo registo de quotas.</small>`,
+        textoConfirmar: 'Sim, Eliminar',
+        assuntoPedido: `Pedido de autorização para eliminar o Sócio nº ${socio.numero} (${socio.nome})`,
+        descricaoPedido: `Solicito autorização à Administração para eliminar permanentemente o associado nº ${socio.numero} (${socio.nome}).`,
+        dadosOperacao: { id: socio.id, numero: socio.numero, nome: socio.nome },
+        onConfirm: async () => {
+          socios = socios.filter(s => s.id !== id);
+          saveSocios();
+          closeSocioDrawer();
+          updateStats();
+          applyFilters();
 
-      socios = socios.filter(s => s.id !== id);
-      saveSocios();
-      closeSocioDrawer();
-      updateStats();
-      applyFilters();
-
-      showToast(`Associado nº ${socio.numero} (${socio.nome}) eliminado com sucesso.`, 'info');
+          showToast(`Associado nº ${socio.numero} (${socio.nome}) eliminado com sucesso.`, 'info');
+        }
+      });
     };
 
     // =========================================================================
@@ -3180,35 +3201,44 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast(`Quota do ano ${ano} adicionada à ficha do sócio!`, 'success');
     };
 
-    window.anularPagamentoQuota = function(socioId, ano) {
+    window.anularPagamentoQuota = async function(socioId, ano) {
       const socio = socios.find(s => s.id === socioId);
       if (!socio || !socio.quotas) return;
 
-      const confirmAnular = confirm(`Deseja reverter o pagamento da quota de ${ano} para "Por pagar"?`);
-      if (!confirmAnular) return;
+      await window.executarComConfirmacaoEAutorizacao({
+        operacao: 'MODIFICAR',
+        modulo: 'Sócios & Cotas',
+        titulo: 'Confirmar Reversão de Quota',
+        mensagem: `Deseja reverter o pagamento da quota do ano <strong>${ano}</strong> do Sócio nº ${socio.numero} para <em>"Por pagar"</em>?`,
+        textoConfirmar: 'Sim, Reverter',
+        assuntoPedido: `Pedido para anular pagamento da quota de ${ano} do Sócio nº ${socio.numero}`,
+        descricaoPedido: `Solicito autorização à Administração para anular o pagamento da quota do ano ${ano} referente ao associado nº ${socio.numero} (${socio.nome}).`,
+        dadosOperacao: { socioId, ano },
+        onConfirm: async () => {
+          const q = socio.quotas.find(item => item.ano === ano);
+          if (q) {
+            q.pago = false;
+            q.estado = 'Por pagar';
+            q.data = null;
+            q.metodo = null;
+            q.recibo = false;
 
-      const q = socio.quotas.find(item => item.ano === ano);
-      if (q) {
-        q.pago = false;
-        q.estado = 'Por pagar';
-        q.data = null;
-        q.metodo = null;
-        q.recibo = false;
+            // Recalcular último ano pago e dívida
+            const paidYears = socio.quotas.filter(item => item.pago).map(item => item.ano);
+            socio.ultimaQuota = paidYears.length > 0 ? Math.max(...paidYears) : (ano - 1);
 
-        // Recalcular último ano pago e dívida
-        const paidYears = socio.quotas.filter(item => item.pago).map(item => item.ano);
-        socio.ultimaQuota = paidYears.length > 0 ? Math.max(...paidYears) : (ano - 1);
+            const unpaidQuotas = socio.quotas.filter(item => !item.pago && item.ano <= 2026);
+            socio.divida = unpaidQuotas.reduce((sum, item) => sum + (item.valor || 6.00), 0);
+            socio.estado = (socio.divida === 0) ? 'Em Dia' : (socio.divida === 6 ? 'Pendente' : 'Atrasado');
 
-        const unpaidQuotas = socio.quotas.filter(item => !item.pago && item.ano <= 2026);
-        socio.divida = unpaidQuotas.reduce((sum, item) => sum + (item.valor || 6.00), 0);
-        socio.estado = (socio.divida === 0) ? 'Em Dia' : (socio.divida === 6 ? 'Pendente' : 'Atrasado');
-
-        saveSocios();
-        updateStats();
-        applyFilters();
-        renderDrawerContent();
-        showToast(`Pagamento da quota de ${ano} anulado.`, 'info');
-      }
+            saveSocios();
+            updateStats();
+            applyFilters();
+            renderDrawerContent();
+            showToast(`Pagamento da quota de ${ano} anulado.`, 'info');
+          }
+        }
+      });
     };
 
     window.removerAnoQuota = function(socioId, ano) {
@@ -5705,13 +5735,19 @@ window.verificarExigeAutorizacao = function(moduloNome, operacaoTipo) {
     return false;
   }
 
+  // Se o utilizador tem flag global de exigir aprovação
+  if (currentUser.requer_aprovacao_admin || currentUser.requer_autorizacao) {
+    return true;
+  }
+
   const perms = currentUser.permissoes_modulos || {};
   const modKey = (moduloNome || '').toLowerCase();
   
   // Encontrar o módulo nas permissões
   let userMod = null;
   for (const k of Object.keys(perms)) {
-    if (k.toLowerCase() === modKey || modKey.includes(k.toLowerCase()) || k.toLowerCase().includes(modKey)) {
+    const kNorm = k.toLowerCase();
+    if (kNorm === modKey || modKey.includes(kNorm) || kNorm.includes(modKey)) {
       userMod = perms[k];
       break;
     }
@@ -5723,6 +5759,202 @@ window.verificarExigeAutorizacao = function(moduloNome, operacaoTipo) {
     }
   }
   return false;
+};
+
+// =========================================================================
+// SISTEMA GLOBAL DE CONFIRMAÇÃO ("SIM" / "CANCELAR") E AVISO DE APROVAÇÃO
+// =========================================================================
+
+/**
+ * Janela Modal de Confirmação com botões "Sim" e "Cancelar"
+ */
+window.confirmarOperacaoArca = function(opts = {}) {
+  return new Promise((resolve) => {
+    let modal = document.getElementById('modalConfirmacaoArca');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'modalConfirmacaoArca';
+      modal.className = 'modal-overlay';
+      modal.style.zIndex = '999999';
+      document.body.appendChild(modal);
+    }
+    const tipo = opts.tipo || 'alterar';
+    const titulo = opts.titulo || (tipo === 'eliminar' ? 'Confirmar Eliminação' : 'Confirmar Alteração');
+    const textoConfirmar = opts.textoConfirmar || (tipo === 'eliminar' ? 'Sim, Eliminar' : 'Sim, Guardar');
+    const textoCancelar = opts.textoCancelar || 'Cancelar';
+    const mensagem = opts.mensagem || 'Tem a certeza de que deseja proceder com esta operação?';
+
+    modal.innerHTML = `
+      <div class="modal-content" style="max-width: 480px; width: 92%; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25); border: 1px solid #cbd5e1; background: #ffffff;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 0.75rem; background: ${tipo === 'eliminar' ? '#fef2f2' : '#f0fdf4'};">
+          <span style="font-size: 1.6rem;">${tipo === 'eliminar' ? '🗑️' : '⚠️'}</span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: ${tipo === 'eliminar' ? '#991b1b' : '#166534'}; font-weight: 800;">
+              ${titulo}
+            </h3>
+            <p style="margin: 0.15rem 0 0 0; font-size: 0.75rem; color: #64748b;">
+              ${tipo === 'eliminar' ? 'Ação irreversível de eliminação de registo' : 'Confirmação de alteração e gravação de dados'}
+            </p>
+          </div>
+        </div>
+        <div style="padding: 1.5rem; font-size: 0.92rem; color: #1e293b; line-height: 1.5;">
+          ${mensagem}
+        </div>
+        <div style="padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnConfirmarArcaCancelar" style="padding: 0.5rem 1.1rem; font-weight: 600;">
+            ${textoCancelar}
+          </button>
+          <button type="button" class="btn btn-sm ${tipo === 'eliminar' ? 'btn-danger' : 'btn-primary'}" id="btnConfirmarArcaSim" style="padding: 0.5rem 1.25rem; font-weight: 700; ${tipo === 'eliminar' ? 'background: #dc2626; color: #ffffff; border: none;' : ''}">
+            ${textoConfirmar}
+          </button>
+        </div>
+      </div>
+    `;
+
+    function fechar(resultado) {
+      modal.classList.remove('active');
+      document.removeEventListener('keydown', handleKey);
+      resolve(resultado);
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Escape') fechar(false);
+    }
+
+    document.getElementById('btnConfirmarArcaCancelar').onclick = () => fechar(false);
+    document.getElementById('btnConfirmarArcaSim').onclick = () => fechar(true);
+    modal.onclick = (e) => { if (e.target === modal) fechar(false); };
+    document.addEventListener('keydown', handleKey);
+
+    modal.classList.add('active');
+  });
+};
+
+/**
+ * Janela Modal de Aviso após submissão de pedido que requer validação do Administrador
+ */
+window.mostrarAvisoAprovacaoAdmin = function(opts = {}) {
+  return new Promise((resolve) => {
+    let modal = document.getElementById('modalAvisoAdminArca');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'modalAvisoAdminArca';
+      modal.className = 'modal-overlay';
+      modal.style.zIndex = '999999';
+      document.body.appendChild(modal);
+    }
+    const modulo = opts.modulo || 'Geral';
+    const operacao = opts.operacao || 'MODIFICAR';
+    const opTexto = (operacao === 'ELIMINAR' ? 'eliminação' : 'alteração');
+    const msg = opts.mensagem || `O seu pedido de ${opTexto} em <strong>${modulo}</strong> foi enviado com sucesso para aprovação do Administrador.`;
+
+    modal.innerHTML = `
+      <div class="modal-content" style="max-width: 500px; width: 92%; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25); border: 1px solid #cbd5e1; background: #ffffff;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 0.75rem; background: #eff6ff;">
+          <span style="font-size: 1.6rem;">✉️</span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: #1e40af; font-weight: 800;">
+              Pedido Enviado para Aprovação do Administrador
+            </h3>
+            <p style="margin: 0.15rem 0 0 0; font-size: 0.75rem; color: #64748b;">
+              Validação administrativa necessária
+            </p>
+          </div>
+        </div>
+        <div style="padding: 1.5rem; font-size: 0.92rem; color: #1e293b; line-height: 1.6;">
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 0.6rem;">
+            <span style="font-size: 1.2rem; line-height: 1;">⏳</span>
+            <div style="font-size: 0.86rem; color: #166534;">
+              <strong>Operação sob Validação:</strong> Esta ação em <u>${modulo}</u> requer autorização prévia por parte dos Administradores da A.R.C.A.
+            </div>
+          </div>
+          <p style="margin: 0 0 0.6rem 0;">
+            ${msg}
+          </p>
+          <p style="margin: 0; font-size: 0.82rem; color: #64748b;">
+            Poderá acompanhar o estado do pedido no submenu <strong>Pedidos e Validações</strong> do Painel de Controlo. Assim que for aprovado por um Administrador, a operação ficará efetiva.
+          </p>
+        </div>
+        <div style="padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+          <button type="button" class="btn btn-primary btn-sm" id="btnAvisoAdminCompreendi" style="padding: 0.5rem 1.4rem; font-weight: 700;">
+            Compreendi
+          </button>
+        </div>
+      </div>
+    `;
+
+    function fechar() {
+      modal.classList.remove('active');
+      resolve(true);
+    }
+
+    document.getElementById('btnAvisoAdminCompreendi').onclick = fechar;
+    modal.onclick = (e) => { if (e.target === modal) fechar(); };
+
+    modal.classList.add('active');
+  });
+};
+
+/**
+ * Orquestrador Central: Confirmação com "Sim" / "Cancelar" e Validação de Autorização
+ */
+window.executarComConfirmacaoEAutorizacao = async function(config = {}) {
+  const operacao = String(config.operacao || 'MODIFICAR').toUpperCase();
+  const modulo = config.modulo || 'Geral';
+  const defTitulo = (operacao === 'ELIMINAR' ? `Confirmar Eliminação em ${modulo}` : `Confirmar Alteração em ${modulo}`);
+  const defTextoConfirmar = (operacao === 'ELIMINAR' ? 'Sim, Eliminar' : 'Sim, Guardar');
+
+  const confirmou = await window.confirmarOperacaoArca({
+    titulo: config.titulo || defTitulo,
+    mensagem: config.mensagem || (operacao === 'ELIMINAR' ? 'Tem a certeza de que deseja eliminar permanentemente este registo?' : 'Tem a certeza de que deseja guardar as alterações efetuadas?'),
+    tipo: operacao === 'ELIMINAR' ? 'eliminar' : 'alterar',
+    textoConfirmar: config.textoConfirmar || defTextoConfirmar,
+    textoCancelar: 'Cancelar'
+  });
+
+  if (!confirmou) {
+    if (typeof config.onCancel === 'function') config.onCancel();
+    return { confirmou: false, executado: false };
+  }
+
+  // Verificar se o utilizador atual exige autorização do Administrador para este módulo
+  const exigeAprovacao = (typeof window.verificarExigeAutorizacao === 'function') 
+    ? window.verificarExigeAutorizacao(modulo, operacao) 
+    : false;
+
+  if (exigeAprovacao) {
+    // Registar o pedido para o Administrador
+    const res = window.enviarPedidoAdmin({
+      tipo: 'MANIPULACAO',
+      modulo: modulo,
+      assunto: config.assuntoPedido || `Pedido de autorização para ${operacao.toLowerCase()} em ${modulo}`,
+      descricao: config.descricaoPedido || `O utilizador solicitou autorização para efetuar uma operação de ${operacao.toLowerCase()} em ${modulo}.`,
+      detalhesOperacao: {
+        operacao: operacao,
+        dados: config.dadosOperacao || {}
+      }
+    });
+
+    // Apresentar o aviso formal de que foi enviado para aprovação
+    await window.mostrarAvisoAprovacaoAdmin({
+      modulo: modulo,
+      operacao: operacao,
+      mensagem: `O seu pedido de <strong>${operacao === 'ELIMINAR' ? 'eliminação' : 'alteração'}</strong> em <strong>${modulo}</strong> foi submetido com sucesso e enviado para aprovação do Administrador.`
+    });
+
+    if (window.atualizarBadgesPedidosPendentes) {
+      window.atualizarBadgesPedidosPendentes();
+    }
+
+    return { confirmou: true, enviadoAprovacao: true, executado: false, pedido: res ? res.pedido : null };
+  }
+
+  // Se tiver permissão direta (ex: Administrador Total ou permissão sem exigência de aprovação)
+  if (typeof config.onConfirm === 'function') {
+    await config.onConfirm();
+  }
+
+  return { confirmou: true, enviadoAprovacao: false, executado: true };
 };
 
 window.atualizarBadgesPedidosPendentes = function() {

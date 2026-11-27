@@ -3191,78 +3191,100 @@
       let allUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
       let savedUser = null;
 
-      if (idVal) {
-        // Atualizar membro existente na base central
-        const uId = parseInt(idVal, 10);
-        const idx = allUsers.findIndex(u => u.id === uId);
-        if (idx >= 0) {
-          allUsers[idx].nome = nome;
-          allUsers[idx].orgao = orgao;
-          allUsers[idx].cargo = (orgao === 'Nenhum') ? '' : cargo;
-          allUsers[idx].numeroSocio = socioNum;
-          allUsers[idx].username = username;
-          allUsers[idx].login = username.replace(/^@/, '');
-          allUsers[idx].email = email;
-          allUsers[idx].telefone = telefone;
-          allUsers[idx].morada = morada;
-          allUsers[idx].perfil = (orgao === 'Nenhum') ? (socioNum ? 'Sócio Associado' : 'Utilizador Geral') : perfil;
-          allUsers[idx].estado = estado;
-          allUsers[idx].foto = foto;
-          allUsers[idx].permissoes_modulos = novasPermissoes;
-          savedUser = allUsers[idx];
+      async function executarGravacaoMembro() {
+        if (idVal) {
+          // Atualizar membro existente na base central
+          const uId = parseInt(idVal, 10);
+          const idx = allUsers.findIndex(u => u.id === uId);
+          if (idx >= 0) {
+            allUsers[idx].nome = nome;
+            allUsers[idx].orgao = orgao;
+            allUsers[idx].cargo = (orgao === 'Nenhum') ? '' : cargo;
+            allUsers[idx].numeroSocio = socioNum;
+            allUsers[idx].username = username;
+            allUsers[idx].login = username.replace(/^@/, '');
+            allUsers[idx].email = email;
+            allUsers[idx].telefone = telefone;
+            allUsers[idx].morada = morada;
+            allUsers[idx].perfil = (orgao === 'Nenhum') ? (socioNum ? 'Sócio Associado' : 'Utilizador Geral') : perfil;
+            allUsers[idx].estado = estado;
+            allUsers[idx].foto = foto;
+            allUsers[idx].permissoes_modulos = novasPermissoes;
+            savedUser = allUsers[idx];
 
-          if (typeof window.getArcaCurrentUser === 'function') {
-            const curr = window.getArcaCurrentUser();
-            if (curr && (curr.id === uId || curr.login === allUsers[idx].login)) {
-              curr.nome = nome;
-              curr.email = email;
-              curr.telefone = telefone;
-              curr.morada = morada;
-              curr.foto = foto;
-              curr.orgao = orgao;
-              curr.cargo = cargo;
-              curr.permissoes_modulos = novasPermissoes;
-              window.setArcaCurrentUser(curr);
+            if (typeof window.getArcaCurrentUser === 'function') {
+              const curr = window.getArcaCurrentUser();
+              if (curr && (curr.id === uId || curr.login === allUsers[idx].login)) {
+                curr.nome = nome;
+                curr.email = email;
+                curr.telefone = telefone;
+                curr.morada = morada;
+                curr.foto = foto;
+                curr.orgao = orgao;
+                curr.cargo = cargo;
+                curr.permissoes_modulos = novasPermissoes;
+                window.setArcaCurrentUser(curr);
+              }
             }
           }
+          showToast(`Dirigente "${nome}" atualizado na base central com sucesso!`, 'success');
+        } else {
+          // Criar novo membro na base central
+          const maxId = allUsers.reduce((max, u) => Math.max(max, u.id || 0), 0);
+          const cleanLogin = (username || `@${nome.toLowerCase().replace(/[^a-z0-9]/g, '')}`).replace(/^@/, '');
+          savedUser = {
+            id: maxId + 1,
+            nome,
+            login: cleanLogin,
+            username: '@' + cleanLogin,
+            cargo,
+            orgao,
+            numeroSocio: socioNum,
+            email,
+            telefone,
+            morada: morada || 'Aguada de Baixo',
+            perfil: perfil || 'Membro da Direção',
+            foto,
+            estado: estado || 'Ativo',
+            password: 'arca' + new Date().getFullYear(),
+            data_registo: new Date().toISOString().split('T')[0],
+            data_rgpd: new Date().toISOString().split('T')[0],
+            permissoes_modulos: novasPermissoes
+          };
+          allUsers.push(savedUser);
+          showToast(`Novo dirigente "${nome}" registado na base de utilizadores com sucesso!`, 'success');
         }
-        showToast(`Dirigente "${nome}" atualizado na base central com sucesso!`, 'success');
+
+        localStorage.setItem('arca_utilizadores_v2', JSON.stringify(allUsers));
+        if (savedUser && typeof window.saveArcaUtilizadorToCloud === 'function') {
+          await window.saveArcaUtilizadorToCloud(savedUser);
+        }
+
+        membros = getMembrosFromCentralUtilizadores();
+        renderMembros();
+        updateMembrosStats();
+        closeFormMembroModal();
+      }
+
+      if (idVal) {
+        const res = await window.executarComConfirmacaoEAutorizacao({
+          operacao: 'MODIFICAR',
+          modulo: 'Membros',
+          titulo: 'Confirmar Alteração de Membro',
+          mensagem: `Deseja guardar as alterações na ficha do membro/dirigente <strong>${nome}</strong> (${orgao} - ${cargo})?`,
+          textoConfirmar: 'Sim, Guardar',
+          assuntoPedido: `Pedido de autorização para modificar membro ${nome}`,
+          descricaoPedido: `Solicito autorização à Administração para atualizar os dados e permissões do dirigente ${nome} (${orgao} - ${cargo}).`,
+          dadosOperacao: { id: parseInt(idVal, 10), nome, orgao, cargo },
+          onConfirm: executarGravacaoMembro
+        });
+
+        if (res.enviadoAprovacao) {
+          closeFormMembroModal();
+        }
       } else {
-        // Criar novo membro na base central
-        const maxId = allUsers.reduce((max, u) => Math.max(max, u.id || 0), 0);
-        const cleanLogin = (username || `@${nome.toLowerCase().replace(/[^a-z0-9]/g, '')}`).replace(/^@/, '');
-        savedUser = {
-          id: maxId + 1,
-          nome,
-          login: cleanLogin,
-          username: '@' + cleanLogin,
-          cargo,
-          orgao,
-          numeroSocio: socioNum,
-          email,
-          telefone,
-          morada: morada || 'Aguada de Baixo',
-          perfil: perfil || 'Membro da Direção',
-          foto,
-          estado: estado || 'Ativo',
-          password: 'arca' + new Date().getFullYear(),
-          data_registo: new Date().toISOString().split('T')[0],
-          data_rgpd: new Date().toISOString().split('T')[0],
-          permissoes_modulos: novasPermissoes
-        };
-        allUsers.push(savedUser);
-        showToast(`Novo dirigente "${nome}" registado na base de utilizadores com sucesso!`, 'success');
+        await executarGravacaoMembro();
       }
-
-      localStorage.setItem('arca_utilizadores_v2', JSON.stringify(allUsers));
-      if (savedUser && typeof window.saveArcaUtilizadorToCloud === 'function') {
-        await window.saveArcaUtilizadorToCloud(savedUser);
-      }
-
-      membros = getMembrosFromCentralUtilizadores();
-      renderMembros();
-      updateMembrosStats();
-      closeFormMembroModal();
     };
 
     function updateMembrosStats() {
