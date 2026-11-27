@@ -1449,7 +1449,21 @@
         return u.estado === 'Ativo';
       });
 
-      return filtrados.map(u => ({
+      // DEDUPLICAÇÃO ESTRITA: Garantir que nenhum dirigente surge repetido por ID ou Login
+      const seenIds = new Set();
+      const seenLogins = new Set();
+      const unicos = [];
+      for (const u of filtrados) {
+        const uId = Number(u.id);
+        const uLog = (u.login || '').trim().toLowerCase();
+        if (!seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
+          seenIds.add(uId);
+          if (uLog) seenLogins.add(uLog);
+          unicos.push(u);
+        }
+      }
+
+      return unicos.map(u => ({
         id: u.id,
         nome: u.nome,
         cargo: u.cargo || (u.id === 1 ? 'Presidente' : 'Vogal'),

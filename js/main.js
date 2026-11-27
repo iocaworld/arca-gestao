@@ -708,6 +708,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ultimo_acesso: "25/11/2026",
       foto: "",
       permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
+        documentos: { enabled: true, mode: "view", submenus: ["consultar"] },
         socios: { enabled: true, mode: "own", submenus: ["consultar"] }
       }
     },
@@ -1123,79 +1126,112 @@ document.addEventListener('DOMContentLoaded', () => {
       ultimo_acesso: "Hoje",
       foto: "",
       permissoes_modulos: {
+        painel: { enabled: true, mode: "view", submenus: ["indicadores"] },
+        direcao: { enabled: true, mode: "full", submenus: ["membros", "atas"] },
+        documentos: { enabled: true, mode: "view", submenus: ["consultar"] },
         socios: { enabled: true, mode: "own", submenus: ["consultar"] }
       }
     }
   ];
 
   window.getArcaUtilizadores = function() {
-    try {
-      const saved = localStorage.getItem(ARCA_UTILIZADORES_KEY);
-      if (saved) {
-        let parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Filtrar utilizadores eliminados permanentemente
-          let deletedIds = [];
-          try {
-            deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-          } catch (e) {}
-          if (deletedIds.length > 0) {
-            parsed = parsed.filter(p => !deletedIds.includes(Number(p.id)));
-          }
+    // Lista canónica dos 23 utilizadores oficiais da ARCA que nunca podem ser eliminados
+    const OFFICIAL_USER_IDS = new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]);
 
-          // Garantir SEMPRE a presença do Administrador Total Jorge (ID: 1) para proteção contra lockout
-          const adminIdx = parsed.findIndex(p => (p.login && p.login.toLowerCase() === 'jorge') || Number(p.id) === 1);
-          if (adminIdx === -1) {
-            const adminSeed = SEED_UTILIZADORES.find(u => u.login === 'jorge');
-            if (adminSeed) parsed.unshift(adminSeed);
-          }
-
-          // Garantir número de sócio correto para Raquel Alexandra Marques da Cunha (Sócia nº 414)
-          const raquelIdx = parsed.findIndex(p => p.login === 'raquel.cunha');
-          if (raquelIdx !== -1 && (!parsed[raquelIdx].numeroSocio || parsed[raquelIdx].numeroSocio === 305)) {
-            parsed[raquelIdx].numeroSocio = 414;
-          }
-
-          // Assegurar que os membros oficiais do seed que ainda não existem em parsed são integrados
-          SEED_UTILIZADORES.forEach(su => {
-            if (!deletedIds.includes(Number(su.id))) {
-              const exists = parsed.some(p => 
-                Number(p.id) === Number(su.id) || 
-                (p.login && su.login && p.login.toLowerCase() === su.login.toLowerCase()) ||
-                (p.nome && su.nome && p.nome.trim().toLowerCase() === su.nome.trim().toLowerCase())
-              );
-              if (!exists) {
-                parsed.push(JSON.parse(JSON.stringify(su)));
-              }
-            }
-          });
-
-          // Garantir atributos de Órgão Social e Cargo onde ainda não definidos
-          parsed.forEach(u => {
-            if (u.orgao === undefined || u.orgao === null || u.orgao === '') {
-              const seedMatch = SEED_UTILIZADORES.find(s => s.id === u.id || s.login === u.login);
-              u.orgao = seedMatch ? (seedMatch.orgao || 'Nenhum') : 'Nenhum';
-            }
-            if (u.cargo === undefined || u.cargo === null) {
-              const seedMatch = SEED_UTILIZADORES.find(s => s.id === u.id || s.login === u.login);
-              u.cargo = seedMatch ? (seedMatch.cargo || '') : '';
-            }
-          });
-
-          localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
-          return parsed;
-        }
-      }
-    } catch (e) {}
-
-    // Fallback inicial se não houver dados em localStorage
+    // Limpar IDs oficiais de arca_deleted_user_ids para evitar que dirigentes e utilizadores oficiais desapareçam
     let deletedIds = [];
     try {
       deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-    } catch (e) {}
-    const initialList = SEED_UTILIZADORES.filter(u => !deletedIds.includes(Number(u.id)));
-    localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(initialList));
-    return initialList;
+      if (Array.isArray(deletedIds) && deletedIds.some(id => OFFICIAL_USER_IDS.has(Number(id)))) {
+        deletedIds = deletedIds.filter(id => !OFFICIAL_USER_IDS.has(Number(id)));
+        localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+      }
+    } catch (e) { deletedIds = []; }
+
+    try {
+      const saved = localStorage.getItem(ARCA_UTILIZADORES_KEY);
+      let parsed = [];
+      if (saved) {
+        try {
+          parsed = JSON.parse(saved);
+        } catch (e) { parsed = []; }
+      }
+
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        parsed = JSON.parse(JSON.stringify(SEED_UTILIZADORES));
+      }
+
+      // Filtrar eliminados não-oficiais
+      if (deletedIds.length > 0) {
+        parsed = parsed.filter(p => !deletedIds.includes(Number(p.id)));
+      }
+
+      // Assegurar SEMPRE a integração dos 23 utilizadores oficiais do seed central
+      SEED_UTILIZADORES.forEach(su => {
+        const idx = parsed.findIndex(p => Number(p.id) === Number(su.id));
+        if (idx === -1) {
+          parsed.push(JSON.parse(JSON.stringify(su)));
+        } else {
+          // Garantir integridade de campos cruciais nos utilizadores oficiais
+          if (!parsed[idx].login) parsed[idx].login = su.login;
+          if (!parsed[idx].nome) parsed[idx].nome = su.nome;
+          if (parsed[idx].orgao === undefined || parsed[idx].orgao === null || parsed[idx].orgao === '') parsed[idx].orgao = su.orgao;
+          if (parsed[idx].cargo === undefined || parsed[idx].cargo === null) parsed[idx].cargo = su.cargo;
+          if (su.id === 5 && parsed[idx].numeroSocio !== 414) parsed[idx].numeroSocio = 414;
+        }
+      });
+
+      // DEDUPLICAÇÃO ESTRITA: Eliminar duplicados por ID e por Login
+      const seenIds = new Set();
+      const seenLogins = new Set();
+      const uniqueList = [];
+
+      // Priorizar utilizadores oficiais do seed primeiro
+      parsed.sort((a, b) => {
+        const isOfficialA = OFFICIAL_USER_IDS.has(Number(a.id)) ? 0 : 1;
+        const isOfficialB = OFFICIAL_USER_IDS.has(Number(b.id)) ? 0 : 1;
+        if (isOfficialA !== isOfficialB) return isOfficialA - isOfficialB;
+        return (Number(a.id) || 0) - (Number(b.id) || 0);
+      });
+
+      for (const u of parsed) {
+        const uId = Number(u.id);
+        const uLog = (u.login || '').trim().toLowerCase();
+        if (!seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
+          seenIds.add(uId);
+          if (uLog) seenLogins.add(uLog);
+          uniqueList.push(u);
+        }
+      }
+      parsed = uniqueList;
+
+      // Garantir SEMPRE permissões totais para o Administrador Total Jorge (ID: 1)
+      const adminIdx = parsed.findIndex(p => (p.login && p.login.toLowerCase() === 'jorge') || Number(p.id) === 1);
+      if (adminIdx !== -1) {
+        parsed[adminIdx].perfil = 'Administrador Total';
+        parsed[adminIdx].orgao = 'Direção';
+        parsed[adminIdx].cargo = 'Presidente';
+        parsed[adminIdx].estado = 'Ativo';
+        parsed[adminIdx].permissoes_modulos = {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
+          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos", "exportar"] },
+          tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+          direcao: { enabled: true, mode: "full", submenus: ["membros", "membros_gestao", "atas", "exercicio"] },
+          desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
+          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "eliminar"] },
+          administracao: { enabled: true, mode: "full", submenus: ["utilizadores_ver", "utilizadores_gerir", "pedidos", "logs"] }
+        };
+      }
+
+      // Ordenar por ID crescente
+      parsed.sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
+
+      localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(parsed));
+      return parsed;
+    } catch (e) {
+      console.warn('Erro em getArcaUtilizadores:', e);
+      return JSON.parse(JSON.stringify(SEED_UTILIZADORES));
+    }
   };
 
   // Expor o seed inicial completo dos utilizadores
@@ -1404,26 +1440,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const u = JSON.parse(saved);
         // Sincronizar com os dados mais recentes do utilizador na lista
         const allUsers = (typeof window.getArcaUtilizadores === 'function') ? window.getArcaUtilizadores() : [];
-        const fresh = allUsers.find(x => x.id === u.id || (x.login && x.login.toLowerCase() === (u.login || '').toLowerCase()));
+        const fresh = allUsers.find(x => Number(x.id) === Number(u.id) || (x.login && x.login.toLowerCase() === (u.login || '').toLowerCase()));
         if (fresh) {
           if (fresh.numeroSocio !== undefined) u.numeroSocio = fresh.numeroSocio;
           if (fresh.permissoes_modulos) u.permissoes_modulos = fresh.permissoes_modulos;
           if (fresh.perfil) u.perfil = fresh.perfil;
           if (fresh.estado) u.estado = fresh.estado;
-          localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
+          if (fresh.orgao) u.orgao = fresh.orgao;
+          if (fresh.cargo) u.cargo = fresh.cargo;
         }
+
+        // Salvaguarda inviolável para Jorge (ID 1 / Administrador Total):
+        if (Number(u.id) === 1 || (u.login && u.login.toLowerCase() === 'jorge')) {
+          u.perfil = 'Administrador Total';
+          u.orgao = 'Direção';
+          u.cargo = 'Presidente';
+          u.estado = 'Ativo';
+          u.permissoes_modulos = {
+            painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
+            socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos", "exportar"] },
+            tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+            direcao: { enabled: true, mode: "full", submenus: ["membros", "membros_gestao", "atas", "exercicio"] },
+            desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
+            documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "eliminar"] },
+            administracao: { enabled: true, mode: "full", submenus: ["utilizadores_ver", "utilizadores_gerir", "pedidos", "logs"] }
+          };
+        }
+
         if ((u.login === 'raquel.cunha' || (u.nome && u.nome.toLowerCase().includes('raquel alexandra'))) && (!u.numeroSocio || u.numeroSocio === 305)) {
           u.numeroSocio = 414;
-          localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
         }
         if (u.foto && (u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users') || u.foto.includes('xmlns="http://www.w3.org/2000/svg"') || (u.id === 1 && !u.foto.startsWith('data:image/')))) {
           u.foto = JORGE_AVATAR_SVG;
-          localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
         }
+
+        localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(u));
         return u;
       }
     } catch (e) {}
-    return null;
+
+    // Fallback: se não houver utilizador ativo em cache, assume sessão padrão do Presidente Jorge
+    const defaultAdmin = JSON.parse(JSON.stringify(SEED_UTILIZADORES[0]));
+    localStorage.setItem(ARCA_SESSION_KEY, JSON.stringify(defaultAdmin));
+    return defaultAdmin;
   };
 
   window.setArcaCurrentUser = function(user) {
@@ -5255,7 +5314,7 @@ window.reverterLogAtividade = function(logId, nota) {
         const exists = users.some(u => Number(u.id) === Number(log.dadosAnteriores.id));
         if (!exists) {
           users.push(log.dadosAnteriores);
-          localStorage.setItem('arca_utilizadores_v1', JSON.stringify(users));
+          localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(users));
           const deleted = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
           const idxDel = deleted.indexOf(Number(log.dadosAnteriores.id));
           if (idxDel >= 0) {
@@ -5334,7 +5393,7 @@ window.reverterLogAtividade = function(logId, nota) {
         const target = users.find(u => Number(u.id) === Number(log.entidadeId));
         if (target) {
           Object.assign(target, log.dadosAnteriores);
-          localStorage.setItem('arca_utilizadores_v1', JSON.stringify(users));
+          localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(users));
           if (typeof window.saveArcaUtilizadorToCloud === 'function') {
             window.saveArcaUtilizadorToCloud(target);
           }
@@ -5657,7 +5716,7 @@ window.aprovarPedidoAdmin = function(pedidoId, respostaAdmin, aplicarPermissao =
           mode: ped.detalhesOperacao.permissaoDesejada || 'full',
           submenus: []
         };
-        localStorage.setItem('arca_utilizadores_v1', JSON.stringify(users));
+        localStorage.setItem(ARCA_UTILIZADORES_KEY, JSON.stringify(users));
         if (typeof window.saveArcaUtilizadorToCloud === 'function') {
           window.saveArcaUtilizadorToCloud(user);
         }

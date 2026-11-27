@@ -1249,6 +1249,16 @@
     // Inicialização da Aplicação
     // =========================================================================
     function loadUtilizadores() {
+      const OFFICIAL_USER_IDS = new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]);
+      let deletedIds = [];
+      try {
+        deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+        if (Array.isArray(deletedIds) && deletedIds.some(id => OFFICIAL_USER_IDS.has(Number(id)))) {
+          deletedIds = deletedIds.filter(id => !OFFICIAL_USER_IDS.has(Number(id)));
+          localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+        }
+      } catch (e) { deletedIds = []; }
+
       if (typeof window.getArcaUtilizadores === 'function') {
         utilizadores = window.getArcaUtilizadores();
       } else {
@@ -1265,19 +1275,41 @@
         }
       }
 
-      // Filtrar utilizadores eliminados
-      let deletedIds = [];
-      try {
-        deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-      } catch (e) {}
+      // Filtrar apenas eliminados não-oficiais
       if (deletedIds.length > 0) {
         utilizadores = utilizadores.filter(u => !deletedIds.includes(Number(u.id)));
       }
+
+      if (!Array.isArray(utilizadores) || utilizadores.length === 0) {
+        utilizadores = JSON.parse(JSON.stringify(CONTAS_UTILIZADORES_INICIAIS));
+        localStorage.setItem(UTILIZADORES_STORAGE_KEY, JSON.stringify(utilizadores));
+      }
+
+      // DEDUPLICAÇÃO ESTRITA por ID e por Login
+      const seenIds = new Set();
+      const seenLogins = new Set();
+      const uniqueList = [];
+      for (const u of utilizadores) {
+        const uId = Number(u.id);
+        const uLog = (u.login || '').trim().toLowerCase();
+        if (!seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
+          seenIds.add(uId);
+          if (uLog) seenLogins.add(uLog);
+          uniqueList.push(u);
+        }
+      }
+      utilizadores = uniqueList;
 
       // Garantir compatibilidade e fotos limpas
       utilizadores.forEach(u => {
         if (!u.estado) u.estado = 'Ativo';
         if (!u.permissoes_modulos) u.permissoes_modulos = {};
+        if (Number(u.id) === 1 || (u.login && u.login.toLowerCase() === 'jorge')) {
+          u.perfil = 'Administrador Total';
+          u.orgao = 'Direção';
+          u.cargo = 'Presidente';
+          u.estado = 'Ativo';
+        }
         if (u.foto && u.foto.includes('gestao.arca-aguadadebaixo.pt/api/users')) {
           if (u.id === 1) u.foto = JORGE_SVG;
           else if (u.id === 2) u.foto = ARTUR_SVG;
@@ -2565,12 +2597,27 @@
       if (typeof window.syncArcaUtilizadoresFromCloud === 'function') {
         const cloudUsers = await window.syncArcaUtilizadoresFromCloud();
         if (cloudUsers && cloudUsers.length > 0) {
+          const OFFICIAL_USER_IDS = new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]);
           let deletedIds = [];
           try {
             deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+            deletedIds = deletedIds.filter(id => !OFFICIAL_USER_IDS.has(Number(id)));
           } catch (e) {}
 
-          utilizadores = cloudUsers.filter(u => !deletedIds.includes(Number(u.id)));
+          const unicos = [];
+          const seenIds = new Set();
+          const seenLogins = new Set();
+          for (const u of cloudUsers) {
+            const uId = Number(u.id);
+            const uLog = (u.login || '').trim().toLowerCase();
+            if (!deletedIds.includes(uId) && !seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
+              seenIds.add(uId);
+              if (uLog) seenLogins.add(uLog);
+              unicos.push(u);
+            }
+          }
+
+          utilizadores = unicos;
           updateUtilizadoresStats();
           renderUtilizadores();
           if (window.showToast) window.showToast('Dados sincronizados com a nuvem com sucesso!', 'success');
@@ -2597,12 +2644,27 @@
       if (typeof window.syncArcaUtilizadoresFromCloud === 'function') {
         window.syncArcaUtilizadoresFromCloud((cloudUsers) => {
           if (cloudUsers && cloudUsers.length > 0) {
+            const OFFICIAL_USER_IDS = new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]);
             let deletedIds = [];
             try {
               deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
+              deletedIds = deletedIds.filter(id => !OFFICIAL_USER_IDS.has(Number(id)));
             } catch (e) {}
 
-            utilizadores = cloudUsers.filter(u => !deletedIds.includes(Number(u.id)));
+            const unicos = [];
+            const seenIds = new Set();
+            const seenLogins = new Set();
+            for (const u of cloudUsers) {
+              const uId = Number(u.id);
+              const uLog = (u.login || '').trim().toLowerCase();
+              if (!deletedIds.includes(uId) && !seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
+                seenIds.add(uId);
+                if (uLog) seenLogins.add(uLog);
+                unicos.push(u);
+              }
+            }
+
+            utilizadores = unicos;
             updateUtilizadoresStats();
             renderUtilizadores();
           }

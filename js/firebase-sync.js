@@ -51,10 +51,15 @@ const ARCA_FIREBASE_CONFIG = {
     try {
       const snapshot = await firestore.collection('utilizadores').get();
       let cloudUsers = [];
+      const OFFICIAL_USER_IDS = new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]);
       let deletedIds = [];
       try {
         deletedIds = JSON.parse(localStorage.getItem('arca_deleted_user_ids') || '[]');
-      } catch (e) {}
+        if (Array.isArray(deletedIds) && deletedIds.some(id => OFFICIAL_USER_IDS.has(Number(id)))) {
+          deletedIds = deletedIds.filter(id => !OFFICIAL_USER_IDS.has(Number(id)));
+          localStorage.setItem('arca_deleted_user_ids', JSON.stringify(deletedIds));
+        }
+      } catch (e) { deletedIds = []; }
 
       snapshot.forEach(doc => {
         const u = doc.data();
@@ -114,6 +119,48 @@ const ARCA_FIREBASE_CONFIG = {
         }
       }
 
+      // DEDUPLICAÇÃO ESTRITA: Garantir que não há utilizadores repetidos por ID ou por login
+      const seenIds = new Set();
+      const seenLogins = new Set();
+      const uniqueCloudUsers = [];
+
+      // Ordenar dando prioridade aos IDs oficiais (1 a 23)
+      cloudUsers.sort((a, b) => {
+        const isOfficialA = OFFICIAL_USER_IDS.has(Number(a.id)) ? 0 : 1;
+        const isOfficialB = OFFICIAL_USER_IDS.has(Number(b.id)) ? 0 : 1;
+        if (isOfficialA !== isOfficialB) return isOfficialA - isOfficialB;
+        return (Number(a.id) || 0) - (Number(b.id) || 0);
+      });
+
+      for (const u of cloudUsers) {
+        const uId = Number(u.id);
+        const uLog = (u.login || '').trim().toLowerCase();
+        if (!seenIds.has(uId) && (!uLog || !seenLogins.has(uLog))) {
+          seenIds.add(uId);
+          if (uLog) seenLogins.add(uLog);
+          uniqueCloudUsers.push(u);
+        }
+      }
+      cloudUsers = uniqueCloudUsers;
+
+      // Garantir permissões e atributos do Presidente Jorge (ID: 1)
+      const jIdx = cloudUsers.findIndex(c => Number(c.id) === 1 || (c.login && c.login.toLowerCase() === 'jorge'));
+      if (jIdx !== -1) {
+        cloudUsers[jIdx].perfil = 'Administrador Total';
+        cloudUsers[jIdx].orgao = 'Direção';
+        cloudUsers[jIdx].cargo = 'Presidente';
+        cloudUsers[jIdx].estado = 'Ativo';
+        cloudUsers[jIdx].permissoes_modulos = {
+          painel: { enabled: true, mode: "full", submenus: ["indicadores", "avisos"] },
+          socios: { enabled: true, mode: "full", submenus: ["consultar", "editar", "pagamentos", "exportar"] },
+          tesouraria: { enabled: true, mode: "full", submenus: ["caixa", "recibos", "fornecedores", "pos"] },
+          direcao: { enabled: true, mode: "full", submenus: ["membros", "membros_gestao", "atas", "exercicio"] },
+          desporto: { enabled: true, mode: "full", submenus: ["diretor", "delegado", "fisio", "seguros"] },
+          documentos: { enabled: true, mode: "full", submenus: ["consultar", "upload", "eliminar"] },
+          administracao: { enabled: true, mode: "full", submenus: ["utilizadores_ver", "utilizadores_gerir", "pedidos", "logs"] }
+        };
+      }
+
       // Garantir número de sócio correto para Raquel Alexandra Marques da Cunha (Sócia nº 414)
       const rIdx = cloudUsers.findIndex(c => c.login === 'raquel.cunha');
       if (rIdx !== -1 && (!cloudUsers[rIdx].numeroSocio || cloudUsers[rIdx].numeroSocio === 305)) {
@@ -121,11 +168,11 @@ const ARCA_FIREBASE_CONFIG = {
       }
 
       // Ordenar por ID crescente
-      cloudUsers.sort((a, b) => (a.id || 0) - (b.id || 0));
+      cloudUsers.sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
 
       // Atualizar cache local
       localStorage.setItem('arca_utilizadores_v2', JSON.stringify(cloudUsers));
-      console.log(`[ARCA Firebase] ${cloudUsers.length} utilizadores sincronizados da nuvem.`);
+      console.log(`[ARCA Firebase] ${cloudUsers.length} utilizadores sincronizados da nuvem (sem duplicados).`);
 
       if (typeof onUpdated === 'function') {
         onUpdated(cloudUsers);
