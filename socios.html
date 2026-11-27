@@ -7,7 +7,70 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20261127_v2">
+  <style>
+    /* Estilos de Seleção Múltipla e Exportação para Sócios */
+    .card-box {
+      overflow: visible !important;
+    }
+    .card-header-bar {
+      overflow: visible !important;
+    }
+    .export-dropdown-group, .col-picker-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .export-dropdown-menu, .col-picker-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
+      min-width: 260px;
+      padding: 0.75rem 0.65rem;
+      z-index: 99999 !important;
+      display: none;
+    }
+    .export-dropdown-menu.show, .col-picker-menu.show {
+      display: block !important;
+    }
+    .export-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: none;
+      background: none;
+      border-radius: var(--radius-xs);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--text-title);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .export-menu-item:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+    .socios-selection-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.1rem;
+      box-shadow: 0 2px 4px rgba(30, 64, 175, 0.05);
+      flex-wrap: wrap;
+    }
+    .selected-row {
+      background-color: #f0fdf4 !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -488,6 +551,86 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Menu Exportar Sócios (CSV, Excel, PDF, Imprimir) -->
+              <div class="export-dropdown-group">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleExportSocios" onclick="toggleSociosExportMenu(event)" style="padding: 0.5rem 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  <span>Exportar</span>
+                  <span style="font-size: 0.65rem;">▼</span>
+                </button>
+                <div class="export-dropdown-menu" id="exportDropdownMenuSocios">
+                  <div class="col-picker-header" style="margin-bottom: 0.4rem;">
+                    <span>Exportar Sócios</span>
+                    <span id="exportSociosTargetLabel" style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">Todos os visíveis</span>
+                  </div>
+                  <button type="button" class="export-menu-item" onclick="exportarSociosCSV(false)">
+                    <span style="font-size: 1.15rem;">📊</span>
+                    <div>
+                      <div style="font-weight: 700;">Exportar para CSV</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Ficheiro separado por ponto e vírgula</small>
+                    </div>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarSociosExcel(false)">
+                    <span style="font-size: 1.15rem;">📗</span>
+                    <div>
+                      <div style="font-weight: 700;">Exportar para Excel (.xls)</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Folha de cálculo com grelha formatada</small>
+                    </div>
+                  </button>
+                  <button type="button" class="export-menu-item" onclick="exportarSociosPDF(false)">
+                    <span style="font-size: 1.15rem;">📄</span>
+                    <div>
+                      <div style="font-weight: 700;">Listagem em PDF</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Documento timbrado oficial A4</small>
+                    </div>
+                  </button>
+                  <div style="border-top: 1px solid var(--border-light); margin: 0.35rem 0;"></div>
+                  <button type="button" class="export-menu-item" onclick="imprimirSocios(false)">
+                    <span style="font-size: 1.15rem;">🖨️</span>
+                    <div>
+                      <div style="font-weight: 700;">Imprimir Listagem</div>
+                      <small style="color: var(--text-muted); font-size: 0.72rem;">Impressão direta da listagem</small>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Barra de Ações de Seleção Múltipla de Sócios -->
+          <div id="sociosSelectionBanner" class="socios-selection-banner" style="display: none; margin: 0.85rem 1.25rem 0.5rem 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 0.4rem; font-weight: 800; color: #1e40af; font-size: 0.9rem;">
+                <span>☑️</span>
+                <span id="labelSelectedSociosCount">0 sócios selecionados</span>
+              </div>
+              <button type="button" class="btn btn-outline btn-xs" onclick="selectAllVisibleSocios()" style="background: #ffffff; border-color: #bfdbfe; color: #1e40af;">
+                Selecionar Todos
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="clearSelectedSocios()" style="background: #ffffff; border-color: #cbd5e1; color: #64748b;">
+                Limpar Seleção
+              </button>
+            </div>
+            <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
+              <span style="font-size: 0.78rem; font-weight: 700; color: #1e3a8a; margin-right: 0.2rem;">Exportar Selecionados:</span>
+              <button type="button" class="btn btn-secondary btn-xs" onclick="exportarSociosCSV(true)" title="Exportar sócios selecionados em CSV">
+                📊 CSV
+              </button>
+              <button type="button" class="btn btn-secondary btn-xs" onclick="exportarSociosExcel(true)" title="Exportar sócios selecionados em Excel">
+                📗 Excel
+              </button>
+              <button type="button" class="btn btn-primary btn-xs" onclick="exportarSociosPDF(true)" title="Exportar sócios selecionados em PDF">
+                📄 PDF
+              </button>
+              <button type="button" class="btn btn-outline btn-xs" onclick="imprimirSocios(true)" style="background: #ffffff;" title="Imprimir sócios selecionados">
+                🖨️ Imprimir
+              </button>
             </div>
           </div>
 
@@ -495,6 +638,9 @@
             <table class="modern-table" id="sociosTable">
               <thead>
                 <tr id="sociosTableHeadRow">
+                  <th data-col="selecao" style="width: 40px; text-align: center;">
+                    <input type="checkbox" id="checkSelectAllSocios" title="Selecionar todos os sócios visíveis" onchange="toggleSelectAllSocios(this.checked)" style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary);">
+                  </th>
                   <th class="sortable-th" data-col="numero" style="width: 75px;" onclick="sortSociosTable('numero')">
                     <span>Nº</span><span class="sort-indicator" id="sortInd_numero">▲</span>
                   </th>
@@ -537,9 +683,14 @@
   <div class="drawer-backdrop" id="drawerSocio" onclick="if(event.target === this) closeSocioDrawer()">
     <div class="drawer-panel">
       
-      <div class="drawer-header">
-        <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-title);" id="drawerHeaderTitle">Sócio nº 2</h3>
-        <button onclick="closeSocioDrawer()" class="btn btn-outline btn-sm">Fechar</button>
+      <div class="drawer-header" style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-title); margin: 0;" id="drawerHeaderTitle">Sócio nº 2</h3>
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="emitirExtratoSocioPDF(currentDrawerSocioId)" style="color: var(--primary); font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;" title="Emitir Extrato Oficial e Aviso de Quotas para entregar ou enviar ao sócio">
+            <span>📄 Extrato / Quotas (PDF)</span>
+          </button>
+          <button type="button" onclick="closeSocioDrawer()" class="btn btn-outline btn-sm">✕</button>
+        </div>
       </div>
 
       <!-- Navegação de Tabs -->

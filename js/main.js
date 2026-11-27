@@ -2175,8 +2175,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Configurações de Personalização de Colunas & Ordenação de Sócios
-    const SOCIOS_COLS_KEY = 'arca_socios_cols_v4';
+    const SOCIOS_COLS_KEY = 'arca_socios_cols_v5';
     const DEFAULT_SOCIOS_COLS = {
+      selecao: true,
       numero: true,
       nome: true,
       localidade: true,
@@ -2187,6 +2188,10 @@ document.addEventListener('DOMContentLoaded', () => {
       acoes: true
     };
     let activeSociosCols = JSON.parse(localStorage.getItem(SOCIOS_COLS_KEY)) || { ...DEFAULT_SOCIOS_COLS };
+
+    // Estado da Seleção Múltipla de Sócios
+    let selectedSocioIds = new Set();
+    let lastFilteredSocios = [];
 
     function saveSociosCols() {
       localStorage.setItem(SOCIOS_COLS_KEY, JSON.stringify(activeSociosCols));
@@ -2236,6 +2241,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!pickerList) return;
 
       const labels = {
+        selecao: 'Caixa de Seleção (Exportar)',
         numero: 'Nº Sócio',
         nome: 'Nome do Sócio',
         localidade: 'Localidade / Morada',
@@ -2293,6 +2299,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (col) {
           th.style.display = isColVisible(col) ? '' : 'none';
         }
+      });
+      document.querySelectorAll('#sociosTableBody tr').forEach(tr => {
+        tr.querySelectorAll('td[data-col]').forEach(td => {
+          const col = td.getAttribute('data-col');
+          if (col) {
+            td.style.display = isColVisible(col) ? '' : 'none';
+          }
+        });
       });
     }
 
@@ -2509,6 +2523,9 @@ document.addEventListener('DOMContentLoaded', () => {
       data.forEach(s => {
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
+        const isSelected = selectedSocioIds.has(Number(s.id));
+        tr.setAttribute('data-socio-id', s.id);
+        if (isSelected) tr.classList.add('selected-row');
 
         // Badge de situação do membro
         let membroBadge = `<span class="status-pill em-dia" style="font-size: 0.78rem; padding: 2px 8px;">Ativo</span>`;
@@ -2527,16 +2544,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = '';
 
+        // 0. Caixa de Seleção
+        if (isColVisible('selecao')) {
+          html += `
+            <td data-col="selecao" style="width: 40px; text-align: center;" onclick="event.stopPropagation()">
+              <input type="checkbox" class="socio-row-check" value="${s.id}" ${isSelected ? 'checked' : ''} onchange="handleSelectSocio(${s.id}, this.checked)" style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary);">
+            </td>
+          `;
+        }
+
         // 1. Nº Sócio (Sem '#' na frente)
         if (isColVisible('numero')) {
-          html += `<td><strong>${s.numero}</strong></td>`;
+          html += `<td data-col="numero"><strong>${s.numero}</strong></td>`;
         }
 
         // 2. Nome do Sócio (Sem avatar/círculo de iniciais, nome em negrito com telefone por baixo)
         if (isColVisible('nome')) {
           const contactoSub = s.telefone ? escapeHtml(s.telefone) : (s.email ? escapeHtml(s.email) : '');
           html += `
-            <td>
+            <td data-col="nome">
               <div>
                 <a href="javascript:void(0)" onclick="openSocioDrawer(${s.id})" style="font-weight: 700; color: var(--text-title); text-decoration: none;">
                   ${escapeHtml(s.nome)}
@@ -2550,33 +2576,36 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Localidade
         if (isColVisible('localidade')) {
           const locText = s.localidade || s.morada || '—';
-          html += `<td><span style="font-size: 0.88rem; color: var(--text-body);">${escapeHtml(locText)}</span></td>`;
+          html += `<td data-col="localidade"><span style="font-size: 0.88rem; color: var(--text-body);">${escapeHtml(locText)}</span></td>`;
         }
 
         // 4. Categoria
         if (isColVisible('categoria')) {
-          html += `<td><span style="font-weight: 600; font-size: 0.88rem;">${escapeHtml(s.categoria || 'Efetivo')}</span></td>`;
+          html += `<td data-col="categoria"><span style="font-weight: 600; font-size: 0.88rem;">${escapeHtml(s.categoria || 'Efetivo')}</span></td>`;
         }
 
         // 5. Estado do Membro
         if (isColVisible('estadoMembro')) {
-          html += `<td>${membroBadge}</td>`;
+          html += `<td data-col="estadoMembro">${membroBadge}</td>`;
         }
 
         // 6. Último ano pago
         if (isColVisible('ultimoAno')) {
-          html += `<td><span style="font-weight: 600; color: var(--text-title);">${s.ultimaQuota || '—'}</span></td>`;
+          html += `<td data-col="ultimoAno"><span style="font-weight: 600; color: var(--text-title);">${s.ultimaQuota || '—'}</span></td>`;
         }
 
         // 7. Em atraso
         if (isColVisible('emAtraso')) {
-          html += `<td>${emAtrasoHtml}</td>`;
+          html += `<td data-col="emAtraso">${emAtrasoHtml}</td>`;
         }
 
         // 8. Ações
         if (isColVisible('acoes')) {
           html += `
-            <td style="text-align: right; white-space: nowrap;">
+            <td data-col="acoes" style="text-align: right; white-space: nowrap;">
+              <button class="btn btn-outline btn-xs" style="margin-right: 0.35rem; color: var(--primary); font-weight: 700;" onclick="event.stopPropagation(); emitirExtratoSocioPDF(${s.id})" title="Extrato Oficial e Aviso de Quotas (PDF / Imprimir)">
+                📄 Extrato
+              </button>
               ${(isOwnOnly && s.divida > 0) ? `
                 <button class="btn btn-primary btn-sm" style="background: #1c6d42; border-color: #1c6d42; margin-right: 0.4rem;" onclick="event.stopPropagation(); abrirModalContactoAdminPagamento(${s.id})" title="Contactar administrador para pagar cotas">
                   ✉️ Pagar Cotas
@@ -2626,6 +2655,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!socio || !drawerBackdrop) return;
 
       currentDrawerSocioId = id;
+      window.currentDrawerSocioId = id;
       currentDrawerTab = tab;
 
       ensureSocioQuotas(socio);
@@ -2908,7 +2938,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         drawerContent.innerHTML = `
           <div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; gap: 0.75rem; flex-wrap: wrap;">
               <div>
                 ${unpaidCount > 0 
                   ? `<div style="font-weight: 700; color: #dc2626; font-size: 1.05rem;">${unpaidCount} quota(s) em atraso - ${unpaidTotal.toFixed(2).replace('.', ',')} €</div>` 
@@ -2918,16 +2948,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
               </div>
 
-              ${canPay ? `
-                <button type="button" class="btn btn-primary" onclick="openRegistarPagamentoModal(${socio.id})" style="background: #6c584c; border-color: #6c584c;">
-                  Registar pagamento
+              <div style="display: flex; gap: 0.45rem; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="emitirExtratoSocioPDF(${socio.id})" style="color: var(--primary); font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;" title="Emitir Extrato Oficial e Aviso de Quotas">
+                  <span>📄 Extrato / Quotas (PDF)</span>
                 </button>
-              ` : `
-                <button type="button" class="btn btn-primary" onclick="abrirModalContactoAdminPagamento(${socio.id})" style="background: #1c6d42; border-color: #1c6d42; font-weight: 700; display: inline-flex; align-items: center; gap: 0.45rem;">
-                  <span>✉️</span>
-                  <span>Contactar um administrador para pagar</span>
-                </button>
-              `}
+                ${canPay ? `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="openRegistarPagamentoModal(${socio.id})" style="background: #6c584c; border-color: #6c584c;">
+                    Registar pagamento
+                  </button>
+                ` : `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalContactoAdminPagamento(${socio.id})" style="background: #1c6d42; border-color: #1c6d42; font-weight: 700; display: inline-flex; align-items: center; gap: 0.45rem;">
+                    <span>✉️</span>
+                    <span>Contactar um administrador para pagar</span>
+                  </button>
+                `}
+              </div>
             </div>
 
             <div class="table-responsive" style="border: 1px solid var(--border-light); border-radius: var(--radius-sm);">
@@ -2969,20 +3004,21 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         if (drawerFooter) {
-          if (!canPay) {
-            drawerFooter.innerHTML = `
-              <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalContactoAdminPagamento(${socio.id})" style="background: #1c6d42; border-color: #1c6d42; font-weight: 700;">
-                  ✉️ Contactar Administrador para Pagar
-                </button>
+          drawerFooter.innerHTML = `
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="emitirExtratoSocioPDF(${socio.id})" style="color: var(--primary); font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;" title="Emitir Extrato Oficial e Aviso de Quotas">
+                <span>📄 Extrato / Quotas (PDF)</span>
+              </button>
+              <div style="display: flex; gap: 0.45rem; align-items: center;">
+                ${!canPay ? `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalContactoAdminPagamento(${socio.id})" style="background: #1c6d42; border-color: #1c6d42; font-weight: 700;">
+                    ✉️ Contactar Administrador para Pagar
+                  </button>
+                ` : ''}
                 <button type="button" class="btn btn-outline btn-sm" onclick="closeSocioDrawer()">Fechar</button>
               </div>
-            `;
-          } else {
-            drawerFooter.innerHTML = `
-              <button type="button" class="btn btn-outline btn-sm" onclick="closeSocioDrawer()">Fechar</button>
-            `;
-          }
+            </div>
+          `;
         }
       }
     }
@@ -3758,7 +3794,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyFilters() {
       if (isOwnOnly) {
         const userSocio = findCurrentUserSocio();
-        renderTable(userSocio ? [userSocio] : []);
+        lastFilteredSocios = userSocio ? [userSocio] : [];
+        renderTable(lastFilteredSocios);
+        updateSociosSelectionUI();
         return;
       }
 
@@ -3827,7 +3865,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return 0;
       });
 
+      lastFilteredSocios = filtered;
       renderTable(filtered);
+      updateSociosSelectionUI();
     }
 
     if (searchInput) searchInput.addEventListener('input', applyFilters);
@@ -3847,6 +3887,890 @@ document.addEventListener('DOMContentLoaded', () => {
         applyFilters();
       });
     }
+
+    // =========================================================================
+    // 4.4.1. SELEÇÃO MÚLTIPLA & EXPORTAÇÃO DE SÓCIOS (CSV, EXCEL, PDF, IMPRESSÃO)
+    // =========================================================================
+    window.handleSelectSocio = function(id, isChecked) {
+      const numId = Number(id);
+      if (isChecked) {
+        selectedSocioIds.add(numId);
+      } else {
+        selectedSocioIds.delete(numId);
+      }
+      updateSociosSelectionUI();
+    };
+
+    window.toggleSelectAllSocios = function(isChecked) {
+      const currentList = (lastFilteredSocios && lastFilteredSocios.length > 0) ? lastFilteredSocios : socios;
+      if (isChecked) {
+        currentList.forEach(s => selectedSocioIds.add(Number(s.id)));
+      } else {
+        selectedSocioIds.clear();
+      }
+      updateSociosSelectionUI();
+      document.querySelectorAll('.socio-row-check').forEach(cb => {
+        cb.checked = isChecked;
+        const tr = cb.closest('tr');
+        if (tr) tr.classList.toggle('selected-row', isChecked);
+      });
+    };
+
+    window.selectAllVisibleSocios = function() {
+      const currentList = (lastFilteredSocios && lastFilteredSocios.length > 0) ? lastFilteredSocios : socios;
+      currentList.forEach(s => selectedSocioIds.add(Number(s.id)));
+      updateSociosSelectionUI();
+      document.querySelectorAll('.socio-row-check').forEach(cb => {
+        cb.checked = true;
+        const tr = cb.closest('tr');
+        if (tr) tr.classList.add('selected-row');
+      });
+    };
+
+    window.clearSelectedSocios = function() {
+      selectedSocioIds.clear();
+      updateSociosSelectionUI();
+      document.querySelectorAll('.socio-row-check').forEach(cb => {
+        cb.checked = false;
+        const tr = cb.closest('tr');
+        if (tr) tr.classList.remove('selected-row');
+      });
+    };
+
+    function updateSociosSelectionUI() {
+      const count = selectedSocioIds.size;
+      const banner = document.getElementById('sociosSelectionBanner');
+      const countLabel = document.getElementById('labelSelectedSociosCount');
+      const targetLabel = document.getElementById('exportSociosTargetLabel');
+      const masterCheck = document.getElementById('checkSelectAllSocios');
+
+      const visibleSocios = (lastFilteredSocios && lastFilteredSocios.length > 0) ? lastFilteredSocios : socios;
+      const visibleCount = visibleSocios.length;
+
+      if (count > 0) {
+        if (banner) banner.style.display = 'flex';
+        if (countLabel) countLabel.textContent = `${count} sócio${count > 1 ? 's' : ''} selecionado${count > 1 ? 's' : ''}`;
+        if (targetLabel) targetLabel.textContent = `${count} selecionado${count > 1 ? 's' : ''} de ${visibleCount}`;
+      } else {
+        if (banner) banner.style.display = 'none';
+        if (targetLabel) targetLabel.textContent = `Todos os visíveis (${visibleCount})`;
+      }
+
+      if (masterCheck) {
+        const visibleSelectedCount = visibleSocios.filter(s => selectedSocioIds.has(Number(s.id))).length;
+        if (visibleCount > 0 && visibleSelectedCount === visibleCount) {
+          masterCheck.checked = true;
+          masterCheck.indeterminate = false;
+        } else if (visibleSelectedCount > 0) {
+          masterCheck.checked = false;
+          masterCheck.indeterminate = true;
+        } else {
+          masterCheck.checked = false;
+          masterCheck.indeterminate = false;
+        }
+      }
+
+      // Atualizar destaque visual nas linhas existentes
+      document.querySelectorAll('#sociosTableBody tr').forEach(tr => {
+        const id = Number(tr.getAttribute('data-socio-id'));
+        if (id) {
+          const isSelected = selectedSocioIds.has(id);
+          tr.classList.toggle('selected-row', isSelected);
+          const chk = tr.querySelector('.socio-row-check');
+          if (chk) chk.checked = isSelected;
+        }
+      });
+    }
+    window.updateSociosSelectionUI = updateSociosSelectionUI;
+
+    function getSociosToExport(onlySelected) {
+      const visibleSocios = (lastFilteredSocios && lastFilteredSocios.length > 0) ? lastFilteredSocios : socios;
+      if (onlySelected && selectedSocioIds.size > 0) {
+        return visibleSocios.filter(s => selectedSocioIds.has(Number(s.id)));
+      }
+      return visibleSocios;
+    }
+    window.getSociosToExport = getSociosToExport;
+
+    window.toggleSociosExportMenu = function(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('exportDropdownMenuSocios');
+      if (menu) menu.classList.toggle('show');
+    };
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('exportDropdownMenuSocios');
+      const btn = document.getElementById('btnToggleExportSocios');
+      if (menu && menu.classList.contains('show')) {
+        if (!menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+          menu.classList.remove('show');
+        }
+      }
+    });
+
+    // --- 1. EXPORTAÇÃO CSV ---
+    window.exportarSociosCSV = function(onlySelected = false) {
+      const list = getSociosToExport(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum associado disponível para exportar.', 'warning');
+        return;
+      }
+
+      const headers = [
+        'Nº Sócio',
+        'Nome Completo',
+        'NIF',
+        'Categoria',
+        'Telefone',
+        'Email',
+        'Morada',
+        'Localidade',
+        'Código Postal',
+        'Data Inscrição',
+        'Situação',
+        'Último Ano Pago',
+        'Quotas em Atraso (€)',
+        'Anos em Atraso',
+        'Estado Quotas',
+        'Observações'
+      ];
+
+      const rows = list.map(s => {
+        const divida = Number(s.divida || 0);
+        const anosAtraso = divida > 0 ? Math.round(divida / 6) : 0;
+        const estadoQuotas = divida > 0 ? 'Em Atraso' : 'Em Dia';
+        return [
+          s.numero || '',
+          `"${(s.nome || '').replace(/"/g, '""')}"`,
+          `"${(s.nif || '').replace(/"/g, '""')}"`,
+          `"${(s.categoria || 'Efetivo').replace(/"/g, '""')}"`,
+          `"${(s.telefone || '').replace(/"/g, '""')}"`,
+          `"${(s.email || '').replace(/"/g, '""')}"`,
+          `"${(s.morada || '').replace(/"/g, '""')}"`,
+          `"${(s.localidade || 'Aguada de Baixo').replace(/"/g, '""')}"`,
+          `"${(s.codPostal || '').replace(/"/g, '""')}"`,
+          s.dataInscricao || '',
+          `"${(s.estadoMembro || 'Ativo').replace(/"/g, '""')}"`,
+          s.ultimaQuota || '',
+          divida.toFixed(2).replace('.', ','),
+          anosAtraso,
+          `"${estadoQuotas}"`,
+          `"${(s.observacoes || '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`
+        ].join(';');
+      });
+
+      const csvContent = '\uFEFF' + headers.join(';') + '\r\n' + rows.join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const hojeStr = new Date().toISOString().split('T')[0];
+      link.href = url;
+      link.setAttribute('download', `socios_arca_${hojeStr}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      const menu = document.getElementById('exportDropdownMenuSocios');
+      if (menu) menu.classList.remove('show');
+      if (window.showToast) window.showToast(`${list.length} sócio(s) exportado(s) para CSV com sucesso!`, 'success');
+    };
+
+    // --- 2. EXPORTAÇÃO EXCEL (.xls HTML Formatted) ---
+    window.exportarSociosExcel = function(onlySelected = false) {
+      const list = getSociosToExport(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum associado disponível para exportar.', 'warning');
+        return;
+      }
+
+      const rowsHtml = list.map((s, idx) => {
+        const divida = Number(s.divida || 0);
+        const anosAtraso = divida > 0 ? Math.round(divida / 6) : 0;
+        const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+        const estadoColor = divida > 0 ? '#dc2626' : '#16a34a';
+        return `
+          <tr style="background-color: ${bg};">
+            <td style="text-align: center; font-weight: bold; padding: 6px 8px; border: 1px solid #cbd5e1;">${s.numero}</td>
+            <td style="padding: 6px 8px; font-weight: bold; border: 1px solid #cbd5e1;">${escapeHtml(s.nome)}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.nif || '')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.categoria || 'Efetivo')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.telefone || '')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.email || '')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.morada || '')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.localidade || 'Aguada de Baixo')}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.codPostal || '')}</td>
+            <td style="text-align: center; padding: 6px 8px; border: 1px solid #cbd5e1;">${s.dataInscricao || ''}</td>
+            <td style="text-align: center; padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.estadoMembro || 'Ativo')}</td>
+            <td style="text-align: center; font-weight: bold; padding: 6px 8px; border: 1px solid #cbd5e1;">${s.ultimaQuota || '—'}</td>
+            <td style="text-align: right; font-weight: bold; color: ${estadoColor}; padding: 6px 8px; border: 1px solid #cbd5e1;">${divida.toFixed(2).replace('.', ',')} €</td>
+            <td style="text-align: center; padding: 6px 8px; border: 1px solid #cbd5e1;">${anosAtraso}</td>
+            <td style="text-align: center; font-weight: bold; color: ${estadoColor}; padding: 6px 8px; border: 1px solid #cbd5e1;">${divida > 0 ? 'Em Atraso' : 'Em Dia'}</td>
+            <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${escapeHtml(s.observacoes || '')}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const totalDivida = list.reduce((sum, s) => sum + Number(s.divida || 0), 0);
+      const totalEmDia = list.filter(s => (s.divida || 0) === 0).length;
+      const totalEmAtraso = list.filter(s => (s.divida || 0) > 0).length;
+
+      const excelTemplate = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+          <style>
+            body { font-family: Calibri, Arial, sans-serif; }
+            table { border-collapse: collapse; width: 100%; }
+            th { background-color: #0f3f26; color: #ffffff; font-weight: bold; border: 1px solid #0a2d1b; text-align: left; padding: 8px; }
+            td { vertical-align: middle; }
+          </style>
+        </head>
+        <body>
+          <h2 style="color: #0f3f26; margin-bottom: 4px;">A.R.C.A. - Associação Recreativa e Cultural de Aguada de Baixo</h2>
+          <p style="color: #475569; margin-top: 0; font-size: 14px;"><strong>Caderno de Sócios & Registo de Quotas</strong> · Emitido em: ${new Date().toLocaleDateString('pt-PT')} ${new Date().toLocaleTimeString('pt-PT')}</p>
+          <p style="font-size: 13px;">Total de Sócios: <strong>${list.length}</strong> | Em Dia: <strong style="color: #16a34a;">${totalEmDia}</strong> | Em Atraso: <strong style="color: #dc2626;">${totalEmAtraso}</strong> | Dívida Global em Quotas: <strong style="color: #dc2626;">${totalDivida.toFixed(2).replace('.', ',')} €</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 70px; text-align: center;">Nº Sócio</th>
+                <th style="width: 220px;">Nome Completo</th>
+                <th style="width: 100px;">NIF</th>
+                <th style="width: 110px;">Categoria</th>
+                <th style="width: 110px;">Telefone</th>
+                <th style="width: 180px;">Email</th>
+                <th style="width: 220px;">Morada</th>
+                <th style="width: 140px;">Localidade</th>
+                <th style="width: 90px;">Cód. Postal</th>
+                <th style="width: 110px; text-align: center;">Data Inscrição</th>
+                <th style="width: 90px; text-align: center;">Situação</th>
+                <th style="width: 100px; text-align: center;">Último Ano</th>
+                <th style="width: 110px; text-align: right;">Dívida (€)</th>
+                <th style="width: 90px; text-align: center;">Anos Atraso</th>
+                <th style="width: 110px; text-align: center;">Estado Quotas</th>
+                <th style="width: 250px;">Observações</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\uFEFF' + excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const hojeStr = new Date().toISOString().split('T')[0];
+      link.href = url;
+      link.setAttribute('download', `socios_arca_${hojeStr}.xls`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      const menu = document.getElementById('exportDropdownMenuSocios');
+      if (menu) menu.classList.remove('show');
+      if (window.showToast) window.showToast(`${list.length} sócio(s) exportado(s) para Excel (.xls) com sucesso!`, 'success');
+    };
+
+    // --- 3. EXPORTAÇÃO LISTAGEM PDF & IMPRIMIR ---
+    window.imprimirSocios = function(onlySelected = false) {
+      window.exportarSociosPDF(onlySelected);
+    };
+
+    window.exportarSociosPDF = function(onlySelected = false) {
+      const list = getSociosToExport(onlySelected);
+      if (!list || list.length === 0) {
+        if (window.showToast) window.showToast('Nenhum associado disponível para emitir documento.', 'warning');
+        return;
+      }
+
+      const currentUser = (typeof window.getArcaCurrentUser === 'function') ? window.getArcaCurrentUser() : null;
+      const emitenteNome = currentUser ? `${currentUser.nome || currentUser.login} (${currentUser.perfil || 'Administração'})` : 'Direção da A.R.C.A.';
+      const hojeData = new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const hojeHora = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+      const totalDivida = list.reduce((sum, s) => sum + Number(s.divida || 0), 0);
+      const totalEmDia = list.filter(s => (s.divida || 0) === 0).length;
+      const totalEmAtraso = list.filter(s => (s.divida || 0) > 0).length;
+
+      const rowsHtml = list.map((s, idx) => {
+        const divida = Number(s.divida || 0);
+        const anosAtraso = divida > 0 ? Math.round(divida / 6) : 0;
+        const contactos = [s.telefone, s.email].filter(Boolean).join(' · ') || '—';
+        const loc = s.localidade || s.morada || 'Aguada de Baixo';
+        return `
+          <tr>
+            <td style="text-align: center; font-weight: 800;">${s.numero}</td>
+            <td style="font-weight: 700;">
+              <div>${escapeHtml(s.nome)}</div>
+              <div style="font-size: 7.5pt; color: #64748b; font-weight: normal;">${escapeHtml(contactos)}</div>
+            </td>
+            <td>${escapeHtml(loc)}</td>
+            <td style="text-align: center; font-weight: 600;">${escapeHtml(s.categoria || 'Efetivo')}</td>
+            <td style="text-align: center;">${escapeHtml(s.estadoMembro || 'Ativo')}</td>
+            <td style="text-align: center; font-weight: 700;">${s.ultimaQuota || '—'}</td>
+            <td style="text-align: center; font-weight: 700; color: ${divida > 0 ? '#b91c1c' : '#15803d'};">
+              ${divida > 0 ? `${anosAtraso} ano(s) (${divida.toFixed(2).replace('.', ',')} €)` : 'Em dia'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert('Por favor autorize janelas pop-up no seu navegador para visualizar o PDF/Impressão.');
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-PT">
+        <head>
+          <meta charset="UTF-8">
+          <title>A.R.C.A. - Caderno Oficial de Sócios & Quotas</title>
+          <style>
+            @page {
+              size: A4 landscape;
+              margin: 10mm 12mm 10mm 12mm;
+            }
+            body {
+              font-family: 'Segoe UI', Arial, sans-serif;
+              color: #1e293b;
+              margin: 0;
+              padding: 0;
+              font-size: 9pt;
+              line-height: 1.35;
+            }
+            .header-bar {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 2.5px solid #0f3f26;
+              padding-bottom: 8px;
+              margin-bottom: 12px;
+            }
+            .brand-title {
+              font-size: 14pt;
+              font-weight: 800;
+              color: #0f3f26;
+              letter-spacing: 0.5px;
+            }
+            .brand-sub {
+              font-size: 8.5pt;
+              color: #475569;
+              font-weight: 600;
+            }
+            .summary-box {
+              display: flex;
+              gap: 16px;
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 4px;
+              padding: 8px 12px;
+              margin-bottom: 12px;
+              font-size: 8.5pt;
+            }
+            .summary-item strong {
+              color: #0f3f26;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th {
+              background: #0f3f26;
+              color: #ffffff;
+              font-size: 8pt;
+              font-weight: 700;
+              text-transform: uppercase;
+              padding: 6px 7px;
+              border: 1px solid #0f3f26;
+              text-align: left;
+            }
+            td {
+              padding: 5px 7px;
+              border: 1px solid #cbd5e1;
+              font-size: 8.5pt;
+            }
+            tr:nth-child(even) {
+              background: #f8fafc;
+            }
+            .footer-bar {
+              margin-top: 14px;
+              display: flex;
+              justify-content: space-between;
+              font-size: 7.5pt;
+              color: #64748b;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 6px;
+            }
+            @media print {
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print" style="background: #0f3f26; color: #ffffff; padding: 10px 14px; margin-bottom: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600;">Documento pronto para Impressão ou Guardar como PDF (A4 Horizontal).</span>
+            <div>
+              <button onclick="window.print()" style="padding: 6px 14px; background: #ffffff; color: #0f3f26; border: none; font-weight: 700; border-radius: 4px; cursor: pointer; margin-right: 6px;">🖨️ Imprimir / Guardar PDF</button>
+              <button onclick="window.close()" style="padding: 6px 10px; background: transparent; color: #ffffff; border: 1px solid #ffffff; border-radius: 4px; cursor: pointer;">Fechar</button>
+            </div>
+          </div>
+
+          <div class="header-bar">
+            <div>
+              <div class="brand-title">A.R.C.A. - ASSOCIAÇÃO RECREATIVA E CULTURAL DE AGUADA DE BAIXO</div>
+              <div class="brand-sub">Caderno Oficial de Associados e Situação Financeira de Quotas</div>
+            </div>
+            <div style="text-align: right; font-size: 8pt; color: #475569;">
+              <div>Data de Emissão: <strong>${hojeData} às ${hojeHora}</strong></div>
+              <div>Emitido por: <strong>${escapeHtml(emitenteNome)}</strong></div>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <div class="summary-item">Total de Sócios Listados: <strong>${list.length}</strong></div>
+            <div class="summary-item">Quotas em Dia: <strong style="color: #16a34a;">${totalEmDia}</strong></div>
+            <div class="summary-item">Quotas em Atraso: <strong style="color: #dc2626;">${totalEmAtraso}</strong></div>
+            <div class="summary-item">Montante Global em Dívida: <strong style="color: #dc2626;">${totalDivida.toFixed(2).replace('.', ',')} €</strong></div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 55px; text-align: center;">Nº</th>
+                <th style="width: 250px;">Nome do Associado / Contactos</th>
+                <th>Localidade / Morada</th>
+                <th style="width: 90px; text-align: center;">Categoria</th>
+                <th style="width: 75px; text-align: center;">Situação</th>
+                <th style="width: 85px; text-align: center;">Último Ano</th>
+                <th style="width: 140px; text-align: center;">Estado / Dívida</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <div class="footer-bar">
+            <span>A.R.C.A. · Sistema Integrado de Gestão Associativa · Documento Informativo Oficial</span>
+            <span>Total de Registos: ${list.length}</span>
+          </div>
+
+          <script>
+            window.addEventListener('load', () => {
+              setTimeout(() => { window.print(); }, 400);
+            });
+          <\/script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+
+      const menu = document.getElementById('exportDropdownMenuSocios');
+      if (menu) menu.classList.remove('show');
+    };
+
+    // --- 4. EXTRATO DE QUOTAS & AVISO INDIVIDUAL DO SÓCIO (PDF / IMPRIMIR) ---
+    window.emitirExtratoSocioPDF = function(socioId) {
+      const targetId = Number(socioId) || Number(window.currentDrawerSocioId) || Number(currentDrawerSocioId);
+      const socio = socios.find(s => Number(s.id) === targetId);
+
+      if (!socio) {
+        if (window.showToast) window.showToast('Por favor selecione ou abra a ficha de um associado.', 'warning');
+        return;
+      }
+
+      ensureSocioQuotas(socio);
+
+      const divida = Number(socio.divida || 0);
+      const anosEmAtraso = divida > 0 ? Math.round(divida / 6) : 0;
+      const quotas = socio.quotas || [];
+      const unpaidQuotas = quotas.filter(q => !q.pago);
+      const hojeDataExtenso = new Date().toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' });
+      const refExtrato = `EXT-${String(socio.numero).padStart(3, '0')}/${new Date().getFullYear()}`;
+
+      // Montar linhas da tabela de quotas
+      const quotasRows = quotas.map(q => {
+        const isPaid = q.pago === true;
+        const valorFmt = (q.valor || 6).toFixed(2).replace('.', ',') + ' €';
+        const estadoLabel = isPaid ? 'Liquidado' : (q.estado === 'Isento' ? 'Isento' : 'Por Liquidar');
+        const estadoColor = isPaid ? '#15803d' : (q.estado === 'Isento' ? '#475569' : '#b91c1c');
+        const reciboFmt = q.reciboNumero ? `Recibo nº ${q.reciboNumero}` : '—';
+        return `
+          <tr>
+            <td style="text-align: center; font-weight: 800; font-size: 10pt;">${q.ano}</td>
+            <td style="text-align: right; font-weight: 700;">${valorFmt}</td>
+            <td style="text-align: center; font-weight: 700; color: ${estadoColor};">${estadoLabel}</td>
+            <td style="text-align: center; color: #475569;">${q.data || '—'}</td>
+            <td style="text-align: center;">${escapeHtml(q.metodo || '—')}</td>
+            <td style="text-align: center; font-weight: 600; color: #0f3f26;">${escapeHtml(reciboFmt)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert('Por favor autorize janelas pop-up no seu navegador para abrir o Extrato de Quotas.');
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-PT">
+        <head>
+          <meta charset="UTF-8">
+          <title>A.R.C.A. - Extrato de Conta e Aviso de Quotas (Sócio nº ${socio.numero})</title>
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 12mm 15mm 12mm 15mm;
+            }
+            body {
+              font-family: 'Segoe UI', Arial, sans-serif;
+              color: #1e293b;
+              margin: 0;
+              padding: 0;
+              font-size: 9.5pt;
+              line-height: 1.45;
+            }
+            .no-print {
+              background: #0f3f26;
+              color: #ffffff;
+              padding: 10px 14px;
+              margin-bottom: 18px;
+              border-radius: 6px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .header-table {
+              width: 100%;
+              border-collapse: collapse;
+              border-bottom: 2.5px solid #0f3f26;
+              padding-bottom: 12px;
+              margin-bottom: 16px;
+            }
+            .header-table td {
+              border: none;
+              padding: 0;
+              vertical-align: middle;
+            }
+            .brand-title {
+              font-size: 13pt;
+              font-weight: 800;
+              color: #0f3f26;
+              letter-spacing: 0.5px;
+            }
+            .brand-sub {
+              font-size: 8pt;
+              color: #475569;
+              font-weight: 600;
+              margin-top: 2px;
+            }
+            .doc-title-box {
+              text-align: center;
+              background: #f1f5f9;
+              border: 1px solid #cbd5e1;
+              border-radius: 6px;
+              padding: 10px 14px;
+              margin-bottom: 16px;
+            }
+            .doc-title {
+              font-size: 13pt;
+              font-weight: 800;
+              color: #0f3f26;
+              letter-spacing: 0.5px;
+              text-transform: uppercase;
+            }
+            .doc-meta {
+              font-size: 8.5pt;
+              color: #64748b;
+              margin-top: 3px;
+            }
+            .socio-card {
+              border: 1.5px solid #0f3f26;
+              border-radius: 6px;
+              background: #ffffff;
+              padding: 12px 14px;
+              margin-bottom: 16px;
+            }
+            .socio-card-title {
+              font-size: 8.5pt;
+              font-weight: 800;
+              color: #0f3f26;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              border-bottom: 1px dashed #cbd5e1;
+              padding-bottom: 5px;
+              margin-bottom: 8px;
+            }
+            .grid-2 {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px 16px;
+              font-size: 9pt;
+            }
+            .field-row {
+              display: flex;
+              justify-content: space-between;
+              border-bottom: 1px dotted #e2e8f0;
+              padding-bottom: 3px;
+            }
+            .field-label {
+              color: #64748b;
+              font-weight: 600;
+            }
+            .field-value {
+              font-weight: 700;
+              color: #1e293b;
+              text-align: right;
+            }
+            .status-banner {
+              border-radius: 6px;
+              padding: 12px 14px;
+              margin-bottom: 16px;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            }
+            .status-banner.atraso {
+              background: #fef2f2;
+              border: 1.5px solid #f87171;
+              color: #991b1b;
+            }
+            .status-banner.em-dia {
+              background: #f0fdf4;
+              border: 1.5px solid #86efac;
+              color: #166534;
+            }
+            .status-banner-icon {
+              font-size: 18pt;
+            }
+            .status-banner-text {
+              font-size: 9.5pt;
+              line-height: 1.4;
+            }
+            table.quotas-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 16px;
+            }
+            table.quotas-table th {
+              background: #0f3f26;
+              color: #ffffff;
+              font-size: 8pt;
+              font-weight: 700;
+              text-transform: uppercase;
+              padding: 7px 8px;
+              border: 1px solid #0f3f26;
+            }
+            table.quotas-table td {
+              padding: 6px 8px;
+              border: 1px solid #cbd5e1;
+              font-size: 9pt;
+            }
+            table.quotas-table tr:nth-child(even) {
+              background: #f8fafc;
+            }
+            .payment-box {
+              background: #fafaf9;
+              border: 1px solid #e7e5e4;
+              border-left: 4px solid #0f3f26;
+              border-radius: 4px;
+              padding: 10px 14px;
+              margin-bottom: 18px;
+              font-size: 8.5pt;
+              line-height: 1.5;
+            }
+            .signatures-row {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 30px;
+              margin-top: 26px;
+              padding-top: 10px;
+            }
+            .sign-box {
+              text-align: center;
+              border-top: 1px solid #94a3b8;
+              padding-top: 6px;
+              font-size: 8.5pt;
+              color: #475569;
+            }
+            .sign-box strong {
+              display: block;
+              color: #1e293b;
+              font-size: 9pt;
+              margin-top: 2px;
+            }
+            .footer-note {
+              margin-top: 22px;
+              text-align: center;
+              font-size: 7.5pt;
+              color: #94a3b8;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 8px;
+            }
+            @media print {
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print">
+            <span style="font-weight: 600;">Extrato Oficial de Conta & Aviso de Quotas pronto para Impressão ou Guardar em PDF.</span>
+            <div>
+              <button onclick="window.print()" style="padding: 6px 14px; background: #ffffff; color: #0f3f26; border: none; font-weight: 700; border-radius: 4px; cursor: pointer; margin-right: 6px;">🖨️ Imprimir / Guardar PDF</button>
+              <button onclick="window.close()" style="padding: 6px 10px; background: transparent; color: #ffffff; border: 1px solid #ffffff; border-radius: 4px; cursor: pointer;">Fechar</button>
+            </div>
+          </div>
+
+          <table class="header-table">
+            <tr>
+              <td>
+                <div class="brand-title">A.R.C.A. - ASSOCIAÇÃO RECREATIVA E CULTURAL DE AGUADA DE BAIXO</div>
+                <div class="brand-sub">Instituição de Utilidade Pública · NIF: 501 547 265 · Fundada em 1986</div>
+                <div class="brand-sub">Sede: Rua da ARCA, Pavilhão Carlos Almeida - 3750-031 Aguada de Baixo, Águeda</div>
+              </td>
+              <td style="text-align: right; width: 140px;">
+                <div style="font-size: 16pt; font-weight: 900; color: #0f3f26; border: 2px solid #0f3f26; border-radius: 4px; padding: 4px 8px; text-align: center; background: #f0fdf4;">
+                  SÓCIO Nº ${socio.numero}
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <div class="doc-title-box">
+            <div class="doc-title">Extrato de Associado & Aviso de Quotas</div>
+            <div class="doc-meta">Ref. Documento: <strong>${refExtrato}</strong> · Emitido em: <strong>${hojeDataExtenso}</strong></div>
+          </div>
+
+          <div class="socio-card">
+            <div class="socio-card-title">Identificação do Associado</div>
+            <div class="grid-2">
+              <div class="field-row">
+                <span class="field-label">Nome Completo:</span>
+                <span class="field-value">${escapeHtml(socio.nome)}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Nº de Sócio:</span>
+                <span class="field-value">Nº ${socio.numero}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">NIF:</span>
+                <span class="field-value">${escapeHtml(socio.nif || 'Não indicado')}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Categoria:</span>
+                <span class="field-value">${escapeHtml(socio.categoria || 'Efetivo')}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Telefone / Telemóvel:</span>
+                <span class="field-value">${escapeHtml(socio.telefone || '—')}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Situação Cadastral:</span>
+                <span class="field-value">${escapeHtml(socio.estadoMembro || 'Ativo')}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Email:</span>
+                <span class="field-value">${escapeHtml(socio.email || '—')}</span>
+              </div>
+              <div class="field-row">
+                <span class="field-label">Data de Inscrição:</span>
+                <span class="field-value">${socio.dataInscricao || 'Histórico'}</span>
+              </div>
+              <div class="field-row" style="grid-column: 1 / -1;">
+                <span class="field-label">Morada / Domicílio:</span>
+                <span class="field-value">${escapeHtml([socio.morada, socio.codPostal, socio.localidade || 'Aguada de Baixo'].filter(Boolean).join(', '))}</span>
+              </div>
+            </div>
+          </div>
+
+          ${divida > 0 ? `
+            <div class="status-banner atraso">
+              <div class="status-banner-icon">⚠️</div>
+              <div class="status-banner-text">
+                <strong>AVISO DE LIQUIDAÇÃO DE QUOTAS PENDENTES:</strong><br>
+                Constatam-se <strong>${unpaidQuotas.length} quota(s) anual(ais)</strong> por regularizar referentes ao(s) ano(s) de <strong>${unpaidQuotas.map(q => q.ano).join(', ')}</strong>, totalizando o montante de <strong style="font-size: 11pt; color: #991b1b;">${divida.toFixed(2).replace('.', ',')} €</strong> (quota anual: 6,00 €). Agradecemos a respetiva liquidação para manter a sua ligação associativa regularizada.
+              </div>
+            </div>
+          ` : `
+            <div class="status-banner em-dia">
+              <div class="status-banner-icon">✅</div>
+              <div class="status-banner-text">
+                <strong>SITUAÇÃO FINANCEIRA TOTALMENTE REGULARIZADA:</strong><br>
+                Todas as quotas estatutárias de associado encontram-se integralmente liquidadas até ao ano de <strong>${socio.ultimaQuota || 2026}</strong>. A Direção da A.R.C.A. manifesta o seu agradecimento pela sua pontual dedicação e apoio contínuo ao nosso clube!
+              </div>
+            </div>
+          `}
+
+          <div style="font-weight: 800; color: #0f3f26; text-transform: uppercase; font-size: 8.5pt; margin-bottom: 6px; letter-spacing: 0.5px;">
+            Histórico Detalhado de Quotas
+          </div>
+
+          <table class="quotas-table">
+            <thead>
+              <tr>
+                <th style="width: 70px; text-align: center;">Ano</th>
+                <th style="width: 90px; text-align: right;">Valor Anual</th>
+                <th style="width: 120px; text-align: center;">Estado</th>
+                <th style="width: 110px; text-align: center;">Data Pagamento</th>
+                <th style="width: 130px; text-align: center;">Meio / Modo</th>
+                <th style="text-align: center;">Documento / Recibo</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${quotasRows}
+            </tbody>
+          </table>
+
+          ${divida > 0 ? `
+            <div class="payment-box">
+              <strong style="color: #0f3f26; font-size: 9pt;">INSTRUÇÕES PARA LIQUIDAÇÃO DE QUOTAS:</strong><br>
+              Poderá proceder à regularização do montante em débito através dos seguintes canais oficiais:<br>
+              • <strong>Transferência Bancária / MB:</strong> IBAN: <code>PT50 0035 0123 0001 2345 6789 0</code> (Caixa Geral de Depósitos - A.R.C.A.).<br>
+              &nbsp;&nbsp;<em>(Obrigatório indicar no descritivo da transferência: "Sócio Nº ${socio.numero} - ${escapeHtml(socio.nome)}")</em>.<br>
+              • <strong>Presencialmente:</strong> Na Secretaria da A.R.C.A. no Pavilhão Carlos Almeida ou junto de qualquer elemento da Direção / Tesouraria.<br>
+              • <strong>Envio de Comprovativo:</strong> Por correio eletrónico para <code>geral@arca.pt</code> ou WhatsApp institucional da Direção.
+            </div>
+          ` : ''}
+
+          <div style="margin-top: 15px; font-size: 8.5pt; color: #475569;">
+            Aguada de Baixo, ${hojeDataExtenso}.
+          </div>
+
+          <div class="signatures-row">
+            <div class="sign-box">
+              <br><br>
+              <strong>A Direção da A.R.C.A.</strong>
+              <span>Pelos Órgãos Sociais</span>
+            </div>
+            <div class="sign-box">
+              <br><br>
+              <strong>O(A) Associado(a)</strong>
+              <span>${escapeHtml(socio.nome)} (Sócio nº ${socio.numero})</span>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            A.R.C.A. - Associação Recreativa e Cultural de Aguada de Baixo · Documento emitido eletronicamente pelos serviços administrativos · geral@arca.pt
+          </div>
+
+          <script>
+            window.addEventListener('load', () => {
+              setTimeout(() => { window.print(); }, 400);
+            });
+          <\/script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    };
 
     // =========================================================================
     // 4.5. Modal: Criar Nova Ficha de Sócio
